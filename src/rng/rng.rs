@@ -62,7 +62,7 @@ impl Rng {
     }
 
     /// Returns the next pseudo random numver.
-    fn next(&mut self) -> u64 {
+    pub fn next(&mut self) -> u64 {
         let (a, b, c, d) = self.seed;
 
         // We use `Wrapping` because overflow and underflow is intended
