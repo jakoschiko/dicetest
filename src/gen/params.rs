@@ -1,5 +1,6 @@
 /// These parameters configure the random value generation of generators.
 /// They will be passed to `GenOnce::gen_once` or `Gen::gen`.
+#[derive(Debug, Clone)]
 pub struct Params {
 	// The maxmimum size of generated dynamic data structures.
 	//
