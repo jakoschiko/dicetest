@@ -9,3 +9,6 @@ pub use self::meta::*;
 
 mod rng;
 pub use self::rng::*;
+
+mod zip;
+pub use self::zip::*;
