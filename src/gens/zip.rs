@@ -12,7 +12,7 @@ macro_rules! fn_zip_n {
 			})
 		}
 
-		/// Generates tuples containing the generated values of several generators.
+		/// Generates a tuple containing the generated values of several generators.
 		pub fn $zip_n<$($Ti,)*>(
 			$($gen_i: impl Gen<$Ti>,)*
 		) -> impl Gen<($($Ti,)*)> {
