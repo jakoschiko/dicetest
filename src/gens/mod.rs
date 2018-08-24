@@ -12,3 +12,6 @@ pub use self::rng::*;
 
 mod zip;
 pub use self::zip::*;
+
+mod one_of;
+pub use self::one_of::*;
