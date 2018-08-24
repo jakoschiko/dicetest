@@ -16,5 +16,8 @@ pub use self::zip::*;
 mod one_of;
 pub use self::one_of::*;
 
+mod bool;
+pub use self::bool::*;
+
 mod int;
 pub use self::int::*;
