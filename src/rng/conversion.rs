@@ -48,10 +48,10 @@ mod tests {
         // TODO: impl test
     }
 
-	#[test]
-	fn u8s_to_u64s_is_left_inverse() {
+    #[test]
+    fn u8s_to_u64s_is_left_inverse() {
         // TODO: impl test
-	}
+    }
 
     #[test]
     fn u64s_to_u8s_is_left_inverse_with_additional_zeros() {
