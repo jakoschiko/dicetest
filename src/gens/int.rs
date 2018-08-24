@@ -130,7 +130,7 @@ where
     gens::from_fn(|rng, _| I::from_rng(rng))
 }
 
-// Generates an integer. Some special intergers have a higher probability of being generated.
+/// Generates an integer. Some special intergers have a higher probability of being generated.
 pub fn int<I: Int>() -> impl Gen<I> {
     let all_gen = int_uniform::<I>();
 
@@ -139,11 +139,11 @@ pub fn int<I: Int>() -> impl Gen<I> {
     gens::one_of_gen_2(all_gen, special_gen)
 }
 
-// Generates an integer that lies between the inclusive interval borders.
-// All integers in the interval are uniformly distributed.
-//
-// # Panics
-// Panics if the interval is empty, i.e. `min > max`.
+/// Generates an integer that lies between the inclusive interval borders.
+/// All integers in the interval are uniformly distributed.
+///
+/// # Panics
+/// Panics if the interval is empty, i.e. `min > max`.
 pub fn choose_int_uniform<I>(min: I, max: I) -> impl Gen<I>
 where
     I: Int
@@ -185,11 +185,11 @@ where
     })
 }
 
-// Generates an integer that lies between the inclusive interval borders.
-// Some special intergers in the interval have a higher probability of being generated.
-//
-// # Panics
-// Panics if the interval is empty, i.e. `min > max`.
+/// Generates an integer that lies between the inclusive interval borders.
+/// Some special intergers in the interval have a higher probability of being generated.
+///
+/// # Panics
+/// Panics if the interval is empty, i.e. `min > max`.
 pub fn choose_int<I>(min: I, max: I) -> impl Gen<I>
 where
     I: Int
