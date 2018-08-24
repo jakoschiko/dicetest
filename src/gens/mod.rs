@@ -15,3 +15,6 @@ pub use self::zip::*;
 
 mod one_of;
 pub use self::one_of::*;
+
+mod int;
+pub use self::int::*;
