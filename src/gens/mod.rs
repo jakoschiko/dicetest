@@ -1,3 +1,5 @@
+//! The standard collection of `Gen` implementations.
+
 mod from_fn;
 pub use self::from_fn::*;
 

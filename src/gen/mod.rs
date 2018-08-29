@@ -1,4 +1,4 @@
-//! Provides random value generators for different kind of data.
+//! Provides a random value generator trait for generating different kind of data.
 
 mod params;
 pub use self::params::Params;
