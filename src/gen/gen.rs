@@ -5,7 +5,7 @@ use ::gen::{Params, GenOnce};
 
 /// Trait for generating random values of type `T`.
 pub trait Gen<T>: GenOnce<T> {
-    /// Generates a random value.
+    /// Generates a random value using the given parameters.
     ///
     /// The `Rng` is the only source of the randomness. Besides that, the generation is
     /// derterministic.
