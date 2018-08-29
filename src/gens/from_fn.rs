@@ -3,7 +3,7 @@ use ::gen::{Params, GenOnce, Gen};
 
 /// Helper for implementing a `GenOnce` from a `FnOnce`.
 ///
-/// The given `FnOnce` already implements the trait `GenOnce`, but this helper may improve the
+/// The given `FnOnce` already implements the trait `GenOnce`, but using this helper may improve the
 /// type inference.
 pub fn from_fn_once<T, F>(f: F) -> impl GenOnce<T>
 where
@@ -14,7 +14,7 @@ where
 
 /// Helper for implementing a `Gen` from a `Fn`.
 ///
-/// The given `Fn` already implements the trait `Gen`, but this helper may improve the
+/// The given `Fn` already implements the trait `Gen`, but using this helper may improve the
 /// type inference.
 pub fn from_fn<T, F>(f: F) -> impl Gen<T>
 where
