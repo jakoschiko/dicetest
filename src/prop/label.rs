@@ -39,3 +39,12 @@ where
 		Label { text }
 	}
 }
+
+/// A never type for labels.
+pub enum NoLabel {}
+
+impl IntoLabel for NoLabel {
+	fn into_label(self) -> Label {
+		match self {}
+	}
+}
