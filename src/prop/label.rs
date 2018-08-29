@@ -7,7 +7,7 @@ use std::string::ToString;
 /// As far as possible labels should be created lazily and should not slow down the test execution.
 #[derive(Debug, PartialEq)]
 pub struct Label {
-	/// A human readable text.
+	/// A human-readable text.
 	pub text: String
 }
 
