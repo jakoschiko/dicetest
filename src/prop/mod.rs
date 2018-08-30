@@ -14,3 +14,9 @@ pub use self::result::Result;
 
 mod prop;
 pub use self::prop::Prop;
+
+mod show;
+pub use self::show::{Show, DebugShow};
+
+mod arg;
+pub use self::arg::{Arg, IntoArg, GenArgExt};
