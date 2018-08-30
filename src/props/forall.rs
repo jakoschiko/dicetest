@@ -163,7 +163,7 @@ fn eval_body(
 
     if params.create_labels {
         forall_result.append_label("forall args:");
-        forall_result.append_labels(arg_labels);
+        forall_result.append_labels_indented(arg_labels);
         forall_result.append_label("forall labels:");
         forall_result.append_labels_indented(result.labels);
     }
