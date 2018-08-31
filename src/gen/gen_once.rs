@@ -62,6 +62,18 @@ pub trait GenOnce<T> {
             _gu: PhantomData,
         }
     }
+
+    /// Calls `GenOnce::gen_once` with random seed and default parameters. Useful for debugging the
+    /// generator.
+    fn sample_once(self) -> T
+    where
+        Self: Sized,
+    {
+        let mut rng = Rng::random();
+        let params = Params::default();
+
+        self.gen_once(&mut rng, &params)
+    }
 }
 
 impl<T, F> GenOnce<T> for F

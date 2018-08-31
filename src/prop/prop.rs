@@ -25,6 +25,21 @@ pub trait Prop {
             label,
         }
     }
+
+    /// Calls `Prop::eval` with random seed and default parameters. Useful for debugging the
+    /// property.
+    fn sample(self) -> Result
+    where
+        Self: Sized,
+    {
+        let mut rng = Rng::random();
+        let params = Params {
+            create_labels: true,
+            gen_params: Default::default(),
+        };
+
+        self.eval(&mut rng, &params)
+    }
 }
 
 impl<F> Prop for F
