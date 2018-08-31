@@ -7,50 +7,50 @@ use std::string::ToString;
 /// As far as possible labels should be created lazily and should not slow down the test execution.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Label {
-	/// A human-readable text.
-	pub text: String
+    /// A human-readable text.
+    pub text: String
 }
 
 /// Trait for converting data into labels. Useful for creating labels lazily.
 pub trait IntoLabel {
-	fn into_label(self) -> Label;
+    fn into_label(self) -> Label;
 }
 
 impl IntoLabel for Label {
-	fn into_label(self) -> Label {
-		self
-	}
+    fn into_label(self) -> Label {
+        self
+    }
 }
 
 impl<'a> IntoLabel for &'a str {
-	fn into_label(self) -> Label {
-		let text = self.to_string();
-		Label { text }
-	}
+    fn into_label(self) -> Label {
+        let text = self.to_string();
+        Label { text }
+    }
 }
 
 impl IntoLabel for String {
-	fn into_label(self) -> Label {
-		let text = self;
-		Label { text }
-	}
+    fn into_label(self) -> Label {
+        let text = self;
+        Label { text }
+    }
 }
 
 impl<F> IntoLabel for F
 where
-	F: FnOnce() -> String,
+    F: FnOnce() -> String,
 {
-	fn into_label(self) -> Label {
-		let text = self();
-		Label { text }
-	}
+    fn into_label(self) -> Label {
+        let text = self();
+        Label { text }
+    }
 }
 
 /// A never type for labels.
 pub enum NoLabel {}
 
 impl IntoLabel for NoLabel {
-	fn into_label(self) -> Label {
-		match self {}
-	}
+    fn into_label(self) -> Label {
+        match self {}
+    }
 }
