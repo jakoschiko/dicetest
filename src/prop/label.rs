@@ -5,7 +5,7 @@ use std::string::ToString;
 /// falsified properties.
 ///
 /// As far as possible labels should be created lazily and should not slow down the test execution.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Label {
 	/// A human-readable text.
 	pub text: String
