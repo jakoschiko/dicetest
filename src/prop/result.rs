@@ -43,4 +43,32 @@ impl Result {
 
         self.labels.append(&mut labels);
     }
+
+    /// Returns a `String` that contains all labels in a pretty format.
+    pub fn pretty_labels(&self) -> String {
+        let mut acc = String::new();
+        let mut iter = self.labels.iter();
+
+        let add_label = |acc: &mut String, label: &Label| {
+            acc.push_str(&"|");
+            acc.push_str(&label.text);
+        };
+
+        if let Some(label) = iter.next() {
+            add_label(&mut acc, label);
+        }
+
+        for label in iter {
+            acc.push('\n');
+            add_label(&mut acc, label);
+        }
+
+        acc
+    }
+
+    /// Prints the `Result` in a pretty format to stdout.
+    pub fn print(&self) {
+        let labels = self.pretty_labels();
+        println!("Status: {:?}\nLabels:\n{}", self.status, labels);
+    }
 }
