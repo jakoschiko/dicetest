@@ -1,4 +1,5 @@
 /// Extended truth values for property evaluation.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Status {
     /// The property was proven to be true.
     True,
