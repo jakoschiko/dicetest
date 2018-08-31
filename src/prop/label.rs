@@ -16,6 +16,12 @@ pub trait IntoLabel {
 	fn into_label(self) -> Label;
 }
 
+impl IntoLabel for Label {
+	fn into_label(self) -> Label {
+		self
+	}
+}
+
 impl<'a> IntoLabel for &'a str {
 	fn into_label(self) -> Label {
 		let text = self.to_string();
