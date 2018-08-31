@@ -6,19 +6,18 @@ use ::gen::GenOnce;
 
 /// Represents a random argument of type `T` that can be used for properties. The struct provides
 /// 	* a generator for a random value of type `T` and
-/// 	* human-readable details for creating a property label that describes the generated value.
+/// 	* human-readable details that can be used for creating a property label.
 pub struct Arg<T, G, L, S>
 where
 	G: GenOnce<T>,
 	L: IntoLabel,
 	S: Show<T>,
 {
-	/// Generates a single random value of type `T`.
+	/// Generator for a single random value of type `T`.
 	pub gen: G,
-	/// An optional description of the argument. E.g. "length" would be an appropriate
-	/// description of an integer used as the length of a vector.
-	pub label_opt: Option<L>,
-	/// Converts the generated value of type `T` into a human-readable text.
+	/// The optional name of the argument.
+	pub name_opt: Option<L>,
+	/// Converter for creating for a human-readable representation of the generated value.
 	pub show: S,
 	_t: PhantomData<T>,
 }
@@ -29,34 +28,34 @@ where
 	L: IntoLabel,
 	S: Show<T>,
 {
-	/// Constructor for an `Arg` with a label.
-	pub fn new(gen: G, label: L, show: S) -> Self {
+	/// Constructor for an `Arg` with a name.
+	pub fn new(gen: G, name: L, show: S) -> Self {
 		Arg {
 			gen,
-			label_opt: Some(label),
+			name_opt: Some(name),
 			show,
 			_t: PhantomData,
 		}
 	}
 
-	/// Sets the given label.
-	pub fn label<LL>(self, label: LL) -> Arg<T, G, LL, S>
+	/// Sets the given name.
+	pub fn name<LL>(self, name: LL) -> Arg<T, G, LL, S>
 	where
 		LL: IntoLabel,
 	{
 		Arg {
 			gen: self.gen,
-			label_opt: Some(label),
+			name_opt: Some(name),
 			show: self.show,
 			_t: PhantomData,
 		}
 	}
 
-	/// Sets the label to `None`.
-	pub fn no_label(self) -> Arg<T, G, NoLabel, S> {
+	/// Removes the name.
+	pub fn no_name(self) -> Arg<T, G, NoLabel, S> {
 		Arg {
 			gen: self.gen,
-			label_opt: None,
+			name_opt: None,
 			show: self.show,
 			_t: PhantomData,
 		}
@@ -69,7 +68,7 @@ where
 	{
 		Arg {
 			gen: self.gen,
-			label_opt: self.label_opt,
+			name_opt: self.name_opt,
 			show: show,
 			_t: PhantomData,
 		}
@@ -81,11 +80,11 @@ where
 	G: GenOnce<T>,
 	S: Show<T>,
 {
-	// Constructor for an `Arg` without a label.
-	pub fn new_no_label(gen: G, show: S) -> Self {
+	// Constructor for an `Arg` without a name.
+	pub fn new_no_name(gen: G, show: S) -> Self {
 		Arg {
 			gen,
-			label_opt: None,
+			name_opt: None,
 			show,
 			_t: PhantomData,
 		}
@@ -102,13 +101,24 @@ where
 	fn into_arg(self) -> Arg<T, G, L, S>;
 }
 
+impl<T, G, L, S> IntoArg<T, G, L, S> for Arg<T, G, L, S>
+where
+	G: GenOnce<T>,
+	L: IntoLabel,
+	S: Show<T>,
+{
+	fn into_arg(self) -> Arg<T, G, L, S> {
+		self
+	}
+}
+
 impl<T, G> IntoArg<T, G, NoLabel, DebugShow> for G
 where
 	T: Debug,
 	G: GenOnce<T>,
 {
 	fn into_arg(self) -> Arg<T, G, NoLabel, DebugShow> {
-		Arg::new_no_label(self, DebugShow)
+		Arg::new_no_name(self, DebugShow)
 	}
 }
 
@@ -117,10 +127,10 @@ pub trait GenArgExt<T>: GenOnce<T> + Sized
 where
 	T: Debug,
 {
-	/// Converts the `GenOnce` into an `Arg` with given label and `DebugShow`.
-	fn label<L: IntoLabel>(self, label: L) -> Arg<T, Self, L, DebugShow>;
+	/// Converts the `GenOnce` into an `Arg` with the given name and `DebugShow`.
+	fn name<L: IntoLabel>(self, name: L) -> Arg<T, Self, L, DebugShow>;
 
-	/// Converts the `GenOnce` into an `Arg` without a label and the given `Show`.
+	/// Converts the `GenOnce` into an `Arg` without a name and the given `Show`.
 	fn show<S: Show<T>>(self, show: S) -> Arg<T, Self, NoLabel, S>;
 }
 
@@ -129,11 +139,11 @@ where
 	T: Debug,
 	G: GenOnce<T>,
 {
-	fn label<L: IntoLabel>(self, label: L) -> Arg<T, Self, L, DebugShow> {
-		Arg::new(self, label, DebugShow)
+	fn name<L: IntoLabel>(self, name: L) -> Arg<T, Self, L, DebugShow> {
+		Arg::new(self, name, DebugShow)
 	}
 
 	fn show<S: Show<T>>(self, show: S) -> Arg<T, Self, NoLabel, S> {
-		Arg::new_no_label(self, show)
+		Arg::new_no_name(self, show)
 	}
 }
