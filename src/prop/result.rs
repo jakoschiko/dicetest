@@ -1,6 +1,7 @@
 use ::prop::{Label, IntoLabel, Status};
 
 /// The result of a property evaluation.
+#[derive(Debug, Clone)]
 pub struct Result {
     /// The truth value of the evaluated property.
     pub status: Status,
