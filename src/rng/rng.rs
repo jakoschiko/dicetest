@@ -34,10 +34,15 @@ impl Rng {
     }
 
     /// Creates a `Rng` using a byte slice as seed.
-    /// There is no guarantee for a satisfying cycle length.
     ///
     /// This function is a right inverse for `Rng::seed_as_bytes`.
-    pub fn init_with_bytes(seed_bytes: &[u8]) -> Rng {
+    ///
+    /// # Safety
+    ///
+    /// A satisfying cycle length is only guaranteed for bytes from `Rng::seed_as_bytes` called
+    /// with a `Rng` that has a satisfying cycle length. Other bytes should not be passed to this
+    /// function. For initializing a `Rng` with an arbitrary seed, use `Rng::init` instead.
+    pub unsafe fn init_with_bytes(seed_bytes: &[u8]) -> Rng {
         let mut iter = conversion::u8s_to_u64s(seed_bytes).into_iter();
 
         let mut rng = {
