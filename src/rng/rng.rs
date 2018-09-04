@@ -15,7 +15,7 @@ pub struct Rng {
 }
 
 impl Rng {
-    /// Creates a `Rng` using a `u64` as seed.
+    /// Creates an `Rng` using a `u64` as seed.
     /// The result has a satisfying cycle length.
     pub fn init(seed_u64: u64) -> Rng {
         let seed = (0xf1ea5eed, seed_u64, seed_u64, seed_u64);
@@ -26,22 +26,22 @@ impl Rng {
         rng
     }
 
-    /// Creates a `Rng` using a random seed.
+    /// Creates an `Rng` using a random seed.
     /// The result has a satisfying cycle length.
     pub fn random() -> Rng {
         let seed = rand::thread_rng().gen();
         Rng::init(seed)
     }
 
-    /// Creates a `Rng` using a byte slice as seed.
+    /// Creates an `Rng` using a byte slice as seed.
     ///
     /// This function is a right inverse for `Rng::seed_as_bytes`.
     ///
     /// # Safety
     ///
     /// A satisfying cycle length is only guaranteed for bytes from `Rng::seed_as_bytes` called
-    /// with a `Rng` that has a satisfying cycle length. Other bytes should not be passed to this
-    /// function. For initializing a `Rng` with an arbitrary seed, use `Rng::init` instead.
+    /// with an `Rng` that has a satisfying cycle length. Other bytes should not be passed to this
+    /// function. For initializing an `Rng` with an arbitrary seed, use `Rng::init` instead.
     pub unsafe fn init_with_bytes(seed_bytes: &[u8]) -> Rng {
         let mut iter = conversion::u8s_to_u64s(seed_bytes).into_iter();
 
