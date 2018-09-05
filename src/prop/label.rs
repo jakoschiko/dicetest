@@ -68,6 +68,11 @@ impl Labels {
         Labels { labels }
     }
 
+    /// Returns if self has at least one label.
+    pub fn is_empty(&self) -> bool {
+        self.labels.len() == 0
+    }
+
     /// Evaluates and pushes the label to the back of self.
     pub fn push<L>(&mut self, label: L)
     where
