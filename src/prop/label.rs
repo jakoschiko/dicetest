@@ -70,7 +70,7 @@ impl Labels {
 
     /// Returns if self has at least one label.
     pub fn is_empty(&self) -> bool {
-        self.labels.len() == 0
+        self.labels.is_empty()
     }
 
     /// Evaluates and pushes the label to the back of self.
