@@ -1,7 +1,7 @@
 //! Provides a property trait for defining test expectations.
 
 mod label;
-pub use self::label::{Label, IntoLabel, NoLabel};
+pub use self::label::{Label, IntoLabel, NoLabel, Labels};
 
 mod params;
 pub use self::params::Params;

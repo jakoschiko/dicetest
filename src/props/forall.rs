@@ -1,6 +1,6 @@
 use ::rng::Rng;
 use ::gen::GenOnce;
-use ::prop::{Show, Label, IntoLabel, IntoArg, Params, Status, Result, Prop};
+use ::prop::{Show, Label, IntoLabel, Labels, IntoArg, Params, Status, Result, Prop};
 use ::props;
 
 macro_rules! fn_forall_n {
@@ -36,7 +36,7 @@ macro_rules! fn_forall_n {
                 $(let $arg_i = $arg_i.into_arg();)*
                 $(let $value_i = $arg_i.gen.gen_once(rng, &params.gen_params);)*
 
-                let mut arg_labels = Vec::new();
+                let mut arg_labels = Labels::new();
 
                 if params.create_labels {
                     let mut index = 0;
@@ -152,9 +152,9 @@ fn eval_body(
     rng: &mut Rng,
     params: &Params,
     body: impl Prop,
-    arg_labels: Vec<Label>
+    mut arg_labels: Labels,
 ) -> Result {
-    let result = body.eval(rng, params);
+    let mut result = body.eval(rng, params);
 
     let forall_status = match result.status {
         Status::True => Status::Passed,
@@ -164,10 +164,11 @@ fn eval_body(
     let mut forall_result = Result::new(forall_status);
 
     if params.create_labels {
-        forall_result.append_label("forall args:");
-        forall_result.append_labels_indented(arg_labels);
-        forall_result.append_label("forall labels:");
-        forall_result.append_labels_indented(result.labels);
+        let labels = &mut forall_result.labels;
+        labels.push("forall args:");
+        labels.append_indented(&mut arg_labels);
+        labels.push("forall labels:");
+        labels.append_indented(&mut result.labels);
     }
 
     forall_result

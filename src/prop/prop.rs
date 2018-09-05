@@ -62,7 +62,7 @@ impl Prop for bool {
         let mut result = Result::new(status);
 
         if params.create_labels {
-            result.append_label(label);
+            result.labels.push(label);
         }
 
         result
@@ -91,7 +91,7 @@ where
         let mut result = prop.eval(rng, params);
 
         if params.create_labels {
-            result.append_label(label);
+            result.labels.push(label);
         }
 
         result
