@@ -15,7 +15,7 @@ pub fn reveal_params() -> impl Gen<Params> {
     gens::from_fn(|_, params| params.clone())
 }
 
-/// Generates the `Params::max_size` passed to the generator method.
-pub fn reveal_max_size() -> impl Gen<usize> {
-    gens::from_fn(|_, params| params.max_size)
+/// Generates the `Params::size` passed to the generator method.
+pub fn reveal_size() -> impl Gen<u64> {
+    gens::from_fn(|_, params| params.size)
 }

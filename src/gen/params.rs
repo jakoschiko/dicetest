@@ -9,13 +9,13 @@ pub struct Params {
     //
     // The generator implementation is allowed to freely interpret this value, but the
     // complexity of the value generation must be in `O(size)`.
-    pub max_size: usize
+    pub size: u64
 }
 
 impl Default for Params {
     fn default() -> Self {
         Params {
-            max_size: 100,
+            size: 100,
         }
     }
 }
