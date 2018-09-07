@@ -8,3 +8,5 @@ pub use self::gen_once::GenOnce;
 
 mod gen;
 pub use self::gen::Gen;
+
+pub mod adapters;
