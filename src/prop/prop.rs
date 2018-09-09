@@ -1,6 +1,6 @@
 use ::rng::Rng;
 use ::prop::{IntoLabel, Params, Status, Result};
-use ::prop::adapters::PropLabel;
+use ::prop::adapters::{PropLabel, PropBoxed};
 
 /// Trait for implementing properties. A property represents a logic expression and can be evaluated
 /// to an extended truth value.
@@ -22,6 +22,14 @@ pub trait Prop {
         L: IntoLabel,
     {
         PropLabel::new(self, label)
+    }
+
+    /// Wraps `self` into a `Box`.
+    fn boxed(self) -> PropBoxed
+    where
+        Self: Sized + 'static,
+    {
+        PropBoxed::new(self)
     }
 
     /// Calls `Prop::eval` with random seed and default parameters. Useful for debugging the
