@@ -1,5 +1,6 @@
 use ::rng::Rng;
 use ::prop::{IntoLabel, Params, Status, Result};
+use ::prop::adapters::PropLabel;
 
 /// Trait for implementing properties. A property represents a logic expression and can be evaluated
 /// to an extended truth value.
@@ -20,10 +21,7 @@ pub trait Prop {
         Self: Sized,
         L: IntoLabel,
     {
-        PropLabel {
-            prop: self,
-            label,
-        }
+        PropLabel::new(self, label)
     }
 
     /// Calls `Prop::eval` with random seed and default parameters. Useful for debugging the
@@ -60,35 +58,6 @@ impl Prop for bool {
         };
 
         let mut result = Result::new(status);
-
-        if params.create_labels {
-            result.labels.push(label);
-        }
-
-        result
-    }
-}
-
-/// Default implementation for `Prop::label`.
-pub struct PropLabel<P, L>
-where
-    P: Prop,
-    L: IntoLabel,
-{
-    prop: P,
-    label: L,
-}
-
-impl<P, L> Prop for PropLabel<P, L>
-where
-    P: Prop,
-    L: IntoLabel,
-{
-    fn eval(self, rng: &mut Rng, params: &Params) -> Result {
-        let prop = self.prop;
-        let label = self.label;
-
-        let mut result = prop.eval(rng, params);
 
         if params.create_labels {
             result.labels.push(label);

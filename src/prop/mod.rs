@@ -15,6 +15,8 @@ pub use self::result::Result;
 mod prop;
 pub use self::prop::Prop;
 
+pub mod adapters;
+
 mod show;
 pub use self::show::{Show, DebugShow};
 
