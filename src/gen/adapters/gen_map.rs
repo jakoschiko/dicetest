@@ -4,7 +4,7 @@ use ::rng::Rng;
 use ::gen::{Params, GenOnce, Gen};
 
 /// Default implementation for `Gen::map`.
-pub struct Map<T, U, G, F>
+pub struct GenMap<T, U, G, F>
 where
     G: Gen<T>,
     F: Fn(T) -> U,
@@ -15,13 +15,13 @@ where
     _u: PhantomData<U>,
 }
 
-impl<T, U, G, F> Map<T, U, G, F>
+impl<T, U, G, F> GenMap<T, U, G, F>
 where
     G: Gen<T>,
     F: Fn(T) -> U,
 {
     pub fn new(g: G, f: F) -> Self {
-        Map {
+        GenMap {
             g,
             f,
             _t: PhantomData,
@@ -30,7 +30,7 @@ where
     }
 }
 
-impl<T, U, G, F> GenOnce<U> for Map<T, U, G, F>
+impl<T, U, G, F> GenOnce<U> for GenMap<T, U, G, F>
 where
     G: Gen<T>,
     F: Fn(T) -> U,
@@ -40,7 +40,7 @@ where
     }
 }
 
-impl<T, U, G, F> Gen<U> for Map<T, U, G, F>
+impl<T, U, G, F> Gen<U> for GenMap<T, U, G, F>
 where
     G: Gen<T>,
     F: Fn(T) -> U,

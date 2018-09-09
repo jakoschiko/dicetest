@@ -4,7 +4,7 @@ use ::rng::Rng;
 use ::gen::{Params, GenOnce};
 
 /// Default implementation for `GenOnce::map_once`.
-pub struct MapOnce<T, U, G, F>
+pub struct GenMapOnce<T, U, G, F>
 where
     G: GenOnce<T>,
     F: FnOnce(T) -> U,
@@ -15,13 +15,13 @@ where
     _u: PhantomData<U>,
 }
 
-impl<T, U, G, F> MapOnce<T, U, G, F>
+impl<T, U, G, F> GenMapOnce<T, U, G, F>
 where
     G: GenOnce<T>,
     F: FnOnce(T) -> U,
 {
     pub fn new(g: G, f: F) -> Self {
-        MapOnce {
+        GenMapOnce {
             g,
             f,
             _t: PhantomData,
@@ -30,7 +30,7 @@ where
     }
 }
 
-impl<T, U, G, F> GenOnce<U> for MapOnce<T, U, G, F>
+impl<T, U, G, F> GenOnce<U> for GenMapOnce<T, U, G, F>
 where
     G: GenOnce<T>,
     F: FnOnce(T) -> U,

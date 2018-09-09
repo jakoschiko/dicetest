@@ -4,7 +4,7 @@ use ::rng::Rng;
 use ::gen::{Params, GenOnce};
 
 /// Default implementation for `GenOnce::flat_map_once`.
-pub struct FlatMapOnce<T, U, GT, GU, F>
+pub struct GenFlatMapOnce<T, U, GT, GU, F>
 where
     GT: GenOnce<T>,
     GU: GenOnce<U>,
@@ -17,14 +17,14 @@ where
     _gu: PhantomData<GU>,
 }
 
-impl<T, U, GT, GU, F> FlatMapOnce<T, U, GT, GU, F>
+impl<T, U, GT, GU, F> GenFlatMapOnce<T, U, GT, GU, F>
 where
     GT: GenOnce<T>,
     GU: GenOnce<U>,
     F: FnOnce(T) -> GU,
 {
     pub fn new(gt: GT, f: F) -> Self {
-        FlatMapOnce {
+        GenFlatMapOnce {
             gt,
             f,
             _t: PhantomData,
@@ -34,7 +34,7 @@ where
     }
 }
 
-impl<T, U, GT, GU, F> GenOnce<U> for FlatMapOnce<T, U, GT, GU, F>
+impl<T, U, GT, GU, F> GenOnce<U> for GenFlatMapOnce<T, U, GT, GU, F>
 where
     GT: GenOnce<T>,
     GU: GenOnce<U>,

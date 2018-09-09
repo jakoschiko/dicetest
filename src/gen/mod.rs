@@ -9,4 +9,7 @@ pub use self::gen_once::GenOnce;
 mod gen;
 pub use self::gen::Gen;
 
+mod wrapper;
+pub use self::wrapper::{Wrapper, GenOnceWrapper, GenWrapper};
+
 pub mod adapters;
