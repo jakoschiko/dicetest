@@ -1,5 +1,7 @@
 extern crate rand;
 
+mod util;
+
 pub mod rng;
 
 pub mod gen;

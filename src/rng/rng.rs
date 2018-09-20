@@ -1,8 +1,9 @@
 use std::num::Wrapping;
+use std::mem;
 
 use rand::{self, Rng as LibRng};
 
-use ::rng::conversion;
+use ::util::conversion;
 
 /// Deterministic generator for pseudo random numbers.
 ///
@@ -35,35 +36,40 @@ impl Rng {
         Rng::init(seed)
     }
 
-    /// Creates an `Rng` using a byte slice as seed.
+    /// Creates an `Rng` using a byte array as seed.
     ///
     /// This function is a right inverse for `Rng::seed_as_bytes`.
     ///
     /// A satisfying cycle length is only guaranteed for bytes from `Rng::seed_as_bytes` called
     /// with an `Rng` that has a satisfying cycle length. Other bytes should not be passed to this
     /// function. For initializing an `Rng` with an arbitrary seed, use `Rng::init` instead.
-    pub fn init_with_bytes(seed_bytes: &[u8]) -> Rng {
-        let mut iter = conversion::u8s_to_u64s(seed_bytes).into_iter();
+    pub fn init_with_bytes(seed_bytes: [u8; 32]) -> Rng {
+        let arrays: [[u8; 8]; 4] = unsafe { mem::transmute(seed_bytes) };
 
-        let mut rng = {
-            let mut next = || iter.next().unwrap_or(0);
-            let seed = (next(), next(), next(), next());
-            Rng { seed }
-        };
+        let a = conversion::bytes_to_u64(arrays[0]);
+        let b = conversion::bytes_to_u64(arrays[1]);
+        let c = conversion::bytes_to_u64(arrays[2]);
+        let d = conversion::bytes_to_u64(arrays[3]);
 
-        while let Some(i) = iter.next() {
-            rng.reseed(i);
-        };
-
-        rng
+        let seed = (a, b, c, d);
+        Rng { seed }
     }
 
     /// Returns the seed as a byte array.
     ///
     /// This function is a right inverse for `Rng::init_with_bytes`.
-    pub fn seed_as_bytes(&self) -> Vec<u8> {
+    pub fn seed_as_bytes(&self) -> [u8; 32] {
         let (a, b, c, d) = self.seed;
-        conversion::u64s_to_u8s(&[a, b, c, d])
+
+        let arrays = [
+            conversion::u64_to_bytes(a),
+            conversion::u64_to_bytes(b),
+            conversion::u64_to_bytes(c),
+            conversion::u64_to_bytes(d),
+        ];
+
+        let seed_bytes = unsafe { mem::transmute(arrays) };
+        seed_bytes
     }
 
     /// Returns the next pseudo random numver.
