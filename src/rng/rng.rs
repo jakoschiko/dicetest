@@ -38,7 +38,7 @@ impl Rng {
 
     /// Creates an `Rng` using a byte array as seed.
     ///
-    /// This function is a right inverse for `Rng::seed_as_bytes`.
+    /// This function is a left and right inverse for `Rng::seed_as_bytes`.
     ///
     /// A satisfying cycle length is only guaranteed for bytes from `Rng::seed_as_bytes` called
     /// with an `Rng` that has a satisfying cycle length. Other bytes should not be passed to this
@@ -57,7 +57,7 @@ impl Rng {
 
     /// Returns the seed as a byte array.
     ///
-    /// This function is a right inverse for `Rng::init_with_bytes`.
+    /// This function is a left and right inverse for `Rng::init_with_bytes`.
     pub fn seed_as_bytes(&self) -> [u8; 32] {
         let (a, b, c, d) = self.seed;
 
@@ -124,7 +124,12 @@ mod tests {
     }
 
     #[test]
-    fn init_with_bytes_is_right_inverse() {
+    fn init_with_bytes_is_left_inverse() {
+        // TODO: impl test
+    }
+
+    #[test]
+    fn seed_as_bytes_is_left_inverse() {
         // TODO: impl test
     }
 
