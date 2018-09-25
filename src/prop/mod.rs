@@ -1,4 +1,4 @@
-//! Provides a property trait for defining test expectations.
+//! Provides the property trait `Prop` for defining test expectations.
 
 mod label;
 pub use self::label::{Label, IntoLabel, NoLabel, Labels};
