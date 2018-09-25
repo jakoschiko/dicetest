@@ -54,17 +54,39 @@ where
     }
 }
 
+impl Prop for Status {
+    fn eval(self, _rng: &mut Rng, params: &Params) -> Result {
+        let mut result = Result::new(self);
+
+        if params.create_labels {
+            let label = match self {
+                Status::True => "True",
+                Status::Passed => "Passed",
+                Status::False => "False",
+            };
+            result.labels.push(label);
+        }
+
+        result
+    }
+}
+
 impl Prop for bool {
     fn eval(self, _rng: &mut Rng, params: &Params) -> Result {
-        let (status, label) = if self {
-            (Status::True, "True from bool")
+        let status = if self {
+            Status::True
         } else {
-            (Status::False, "False from bool")
+            Status::False
         };
 
         let mut result = Result::new(status);
 
         if params.create_labels {
+            let label = if self {
+                "True from bool"
+            } else {
+                "False from bool"
+            };
             result.labels.push(label);
         }
 
