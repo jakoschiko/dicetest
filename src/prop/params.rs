@@ -20,3 +20,12 @@ impl Params {
         Params { gen_params, ..self }
     }
 }
+
+impl Default for Params {
+    fn default() -> Self {
+        Params {
+            create_labels: true,
+            gen_params: gen::Params::default(),
+        }
+    }
+}

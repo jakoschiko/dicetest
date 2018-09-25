@@ -39,10 +39,7 @@ pub trait Prop {
         Self: Sized,
     {
         let mut rng = Rng::random();
-        let params = Params {
-            create_labels: true,
-            gen_params: Default::default(),
-        };
+        let params = Params::default();
 
         self.eval(&mut rng, &params)
     }
