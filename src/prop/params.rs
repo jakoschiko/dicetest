@@ -8,3 +8,15 @@ pub struct Params {
     /// Parameters for properties that uses `GenOnce`s and `Gen`s.
     pub gen_params: gen::Params,
 }
+
+impl Params {
+    /// Sets the field `create_labels`.
+    pub fn create_labels(self, create_labels: bool) -> Params {
+        Params { create_labels, ..self }
+    }
+
+    /// Sets the field `gen_params`.
+    pub fn gen_params(self, gen_params: gen::Params) -> Params {
+        Params { gen_params, ..self }
+    }
+}

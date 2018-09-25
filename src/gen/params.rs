@@ -12,6 +12,13 @@ pub struct Params {
     pub size: u64
 }
 
+impl Params {
+    /// Sets the field `size`.
+    pub fn size(self, size: u64) -> Self {
+        Params { size, ..self }
+    }
+}
+
 impl Default for Params {
     fn default() -> Self {
         Params {
