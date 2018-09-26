@@ -20,7 +20,7 @@ impl Result {
     }
 
     /// Converts the `Result` to a human-readable summary.
-    fn summary(&self) {
+    pub fn summary(&self) {
         let labels = self.labels.pretty_labels();
         format!("Status: {:?}\nLabels:\n{}", self.status, labels);
     }
