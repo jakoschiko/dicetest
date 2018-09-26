@@ -19,9 +19,9 @@ impl Result {
         Result { status, labels }
     }
 
-    /// Prints the `Result` in a pretty format to stdout.
-    pub fn print(&self) {
+    /// Converts the `Result` to a human-readable summary.
+    fn summary(&self) {
         let labels = self.labels.pretty_labels();
-        println!("Status: {:?}\nLabels:\n{}", self.status, labels);
+        format!("Status: {:?}\nLabels:\n{}", self.status, labels);
     }
 }
