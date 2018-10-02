@@ -11,3 +11,6 @@ pub use self::eq::*;
 
 mod assert;
 pub use self::assert::*;
+
+mod inverse;
+pub use self::inverse::*;
