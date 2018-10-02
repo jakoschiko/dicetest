@@ -88,7 +88,7 @@ impl Log {
             let print = print.create_string();
             let mut acc = String::new();
             for _ in 0..self.print_indention_level {
-                acc.push('\n');
+                acc.push('\t');
             }
             acc.push_str(&print);
             self.log_data.prints.0.push(acc);
