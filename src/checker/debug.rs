@@ -1,4 +1,4 @@
-use ::prop::{self, Prop, Status};
+use ::prop::{Log, Eval, Prop};
 use ::checker::EvalParams;
 
 /// Evaluates the property one time with parameters decoded from the evaluation code. Panics if
@@ -22,16 +22,14 @@ where
     F: FnOnce() -> P,
 {
     let mut rng = eval_params.rng;
-    let params = prop::Params {
-        create_labels: true,
-        gen_params: eval_params.gen_params,
-    };
+    let size = eval_params.size;
+    let mut log = Log::with_print_enabled();
 
     let prop = prop_fn();
-    let result = prop.eval(&mut rng, &params);
+    let eval = prop.eval(&mut rng, size, &mut log);
 
-    if result.status == Status::False {
-        let labels = result.labels.pretty_labels();
+    if eval == Eval::False {
+        let labels = log.data().prints.pretty();
         panic!("Property was falsified with labels:\n{}\n", labels);
     }
 }

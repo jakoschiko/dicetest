@@ -2,16 +2,15 @@ use rand::{self, Rng as LibRng};
 
 use ::util::workers;
 use ::rng::Rng;
-use ::prop::{self, Prop};
+use ::prop::{Log, Prop};
 use ::checker::{
-    EvalSeriesParams, EvalSeriesStatus, EvalSeriesResult,
-    Params, ThreadErr, Status, Result,
-    Portions, eval_series
+    SizeSeries, EvalSummary, EvalSeries,
+    Params, ThreadErr, Status, Report,
+    Portions, eval_runner,
 };
 
-/// Evaluates the property several times with default parameters. The returned `Result` is a
-/// summary of all evaluations.
-pub fn check_prop<P, F>(prop_fn: F) -> Result
+/// Evaluates the property several times with default parameters and returns a report.
+pub fn check_prop<P, F>(prop_fn: F) -> Report
 where
     P: Prop + 'static,
     F: Fn() -> P + Send + Clone + 'static,
@@ -21,9 +20,9 @@ where
     check_prop_with_params(params, prop_fn)
 }
 
-/// Evaluates the property several times with default parameters and the given seed. The returned
-/// `Result` is a summary of all evaluations.
-pub fn check_prop_with_seed<P, F>(seed: u64, prop_fn: F) -> Result
+/// Evaluates the property several times with default parameters and the given seed and returns a
+/// report.
+pub fn check_prop_with_seed<P, F>(seed: u64, prop_fn: F) -> Report
 where
     P: Prop + 'static,
     F: Fn() -> P + Send + Clone + 'static,
@@ -34,9 +33,8 @@ where
     check_prop_with_params(params, prop_fn)
 }
 
-/// Evaluates the property several times with the given parameters. The returned `Result` is a
-/// summary of all evaluations.
-pub fn check_prop_with_params<P, F>(params: Params, prop_fn: F) -> Result
+/// Evaluates the property several times with the given parameters and returns a report.
+pub fn check_prop_with_params<P, F>(params: Params, prop_fn: F) -> Report
 where
     P: Prop + 'static,
     F: Fn() -> P + Send + Clone + 'static,
@@ -48,31 +46,30 @@ where
     let mut rng = Rng::init(seed);
 
     let status = if params.worker_count == 0 {
-        let params = EvalSeriesParams {
-            rng,
-            start_size: params.start_size,
-            end_size: params.end_size,
-            min_passed: params.min_passed,
-        };
+        let size_series = SizeSeries::new(
+            params.start_size,
+            params.end_size,
+            params.min_passed,
+        );
 
-        let eval_series_result = eval_series::run(params, prop_fn.clone());
+        let eval_series = eval_runner::run(rng, size_series, prop_fn.clone());
 
-        Status::Checked(eval_series_result)
+        Status::Checked(eval_series)
     } else {
-        let portions = Portions {
-            total: params.min_passed,
-            count: params.worker_count,
-        };
+        let min_passed_portions = Portions::new(
+            params.min_passed,
+            params.worker_count,
+        );
 
-        let funs = portions.into_iter().map(|portion| {
-            let eval_series_params = EvalSeriesParams {
-                rng: rng.fork(),
-                start_size: params.start_size,
-                end_size: params.end_size,
-                min_passed: portion,
-            };
+        let funs = min_passed_portions.into_iter().map(|min_passed| {
+            let worker_rng =  rng.fork();
+            let size_series = SizeSeries::new(
+                params.start_size,
+                params.end_size,
+                min_passed,
+            );
             let prop_fn = prop_fn.clone();
-            move || eval_series::run(eval_series_params, prop_fn)
+            move || eval_runner::run(worker_rng, size_series, prop_fn)
         }).collect();
 
         let joined_result = workers::run(funs, params.timeout);
@@ -80,14 +77,14 @@ where
         status_from_joined_result(joined_result)
     };
 
-    let mut result = Result { seed, params, status };
+    let mut report = Report { seed, params, status };
 
-    calculate_labels_if_falsified(&mut result, prop_fn);
+    calculate_prints_if_falsified(&mut report, prop_fn);
 
-    result
+    report
 }
 
-fn status_from_joined_result(joined_result: workers::JoinedResult<EvalSeriesResult>) -> Status {
+fn status_from_joined_result(joined_result: workers::JoinedResult<EvalSeries>) -> Status {
     if joined_result.timeout {
         Status::Timeout
     } else {
@@ -96,42 +93,41 @@ fn status_from_joined_result(joined_result: workers::JoinedResult<EvalSeriesResu
                 let thread_err = ThreadErr::new(err);
                 Status::Panic(thread_err)
             }
-            Ok(eval_series_results) => {
-                let eval_series_result = {
-                    let mut iter = eval_series_results.into_iter();
+            Ok(eval_serieses) => {
+                let eval_series = {
+                    let mut iter = eval_serieses.into_iter();
+                    // We know that there is at least one worker
                     let first = iter.next().unwrap();
                     iter.fold(first, |acc, next| acc.merge(next))
                 };
-                Status::Checked(eval_series_result)
+                Status::Checked(eval_series)
             }
         }
     }
 }
 
-fn calculate_labels_if_falsified<P, F>(result: &mut Result, prop_fn: F)
+fn calculate_prints_if_falsified<P, F>(report: &mut Report, prop_fn: F)
 where
     P: Prop + 'static,
     F: Fn() -> P + Send + Clone + 'static,
 {
     if let Status::Checked(
-        EvalSeriesResult {
-            status: EvalSeriesStatus::False {
+        EvalSeries {
+            summary: EvalSummary::False {
                 ref counterexample,
-                ref mut labels,
+                ref mut prints,
             },
             ..
         }
-    ) = result.status {
+    ) = report.status {
         let mut rng = counterexample.rng.clone();
-        let prop_params = prop::Params {
-            create_labels: true,
-            gen_params: counterexample.gen_params.clone(),
-        };
+        let size = counterexample.size;
+        let mut log = Log::with_print_enabled();
 
         let prop = prop_fn();
-        let mut prop_result = prop.eval(&mut rng, &prop_params);
+        let _ = prop.eval(&mut rng, size, &mut log);
 
-        *labels = prop_result.labels;
+        *prints = log.data().prints;
     }
 }
 
@@ -140,32 +136,32 @@ mod tests {
     use std::time::Duration;
     use std::thread;
 
-    use ::prop::{self, Labels};
+    use ::prop::{Eval, Prints};
     use ::checker::{
         EvalParams,
-        EvalSeriesStatus, EvalSeriesResult,
-        Params, Status, Result,
+        EvalSummary, EvalSeries,
+        Params, Status, Report,
         check_prop_with_params
     };
 
-    fn expect_status_checked(result: Result) -> EvalSeriesResult {
-        match result.status {
-            Status::Checked(eval_series_result) => eval_series_result,
+    fn expect_status_checked(report: Report) -> EvalSeries {
+        match report.status {
+            Status::Checked(eval_series) => eval_series,
             unexpected => panic!("Expecting Status::Checked, but got {:?}", unexpected),
         }
     }
 
-    fn expect_status_timeout(result: Result) {
-        match result.status {
+    fn expect_status_timeout(report: Report) {
+        match report.status {
             Status::Timeout => (),
             unexpected => panic!("Expecting Status::Timeout, but got {:?}", unexpected),
         }
     }
 
-    fn expect_eval_series_status_false(result: EvalSeriesResult) -> (EvalParams, Labels) {
-        match result.status {
-            EvalSeriesStatus::False { counterexample, labels } => (counterexample, labels),
-            unexpected => panic!("Expecting EvalSeriesStatus::False, but got {:?}", unexpected),
+    fn expect_eval_summary_false(eval_series: EvalSeries) -> (EvalParams, Prints) {
+        match eval_series.summary {
+            EvalSummary::False { counterexample, prints } => (counterexample, prints),
+            unexpected => panic!("Expecting EvalSummary::False, but got {:?}", unexpected),
         }
     }
 
@@ -178,14 +174,14 @@ mod tests {
     #[test]
     fn no_passed_if_prop_evaluates_to_true_or_false() {
         test_with_different_worker_count(|worker_count| {
-            for &truth in &[prop::Status::True, prop::Status::False] {
+            for &truth in &[Eval::True, Eval::False] {
                 let params = Params::default()
                     .worker_count(worker_count);
 
-                let result = check_prop_with_params(params, move || truth);
-                let eval_series_result = expect_status_checked(result);
+                let report = check_prop_with_params(params, move || truth);
+                let eval_series = expect_status_checked(report);
 
-                assert_eq!(0, eval_series_result.passed_tests)
+                assert_eq!(0, eval_series.passed_tests)
             }
         })
     }
@@ -198,25 +194,25 @@ mod tests {
                     .worker_count(worker_count)
                     .min_passed(min_passed);
 
-                let result = check_prop_with_params(params, || prop::Status::Passed);
-                let eval_series_result = expect_status_checked(result);
+                let report = check_prop_with_params(params, || Eval::Passed);
+                let eval_series = expect_status_checked(report);
 
-                assert_eq!(min_passed, eval_series_result.passed_tests)
+                assert_eq!(min_passed, eval_series.passed_tests)
             }
         })
     }
 
     #[test]
-    fn contains_labels_if_prop_evaluates_to_false() {
+    fn contains_prints_if_prop_evaluates_to_false() {
         test_with_different_worker_count(|worker_count| {
             let params = Params::default()
                 .worker_count(worker_count);
 
-            let result = check_prop_with_params(params, || prop::Status::False);
-            let eval_series_result = expect_status_checked(result);
-            let (_, labels) = expect_eval_series_status_false(eval_series_result);
+            let report = check_prop_with_params(params, || Eval::False);
+            let eval_series = expect_status_checked(report);
+            let (_, prints) = expect_eval_summary_false(eval_series);
 
-            assert!(!labels.is_empty())
+            assert!(!prints.0.is_empty())
         })
     }
 
@@ -226,12 +222,12 @@ mod tests {
             .worker_count(0)
             .timeout(Some(Duration::from_millis(10)));
 
-        let result = check_prop_with_params(params, || {
+        let report = check_prop_with_params(params, || {
             thread::sleep(Duration::from_millis(100));
-            prop::Status::True
+            Eval::True
         });
 
-        let _ = expect_status_checked(result);
+        let _ = expect_status_checked(report);
     }
 
     #[test]
@@ -240,11 +236,11 @@ mod tests {
             .worker_count(1)
             .timeout(Some(Duration::from_millis(1)));
 
-        let result = check_prop_with_params(params, || {
+        let report = check_prop_with_params(params, || {
             thread::sleep(Duration::from_millis(1000));
-            prop::Status::True
+            Eval::True
         });
 
-        expect_status_timeout(result);
+        expect_status_timeout(report);
     }
 }

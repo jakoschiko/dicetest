@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use ::rng::Rng;
-use ::gen::{Params, GenOnce, Gen, Wrapper, GenWrapper};
+use ::gen::{Size, GenOnce, Gen, Wrapper, GenWrapper};
 
 #[derive(Clone)]
 pub struct GenRc<T> {
@@ -26,8 +26,8 @@ impl<T> GenRc<T> {
 }
 
 impl<T> Gen<T> for GenRc<T> {
-    fn gen(&self, rng: &mut Rng, params: &Params) -> T {
-        self.rc.gen(rng, params)
+    fn gen(&self, rng: &mut Rng, size: Size) -> T {
+        self.rc.gen(rng, size)
     }
 
     fn rc(self) -> GenRc<T>
@@ -40,7 +40,7 @@ impl<T> Gen<T> for GenRc<T> {
 }
 
 impl<T> GenOnce<T> for GenRc<T> {
-    fn gen_once(self, rng: &mut Rng, params: &Params) -> T {
-        self.gen(rng, params)
+    fn gen_once(self, rng: &mut Rng, size: Size) -> T {
+        self.gen(rng, size)
     }
 }

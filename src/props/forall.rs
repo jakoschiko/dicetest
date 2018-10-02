@@ -1,6 +1,6 @@
 use ::rng::Rng;
-use ::gen::GenOnce;
-use ::prop::{Show, Label, IntoLabel, Labels, IntoArg, Params, Status, Result, Prop};
+use ::gen::{Size, GenOnce};
+use ::prop::{Label, IntoLabel, Log, Eval, Prop, Show, IntoArg};
 use ::props;
 
 macro_rules! fn_forall_n {
@@ -32,25 +32,25 @@ macro_rules! fn_forall_n {
             P: Prop,
             F: FnOnce($($Ti,)*) -> P,
         {
-            props::from_fn_once(move |rng, params| {
+            props::from_fn_once(move |rng, size, log| {
                 $(let $arg_i = $arg_i.into_arg();)*
-                $(let $value_i = $arg_i.gen.gen_once(rng, &params.gen_params);)*
+                $(let $value_i = $arg_i.gen.gen_once(rng, size);)*
 
-                let mut arg_labels = Labels::new();
+                let mut arg_infos = Vec::new();
 
-                if params.create_labels {
+                if log.print_enabled() {
                     let mut index = 0;
 
                     $({
                         index += 1;
-                        let arg_label = arg_label(index, &$value_i, $arg_i.name_opt, $arg_i.show);
-                        arg_labels.push(arg_label)
+                        let arg_info = arg_info(index, $arg_i.name_opt, &$value_i, $arg_i.show);
+                        arg_infos.push(arg_info)
                     })*
                 }
 
                 let body = f($($value_i,)*);
 
-                eval_body(rng, params, body, arg_labels)
+                eval_body(rng, size, log, body, arg_infos)
             })
         }
     )
@@ -128,16 +128,16 @@ fn_forall_n! { forall_9:
     T9, G9, L9, S9, A9, arg_9, value_9
 }
 
-fn arg_label<T, L, S>(index: u32, value: &T, label_opt: Option<L>, show: S) -> Label
+fn arg_info<T, L, S>(index: u32, name_opt: Option<L>, value: &T, show: S) -> Label
 where
     L: IntoLabel,
     S: Show<T>,
 {
-    let name_string = match label_opt {
+    let name_string = match name_opt {
         None => String::new(),
-        Some(label) => {
-            let text  = label.into_label().text;
-            format!("{}: ", text)
+        Some(name) => {
+            let name  = name.into_label().text;
+            format!("{}: ", name)
         }
     };
 
@@ -150,26 +150,29 @@ where
 
 fn eval_body(
     rng: &mut Rng,
-    params: &Params,
+    size: Size,
+    log: &mut Log,
     body: impl Prop,
-    mut arg_labels: Labels,
-) -> Result {
-    let mut result = body.eval(rng, params);
-
-    let forall_status = match result.status {
-        Status::True => Status::Passed,
-        status => status,
-    };
-
-    let mut forall_result = Result::new(forall_status);
-
-    if params.create_labels {
-        let labels = &mut forall_result.labels;
-        labels.push("forall args:");
-        labels.append_indented(&mut arg_labels);
-        labels.push("forall labels:");
-        labels.append_indented(&mut result.labels);
+    arg_infos: Vec<Label>,
+) -> Eval {
+    if log.print_enabled() {
+        log.print("forall args:");
+        log.indent_print();
+        for arg_info in arg_infos.into_iter() {
+            log.print(arg_info);
+        }
+        log.unindent_print();
+        log.print("forall labels:");
+        log.indent_print();
     }
 
-    forall_result
+    let eval = body.eval(rng, size, log);
+
+    log.unindent_print();
+
+    match eval {
+        Eval::True => Eval::Passed,
+        Eval::Passed => Eval::Passed,
+        Eval::False => Eval::False,
+    }
 }

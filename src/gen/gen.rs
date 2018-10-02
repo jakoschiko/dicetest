@@ -1,5 +1,5 @@
 use ::rng::Rng;
-use ::gen::{Params, GenOnce};
+use ::gen::{Size, GenOnce};
 use ::gen::adapters::{GenMap, GenFlatten, GenFlatMap, GenBoxed, GenRc, GenArc};
 
 /// Trait for generating random values of type `T`.
@@ -7,13 +7,13 @@ use ::gen::adapters::{GenMap, GenFlatten, GenFlatMap, GenBoxed, GenRc, GenArc};
 /// `Gen` trait represents a subset of `GenOnce`. It mirrors all methods of `GenOnce` without
 /// the suffix `_once`. These methods must behave in the same way. For example an implementation
 /// of `Gen` must produce the same value with its methods `gen` and `gen_once` if they are called
-/// with the same `Rng` and `Params`.
+/// with the same `Rng` and `Size`.
 pub trait Gen<T>: GenOnce<T> {
-    /// Generates a random value using the given parameters.
+    /// Generates a random value using.
     ///
     /// The `Rng` is the only source of the randomness. Besides that, the generation is
     /// derterministic.
-    fn gen(&self, &mut Rng, &Params) -> T;
+    fn gen(&self, &mut Rng, Size) -> T;
 
     /// Creates a new `Gen` by mapping the generated values of `self`.
     ///
@@ -82,17 +82,17 @@ pub trait Gen<T>: GenOnce<T> {
     /// generator.
     fn sample(&self) -> T {
         let mut rng = Rng::random();
-        let params = Params::default();
+        let size = Size::default();
 
-        self.gen(&mut rng, &params)
+        self.gen(&mut rng, size)
     }
 }
 
 impl<T, F> Gen<T> for F
 where
-    F: Fn(&mut Rng, &Params) -> T,
+    F: Fn(&mut Rng, Size) -> T,
 {
-    fn gen(&self, rng: &mut Rng, params: &Params) -> T {
-        self(rng, params)
+    fn gen(&self, rng: &mut Rng, size: Size) -> T {
+        self(rng, size)
     }
 }

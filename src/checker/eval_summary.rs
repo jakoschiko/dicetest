@@ -1,9 +1,9 @@
-use ::prop::Labels;
+use ::prop::Prints;
 use ::checker::EvalParams;
 
-/// The merged status of several property evaluations.
+/// The merged result of several property evaluations.
 #[derive(Debug, Clone)]
-pub enum EvalSeriesStatus {
+pub enum EvalSummary {
     /// The property was evaluated to `prop::Status::True` at least once, but was never
     /// evaluated to `prop::Status::False`.
     True,
@@ -11,19 +11,19 @@ pub enum EvalSeriesStatus {
     Passed,
     /// The property was evaluated to `prop::Status::False` at least once.
     False {
-        /// The paramters that was used when the property was evaluted to `prop::Status::False`.
+        /// The parameters that was used when the property was evaluted to `prop::Status::False`.
         counterexample: EvalParams,
-        /// The labels that were generated when the property was evaluted to `prop::Status::False`.
-        labels: Labels,
+        /// The prints that were collected when the property was evaluted to `prop::Status::False`.
+        prints: Prints,
     },
 }
 
-impl EvalSeriesStatus {
-    /// Merges both states into one.
+impl EvalSummary {
+    /// Merge operation for `EvalSummary`.
     ///
-    /// The merge operation is similar to the logical conjunction.
-    pub fn merge(self, other: Self) -> Self {
-        use self::EvalSeriesStatus::{True, Passed, False};
+    /// This operation is similar to the logical conjunction.
+    pub fn merge(self, other: EvalSummary) -> Self {
+        use self::EvalSummary::{True, Passed, False};
         // A property should never or always evaluate to `prop::Status::True`.
         // Nevertheless we can't trust the property implementation and must handle all cases.
         match (self, other) {
@@ -36,15 +36,14 @@ impl EvalSeriesStatus {
             (f@False { .. }, True) => f,
             (f@False { .. }, Passed) => f,
             (
-                False { counterexample: left_counterexample, labels: left_labels },
-                False { counterexample: right_counterexample, labels: right_labels }
+                False { counterexample: left_counterexample, prints: left_prints },
+                False { counterexample: right_counterexample, prints: right_prints }
             ) => {
                 // We prefer the counterexample that is probably smaller
-                let size = |eval_params: &EvalParams| eval_params.gen_params.size;
-                if size(&left_counterexample) < size(&right_counterexample) {
-                    False { counterexample: left_counterexample, labels: left_labels }
+                if left_counterexample.size < right_counterexample.size {
+                    False { counterexample: left_counterexample, prints: left_prints }
                 } else {
-                    False { counterexample: right_counterexample, labels: right_labels }
+                    False { counterexample: right_counterexample, prints: right_prints }
                 }
             }
         }

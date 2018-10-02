@@ -1,5 +1,5 @@
 use ::prop::Prop;
-use ::checker::{EvalSeriesStatus, Params, Status, check_prop_with_params};
+use ::checker::{EvalSummary, Params, Status, check_prop_with_params};
 
 /// Evaluates the property several times with default parameters. Panics if the property was
 /// falsified or the evaluation failed.
@@ -33,13 +33,13 @@ where
     P: Prop + 'static,
     F: Fn() -> P + Send + Clone + 'static,
 {
-    let result = check_prop_with_params(params, prop_fn);
+    let report = check_prop_with_params(params, prop_fn);
 
-    let success = match result.status {
-        Status::Checked(ref eval_series_result) => {
-            match eval_series_result.status {
-                EvalSeriesStatus::True => true,
-                EvalSeriesStatus::Passed => true,
+    let success = match report.status {
+        Status::Checked(ref eval_series) => {
+            match eval_series.summary {
+                EvalSummary::True => true,
+                EvalSummary::Passed => true,
                 _ => false,
             }
         }
@@ -47,8 +47,6 @@ where
     };
 
     if !success {
-        let summary = result.summary();
-
-        panic!(summary);
+        panic!(report.pretty());
     }
 }

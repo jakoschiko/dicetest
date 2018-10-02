@@ -200,14 +200,14 @@ where
         let limit_gen = move || gens::one_of_2(min, max);
         let fallback_gen = limit_gen();
         let special_in_interval_gen = {
-            gens::from_fn(move |rng, params| {
+            gens::from_fn(move |rng, size| {
                 let special_gen = gens::one_of_array(I::special_values());
-                let special = special_gen.gen(rng, params);
+                let special = special_gen.gen(rng, size);
                 if min <= special && special <= max {
                     special
                 } else {
                     // Significant value is not in range, fallback to other generator
-                    fallback_gen.gen(rng, params)
+                    fallback_gen.gen(rng, size)
                 }
             })
         };

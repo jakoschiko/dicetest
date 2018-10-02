@@ -1,5 +1,5 @@
 use ::rng::Rng;
-use ::gen::{Params, GenOnce, Gen, Wrapper, GenWrapper, adapters::{GenBoxedOnce, GenRc, GenArc}};
+use ::gen::{Size, GenOnce, Gen, Wrapper, GenWrapper, adapters::{GenBoxedOnce, GenRc, GenArc}};
 
 /// Default implementation for `Gen::boxed`.
 pub struct GenBoxed<T> {
@@ -19,8 +19,8 @@ impl<T> GenBoxed<T> {
 }
 
 impl<T> Gen<T> for GenBoxed<T> {
-    fn gen(&self, rng: &mut Rng, params: &Params) -> T {
-        self.boxed.gen(rng, params)
+    fn gen(&self, rng: &mut Rng, size: Size) -> T {
+        self.boxed.gen(rng, size)
     }
 
     fn boxed(self) -> GenBoxed<T>
@@ -49,8 +49,8 @@ impl<T> Gen<T> for GenBoxed<T> {
 }
 
 impl<T> GenOnce<T> for GenBoxed<T> {
-    fn gen_once(self, rng: &mut Rng, params: &Params) -> T {
-        self.gen(rng, params)
+    fn gen_once(self, rng: &mut Rng, size: Size) -> T {
+        self.gen(rng, size)
     }
 
     fn boxed_once(self) -> GenBoxedOnce<T>

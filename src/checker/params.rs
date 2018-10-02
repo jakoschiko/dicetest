@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use ::gen;
+use ::gen::Size;
 
 /// The parameters for the checker.
 #[derive(Debug, Clone)]
@@ -11,13 +11,13 @@ pub struct Params {
     // evaluation. The next property evaluations use an interpolated maximum size between
     // `start_size` and `end_size`.
     //
-    // The maximum size will be based to the generators, see `gen::Parmas::size`.
+    // The maximum size will be passed to the generators, see `gen::Size`.
     pub start_size: u64,
     // The maxmimum size of generated dynamic data structures used for the last property
     // evaluation. The previous property evaluations use an interpolated maximum size between
     // `start_size` and `end_size`.
     //
-    // The maximum size will be based to the generators, see `gen::Parmas::size`.
+    // The maximum size will be passed to the generators, see `gen::Size`.
     pub end_size: u64,
     /// The upper limit for the number of property evaluations.
     ///
@@ -26,7 +26,7 @@ pub struct Params {
     pub min_passed: u64,
     /// The number of worker threads used for evaluating the property.
     ///
-    /// If set to `0`, no worker trhead is used and the property is evaluated in the caller thread.
+    /// If set to `0`, no worker thread is used and the property is evaluated in the caller thread.
     /// In this case, the checker cannot handle timeouts or panicked threads.
     pub worker_count: u64,
     /// A timeout for the worker threads. If the timeout is reached, the checker aborts the
@@ -73,7 +73,7 @@ impl Default for Params {
         Params {
             seed: None,
             start_size: 0,
-            end_size: gen::Params::default().size,
+            end_size: Size::default().0,
             min_passed: 1000,
             worker_count: 1,
             timeout: None,

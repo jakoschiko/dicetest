@@ -1,16 +1,16 @@
 //! Provides the property trait `Prop` for defining test expectations.
 
 mod label;
-pub use self::label::{Label, IntoLabel, NoLabel, Labels};
+pub use self::label::{Label, IntoLabel, NoLabel};
 
-mod params;
-pub use self::params::Params;
+mod log;
+pub use self::log::{Prints, LogData, Log};
 
-mod status;
-pub use self::status::Status;
+mod eval;
+pub use self::eval::Eval;
 
-mod result;
-pub use self::result::Result;
+mod sample;
+pub use self::sample::Sample;
 
 mod prop;
 pub use self::prop::Prop;

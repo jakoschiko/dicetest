@@ -1,5 +1,6 @@
 use ::rng::Rng;
-use ::prop::{Params, Result, Prop};
+use ::gen::Size;
+use ::prop::{Log, Eval, Prop};
 
 /// Default implementation for `Prop::boxed`.
 pub struct PropBoxed {
@@ -20,8 +21,8 @@ impl PropBoxed {
 }
 
 impl Prop for PropBoxed {
-    fn eval(mut self, rng: &mut Rng, params: &Params) -> Result {
-        self.boxed.eval(rng, params)
+    fn eval(mut self, rng: &mut Rng, size: Size, log: &mut Log) -> Eval {
+        self.boxed.eval(rng, size, log)
     }
 
     fn boxed(self) -> PropBoxed
@@ -33,7 +34,7 @@ impl Prop for PropBoxed {
 }
 
 trait Wrapper {
-    fn eval(&mut self, &mut Rng, &Params) -> Result;
+    fn eval(&mut self, &mut Rng, Size, log: &mut Log) -> Eval;
 }
 
 struct PropWrapper<P>
@@ -47,8 +48,8 @@ impl<P> Wrapper for PropWrapper<P>
 where
     P: Prop,
 {
-    fn eval(&mut self, rng: &mut Rng, params: &Params) -> Result {
+    fn eval(&mut self, rng: &mut Rng, size: Size, log: &mut Log) -> Eval {
         let prop = self.prop.take().expect("PropWrapper::eval should not be called twice");
-        prop.eval(rng, params)
+        prop.eval(rng, size, log)
     }
 }

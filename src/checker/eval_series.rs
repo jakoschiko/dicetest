@@ -1,49 +1,61 @@
-use ::gen;
-use ::prop::{self, Prop};
-use ::checker::{EvalParams, EvalSeriesParams, EvalSeriesStatus, EvalSeriesResult, SizeSeries};
+use ::prop::{Prints, Eval};
+use ::checker::{EvalParams, EvalSummary};
 
-/// Evaluates the property several times and returns the merged result of the property evaluations.
-pub fn run<P, F>(params: EvalSeriesParams, prop_fn: F) -> EvalSeriesResult
-where
-    P: Prop + 'static,
-    F: Fn() -> P + Send + Clone + 'static
-{
-    let size_series = SizeSeries::new(params.start_size, params.end_size, params.min_passed);
+/// Contains the results of a series of property evaluations.
+#[derive(Debug, Clone)]
+#[must_use]
+pub struct EvalSeries {
+    /// The merged result of all property evaluations.
+    pub summary: EvalSummary,
+    /// The number of property evaluations with the result `Eval::Passed`.
+    pub passed_tests: u64,
+}
 
-    let mut rng = params.rng;
-
-    let mut result_acc = EvalSeriesResult::new();
-
-    for size in size_series.into_iter() {
-        let prop_params = prop::Params {
-            // For performance reasons, we do not create labels here.
-            // If the property will be falsified and all workers are done,
-            // we reevalute the property and create the labels.
-            create_labels: false,
-            gen_params: gen::Params { size },
-        };
-
-        // We clone the `Rng` to be able to reevalute the property
-        let eval_rng = rng.clone();
-
-        let prop = prop_fn();
-        let prop_result = prop.eval(&mut rng, &prop_params);
-
-        let result = EvalSeriesResult::from_prop_result(prop_result, move || {
-            EvalParams {
-                rng: eval_rng,
-                gen_params: prop_params.gen_params,
-            }
-        });
-
-        result_acc = result_acc.merge(result);
-
-        match result_acc.status {
-            EvalSeriesStatus::True => break,
-            EvalSeriesStatus::Passed => (),
-            EvalSeriesStatus::False { .. } => break,
+impl EvalSeries {
+    /// Creates a new instance without any property evaluations.
+    pub fn new() -> Self {
+        EvalSeries {
+            // `EvalSummary::Passed` is the most neutral element of `EvalSummary::merge`
+            summary: EvalSummary::Passed,
+            passed_tests: 0,
         }
     }
 
-    result_acc
+    /// Creates an instance for a single property evaluation.
+    pub fn from_eval(
+        eval: Eval,
+        prints: Prints,
+        eval_params: impl FnOnce() -> EvalParams,
+    ) -> Self {
+        match eval {
+            Eval::True => {
+                EvalSeries {
+                    summary: EvalSummary::True,
+                    passed_tests: 0,
+                }
+            }
+            Eval::Passed => {
+                EvalSeries {
+                    summary: EvalSummary::Passed,
+                    passed_tests: 1,
+                }
+            }
+            Eval::False => {
+                EvalSeries {
+                    summary: EvalSummary::False {
+                        counterexample: eval_params(),
+                        prints,
+                    },
+                    passed_tests: 0,
+                }
+            }
+        }
+    }
+
+    /// Merge opertation for `EvalSeries`.
+    pub fn merge(self, other: Self) -> Self {
+        let summary = self.summary.merge(other.summary);
+        let passed_tests = self.passed_tests + other.passed_tests;
+        EvalSeries { summary, passed_tests }
+    }
 }

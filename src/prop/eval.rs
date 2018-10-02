@@ -1,6 +1,7 @@
-/// Extended truth values for property evaluation.
+/// The result of a property evaluation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Status {
+#[must_use]
+pub enum Eval {
     /// The property was proven to be true.
     ///
     /// A property should either never or always evaluate to `True`.

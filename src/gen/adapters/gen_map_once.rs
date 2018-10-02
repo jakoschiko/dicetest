@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use ::rng::Rng;
-use ::gen::{Params, GenOnce};
+use ::gen::{Size, GenOnce};
 
 /// Default implementation for `GenOnce::map_once`.
 pub struct GenMapOnce<T, U, G, F>
@@ -35,11 +35,11 @@ where
     G: GenOnce<T>,
     F: FnOnce(T) -> U,
 {
-    fn gen_once(self, rng: &mut Rng, params: &Params) -> U {
+    fn gen_once(self, rng: &mut Rng, size: Size) -> U {
         let g = self.g;
         let f = self.f;
 
-        let t = g.gen_once(rng, params);
+        let t = g.gen_once(rng, size);
         let u = f(t);
 
         u

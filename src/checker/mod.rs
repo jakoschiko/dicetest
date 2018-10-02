@@ -3,11 +3,11 @@
 //! There are three kind of checker functions:
 //!
 //! # `check_prop*`
-//! These functions check a property and return a `Result`. The `Result` is a summary of all
+//! These functions check a property and return a `Report`. The `Report` is a summary of all
 //! evaluations.
 //!
 //! # `assert_prop*`
-//! These functions are similiar to `check_prop*`, but does not return a `Result`. Instead they
+//! These functions are similiar to `check_prop*`, but does not return a `Report`. Instead they
 //! panic if the property was falsified or the evaluation failed. They provide a convenient way
 //! for checking a property inside a unit test.
 //!
@@ -18,20 +18,11 @@
 mod eval_params;
 pub use self::eval_params::EvalParams;
 
-
-mod eval_series_params;
-use self::eval_series_params::EvalSeriesParams;
-
-mod eval_series_status;
-pub use self::eval_series_status::EvalSeriesStatus;
-
-mod eval_series_result;
-pub use self::eval_series_result::EvalSeriesResult;
-
-mod size_series;
-use self::size_series::SizeSeries;
+mod eval_summary;
+pub use self::eval_summary::EvalSummary;
 
 mod eval_series;
+pub use self::eval_series::EvalSeries;
 
 
 mod params;
@@ -43,8 +34,15 @@ pub use self::thread_err::ThreadErr;
 mod status;
 pub use self::status::Status;
 
-mod result;
-pub use self::result::Result;
+mod report;
+pub use self::report::Report;
+
+
+mod size_series;
+use self::size_series::SizeSeries;
+
+mod eval_runner;
+
 
 mod portions;
 use self::portions::Portions;

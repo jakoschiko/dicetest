@@ -1,10 +1,10 @@
-use ::prop::Labels;
-use ::checker::{EvalParams, EvalSeriesStatus, Params, Status, ThreadErr};
+use ::prop::Prints;
+use ::checker::{EvalParams, EvalSummary, Params, Status, ThreadErr};
 
 /// The result of the checker.
 #[derive(Debug, Clone)]
 #[must_use]
-pub struct Result {
+pub struct Report {
     /// The inital seed used for random number generation.
     ///
     /// The seed is taken from `Params::seed` or else generated randomly.
@@ -15,9 +15,9 @@ pub struct Result {
     pub status: Status,
 }
 
-impl Result {
-    /// Converts the `Result` to a human-readable summary.
-    pub fn summary(&self) -> String {
+impl Report {
+    /// Converts the `Report` to a pretty text.
+    pub fn pretty(&self) -> String {
         let (headline, sections) = headline_and_sections(self);
 
         let mut acc = headline;
@@ -34,43 +34,43 @@ impl Result {
     }
 }
 
-fn headline_and_sections(result: &Result) -> (String, Vec<String>) {
-    match result.status {
-        Status::Checked(ref eval_series_result) => {
-            match eval_series_result.status {
-                EvalSeriesStatus::True => {
+fn headline_and_sections(report: &Report) -> (String, Vec<String>) {
+    match report.status {
+        Status::Checked(ref eval_series) => {
+            match eval_series.summary {
+                EvalSummary::True => {
                     let headline = format!(
                         "Property was proven after {} passed tests",
-                        eval_series_result.passed_tests,
+                        eval_series.passed_tests,
                     );
 
                     let sections = vec!(
-                        section_parameters(result.seed, &result.params),
+                        section_parameters(report.seed, &report.params),
                     );
 
                     (headline, sections)
                 }
-                EvalSeriesStatus::Passed => {
+                EvalSummary::Passed => {
                     let headline = format!(
                         "Property has passed {} tests",
-                        eval_series_result.passed_tests,
+                        eval_series.passed_tests,
                     );
 
                     let sections = vec!(
-                        section_parameters(result.seed, &result.params),
+                        section_parameters(report.seed, &report.params),
                     );
 
                     (headline, sections)
                 }
-                EvalSeriesStatus::False { ref counterexample, ref labels } => {
+                EvalSummary::False { ref counterexample, ref prints } => {
                     let headline = format!(
                         "Property was falsified after {} passed tests",
-                        eval_series_result.passed_tests,
+                        eval_series.passed_tests,
                     );
 
                     let sections = vec!(
-                        section_parameters(result.seed, &result.params),
-                        section_counterexample(counterexample, labels),
+                        section_parameters(report.seed, &report.params),
+                        section_counterexample(counterexample, prints),
                     );
 
                     (headline, sections)
@@ -82,7 +82,7 @@ fn headline_and_sections(result: &Result) -> (String, Vec<String>) {
                 "Property could not be checked because a thread had panicked".to_string();
 
             let sections = vec!(
-                section_parameters(result.seed, &result.params),
+                section_parameters(report.seed, &report.params),
                 section_panic(thread_err),
             );
 
@@ -91,11 +91,11 @@ fn headline_and_sections(result: &Result) -> (String, Vec<String>) {
         Status::Timeout => {
             let headline = format!(
                 "Property could not be checked because a timeout occured after {:?}",
-                &result.params.timeout,
+                &report.params.timeout,
             );
 
             let sections = vec!(
-                section_parameters(result.seed, &result.params),
+                section_parameters(report.seed, &report.params),
             );
 
             (headline, sections)
@@ -122,19 +122,19 @@ fn section_parameters(seed: u64, params: &Params) -> String {
     section("Parameters", &parameters_text)
 }
 
-fn section_counterexample(counterexample: &EvalParams, labels: &Labels) -> String {
+fn section_counterexample(counterexample: &EvalParams, prints: &Prints) -> String {
     let eval_code = counterexample.eval_code();
     let eval_code_help = format!(
         "You can rerun the counterexample by using its evaluation code:\n\
-        debug_prop(\"{}\", || my_prop)",
+        debug_prop(\"{}\", ...)",
         eval_code,
     );
-    let pretty_labels = if labels.is_empty() {
-        "The counterexample has no labels".to_string()
+    let pretty_prints = if prints.0.is_empty() {
+        "The counterexample has no prints".to_string()
     } else {
-        format!("Labels of the counterexample:\n{}", labels.pretty_labels())
+        format!("Prints of the counterexample:\n{}", prints.pretty())
     };
-    let debug_help = format!("{}\n\n{}", eval_code_help, pretty_labels);
+    let debug_help = format!("{}\n\n{}", eval_code_help, pretty_prints);
     section("Counterexample", &debug_help)
 }
 

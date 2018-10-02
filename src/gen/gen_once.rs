@@ -1,14 +1,14 @@
 use ::rng::Rng;
-use ::gen::Params;
+use ::gen::Size;
 use ::gen::adapters::{GenMapOnce, GenFlattenOnce, GenFlatMapOnce, GenBoxedOnce};
 
 /// Trait for generating a single random value of type `T`.
 pub trait GenOnce<T> {
-    /// Consumes the generator and generates a random value using the given parameters.
+    /// Consumes the generator and generates a random value.
     ///
     /// The `Rng` is the only source of the randomness. Besides that, the generation is
     /// derterministic.
-    fn gen_once(self, &mut Rng, &Params) -> T;
+    fn gen_once(self, &mut Rng, Size) -> T;
 
     /// Creates a new `GenOnce` by mapping the generated values of `self`.
     ///
@@ -63,17 +63,17 @@ pub trait GenOnce<T> {
         Self: Sized,
     {
         let mut rng = Rng::random();
-        let params = Params::default();
+        let size = Size::default();
 
-        self.gen_once(&mut rng, &params)
+        self.gen_once(&mut rng, size)
     }
 }
 
 impl<T, F> GenOnce<T> for F
 where
-    F: FnOnce(&mut Rng, &Params) -> T,
+    F: FnOnce(&mut Rng, Size) -> T,
 {
-    fn gen_once(self, rng: &mut Rng, params: &Params) -> T {
-        self(rng, params)
+    fn gen_once(self, rng: &mut Rng, size: Size) -> T {
+        self(rng, size)
     }
 }

@@ -1,16 +1,16 @@
 use std::marker::PhantomData;
 
 use ::rng::Rng;
-use ::gen::{Params, GenOnce, Gen};
+use ::gen::{Size, GenOnce, Gen};
 
 /// Helper for hiding `GenOnce` and `Gen` implementations behind a common pointer type.
 pub trait Wrapper<T> {
     /// Wrapper  for `GenOnce::gen_once`. Takes a mutable reference to `self` because
     /// `GenOnceWrapper` will consume `self`. Hence this method may panic if called twice.
-    fn gen_once(&mut self, &mut Rng, &Params) -> T;
+    fn gen_once(&mut self, &mut Rng, Size) -> T;
     // Wrapper for `Gen::gen`. It's not implemented for `GenOnceWrapper`. Hence this method may
     // panic.
-    fn gen(&self, &mut Rng, &Params) -> T;
+    fn gen(&self, &mut Rng, Size) -> T;
 }
 
 /// Implements `Wrapper` for `GenOnce`.
@@ -38,12 +38,12 @@ impl<T, G> Wrapper<T> for GenOnceWrapper<T, G>
 where
     G: GenOnce<T>,
 {
-    fn gen_once(&mut self, rng: &mut Rng, params: &Params) -> T {
+    fn gen_once(&mut self, rng: &mut Rng, size: Size) -> T {
         let gen = self.gen.take().expect("GenOnceWrapper::gen_once should not be called twice");
-        gen.gen_once(rng, params)
+        gen.gen_once(rng, size)
     }
 
-    fn gen(&self, _rng: &mut Rng, _params: &Params) -> T {
+    fn gen(&self, _rng: &mut Rng, _size: Size) -> T {
         panic!("GenOnceWrapper::gen should not be called");
     }
 }
@@ -73,11 +73,11 @@ impl<T, G> Wrapper<T> for GenWrapper<T, G>
 where
     G: Gen<T>,
 {
-    fn gen_once(&mut self, rng: &mut Rng, params: &Params) -> T {
-        self.gen(rng, params)
+    fn gen_once(&mut self, rng: &mut Rng, size: Size) -> T {
+        self.gen(rng, size)
     }
 
-    fn gen(&self, rng: &mut Rng, params: &Params) -> T {
-        self.gen.gen(rng, params)
+    fn gen(&self, rng: &mut Rng, size: Size) -> T {
+        self.gen.gen(rng, size)
     }
 }
