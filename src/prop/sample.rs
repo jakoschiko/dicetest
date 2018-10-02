@@ -12,7 +12,7 @@ impl Sample {
     /// Converts the `Report` to a pretty text.
     pub fn pretty(&self) -> String {
         format!(
-            "Status: {:?}\nLabels:\n{}",
+            "Status: {:?}\nPrints:\n{}",
             self.eval,
             self.prints.pretty()
         )

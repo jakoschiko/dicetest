@@ -1,4 +1,4 @@
-use ::prop::IntoLabel;
+use ::prop::LazyString;
 
 /// Strings that were collected during property evaluation.
 ///
@@ -83,14 +83,14 @@ impl Log {
     }
 
     /// If print is enabled, the given print will be evaluted and appended.
-    pub fn print(&mut self, print: impl IntoLabel) {
+    pub fn print(&mut self, print: impl LazyString) {
         if self.print_enabled {
-            let text = print.into_label().text;
+            let print = print.create_string();
             let mut acc = String::new();
             for _ in 0..self.print_indention_level {
                 acc.push('\n');
             }
-            acc.push_str(&text);
+            acc.push_str(&print);
             self.log_data.prints.0.push(acc);
         }
     }

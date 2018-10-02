@@ -1,6 +1,6 @@
 use ::rng::Rng;
 use ::gen::{Size, GenOnce};
-use ::prop::{Label, IntoLabel, Log, Eval, Prop, Show, IntoArg};
+use ::prop::{LazyString, Log, Eval, Prop, Show, IntoArg};
 use ::props;
 
 macro_rules! fn_forall_n {
@@ -26,7 +26,7 @@ macro_rules! fn_forall_n {
         ) -> impl Prop
         where
             $($Gi: GenOnce<$Ti>,)*
-            $($Li: IntoLabel,)*
+            $($Li: LazyString,)*
             $($Si: Show<$Ti>,)*
             $($Ai: IntoArg<$Ti, $Gi, $Li, $Si>,)*
             P: Prop,
@@ -128,24 +128,22 @@ fn_forall_n! { forall_9:
     T9, G9, L9, S9, A9, arg_9, value_9
 }
 
-fn arg_info<T, L, S>(index: u32, name_opt: Option<L>, value: &T, show: S) -> Label
+fn arg_info<T, N, S>(index: u32, name_opt: Option<N>, value: &T, show: S) -> String
 where
-    L: IntoLabel,
+    N: LazyString,
     S: Show<T>,
 {
     let name_string = match name_opt {
         None => String::new(),
         Some(name) => {
-            let name  = name.into_label().text;
+            let name = name.create_string();
             format!("{}: ", name)
         }
     };
 
     let value_string = show.show(&value);
 
-    let arg_string = format!("{}.) {}{}", index, name_string, value_string);
-
-    arg_string.into_label()
+    format!("{}.) {}{}", index, name_string, value_string)
 }
 
 fn eval_body(
@@ -153,16 +151,16 @@ fn eval_body(
     size: Size,
     log: &mut Log,
     body: impl Prop,
-    arg_infos: Vec<Label>,
+    arg_infos: Vec<String>,
 ) -> Eval {
     if log.print_enabled() {
         log.print("forall args:");
         log.indent_print();
         for arg_info in arg_infos.into_iter() {
-            log.print(arg_info);
+            log.print(move || arg_info);
         }
         log.unindent_print();
-        log.print("forall labels:");
+        log.print("forall prints:");
         log.indent_print();
     }
 

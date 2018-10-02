@@ -54,12 +54,11 @@ where
 impl Prop for Eval {
     fn eval(self, _rng: &mut Rng, _size: Size, log: &mut Log) -> Eval {
         log.print(|| {
-            let text = match self {
+            match self {
                 Eval::True => "True",
                 Eval::Passed => "Passed",
                 Eval::False => "False",
-            };
-            text.to_string()
+            }
         });
 
         self
@@ -69,12 +68,11 @@ impl Prop for Eval {
 impl Prop for bool {
     fn eval(self, _rng: &mut Rng, _size: Size, log: &mut Log) -> Eval {
         log.print(|| {
-            let text = if self {
+            if self {
                 "True from bool"
             } else {
                 "False from bool"
-            };
-            text.to_string()
+            }
         });
 
         if self {

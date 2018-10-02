@@ -29,7 +29,7 @@ where
     let eval = prop.eval(&mut rng, size, &mut log);
 
     if eval == Eval::False {
-        let labels = log.data().prints.pretty();
-        panic!("Property was falsified with labels:\n{}\n", labels);
+        let prints = log.data().prints.pretty();
+        panic!("Property was falsified with prints:\n{}\n", prints);
     }
 }

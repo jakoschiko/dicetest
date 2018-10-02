@@ -1,35 +1,33 @@
 use std::marker::PhantomData;
 use std::fmt::Debug;
 
-use ::prop::{Show, DebugShow, IntoLabel, NoLabel};
+use ::prop::{Show, DebugShow, LazyString, NoString};
 use ::gen::GenOnce;
 
-/// Represents a random argument of type `T` that can be used for properties. The struct provides
-///     * a generator for a random value of type `T` and
-///     * human-readable details that can be used for creating a property label.
-pub struct Arg<T, G, L, S>
+/// Represents a random argument of type `T` that can be used for properties.
+pub struct Arg<T, G, N, S>
 where
     G: GenOnce<T>,
-    L: IntoLabel,
+    N: LazyString,
     S: Show<T>,
 {
     /// Generator for a single random value of type `T`.
     pub gen: G,
     /// The optional name of the argument.
-    pub name_opt: Option<L>,
+    pub name_opt: Option<N>,
     /// Converter for creating for a human-readable representation of the generated value.
     pub show: S,
     _t: PhantomData<T>,
 }
 
-impl<T, G, L, S> Arg<T, G, L, S>
+impl<T, G, N, S> Arg<T, G, N, S>
 where
     G: GenOnce<T>,
-    L: IntoLabel,
+    N: LazyString,
     S: Show<T>,
 {
     /// Constructor for an `Arg` with a name.
-    pub fn new(gen: G, name: L, show: S) -> Self {
+    pub fn new(gen: G, name: N, show: S) -> Self {
         Arg {
             gen,
             name_opt: Some(name),
@@ -41,7 +39,7 @@ where
     /// Sets the given name.
     pub fn name<LL>(self, name: LL) -> Arg<T, G, LL, S>
     where
-        LL: IntoLabel,
+        LL: LazyString,
     {
         Arg {
             gen: self.gen,
@@ -52,7 +50,7 @@ where
     }
 
     /// Removes the name.
-    pub fn no_name(self) -> Arg<T, G, NoLabel, S> {
+    pub fn no_name(self) -> Arg<T, G, NoString, S> {
         Arg {
             gen: self.gen,
             name_opt: None,
@@ -62,7 +60,7 @@ where
     }
 
     /// Sets the given `Show`.
-    pub fn show<SS>(self, show: SS) -> Arg<T, G, L, SS>
+    pub fn show<SS>(self, show: SS) -> Arg<T, G, N, SS>
     where
         SS: Show<T>,
     {
@@ -75,7 +73,7 @@ where
     }
 }
 
-impl<T, G, S> Arg<T, G, NoLabel, S>
+impl<T, G, S> Arg<T, G, NoString, S>
 where
     G: GenOnce<T>,
     S: Show<T>,
@@ -92,32 +90,32 @@ where
 }
 
 /// Trait for converting a type into `Arg`.
-pub trait IntoArg<T, G, L, S>
+pub trait IntoArg<T, G, N, S>
 where
     G: GenOnce<T>,
-    L: IntoLabel,
+    N: LazyString,
     S: Show<T>,
 {
-    fn into_arg(self) -> Arg<T, G, L, S>;
+    fn into_arg(self) -> Arg<T, G, N, S>;
 }
 
-impl<T, G, L, S> IntoArg<T, G, L, S> for Arg<T, G, L, S>
+impl<T, G, N, S> IntoArg<T, G, N, S> for Arg<T, G, N, S>
 where
     G: GenOnce<T>,
-    L: IntoLabel,
+    N: LazyString,
     S: Show<T>,
 {
-    fn into_arg(self) -> Arg<T, G, L, S> {
+    fn into_arg(self) -> Arg<T, G, N, S> {
         self
     }
 }
 
-impl<T, G> IntoArg<T, G, NoLabel, DebugShow> for G
+impl<T, G> IntoArg<T, G, NoString, DebugShow> for G
 where
     T: Debug,
     G: GenOnce<T>,
 {
-    fn into_arg(self) -> Arg<T, G, NoLabel, DebugShow> {
+    fn into_arg(self) -> Arg<T, G, NoString, DebugShow> {
         Arg::new_no_name(self, DebugShow)
     }
 }
@@ -128,10 +126,10 @@ where
     T: Debug,
 {
     /// Converts the `GenOnce` into an `Arg` with the given name and `DebugShow`.
-    fn name<L: IntoLabel>(self, name: L) -> Arg<T, Self, L, DebugShow>;
+    fn name<N: LazyString>(self, name: N) -> Arg<T, Self, N, DebugShow>;
 
     /// Converts the `GenOnce` into an `Arg` without a name and the given `Show`.
-    fn show<S: Show<T>>(self, show: S) -> Arg<T, Self, NoLabel, S>;
+    fn show<S: Show<T>>(self, show: S) -> Arg<T, Self, NoString, S>;
 }
 
 impl<T, G> GenArgExt<T> for G
@@ -139,11 +137,11 @@ where
     T: Debug,
     G: GenOnce<T>,
 {
-    fn name<L: IntoLabel>(self, name: L) -> Arg<T, Self, L, DebugShow> {
+    fn name<N: LazyString>(self, name: N) -> Arg<T, Self, N, DebugShow> {
         Arg::new(self, name, DebugShow)
     }
 
-    fn show<S: Show<T>>(self, show: S) -> Arg<T, Self, NoLabel, S> {
+    fn show<S: Show<T>>(self, show: S) -> Arg<T, Self, NoString, S> {
         Arg::new_no_name(self, show)
     }
 }

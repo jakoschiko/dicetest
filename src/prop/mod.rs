@@ -1,7 +1,7 @@
 //! Provides the property trait `Prop` for defining test expectations.
 
-mod label;
-pub use self::label::{Label, IntoLabel, NoLabel};
+mod lazy_string;
+pub use self::lazy_string::{LazyString, NoString};
 
 mod log;
 pub use self::log::{Prints, LogData, Log};
