@@ -23,3 +23,6 @@ pub use self::bool::*;
 
 mod int;
 pub use self::int::*;
+
+mod array;
+pub use self::array::*;
