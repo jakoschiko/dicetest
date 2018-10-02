@@ -8,7 +8,7 @@ macro_rules! fn_forall_n {
         $forall_n:ident:
         $($Ti:ident, $Gi:ident, $Li:ident, $Si:ident, $Ai:ident, $arg_i:ident, $value_i:ident)+
     ) => (
-        /// Implements an universal quantifier.
+        /// A property that represents an universal quantifier.
         ///
         /// This property will be evaluated as follows:
         ///     * Random values will be generated using the given `Arg`s
@@ -30,7 +30,7 @@ macro_rules! fn_forall_n {
             $($Si: Show<$Ti>,)*
             $($Ai: IntoArg<$Ti, $Gi, $Li, $Si>,)*
             P: Prop,
-            F: FnOnce($($Ti,)*) -> P,
+            F: FnOnce(&mut Log, $($Ti,)*) -> P,
         {
             props::from_fn_once(move |rng, size, log| {
                 $(let $arg_i = $arg_i.into_arg();)*
@@ -48,9 +48,9 @@ macro_rules! fn_forall_n {
                     })*
                 }
 
-                let body = f($($value_i,)*);
+                let f = move |log: &mut Log| f(log, $($value_i,)*);
 
-                eval_body(rng, size, log, body, arg_infos)
+                eval_body(rng, size, log, f, arg_infos)
             })
         }
     )
@@ -146,13 +146,17 @@ where
     format!("{}.) {}{}", index, name_string, value_string)
 }
 
-fn eval_body(
+fn eval_body<P, F>(
     rng: &mut Rng,
     size: Size,
     log: &mut Log,
-    body: impl Prop,
+    f: F,
     arg_infos: Vec<String>,
-) -> Eval {
+) -> Eval
+where
+    P: Prop,
+    F: FnOnce(&mut Log) -> P,
+{
     if log.print_enabled() {
         log.print("forall args:");
         log.indent_print();
@@ -164,6 +168,7 @@ fn eval_body(
         log.indent_print();
     }
 
+    let body = f(log);
     let eval = body.eval(rng, size, log);
 
     log.unindent_print();
