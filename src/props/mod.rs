@@ -8,3 +8,6 @@ pub use self::forall::*;
 
 mod eq;
 pub use self::eq::*;
+
+mod assert;
+pub use self::assert::*;
