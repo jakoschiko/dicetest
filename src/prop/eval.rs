@@ -1,5 +1,3 @@
-use std::ops::BitAnd;
-
 /// The result of a property evaluation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[must_use]
