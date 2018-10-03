@@ -87,12 +87,10 @@ impl Rng {
         i
     }
 
-    /// Creates a completely different seed from the current seed and the given `u64` value.
+    /// Replaces the seed of self with a new seed. The new seed is generated using the old seed
+    /// and the given `u64` value.
     ///
-    /// The implementation is inspired by [ScalaCheck] and propably there is no statistical
-    /// foundation for this.
-    ///
-    /// [ScalaCheck]: https://github.com/rickynils/scalacheck
+    /// The implementation is inspired by [ScalaCheck](https://github.com/rickynils/scalacheck).
     pub fn reseed(&mut self, n: u64) {
         let (a, b, c, d) = self.seed;
 
@@ -106,8 +104,7 @@ impl Rng {
         }
     }
 
-    // TODO: doc
-    // TODO: test
+    /// Splits off a new `Rng` from self. The seed of the new `Rng` is generated with self.
     pub fn fork(&mut self) -> Rng {
         let random_number = self.next();
         let mut reseeded_rng = self.clone();
@@ -118,23 +115,63 @@ impl Rng {
 
 #[cfg(test)]
 mod tests {
+    use ::prelude::*;
+    use ::rng::Rng;
+
     #[test]
-    fn init_must_no_have_cycle_lenght_zero() {
-        // TODO: impl test
+    fn init_must_not_have_cycle_length_zero() {
+        assert_prop(|| {
+            props::forall_1(
+                gens::int::<u64>().name("seed"),
+                |log, seed| {
+                    let rng_init = Rng::init(seed);
+                    log.print(|| format!("Rng after init: {:?}", rng_init));
+                    let mut rng_next = rng_init.clone();
+                    let _ = rng_next.next();
+                    log.print(|| format!("Rng after next: {:?}", rng_next));
+                    let cycle_length_is_zero = rng_init == rng_next;
+                    props::assert(!cycle_length_is_zero, "Cycle length is not zero")
+                }
+            )
+        })
     }
 
     #[test]
     fn init_with_bytes_is_left_inverse() {
-        // TODO: impl test
+        assert_prop(|| {
+            props::left_inverse(
+                gens::rng_fork(),
+                |rng| rng.seed_as_bytes(),
+                Rng::init_with_bytes,
+            )
+        })
     }
 
     #[test]
     fn seed_as_bytes_is_left_inverse() {
-        // TODO: impl test
+        assert_prop(|| {
+            props::left_inverse(
+                gens::array_32(gens::int::<u8>()),
+                Rng::init_with_bytes,
+                |rng| rng.seed_as_bytes(),
+            )
+        })
     }
 
     #[test]
-    fn reseed_must_change_next_random_number() {
-        // TODO: impl test
+    fn reseed_changes_rng() {
+        assert_prop(|| {
+            props::forall_2(
+                gens::rng_fork().name("rng"),
+                gens::int::<u64>().name("seed"),
+                |log, rng, seed| {
+                    let mut rng_reseeded = rng.clone();
+                    rng_reseeded.reseed(seed);
+                    log.print(|| format!("rng_reseeded: {:?}", rng_reseeded));
+                    let rngs_are_equal = rng == rng_reseeded;
+                    props::assert(!rngs_are_equal, "Reseeded Rng is not equal")
+                }
+            )
+        })
     }
 }
