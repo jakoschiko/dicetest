@@ -12,9 +12,10 @@ macro_rules! fn_forall_n {
         ///
         /// This property will be evaluated as follows:
         ///     * Random values will be generated using the given `Arg`s
-        ///     * The generated values will be passed to the given function for creating the body
-        ///     * The body will be evaluated
-        ///     * If the body evaluates to `Status::False`, this property evaluates to
+        ///     * The generated values will be passed to the given predicate for creating the
+        ///     predicate property.
+        ///     * The predicate property will be evaluated
+        ///     * If the predicate property evaluates to `Status::False`, this property evaluates to
         ///     `Status::False`
         ///     * Else this property evalutes to `Status::Passed`
         ///
@@ -22,7 +23,7 @@ macro_rules! fn_forall_n {
         /// never evaluates to `Status::True`.
         pub fn $forall_n<$($Ti,)* $($Gi,)* $($Li,)* $($Si,)* $($Ai,)* P, F>(
             $($arg_i: $Ai,)*
-            f: F,
+            predicate: F,
         ) -> impl Prop
         where
             $($Gi: GenOnce<$Ti>,)*
@@ -48,9 +49,13 @@ macro_rules! fn_forall_n {
                     })*
                 }
 
-                let f = move |log: &mut Log| f(log, $($value_i,)*);
-
-                eval_body(rng, size, log, f, arg_infos)
+                eval_predicate(
+                    rng,
+                    size,
+                    log,
+                    move |log| predicate(log, $($value_i,)*),
+                    arg_infos,
+                )
             })
         }
     )
@@ -146,11 +151,11 @@ where
     format!("{}.) {}{}", index, name_string, value_string)
 }
 
-fn eval_body<P, F>(
+fn eval_predicate<P, F>(
     rng: &mut Rng,
     size: Size,
     log: &mut Log,
-    f: F,
+    predicate: F,
     arg_infos: Vec<String>,
 ) -> Eval
 where
@@ -164,12 +169,12 @@ where
             log.print(move || arg_info);
         }
         log.unindent_print();
-        log.print("forall prints:");
+        log.print("forall predicate:");
         log.indent_print();
     }
 
-    let body = f(log);
-    let eval = body.eval(rng, size, log);
+    let predicate_prop = predicate(log);
+    let eval = predicate_prop.eval(rng, size, log);
 
     log.unindent_print();
 
