@@ -6,6 +6,9 @@ pub use self::from_fn_once::*;
 mod forall;
 pub use self::forall::*;
 
+mod all;
+pub use self::all::*;
+
 mod eq;
 pub use self::eq::*;
 
