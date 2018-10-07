@@ -3,6 +3,7 @@ use std::rc::Rc;
 use ::rng::Rng;
 use ::gen::{Size, GenOnce, Gen, Wrapper, GenWrapper};
 
+/// Adapter for `GenOnce::rc`.
 #[derive(Clone)]
 pub struct GenRc<T> {
     rc: Rc<dyn Wrapper<T>>,

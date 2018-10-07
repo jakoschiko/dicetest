@@ -1,7 +1,7 @@
 use ::rng::Rng;
 use ::gen::{Size, GenOnce, Wrapper, GenOnceWrapper};
 
-/// Default implementation for `GenOnce::boxed`.
+/// Adapter for `GenOnce::boxed`.
 pub struct GenBoxedOnce<T> {
     boxed: Box<dyn Wrapper<T>>,
 }

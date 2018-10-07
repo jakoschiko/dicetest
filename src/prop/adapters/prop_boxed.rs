@@ -2,7 +2,7 @@ use ::rng::Rng;
 use ::gen::Size;
 use ::prop::{Log, Eval, Prop};
 
-/// Default implementation for `Prop::boxed`.
+/// Adapter for `Prop::boxed`.
 pub struct PropBoxed {
     boxed: Box<dyn Wrapper>,
 }

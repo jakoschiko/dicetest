@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 use ::rng::Rng;
 use ::gen::{Size, GenOnce, Gen};
 
-/// Default implementation for `Gen::flat_map`.
+/// Adapter for `Gen::flat_map`.
 pub struct GenFlatMap<T, U, GT, GU, F>
 where
     GT: Gen<T>,

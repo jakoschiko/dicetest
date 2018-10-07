@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 use ::rng::Rng;
 use ::gen::{Size, GenOnce};
 
-/// Default implementation for `GenOnce::flatten_once`.
+/// Adapter for `GenOnce::flatten_once`.
 pub struct GenFlattenOnce<T, GT, GGT>
 where
     GT: GenOnce<T>,

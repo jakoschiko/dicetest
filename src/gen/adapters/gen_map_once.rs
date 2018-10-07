@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 use ::rng::Rng;
 use ::gen::{Size, GenOnce};
 
-/// Default implementation for `GenOnce::map_once`.
+/// Adapter for `GenOnce::map_once`.
 pub struct GenMapOnce<T, U, G, F>
 where
     G: GenOnce<T>,

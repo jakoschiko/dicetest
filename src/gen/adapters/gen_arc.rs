@@ -3,7 +3,7 @@ use std::sync::Arc;
 use ::rng::Rng;
 use ::gen::{Size, GenOnce, Gen, Wrapper, GenWrapper};
 
-/// Default implementation for `Gen::arc`.
+/// Adapter for `Gen::arc`.
 #[derive(Clone)]
 pub struct GenArc<T> {
     arc: Arc<dyn Wrapper<T>>,
