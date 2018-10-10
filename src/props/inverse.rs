@@ -19,7 +19,7 @@ where
             let y = f(x.clone());
             let other_x = g(y);
             log.print(|| format!("g(f(x)): {:?}", other_x));
-            props::eq(x, other_x)
+            props::equal(x, other_x)
         }
     )
 }
@@ -39,7 +39,7 @@ where
             let x = h(y.clone());
             let other_y = f(x);
             log.print(|| format!("f(g(y)): {:?}", other_y));
-            props::eq(y, other_y)
+            props::equal(y, other_y)
         }
     )
 }

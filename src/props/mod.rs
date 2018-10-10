@@ -9,8 +9,8 @@ pub use self::forall::*;
 mod all;
 pub use self::all::*;
 
-mod eq;
-pub use self::eq::*;
+mod compare;
+pub use self::compare::*;
 
 mod assert;
 pub use self::assert::*;
