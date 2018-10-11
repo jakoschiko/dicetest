@@ -4,7 +4,7 @@ use ::util::workers;
 use ::rng::Rng;
 use ::prop::{Log, Prop};
 use ::checker::{
-    SizeSeries, EvalSummary, EvalSeries,
+    LimitSeries, EvalSummary, EvalSeries,
     Params, ThreadErr, Status, Report,
     Portions, eval_runner,
 };
@@ -46,13 +46,13 @@ where
     let mut rng = Rng::init(seed);
 
     let status = if params.worker_count == 0 {
-        let size_series = SizeSeries::new(
-            params.start_size,
-            params.end_size,
+        let limit_series = LimitSeries::new(
+            params.start_limit,
+            params.end_limit,
             params.min_passed,
         );
 
-        let eval_series = eval_runner::run(rng, size_series, prop_fn.clone());
+        let eval_series = eval_runner::run(rng, limit_series, prop_fn.clone());
 
         Status::Checked(eval_series)
     } else {
@@ -63,13 +63,13 @@ where
 
         let funs = min_passed_portions.into_iter().map(|min_passed| {
             let worker_rng =  rng.fork();
-            let size_series = SizeSeries::new(
-                params.start_size,
-                params.end_size,
+            let limit_series = LimitSeries::new(
+                params.start_limit,
+                params.end_limit,
                 min_passed,
             );
             let prop_fn = prop_fn.clone();
-            move || eval_runner::run(worker_rng, size_series, prop_fn)
+            move || eval_runner::run(worker_rng, limit_series, prop_fn)
         }).collect();
 
         let joined_result = workers::run(funs, params.timeout);
@@ -120,12 +120,12 @@ where
             ..
         }
     ) = report.status {
-        let mut rng = counterexample.rng.clone();
-        let size = counterexample.size;
         let mut log = Log::with_print_enabled();
+        let mut rng = counterexample.rng.clone();
+        let lim = counterexample.limit;
 
         let prop = prop_fn();
-        let _ = prop.eval(&mut rng, size, &mut log);
+        let _ = prop.eval(&mut log, &mut rng, lim);
 
         *prints = log.data().prints;
     }

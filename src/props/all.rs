@@ -7,7 +7,7 @@ macro_rules! fn_all_n {
         pub fn $all_n(
             $($prop_i: impl Prop,)*
         ) -> impl Prop {
-            props::from_fn_once(|rng, size, log| {
+            props::from_fn_once(|log, rng, lim| {
                 let mut index = 0;
                 let mut acc = Eval::True;
 
@@ -15,7 +15,7 @@ macro_rules! fn_all_n {
                     index += 1;
                     log.print(|| format!("all term {}:", index));
                     log.indent_print();
-                    acc = acc.and($prop_i.eval(rng, size, log));
+                    acc = acc.and($prop_i.eval(log, rng, lim));
                     log.unindent_print();
 
                     if acc == Eval::False {

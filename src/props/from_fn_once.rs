@@ -1,5 +1,5 @@
 use ::rng::Rng;
-use ::gen::Size;
+use ::gen::Limit;
 use ::prop::{Log, Eval, Prop};
 
 /// Helper for implementing a `Prop` from a `FnOnce`.
@@ -8,7 +8,7 @@ use ::prop::{Log, Eval, Prop};
 /// type inference.
 pub fn from_fn_once<F>(f: F) -> impl Prop
 where
-    F: FnOnce(&mut Rng, Size, &mut Log) -> Eval,
+    F: FnOnce(&mut Log, &mut Rng, Limit) -> Eval,
 {
     f
 }

@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use ::rng::Rng;
-use ::gen::{Size, GenOnce, Gen, Wrapper, GenWrapper};
+use ::gen::{Limit, GenOnce, Gen, Wrapper, GenWrapper};
 
 /// Adapter for `GenOnce::rc`.
 #[derive(Clone)]
@@ -27,8 +27,8 @@ impl<T> GenRc<T> {
 }
 
 impl<T> Gen<T> for GenRc<T> {
-    fn gen(&self, rng: &mut Rng, size: Size) -> T {
-        self.rc.gen(rng, size)
+    fn gen(&self, rng: &mut Rng, lim: Limit) -> T {
+        self.rc.gen(rng, lim)
     }
 
     fn rc(self) -> GenRc<T>
@@ -41,7 +41,7 @@ impl<T> Gen<T> for GenRc<T> {
 }
 
 impl<T> GenOnce<T> for GenRc<T> {
-    fn gen_once(self, rng: &mut Rng, size: Size) -> T {
-        self.gen(rng, size)
+    fn gen_once(self, rng: &mut Rng, lim: Limit) -> T {
+        self.gen(rng, lim)
     }
 }

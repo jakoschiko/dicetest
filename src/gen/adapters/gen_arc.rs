@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use ::rng::Rng;
-use ::gen::{Size, GenOnce, Gen, Wrapper, GenWrapper};
+use ::gen::{Limit, GenOnce, Gen, Wrapper, GenWrapper};
 
 /// Adapter for `Gen::arc`.
 #[derive(Clone)]
@@ -27,8 +27,8 @@ impl<T> GenArc<T> {
 }
 
 impl<T> Gen<T> for GenArc<T> {
-    fn gen(&self, rng: &mut Rng, size: Size) -> T {
-        self.arc.gen(rng, size)
+    fn gen(&self, rng: &mut Rng, lim: Limit) -> T {
+        self.arc.gen(rng, lim)
     }
 
     fn arc(self) -> GenArc<T>
@@ -41,7 +41,7 @@ impl<T> Gen<T> for GenArc<T> {
 }
 
 impl<T> GenOnce<T> for GenArc<T> {
-    fn gen_once(self, rng: &mut Rng, size: Size) -> T {
-        self.gen(rng, size)
+    fn gen_once(self, rng: &mut Rng, lim: Limit) -> T {
+        self.gen(rng, lim)
     }
 }

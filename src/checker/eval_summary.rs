@@ -40,7 +40,7 @@ impl EvalSummary {
                 False { counterexample: right_counterexample, prints: right_prints }
             ) => {
                 // We prefer the counterexample that is probably smaller
-                if left_counterexample.size < right_counterexample.size {
+                if left_counterexample.limit < right_counterexample.limit {
                     False { counterexample: left_counterexample, prints: left_prints }
                 } else {
                     False { counterexample: right_counterexample, prints: right_prints }

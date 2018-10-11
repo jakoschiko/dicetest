@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use ::rng::Rng;
-use ::gen::{Size, GenOnce, Gen};
+use ::gen::{Limit, GenOnce, Gen};
 
 /// Adapter for `Gen::map`.
 pub struct GenMap<T, U, G, F>
@@ -35,8 +35,8 @@ where
     G: Gen<T>,
     F: Fn(T) -> U,
 {
-    fn gen_once(self, rng: &mut Rng, size: Size) -> U {
-        self.gen(rng, size)
+    fn gen_once(self, rng: &mut Rng, lim: Limit) -> U {
+        self.gen(rng, lim)
     }
 }
 
@@ -45,11 +45,11 @@ where
     G: Gen<T>,
     F: Fn(T) -> U,
 {
-    fn gen(&self, rng: &mut Rng, size: Size) -> U {
+    fn gen(&self, rng: &mut Rng, lim: Limit) -> U {
         let g = &self.g;
         let f = &self.f;
 
-        let t = g.gen(rng, size);
+        let t = g.gen(rng, lim);
         let u = f(t);
 
         u

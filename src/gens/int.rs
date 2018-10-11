@@ -197,22 +197,22 @@ where
     let all_gen = choose_int_uniform::<I>(min, max);
 
     let special_gen = {
-        let limit_gen = move || gens::one_of_2(min, max);
-        let fallback_gen = limit_gen();
+        let extremum_gen = move || gens::one_of_2(min, max);
+        let fallback_gen = extremum_gen();
         let special_in_interval_gen = {
-            gens::from_fn(move |rng, size| {
+            gens::from_fn(move |rng, lim| {
                 let special_gen = gens::one_of_array(I::special_values());
-                let special = special_gen.gen(rng, size);
+                let special = special_gen.gen(rng, lim);
                 if min <= special && special <= max {
                     special
                 } else {
                     // Significant value is not in range, fallback to other generator
-                    fallback_gen.gen(rng, size)
+                    fallback_gen.gen(rng, lim)
                 }
             })
         };
 
-        gens::one_of_gen_2(limit_gen(), special_in_interval_gen)
+        gens::one_of_gen_2(extremum_gen(), special_in_interval_gen)
     };
 
     gens::one_of_gen_2(all_gen, special_gen)

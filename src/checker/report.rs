@@ -110,11 +110,11 @@ fn section(title: &str, body: &str) -> String {
 fn section_parameters(seed: u64, params: &Params) -> String {
     let parameters_text = format!(
         "Seed: {}\n\
-        Start size: {}; End size: {}\n\
+        Start limit: {}; End limit: {}\n\
         Min passed: {}; Worker count: {}; Timeout: {:?}",
         seed,
-        params.start_size,
-        params.end_size,
+        params.start_limit,
+        params.end_limit,
         params.min_passed,
         params.worker_count,
         params.timeout,

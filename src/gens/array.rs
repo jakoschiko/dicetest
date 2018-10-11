@@ -5,9 +5,9 @@ macro_rules! fn_array_n {
     ($N:expr, $array_n:ident: $($i:expr)+) => (
         /// Generates an array with random elements.
         pub fn $array_n<T>(element_gen: impl Gen<T>) -> impl Gen<[T; $N]> {
-            gens::from_fn(move |rng, size| {
+            gens::from_fn(move |rng, lim| {
                 [
-                    $({ $i; element_gen.gen(rng, size) }, )*
+                    $({ $i; element_gen.gen(rng, lim) }, )*
                 ]
             })
         }

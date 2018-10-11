@@ -1,24 +1,24 @@
 use std::time::Duration;
 
-use ::gen::Size;
+use ::gen::Limit;
 
 /// The parameters for the checker.
 #[derive(Debug, Clone)]
 pub struct Params {
     /// The initial seed for the random value generation. If `None` the checker uses a random seed.
     pub seed: Option<u64>,
-    // The maxmimum size of generated dynamic data structures used for the first property
-    // evaluation. The next property evaluations use an interpolated maximum size between
-    // `start_size` and `end_size`.
+    // The upper size limit of generated dynamic data structures used for the first property
+    // evaluation. The next property evaluations use an interpolated limit between `start_limit`
+    // and `end_limit`.
     //
-    // The maximum size will be passed to the generators, see `gen::Size`.
-    pub start_size: u64,
-    // The maxmimum size of generated dynamic data structures used for the last property
-    // evaluation. The previous property evaluations use an interpolated maximum size between
-    // `start_size` and `end_size`.
+    // The limit will be passed to the generators, see `gen::Limit`.
+    pub start_limit: u64,
+    // The upper size limit of generated dynamic data structures used for the last property
+    // evaluation. The previous property evaluations use an interpolated limit between `start_limit`
+    // and `end_limit`.
     //
-    // The maximum size will be passed to the generators, see `gen::Size`.
-    pub end_size: u64,
+    // The limit will be passed to the generators, see `gen::Limit`.
+    pub end_limit: u64,
     /// The upper limit for the number of property evaluations.
     ///
     /// If the property evalutes to `prop::Status::Passed` and `min_passed` is not reached,
@@ -42,14 +42,14 @@ impl Params {
         Params { seed, ..self }
     }
 
-    /// Sets the field `start_size`.
-    pub fn start_size(self, start_size: u64) -> Self {
-        Params { start_size, ..self }
+    /// Sets the field `start_limit`.
+    pub fn start_limit(self, start_limit: u64) -> Self {
+        Params { start_limit, ..self }
     }
 
-    /// Sets the field `end_size`.
-    pub fn end_size(self, end_size: u64) -> Self {
-        Params { end_size, ..self }
+    /// Sets the field `end_limit`.
+    pub fn end_limit(self, end_limit: u64) -> Self {
+        Params { end_limit, ..self }
     }
 
     /// Sets the field `min_passed`.
@@ -72,8 +72,8 @@ impl Default for Params {
     fn default() -> Self {
         Params {
             seed: None,
-            start_size: 0,
-            end_size: Size::default().0,
+            start_limit: 0,
+            end_limit: Limit::default().0,
             min_passed: 1000,
             worker_count: 1,
             timeout: None,

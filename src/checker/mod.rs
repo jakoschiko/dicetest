@@ -38,8 +38,8 @@ mod report;
 pub use self::report::Report;
 
 
-mod size_series;
-use self::size_series::SizeSeries;
+mod limit_series;
+use self::limit_series::LimitSeries;
 
 mod eval_runner;
 

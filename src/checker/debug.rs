@@ -21,12 +21,12 @@ where
     P: Prop,
     F: FnOnce() -> P,
 {
-    let mut rng = eval_params.rng;
-    let size = eval_params.size;
     let mut log = Log::with_print_enabled();
+    let mut rng = eval_params.rng;
+    let lim = eval_params.limit;
 
     let prop = prop_fn();
-    let eval = prop.eval(&mut rng, size, &mut log);
+    let eval = prop.eval(&mut log, &mut rng, lim);
 
     if eval == Eval::False {
         let prints = log.data().prints.pretty();

@@ -1,5 +1,5 @@
 use ::rng::Rng;
-use ::gen::{Size, GenOnce};
+use ::gen::{Limit, GenOnce};
 use ::prop::{LazyString, Log, Eval, Prop, Show, IntoArg};
 use ::props;
 
@@ -33,9 +33,9 @@ macro_rules! fn_forall_n {
             P: Prop,
             F: FnOnce(&mut Log, $($Ti,)*) -> P,
         {
-            props::from_fn_once(move |rng, size, log| {
+            props::from_fn_once(move |log, rng, lim| {
                 $(let $arg_i = $arg_i.into_arg();)*
-                $(let $value_i = $arg_i.gen.gen_once(rng, size);)*
+                $(let $value_i = $arg_i.gen.gen_once(rng, lim);)*
 
                 let mut arg_infos = Vec::new();
 
@@ -51,7 +51,7 @@ macro_rules! fn_forall_n {
 
                 eval_predicate(
                     rng,
-                    size,
+                    lim,
                     log,
                     move |log| predicate(log, $($value_i,)*),
                     arg_infos,
@@ -153,7 +153,7 @@ where
 
 fn eval_predicate<P, F>(
     rng: &mut Rng,
-    size: Size,
+    lim: Limit,
     log: &mut Log,
     predicate: F,
     arg_infos: Vec<String>,
@@ -174,7 +174,7 @@ where
     }
 
     let predicate_prop = predicate(log);
-    let eval = predicate_prop.eval(rng, size, log);
+    let eval = predicate_prop.eval(log, rng, lim);
 
     log.unindent_print();
 

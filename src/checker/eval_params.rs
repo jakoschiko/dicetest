@@ -1,14 +1,14 @@
 use ::util::{conversion, base64};
 use ::rng::Rng;
-use ::gen::Size;
+use ::gen::Limit;
 
 /// The parameters for evaluating a property one time.
 #[derive(Debug, Clone)]
 pub struct EvalParams {
     /// The random number generator for calling `Prop::eval`.
     pub rng: Rng,
-    /// The generation size for calling `Prop::eval`.
-    pub size: Size,
+    /// The generation limit for calling `Prop::eval`.
+    pub limit: Limit,
 }
 
 impl EvalParams {
@@ -19,7 +19,7 @@ impl EvalParams {
         let mut bytes = Vec::new();
 
         bytes.extend_from_slice(&self.rng.seed_as_bytes());
-        bytes.extend_from_slice(&conversion::u64_to_bytes(self.size.0));
+        bytes.extend_from_slice(&conversion::u64_to_bytes(self.limit.0));
 
         let eval_code = base64::encode(&bytes);
         eval_code
@@ -41,15 +41,15 @@ impl EvalParams {
             Rng::init_with_bytes(seed_bytes)
         };
 
-        let size = {
-            let mut size_bytes = [0; 8];
-            size_bytes.copy_from_slice(&bytes[32..40]);
-            Size(conversion::bytes_to_u64(size_bytes))
+        let limit = {
+            let mut limit_bytes = [0; 8];
+            limit_bytes.copy_from_slice(&bytes[32..40]);
+            Limit(conversion::bytes_to_u64(limit_bytes))
         };
 
         let eval_params = EvalParams {
             rng,
-            size,
+            limit,
         };
 
         Ok(eval_params)

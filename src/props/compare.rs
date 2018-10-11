@@ -61,7 +61,7 @@ fn compare<A>(
 where
     A: Debug
 {
-    props::from_fn_once(move |_, _, log| {
+    props::from_fn_once(move |log, _, _| {
         let expectation = compare_op(&left, &right);
 
         log.print(|| format!("Assertion `left {} right` is {}", compare_str, expectation));

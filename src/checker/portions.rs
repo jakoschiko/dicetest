@@ -42,10 +42,10 @@ impl Iterator for PortionsIntoIter {
     type Item = u64;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let size = self.portions.nth(self.idx);
-        if size.is_some() {
+        let portion = self.portions.nth(self.idx);
+        if portion.is_some() {
             self.idx += 1;
         }
-        size
+        portion
     }
 }

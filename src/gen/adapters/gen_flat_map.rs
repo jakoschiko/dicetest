@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use ::rng::Rng;
-use ::gen::{Size, GenOnce, Gen};
+use ::gen::{Limit, GenOnce, Gen};
 
 /// Adapter for `Gen::flat_map`.
 pub struct GenFlatMap<T, U, GT, GU, F>
@@ -40,13 +40,13 @@ where
     GU: GenOnce<U>,
     F: Fn(T) -> GU,
 {
-    fn gen(&self, rng: &mut Rng, size: Size) -> U {
+    fn gen(&self, rng: &mut Rng, lim: Limit) -> U {
         let gt = &self.gt;
         let f = &self.f;
 
-        let t = gt.gen(rng, size);
+        let t = gt.gen(rng, lim);
         let gu = f(t);
-        let u = gu.gen_once(rng, size);
+        let u = gu.gen_once(rng, lim);
 
         u
     }
@@ -58,7 +58,7 @@ where
     GU: GenOnce<U>,
     F: Fn(T) -> GU,
 {
-    fn gen_once(self, rng: &mut Rng, size: Size) -> U {
-        self.gen(rng, size)
+    fn gen_once(self, rng: &mut Rng, lim: Limit) -> U {
+        self.gen(rng, lim)
     }
 }

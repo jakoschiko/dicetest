@@ -1,5 +1,5 @@
 use ::rng::Rng;
-use ::gen::{Size, Gen};
+use ::gen::{Limit, Gen};
 use ::gens;
 
 /// Generates a clone of the `Rng` passed to the generator method.
@@ -10,7 +10,7 @@ pub fn reveal_rng() -> impl Gen<Rng> {
     gens::from_fn(|rng, _| rng.clone())
 }
 
-/// Generates the `Size` passed to the generator method.
-pub fn reveal_size() -> impl Gen<Size> {
-    gens::from_fn(|_, size| size)
+/// Generates the `Limit` passed to the generator method.
+pub fn reveal_limit() -> impl Gen<Limit> {
+    gens::from_fn(|_, lim| lim)
 }

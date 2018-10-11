@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use ::rng::Rng;
-use ::gen::{Size, GenOnce};
+use ::gen::{Limit, GenOnce};
 
 /// Adapter for `GenOnce::flat_map_once`.
 pub struct GenFlatMapOnce<T, U, GT, GU, F>
@@ -40,13 +40,13 @@ where
     GU: GenOnce<U>,
     F: FnOnce(T) -> GU,
 {
-    fn gen_once(self, rng: &mut Rng, size: Size) -> U {
+    fn gen_once(self, rng: &mut Rng, lim: Limit) -> U {
         let gt = self.gt;
         let f = self.f;
 
-        let t = gt.gen_once(rng, size);
+        let t = gt.gen_once(rng, lim);
         let gu = f(t);
-        let u = gu.gen_once(rng, size);
+        let u = gu.gen_once(rng, lim);
 
         u
     }

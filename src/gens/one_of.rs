@@ -29,10 +29,10 @@ macro_rules! fn_one_of_n {
         pub fn $one_of_gen_n_once<T>(
             $($gen_i: impl GenOnce<T>,)*
         ) -> impl GenOnce<T> {
-            gens::from_fn_once(move |rng, size| {
+            gens::from_fn_once(move |rng, lim| {
                 let choice = rng.next() % $n;
                     match choice {
-                    $($i => $gen_i.gen_once(rng, size),)*
+                    $($i => $gen_i.gen_once(rng, lim),)*
                     _ => panic!(),
                 }
             })
@@ -45,10 +45,10 @@ macro_rules! fn_one_of_n {
         where
             T: Clone,
         {
-            gens::from_fn(move |rng, size| {
+            gens::from_fn(move |rng, lim| {
                 let choice = rng.next() % $n;
                 match choice {
-                    $($i => $gen_i.gen(rng, size),)*
+                    $($i => $gen_i.gen(rng, lim),)*
                     _ => panic!(),
                 }
             })

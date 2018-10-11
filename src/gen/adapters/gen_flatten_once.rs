@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use ::rng::Rng;
-use ::gen::{Size, GenOnce};
+use ::gen::{Limit, GenOnce};
 
 /// Adapter for `GenOnce::flatten_once`.
 pub struct GenFlattenOnce<T, GT, GGT>
@@ -33,11 +33,11 @@ where
     GT: GenOnce<T>,
     GGT: GenOnce<GT>,
 {
-    fn gen_once(self, rng: &mut Rng, size: Size) -> T {
+    fn gen_once(self, rng: &mut Rng, lim: Limit) -> T {
         let ggt = self.ggt;
 
-        let gt = ggt.gen_once(rng, size);
-        let t = gt.gen_once(rng, size);
+        let gt = ggt.gen_once(rng, lim);
+        let t = gt.gen_once(rng, lim);
 
         t
     }

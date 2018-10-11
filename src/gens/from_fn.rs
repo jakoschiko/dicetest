@@ -1,5 +1,5 @@
 use ::rng::Rng;
-use ::gen::{Size, GenOnce, Gen};
+use ::gen::{Limit, GenOnce, Gen};
 
 /// Helper for implementing a `GenOnce` from a `FnOnce`.
 ///
@@ -7,7 +7,7 @@ use ::gen::{Size, GenOnce, Gen};
 /// type inference.
 pub fn from_fn_once<T, F>(f: F) -> impl GenOnce<T>
 where
-    F: FnOnce(&mut Rng, Size) -> T,
+    F: FnOnce(&mut Rng, Limit) -> T,
 {
     f
 }
@@ -18,7 +18,7 @@ where
 /// type inference.
 pub fn from_fn<T, F>(f: F) -> impl Gen<T>
 where
-    F: Fn(&mut Rng, Size) -> T,
+    F: Fn(&mut Rng, Limit) -> T,
 {
     f
 }
