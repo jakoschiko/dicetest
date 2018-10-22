@@ -4,7 +4,7 @@ use ::rng::Rng;
 use ::gen::{Limit, GenOnce};
 
 /// Adapter for `GenOnce::flatten_once`.
-pub struct GenFlattenOnce<T, GT, GGT>
+pub struct FlattenGenOnce<T, GT, GGT>
 where
     GT: GenOnce<T>,
     GGT: GenOnce<GT>,
@@ -14,13 +14,13 @@ where
     _gt: PhantomData<GT>,
 }
 
-impl<T, GT, GGT> GenFlattenOnce<T, GT, GGT>
+impl<T, GT, GGT> FlattenGenOnce<T, GT, GGT>
 where
     GT: GenOnce<T>,
     GGT: GenOnce<GT>,
 {
     pub fn new(ggt: GGT) -> Self {
-        GenFlattenOnce {
+        FlattenGenOnce {
             ggt,
             _t: PhantomData,
             _gt: PhantomData,
@@ -28,7 +28,7 @@ where
     }
 }
 
-impl<T, GT, GGT> GenOnce<T> for GenFlattenOnce<T, GT, GGT>
+impl<T, GT, GGT> GenOnce<T> for FlattenGenOnce<T, GT, GGT>
 where
     GT: GenOnce<T>,
     GGT: GenOnce<GT>,

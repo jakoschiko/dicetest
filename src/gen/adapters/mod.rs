@@ -1,22 +1,22 @@
 //! A collection of `GenOnce` and `Gen` adapters.
 
-mod gen_map_once;
-pub use self::gen_map_once::GenMapOnce;
+mod map_gen_once;
+pub use self::map_gen_once::MapGenOnce;
 
-mod gen_map;
-pub use self::gen_map::GenMap;
+mod map_gen;
+pub use self::map_gen::MapGen;
 
-mod gen_flatten_once;
-pub use self::gen_flatten_once::GenFlattenOnce;
+mod flatten_gen_once;
+pub use self::flatten_gen_once::FlattenGenOnce;
 
-mod gen_flatten;
-pub use self::gen_flatten::GenFlatten;
+mod flatten_gen;
+pub use self::flatten_gen::FlattenGen;
 
-mod gen_flat_map_once;
-pub use self::gen_flat_map_once::GenFlatMapOnce;
+mod flat_map_gen_once;
+pub use self::flat_map_gen_once::FlatMapGenOnce;
 
-mod gen_flat_map;
-pub use self::gen_flat_map::GenFlatMap;
+mod flat_map_gen;
+pub use self::flat_map_gen::FlatMapGen;
 
 mod dyn_gen_once;
 pub use self::dyn_gen_once::DynGenOnce;
