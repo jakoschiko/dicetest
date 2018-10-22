@@ -18,14 +18,14 @@ pub use self::gen_flat_map_once::GenFlatMapOnce;
 mod gen_flat_map;
 pub use self::gen_flat_map::GenFlatMap;
 
-mod gen_boxed_once;
-pub use self::gen_boxed_once::GenBoxedOnce;
+mod dyn_gen_once;
+pub use self::dyn_gen_once::DynGenOnce;
 
-mod gen_boxed;
-pub use self::gen_boxed::GenBoxed;
+mod dyn_gen;
+pub use self::dyn_gen::DynGen;
 
-mod gen_rc;
-pub use self::gen_rc::GenRc;
+mod dyn_rc_gen;
+pub use self::dyn_rc_gen::DynRcGen;
 
-mod gen_arc;
-pub use self::gen_arc::GenArc;
+mod dyn_arc_gen;
+pub use self::dyn_arc_gen::DynArcGen;

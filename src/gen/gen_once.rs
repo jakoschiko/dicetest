@@ -1,6 +1,6 @@
 use ::rng::Rng;
 use ::gen::Limit;
-use ::gen::adapters::{GenMapOnce, GenFlattenOnce, GenFlatMapOnce, GenBoxedOnce};
+use ::gen::adapters::{GenMapOnce, GenFlattenOnce, GenFlatMapOnce, DynGenOnce};
 
 /// Trait for generating a single random value of type `T`.
 pub trait GenOnce<T> {
@@ -47,13 +47,12 @@ pub trait GenOnce<T> {
         GenFlatMapOnce::new(self, f)
     }
 
-    /// Wraps `self` into a `Box`.
-    fn boxed_once(self) -> GenBoxedOnce<T>
+    /// Puts `self` behind a pointer.
+    fn dyn_once<'a>(self) -> DynGenOnce<'a, T>
     where
-        Self: Sized + 'static,
-        T: 'static,
+        Self: Sized + 'a,
     {
-        GenBoxedOnce::new(self)
+        DynGenOnce::new(self)
     }
 
     /// Calls `GenOnce::gen_once` with random seed and default parameters. Useful for debugging the

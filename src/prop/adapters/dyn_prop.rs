@@ -2,34 +2,27 @@ use ::rng::Rng;
 use ::gen::Limit;
 use ::prop::{Log, Eval, Prop};
 
-/// Adapter for `Prop::boxed`.
-pub struct PropBoxed {
-    boxed: Box<dyn Wrapper>,
+/// Adapter for `Prop::dyn`.
+pub struct DynProp<'a> {
+    dyn: Box<dyn Wrapper + 'a>,
 }
 
-impl PropBoxed {
+impl<'a> DynProp<'a> {
     pub fn new<P>(prop: P) -> Self
     where
-        P: Prop + 'static,
+        P: Prop + 'a,
     {
         let wrapper = PropWrapper {
             prop: Some(prop)
         };
-        let boxed = Box::new(wrapper);
-        PropBoxed { boxed }
+        let dyn = Box::new(wrapper);
+        DynProp { dyn }
     }
 }
 
-impl Prop for PropBoxed {
+impl<'a> Prop for DynProp<'a> {
     fn eval(mut self, log: &mut Log, rng: &mut Rng, lim: Limit) -> Eval {
-        self.boxed.eval(log, rng, lim)
-    }
-
-    fn boxed(self) -> PropBoxed
-    where
-        Self: Sized + 'static,
-    {
-        self
+        self.dyn.eval(log, rng, lim)
     }
 }
 

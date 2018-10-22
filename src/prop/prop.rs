@@ -1,7 +1,7 @@
 use ::rng::Rng;
 use ::gen::Limit;
 use ::prop::{Log, Eval, Sample};
-use ::prop::adapters::PropBoxed;
+use ::prop::adapters::DynProp;
 
 /// Trait for implementing properties. A property represents a logic expression and can be evaluated
 /// to an extended truth value.
@@ -16,12 +16,12 @@ pub trait Prop {
     /// derterministic.
     fn eval(self, &mut Log, &mut Rng, Limit) -> Eval;
 
-    /// Wraps `self` into a `Box`.
-    fn boxed(self) -> PropBoxed
+    /// Puts `self` behind a pointer.
+    fn dyn<'a>(self) -> DynProp<'a>
     where
-        Self: Sized + 'static,
+        Self: Sized + 'a,
     {
-        PropBoxed::new(self)
+        DynProp::new(self)
     }
 
     /// Calls `Prop::eval` with random seed, default limit and enabled `Log`. Useful for debugging

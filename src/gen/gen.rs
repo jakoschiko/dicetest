@@ -1,6 +1,6 @@
 use ::rng::Rng;
 use ::gen::{Limit, GenOnce};
-use ::gen::adapters::{GenMap, GenFlatten, GenFlatMap, GenBoxed, GenRc, GenArc};
+use ::gen::adapters::{GenMap, GenFlatten, GenFlatMap, DynGen, DynRcGen, DynArcGen};
 
 /// Trait for generating random values of type `T`.
 ///
@@ -51,31 +51,28 @@ pub trait Gen<T>: GenOnce<T> {
         GenFlatMap::new(self, f)
     }
 
-    /// Wraps `self` into a `Box`.
-    fn boxed(self) -> GenBoxed<T>
-        where
-        Self: Sized + 'static,
-        T: 'static,
+    /// Puts `self` behind a pointer.
+    fn dyn<'a>(self) -> DynGen<'a, T>
+    where
+        Self: Sized + 'a,
     {
-        GenBoxed::new(self)
+        DynGen::new(self)
     }
 
-    /// Wraps `self` into an `Rc`.
-    fn rc(self) -> GenRc<T>
-        where
-        Self: Sized + 'static,
-        T: 'static,
+    /// Puts `self` behind an `Rc` pointer.
+    fn dyn_rc<'a>(self) -> DynRcGen<'a, T>
+    where
+        Self: Sized + 'a,
     {
-        GenRc::new(self)
+        DynRcGen::new(self)
     }
 
-    /// Wraps `self` into an `Arc`.
-    fn arc(self) -> GenArc<T>
-        where
+    /// Puts `self` behind an `Arc` pointer.
+    fn dyn_arc(self) -> DynArcGen<T>
+    where
         Self: Sized + 'static,
-        T: 'static,
     {
-        GenArc::new(self)
+        DynArcGen::new(self)
     }
 
     /// Calls `Gen::gen` with random seed and default parameters. Useful for debugging the

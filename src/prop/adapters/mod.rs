@@ -1,4 +1,4 @@
 //! A collection of `Prop` adapters.
 
-mod prop_boxed;
-pub use self::prop_boxed::PropBoxed;
+mod dyn_prop;
+pub use self::dyn_prop::DynProp;
