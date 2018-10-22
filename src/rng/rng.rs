@@ -122,7 +122,7 @@ mod tests {
     fn init_must_not_have_cycle_length_zero() {
         assert_prop(|| {
             props::forall_1(
-                gens::int::<u64>().name("seed"),
+                gens::u64(..).name("seed"),
                 |log, seed| {
                     let rng_init = Rng::init(seed);
                     log.print(|| format!("Rng after init: {:?}", rng_init));
@@ -151,7 +151,7 @@ mod tests {
     fn seed_as_bytes_is_left_inverse() {
         assert_prop(|| {
             props::left_inverse(
-                gens::array_32(gens::int::<u8>()),
+                gens::array_32(gens::u8(..)),
                 Rng::init_with_bytes,
                 |rng| rng.seed_as_bytes(),
             )
@@ -163,7 +163,7 @@ mod tests {
         assert_prop(|| {
             props::forall_2(
                 gens::rng_fork().name("rng"),
-                gens::int::<u64>().name("seed"),
+                gens::u64(..).name("seed"),
                 |log, rng, seed| {
                     let mut rng_reseeded = rng.clone();
                     rng_reseeded.reseed(seed);

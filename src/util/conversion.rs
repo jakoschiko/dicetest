@@ -25,7 +25,7 @@ mod tests {
     fn bytes_to_u64_is_left_inverse() {
         assert_prop(|| {
             props::left_inverse(
-                gens::array_8(gens::int::<u8>()),
+                gens::array_8(gens::u8(..)),
                 ::util::conversion::bytes_to_u64,
                 ::util::conversion::u64_to_bytes,
             )
@@ -36,7 +36,7 @@ mod tests {
     fn u64_to_bytes_is_left_inverse() {
         assert_prop(|| {
             props::left_inverse(
-                gens::int::<u64>(),
+                gens::u64(..),
                 ::util::conversion::u64_to_bytes,
                 ::util::conversion::bytes_to_u64,
             )
