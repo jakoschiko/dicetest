@@ -293,7 +293,6 @@ mod tests {
         GB: GenOnce<B>,
         R: gens::IntRange<I> + Debug,
     {
-        // Boxing improves the compile time drastically
         props::forall_1(
             range_data_gen.name("range_data"),
             move |log, range_data| {
