@@ -26,3 +26,6 @@ pub use self::int::*;
 
 mod array;
 pub use self::array::*;
+
+mod size;
+pub use self::size::*;
