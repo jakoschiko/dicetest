@@ -5,7 +5,7 @@ use ::gen::{Limit, Gen};
 use ::gens;
 
 /// Non-empty range for `gens::size`.
-pub trait SizeRange {
+pub trait SizeRange: Clone + Debug {
     /// Returns the inclusive bounds `(lower, upper)` that represent the range. They must hold
     /// `lower <= upper`. If the upper bound is open, it will be limited with `Limit`.
     ///

@@ -8,7 +8,7 @@ use ::gens;
 
 // Non-empty range for integer generators like `gens::u8`, `gens::i32`, etc.
 // The integer type is represented by `I`.
-pub trait IntRange<I> {
+pub trait IntRange<I>: Clone + Debug {
     /// Returns the inclusive bounds `(lower, upper)` that represent the range. They must hold
     /// `lower <= upper`.
     ///
@@ -17,6 +17,7 @@ pub trait IntRange<I> {
     fn bounds(&self) -> (I, I);
 }
 
+#[derive(Clone, Debug)]
 struct UncheckedRange<I> {
     lower: I,
     upper: I,
