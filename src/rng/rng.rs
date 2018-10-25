@@ -1,5 +1,8 @@
 use std::num::Wrapping;
 use std::mem;
+use std::hash::BuildHasher;
+#[allow(deprecated)]
+use std::hash::SipHasher;
 
 use rand::{self, Rng as LibRng};
 
@@ -110,6 +113,19 @@ impl Rng {
         let mut reseeded_rng = self.clone();
         reseeded_rng.reseed(random_number);
         reseeded_rng
+    }
+}
+
+impl BuildHasher for Rng {
+    #[allow(deprecated)]
+    type Hasher = SipHasher;
+
+    fn build_hasher(&self) -> Self::Hasher {
+        let mut rng = self.clone();
+        let (key0, key1) = (rng.next(), rng.next());
+        #[allow(deprecated)]
+        let hasher = SipHasher::new_with_keys(key0, key1);
+        hasher
     }
 }
 
