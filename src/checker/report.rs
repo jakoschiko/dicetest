@@ -126,7 +126,7 @@ fn section_counterexample(counterexample: &EvalParams, prints: &Prints) -> Strin
     let eval_code = counterexample.eval_code();
     let eval_code_help = format!(
         "You can rerun the counterexample by using its evaluation code:\n\
-        debug_prop(\"{}\", ...)",
+        debug_prop_eval_with_code(\"{}\", ...)",
         eval_code,
     );
     let pretty_prints = if prints.0.is_empty() {

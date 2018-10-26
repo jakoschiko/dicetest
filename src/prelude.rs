@@ -27,6 +27,6 @@ pub mod tests {
     pub use crate::props;
     pub use crate::checker::{
         assert_prop, assert_prop_with_seed, assert_prop_with_params,
-        debug_prop, debug_prop_with_params,
+        debug_prop_eval, debug_prop_eval_with_code, debug_prop_eval_with_params,
     };
 }

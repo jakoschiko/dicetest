@@ -24,17 +24,27 @@ pub trait Prop {
         DynProp::new(self)
     }
 
-    /// Calls `Prop::eval` with random seed, default limit and enabled `Log`. Useful for debugging
+    /// Calls `Prop::eval` with a random seed, default limit and enabled `Log`. Useful for debugging
     /// the property.
     fn sample(self) -> Sample
     where
         Self: Sized,
     {
-        let mut log = Log::with_print_enabled();
         let mut rng = Rng::random();
         let lim = Limit::default();
 
-        let eval = self.eval(&mut log, &mut rng, lim);
+        self.sample_with_params(&mut rng, lim)
+    }
+
+    /// Calls `Prop::eval` with the given seed, the given limit and enabled `Log`. Useful for
+    /// debugging the property.
+    fn sample_with_params(self, rng: &mut Rng, lim: Limit) -> Sample
+    where
+        Self: Sized,
+    {
+        let mut log = Log::with_print_enabled();
+
+        let eval = self.eval(&mut log, rng, lim);
         let log_data = log.data();
         let prints = log_data.prints;
 
