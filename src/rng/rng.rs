@@ -6,7 +6,7 @@ use std::hash::SipHasher;
 
 use rand::{self, Rng as LibRng};
 
-use ::util::conversion;
+use crate::util::conversion;
 
 /// Deterministic generator for pseudo random numbers.
 ///
@@ -131,8 +131,8 @@ impl BuildHasher for Rng {
 
 #[cfg(test)]
 mod tests {
-    use ::prelude::tests::*;
-    use ::rng::Rng;
+    use crate::prelude::tests::*;
+    use crate::rng::Rng;
 
     #[test]
     fn init_must_not_have_cycle_length_zero() {

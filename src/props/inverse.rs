@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use ::prelude::props::*;
+use crate::prelude::props::*;
 
 /// Tests if `g` is a left inverse for `f`.
 pub fn left_inverse<X, Y>(

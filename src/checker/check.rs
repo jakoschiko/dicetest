@@ -1,9 +1,9 @@
 use rand::{self, Rng as LibRng};
 
-use ::util::workers;
-use ::rng::Rng;
-use ::prop::{Log, Prop};
-use ::checker::{
+use crate::util::workers;
+use crate::rng::Rng;
+use crate::prop::{Log, Prop};
+use crate::checker::{
     LimitSeries, EvalSummary, EvalSeries,
     Params, ThreadErr, Status, Report,
     Portions, eval_runner,
@@ -136,8 +136,8 @@ mod tests {
     use std::time::Duration;
     use std::thread;
 
-    use ::prop::{Eval, Prints};
-    use ::checker::{
+    use crate::prop::{Eval, Prints};
+    use crate::checker::{
         EvalParams,
         EvalSummary, EvalSeries,
         Params, Status, Report,

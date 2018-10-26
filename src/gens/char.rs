@@ -1,6 +1,4 @@
-use std;
-
-use ::prelude::gens::*;
+use crate::prelude::gens::*;
 
 fn char_in_range(lower: u32, upper: u32) -> impl Gen<char> {
     gens::u32_uniform(lower..=upper)
@@ -73,9 +71,7 @@ pub fn char() -> impl Gen<char> {
 
 #[cfg(test)]
 mod tests {
-    use std;
-
-    use ::prelude::tests::*;
+    use crate::prelude::tests::*;
 
     #[test]
     fn char_ascii_alphabetic_lowercase_generates_only_valid_values() {

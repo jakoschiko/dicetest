@@ -1,5 +1,5 @@
-use ::prop::{Log, Eval, Prop};
-use ::checker::EvalParams;
+use crate::prop::{Log, Eval, Prop};
+use crate::checker::EvalParams;
 
 /// Evaluates the property one time with parameters decoded from the evaluation code. Panics if
 /// the property was falsified.

@@ -1,7 +1,7 @@
-use ::rng::Rng;
-use ::gen::Limit;
-use ::prop::{Log, Eval, Sample};
-use ::prop::adapters::DynProp;
+use crate::rng::Rng;
+use crate::gen::Limit;
+use crate::prop::{Log, Eval, Sample};
+use crate::prop::adapters::DynProp;
 
 /// Trait for implementing properties. A property represents a logic expression and can be evaluated
 /// to an extended truth value.

@@ -1,5 +1,5 @@
-use ::prop::Prop;
-use ::checker::{EvalSummary, Params, Status, check_prop_with_params};
+use crate::prop::Prop;
+use crate::checker::{EvalSummary, Params, Status, check_prop_with_params};
 
 /// Evaluates the property several times with default parameters. Panics if the property was
 /// falsified or the evaluation failed.

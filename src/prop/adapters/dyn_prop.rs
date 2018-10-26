@@ -1,6 +1,6 @@
-use ::rng::Rng;
-use ::gen::Limit;
-use ::prop::{Log, Eval, Prop};
+use crate::rng::Rng;
+use crate::gen::Limit;
+use crate::prop::{Log, Eval, Prop};
 
 /// Adapter for `Prop::dyn`.
 pub struct DynProp<'a> {

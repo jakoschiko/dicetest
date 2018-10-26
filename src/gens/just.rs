@@ -1,4 +1,4 @@
-use ::prelude::gens::*;
+use crate::prelude::gens::*;
 
 /// Generates the given value.
 pub fn just_once<T>(value: T) -> impl GenOnce<T> {

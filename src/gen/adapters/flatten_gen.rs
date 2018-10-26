@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
-use ::rng::Rng;
-use ::gen::{Limit, GenOnce, Gen};
+use crate::rng::Rng;
+use crate::gen::{Limit, GenOnce, Gen};
 
 /// Adapter for `Gen::flatten`.
 pub struct FlattenGen<T, GT, GGT>

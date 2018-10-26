@@ -1,5 +1,3 @@
-use std::string::ToString;
-
 /// Trait for lazy string creation.
 pub trait LazyString {
     fn create_string(self) -> String;

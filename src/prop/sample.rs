@@ -1,4 +1,4 @@
-use ::prop::{Prints, Eval};
+use crate::prop::{Prints, Eval};
 
 /// The result of `Prop::sample`.
 pub struct Sample {

@@ -1,4 +1,4 @@
-use ::prelude::props::*;
+use crate::prelude::props::*;
 
 /// Helper for implementing a `Prop` from a `FnOnce`.
 ///

@@ -1,6 +1,6 @@
-use ::prop::{Log, Prop};
-use ::rng::Rng;
-use ::checker::{EvalParams, EvalSummary, EvalSeries, LimitSeries};
+use crate::prop::{Log, Prop};
+use crate::rng::Rng;
+use crate::checker::{EvalParams, EvalSummary, EvalSeries, LimitSeries};
 
 /// Evaluates the property several times and returns the results.
 pub fn run<P, F>(

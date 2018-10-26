@@ -1,6 +1,6 @@
-use ::std::fmt::Debug;
+use crate::std::fmt::Debug;
 
-use ::prelude::props::*;
+use crate::prelude::props::*;
 
 /// This property holds iff `left == right` is true.
 pub fn equal<A>(left: A, right: A) -> impl Prop

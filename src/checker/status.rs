@@ -1,4 +1,4 @@
-use ::checker::{EvalSeries, ThreadErr};
+use crate::checker::{EvalSeries, ThreadErr};
 
 // Represents either a finished or an aborted property check.
 #[derive(Debug, Clone)]

@@ -1,4 +1,4 @@
-use ::prelude::gens::*;
+use crate::prelude::gens::*;
 
 macro_rules! fn_array_n {
     ($N:expr, $array_n:ident: $($i:expr)+) => (

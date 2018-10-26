@@ -1,6 +1,6 @@
-use ::rng::Rng;
-use ::gen::{Limit, GenOnce};
-use ::gen::adapters::{MapGen, FlattenGen, FlatMapGen, DynGen, DynRcGen, DynArcGen};
+use crate::rng::Rng;
+use crate::gen::{Limit, GenOnce};
+use crate::gen::adapters::{MapGen, FlattenGen, FlatMapGen, DynGen, DynRcGen, DynArcGen};
 
 /// Trait for generating random values of type `T`.
 ///

@@ -1,6 +1,6 @@
-use ::rng::Rng;
-use ::gen::Limit;
-use ::gen::adapters::{MapGenOnce, FlattenGenOnce, FlatMapGenOnce, DynGenOnce};
+use crate::rng::Rng;
+use crate::gen::Limit;
+use crate::gen::adapters::{MapGenOnce, FlattenGenOnce, FlatMapGenOnce, DynGenOnce};
 
 /// Trait for generating a single random value of type `T`.
 pub trait GenOnce<T> {

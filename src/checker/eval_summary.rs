@@ -1,5 +1,5 @@
-use ::prop::Prints;
-use ::checker::EvalParams;
+use crate::prop::Prints;
+use crate::checker::EvalParams;
 
 /// The merged result of several property evaluations.
 #[derive(Debug, Clone)]

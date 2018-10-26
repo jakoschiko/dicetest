@@ -1,5 +1,5 @@
-use ::rng::Rng;
-use ::gen::{Limit, GenOnce, Gen};
+use crate::rng::Rng;
+use crate::gen::{Limit, GenOnce, Gen};
 
 /// Adapter for `Gen::dyn`.
 pub struct DynGen<'a, T> {

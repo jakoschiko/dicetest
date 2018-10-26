@@ -1,4 +1,4 @@
-use ::prelude::gens::*;
+use crate::prelude::gens::*;
 
 /// Generates a clone of the `Rng` passed to the generator method.
 ///

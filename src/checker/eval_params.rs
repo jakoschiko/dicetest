@@ -1,6 +1,6 @@
-use ::util::{conversion, base64};
-use ::rng::Rng;
-use ::gen::Limit;
+use crate::util::{conversion, base64};
+use crate::rng::Rng;
+use crate::gen::Limit;
 
 /// The parameters for evaluating a property one time.
 #[derive(Debug, Clone)]

@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
-use ::rng::Rng;
-use ::gen::{Limit, GenOnce, Gen};
+use crate::rng::Rng;
+use crate::gen::{Limit, GenOnce, Gen};
 
 /// Adapter for `Gen::flat_map`.
 pub struct FlatMapGen<T, U, GT, GU, F>

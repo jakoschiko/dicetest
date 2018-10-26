@@ -1,5 +1,5 @@
-use ::prop::{Prints, Eval};
-use ::checker::{EvalParams, EvalSummary};
+use crate::prop::{Prints, Eval};
+use crate::checker::{EvalParams, EvalSummary};
 
 /// Contains the results of a series of property evaluations.
 #[derive(Debug, Clone)]

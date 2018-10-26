@@ -1,5 +1,5 @@
-use ::prelude::gens::*;
-use ::gens::{SizeRange, CollectionBuilder};
+use crate::prelude::gens::*;
+use crate::gens::{SizeRange, CollectionBuilder};
 
 #[derive(Clone)]
 struct VecBuilder;

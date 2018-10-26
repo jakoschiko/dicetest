@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
-use ::rng::Rng;
-use ::gen::{Limit, GenOnce};
+use crate::rng::Rng;
+use crate::gen::{Limit, GenOnce};
 
 /// Adapter for `GenOnce::dyn_once`.
 pub struct DynGenOnce<'a, T>

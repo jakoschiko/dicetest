@@ -1,4 +1,4 @@
-use ::prelude::props::*;
+use crate::prelude::props::*;
 
 macro_rules! fn_all_n {
     ($all_n:ident: $($prop_i:ident)+) => (
@@ -65,8 +65,8 @@ mod tests {
     use std::cell::Cell;
     use std::rc::Rc;
 
-    use ::prelude::tests::*;
-    use ::prop::Eval;
+    use crate::prelude::tests::*;
+    use crate::prop::Eval;
 
     #[test]
     fn all_is_conjunction() {

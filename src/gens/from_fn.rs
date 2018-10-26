@@ -1,4 +1,4 @@
-use ::prelude::gens::*;
+use crate::prelude::gens::*;
 
 /// Helper for implementing a `GenOnce` from a `FnOnce`.
 ///

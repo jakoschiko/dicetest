@@ -1,5 +1,5 @@
-use ::prelude::props::*;
-use ::prop::{Show, IntoArg};
+use crate::prelude::props::*;
+use crate::prop::{Show, IntoArg};
 
 macro_rules! fn_forall_n {
     (

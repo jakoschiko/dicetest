@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use ::gen::Limit;
+use crate::gen::Limit;
 
 /// The parameters for the checker.
 #[derive(Debug, Clone)]

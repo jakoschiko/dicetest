@@ -1,4 +1,4 @@
-use ::prop::LazyString;
+use crate::prop::LazyString;
 
 /// Strings that were collected during property evaluation.
 ///

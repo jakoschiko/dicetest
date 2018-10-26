@@ -1,4 +1,4 @@
-use ::prelude::gens::*;
+use crate::prelude::gens::*;
 
 macro_rules! fn_zip_n {
     ($zip_n_once:ident, $zip_n:ident: $($Ti:ident, $gen_i:ident)+) => (

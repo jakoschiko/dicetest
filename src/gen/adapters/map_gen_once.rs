@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
-use ::rng::Rng;
-use ::gen::{Limit, GenOnce};
+use crate::rng::Rng;
+use crate::gen::{Limit, GenOnce};
 
 /// Adapter for `GenOnce::map_once`.
 pub struct MapGenOnce<T, U, G, F>

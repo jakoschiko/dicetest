@@ -1,4 +1,4 @@
-use ::prelude::gens::*;
+use crate::prelude::gens::*;
 
 /// Generates `true` or `false` with the same probability.
 pub fn bool() -> impl Gen<bool> {

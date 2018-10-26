@@ -1,7 +1,7 @@
 use std::ops::{Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive};
 use std::fmt::Debug;
 
-use ::prelude::gens::*;
+use crate::prelude::gens::*;
 
 /// Non-empty range for `gens::size`.
 pub trait SizeRange: Clone + Debug {
@@ -95,8 +95,8 @@ pub fn size(range: impl SizeRange) -> impl Gen<usize> {
 mod tests {
     use std::fmt::Debug;
 
-    use ::prelude::tests::*;
-    use ::gen::Limit;
+    use crate::prelude::tests::*;
+    use crate::gen::Limit;
 
     fn range_contains_size_prop<B, R>(
         range_data_gen: impl GenOnce<B>,

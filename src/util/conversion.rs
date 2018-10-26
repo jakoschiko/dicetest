@@ -19,15 +19,16 @@ pub fn bytes_to_u64(bytes: [u8; 8]) -> u64 {
 
 #[cfg(test)]
 mod tests {
-    use ::prelude::tests::*;
+    use crate::prelude::tests::*;
+    use crate::util::conversion;
 
     #[test]
     fn bytes_to_u64_is_left_inverse() {
         assert_prop(|| {
             props::left_inverse(
                 gens::array_8(gens::u8(..)),
-                ::util::conversion::bytes_to_u64,
-                ::util::conversion::u64_to_bytes,
+                conversion::bytes_to_u64,
+                conversion::u64_to_bytes,
             )
         })
     }
@@ -37,8 +38,8 @@ mod tests {
         assert_prop(|| {
             props::left_inverse(
                 gens::u64(..),
-                ::util::conversion::u64_to_bytes,
-                ::util::conversion::bytes_to_u64,
+                conversion::u64_to_bytes,
+                conversion::bytes_to_u64,
             )
         })
     }

@@ -1,4 +1,4 @@
-use ::gen::Limit;
+use crate::gen::Limit;
 
 /// Generates a series of interpolated `Limit`s.
 #[derive(Debug, Clone)]

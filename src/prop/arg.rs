@@ -1,8 +1,8 @@
 use std::marker::PhantomData;
 use std::fmt::Debug;
 
-use ::prop::{Show, DebugShow, LazyString, NoString};
-use ::gen::GenOnce;
+use crate::prop::{Show, DebugShow, LazyString, NoString};
+use crate::gen::GenOnce;
 
 /// Represents a random argument of type `T` that can be used for properties.
 pub struct Arg<T, G, N, S>

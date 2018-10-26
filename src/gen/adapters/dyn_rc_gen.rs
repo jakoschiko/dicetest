@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
-use ::rng::Rng;
-use ::gen::{Limit, GenOnce, Gen};
+use crate::rng::Rng;
+use crate::gen::{Limit, GenOnce, Gen};
 
 /// Adapter for `GenOnce::dyn_rc`.
 #[derive(Clone)]

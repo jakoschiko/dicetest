@@ -1,5 +1,5 @@
-use ::prop::Prints;
-use ::checker::{EvalParams, EvalSummary, Params, Status, ThreadErr};
+use crate::prop::Prints;
+use crate::checker::{EvalParams, EvalSummary, Params, Status, ThreadErr};
 
 /// The result of the checker.
 #[derive(Debug, Clone)]

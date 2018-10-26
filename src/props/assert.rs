@@ -1,4 +1,4 @@
-pub use ::prelude::props::*;
+pub use crate::prelude::props::*;
 
 /// This property holds if `assertion` is true.
 pub fn assert(assertion: bool, message: impl LazyString) -> impl Prop {
