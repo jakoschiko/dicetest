@@ -47,3 +47,6 @@ pub use self::hash_map::*;
 
 mod string;
 pub use self::string::*;
+
+mod shuffled;
+pub use self::shuffled::*;
