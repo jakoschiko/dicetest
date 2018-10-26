@@ -33,7 +33,7 @@ macro_rules! fn_forall_n {
             P: Prop,
             F: FnOnce(&mut Log, $($Ti,)*) -> P,
         {
-            props::from_fn_once(move |log, rng, lim| {
+            props::from_fn(move |log, rng, lim| {
                 $(let $arg_i = $arg_i.into_arg();)*
                 $(let $value_i = $arg_i.gen.gen_once(rng, lim);)*
 

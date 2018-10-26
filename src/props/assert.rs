@@ -3,7 +3,7 @@ pub use ::props;
 
 /// This property holds if `assertion` is true.
 pub fn assert(assertion: bool, message: impl LazyString) -> impl Prop {
-    props::from_fn_once(move |log, _, _| {
+    props::from_fn(move |log, _, _| {
         if assertion {
             log.print("Assertion holds");
             Eval::True

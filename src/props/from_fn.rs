@@ -6,7 +6,7 @@ use ::prop::{Log, Eval, Prop};
 ///
 /// The given `FnOnce` already implements the trait `Prop`, but using this helper may improve the
 /// type inference.
-pub fn from_fn_once<F>(f: F) -> impl Prop
+pub fn from_fn<F>(f: F) -> impl Prop
 where
     F: FnOnce(&mut Log, &mut Rng, Limit) -> Eval,
 {
