@@ -1,8 +1,6 @@
 use std::fmt::Debug;
 
-use ::gen::GenOnce;
-use ::prop::{Prop, GenArgExt};
-use ::props;
+use ::prelude::props::*;
 
 /// Tests if `g` is a left inverse for `f`.
 pub fn left_inverse<X, Y>(

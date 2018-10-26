@@ -1,7 +1,5 @@
-use ::rng::Rng;
-use ::gen::{Limit, GenOnce};
-use ::prop::{LazyString, Log, Eval, Prop, Show, IntoArg};
-use ::props;
+use ::prelude::props::*;
+use ::prop::{Show, IntoArg};
 
 macro_rules! fn_forall_n {
     (

@@ -1,5 +1,5 @@
-use ::gen::Gen;
-use ::gens::{self, SizeRange};
+use ::prelude::gens::*;
+use ::gens::SizeRange;
 
 /// Builds collections for `gens::collection`.
 pub trait CollectionBuilder<T, C> {

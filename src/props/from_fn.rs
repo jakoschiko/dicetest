@@ -1,6 +1,4 @@
-use ::rng::Rng;
-use ::gen::Limit;
-use ::prop::{Log, Eval, Prop};
+use ::prelude::props::*;
 
 /// Helper for implementing a `Prop` from a `FnOnce`.
 ///

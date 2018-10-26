@@ -1,5 +1,4 @@
-use ::rng::Rng;
-use ::gen::{Limit, GenOnce, Gen};
+use ::prelude::gens::*;
 
 /// Helper for implementing a `GenOnce` from a `FnOnce`.
 ///

@@ -2,9 +2,7 @@ use std::mem::size_of;
 use std::fmt::Debug;
 use std::ops::{Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive};
 
-use ::rng::Rng;
-use ::gen::Gen;
-use ::gens;
+use ::prelude::gens::*;
 
 // Non-empty range for integer generators like `gens::u8`, `gens::i32`, etc.
 // The integer type is represented by `I`.
@@ -279,7 +277,7 @@ fn_int! { isize, isize_uniform, usize, rng_isize, [-2, -1, 0, 1, 2] }
 mod tests {
     use std::fmt::Debug;
 
-    use ::prelude::*;
+    use ::prelude::tests::*;
 
     fn range_contains_int_prop<I, GI, B, GB, R>(
         range_data_gen: GB,

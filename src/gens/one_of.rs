@@ -1,5 +1,4 @@
-use ::gen::{GenOnce, Gen};
-use ::gens;
+use ::prelude::gens::*;
 
 macro_rules! fn_one_of_n {
     (

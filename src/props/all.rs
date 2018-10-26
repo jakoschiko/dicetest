@@ -1,5 +1,4 @@
-use ::prop::{Eval, Prop};
-use ::props;
+use ::prelude::props::*;
 
 macro_rules! fn_all_n {
     ($all_n:ident: $($prop_i:ident)+) => (
@@ -66,7 +65,7 @@ mod tests {
     use std::cell::Cell;
     use std::rc::Rc;
 
-    use ::prelude::*;
+    use ::prelude::tests::*;
     use ::prop::Eval;
 
     #[test]

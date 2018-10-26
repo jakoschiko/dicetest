@@ -1,5 +1,4 @@
-pub use ::prop::{LazyString, Eval, Prop};
-pub use ::props;
+pub use ::prelude::props::*;
 
 /// This property holds if `assertion` is true.
 pub fn assert(assertion: bool, message: impl LazyString) -> impl Prop {

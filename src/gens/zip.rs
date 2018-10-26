@@ -1,5 +1,4 @@
-use ::gen::{GenOnce, Gen};
-use ::gens;
+use ::prelude::gens::*;
 
 macro_rules! fn_zip_n {
     ($zip_n_once:ident, $zip_n:ident: $($Ti:ident, $gen_i:ident)+) => (

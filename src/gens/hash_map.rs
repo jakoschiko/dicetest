@@ -1,9 +1,8 @@
 use std::collections::HashMap;
 use std::hash::{Hash, BuildHasher};
 
-use ::rng::Rng;
-use ::gen::Gen;
-use ::gens::{self, SizeRange, CollectionBuilder};
+use ::prelude::gens::*;
+use ::gens::{SizeRange, CollectionBuilder};
 
 struct HashMapBuilder<S>
 where

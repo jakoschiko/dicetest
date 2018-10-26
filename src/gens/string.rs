@@ -1,5 +1,5 @@
-use ::gen::Gen;
-use ::gens::{self, SizeRange, CollectionBuilder};
+use ::prelude::gens::*;
+use ::gens::{SizeRange, CollectionBuilder};
 
 #[derive(Clone)]
 struct StringBuilder;

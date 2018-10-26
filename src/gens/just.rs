@@ -1,5 +1,4 @@
-use ::gen::{GenOnce, Gen};
-use ::gens;
+use ::prelude::gens::*;
 
 /// Generates the given value.
 pub fn just_once<T>(value: T) -> impl GenOnce<T> {

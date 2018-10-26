@@ -19,7 +19,7 @@ pub fn bytes_to_u64(bytes: [u8; 8]) -> u64 {
 
 #[cfg(test)]
 mod tests {
-    use ::prelude::*;
+    use ::prelude::tests::*;
 
     #[test]
     fn bytes_to_u64_is_left_inverse() {

@@ -1,6 +1,4 @@
-use ::rng::Rng;
-use ::gen::{Limit, Gen};
-use ::gens;
+use ::prelude::gens::*;
 
 /// Generates a clone of the `Rng` passed to the generator method.
 ///

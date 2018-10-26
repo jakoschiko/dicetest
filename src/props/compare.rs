@@ -1,7 +1,6 @@
 use ::std::fmt::Debug;
 
-use ::prop::{Eval, Prop};
-use ::props;
+use ::prelude::props::*;
 
 /// This property holds iff `left == right` is true.
 pub fn equal<A>(left: A, right: A) -> impl Prop

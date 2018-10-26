@@ -131,7 +131,7 @@ impl BuildHasher for Rng {
 
 #[cfg(test)]
 mod tests {
-    use ::prelude::*;
+    use ::prelude::tests::*;
     use ::rng::Rng;
 
     #[test]
