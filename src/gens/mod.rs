@@ -24,6 +24,9 @@ pub use self::bool::*;
 mod int;
 pub use self::int::*;
 
+mod char;
+pub use self::char::*;
+
 mod array;
 pub use self::array::*;
 
@@ -41,3 +44,6 @@ pub use self::hash_set::*;
 
 mod hash_map;
 pub use self::hash_map::*;
+
+mod string;
+pub use self::string::*;
