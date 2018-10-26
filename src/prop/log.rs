@@ -105,7 +105,7 @@ impl Log {
     /// Decreases the indention level for all following prints.
     pub fn unindent_print(&mut self) {
         if self.print_enabled {
-            self.print_indention_level = self.print_indention_level.saturating_sub(0);
+            self.print_indention_level = self.print_indention_level.saturating_sub(1);
         }
     }
 
