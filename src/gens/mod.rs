@@ -29,3 +29,15 @@ pub use self::array::*;
 
 mod size;
 pub use self::size::*;
+
+mod collection;
+pub use self::collection::*;
+
+mod vec;
+pub use self::vec::*;
+
+mod hash_set;
+pub use self::hash_set::*;
+
+mod hash_map;
+pub use self::hash_map::*;
