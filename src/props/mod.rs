@@ -9,6 +9,9 @@ pub use self::forall::*;
 mod all;
 pub use self::all::*;
 
+mod implies;
+pub use self::implies::*;
+
 mod compare;
 pub use self::compare::*;
 
@@ -17,3 +20,6 @@ pub use self::assert::*;
 
 mod inverse;
 pub use self::inverse::*;
+
+mod result;
+pub use self::result::*;
