@@ -38,6 +38,10 @@ const CHAR_TO_BYTE: [u8; 256] = [
 
 const PAD_CHAR: char = '=';
 
+fn is_invalid_char(c: char) -> bool {
+    (c as u32) >= 256 || CHAR_TO_BYTE[c as usize] >= 64
+}
+
 /// Converts the given bytes to a base64 string.
 ///
 /// This function is a right inverse for `decode`.
@@ -96,7 +100,7 @@ pub fn decode(base64: &str) -> Result<Vec<u8>, String> {
 
     let invalid_char = prefix
         .chars()
-        .find(|&c| (c as u32) >= 256 || CHAR_TO_BYTE[c as usize] >= 64);
+        .find(|&c| is_invalid_char(c));
 
     if let Some(invalid_char) = invalid_char {
         return Err(format!("Base64 string contains invalid character: {:?}", invalid_char))
@@ -135,28 +139,90 @@ pub fn decode(base64: &str) -> Result<Vec<u8>, String> {
 
 #[cfg(test)]
 mod tests {
+    use crate::prelude::tests::*;
+    use crate::util::base64;
+
     #[test]
-    fn encode_produces_empty_string_if_bytes_are_empty() {
-        // TODO: impl test
+    fn encode_produces_empty_string_if_bytes_is_empty() {
+        let bytes = Vec::new();
+        let base64 = base64::encode(&bytes);
+        assert_eq!(base64, "");
     }
 
     #[test]
-    fn encode_produces_non_empty_string_if_bytes_are_non_empty() {
-        // TODO: impl test
+    fn encode_produces_non_empty_string_if_bytes_is_non_empty() {
+        assert_prop(|| {
+            props::forall_1(
+                gens::vec(gens::u8(..), 1..).name("bytes"),
+                |log, bytes| {
+                    let base64 = base64::encode(&bytes);
+                    log.print(|| format!("base64: {:?}", base64));
+                    props::assert(!base64.is_empty(), "base64 should be non-empty")
+                }
+            ).dyn()
+        })
     }
 
     #[test]
     fn decode_is_left_inverse() {
-        // TODO: impl test
+        assert_prop(|| {
+            props::forall_1(
+                gens::vec(gens::u8(..), ..).name("bytes"),
+                |log, bytes| {
+                    let base64 = base64::encode(&bytes);
+                    log.print(|| format!("base64: {:?}", base64));
+                    let decoded_bytes = base64::decode(&base64);
+                    props::result_ok(decoded_bytes, move |decoded_bytes| {
+                        props::equal(bytes, decoded_bytes)
+                    })
+                }
+            ).dyn()
+        })
     }
 
     #[test]
     fn decode_fails_if_string_contains_invalid_char() {
-        // TODO: impl test
+        assert_prop(|| {
+            let valid_len_gen = gens::size(4..).map(|len| len - (len % 4));
+
+            props::forall_1(
+                valid_len_gen.name("len"),
+                move |_, len| {
+                    props::forall_1(
+                        gens::string(gens::char(), len).name("base64"),
+                        |_, base64| {
+                            let is_invalid = base64.chars().any(base64::is_invalid_char);
+
+                            props::implies(is_invalid, move || {
+                                let bytes = base64::decode(&base64);
+                                props::result_err(bytes, |_| true)
+                            })
+                        }
+                    )
+                }
+            ).dyn()
+        })
     }
 
     #[test]
     fn decode_fails_if_string_has_invalid_length() {
-        // TODO: impl test
+        assert_prop(|| {
+            let base_64_char_gen = gens::one_of_array(&base64::BYTE_TO_CHAR);
+            let invalid_len_gen = gens::size(1..)
+                .map(|len| if len % 4 == 0 { len + 1 } else { len } );
+
+            props::forall_1(
+                invalid_len_gen.name("len"),
+                move |_, len| {
+                    props::forall_1(
+                        gens::string(base_64_char_gen, len).name("invalid_base64"),
+                        |_, invalid_base64| {
+                            let bytes = base64::decode(&invalid_base64);
+                            props::result_err(bytes, |_| true)
+                        }
+                    )
+                }
+            ).dyn()
+        })
     }
 }
