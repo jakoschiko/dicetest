@@ -3,23 +3,15 @@ use std::marker::PhantomData;
 use crate::rng::Rng;
 use crate::gen::{Limit, GenOnce, Gen};
 
-/// Adapter for `Gen::map`.
-pub struct MapGen<T, U, G, F>
-where
-    G: Gen<T>,
-    F: Fn(T) -> U,
-{
+/// Adapter for `GenOnce::map_once` and `Gen::map`.
+pub struct MapGen<T, U, G, F> {
     g: G,
     f: F,
     _t: PhantomData<T>,
     _u: PhantomData<U>,
 }
 
-impl<T, U, G, F> MapGen<T, U, G, F>
-where
-    G: Gen<T>,
-    F: Fn(T) -> U,
-{
+impl<T, U, G, F> MapGen<T, U, G, F> {
     pub fn new(g: G, f: F) -> Self {
         MapGen {
             g,
@@ -32,11 +24,17 @@ where
 
 impl<T, U, G, F> GenOnce<U> for MapGen<T, U, G, F>
 where
-    G: Gen<T>,
-    F: Fn(T) -> U,
+    G: GenOnce<T>,
+    F: FnOnce(T) -> U,
 {
     fn gen_once(self, rng: &mut Rng, lim: Limit) -> U {
-        self.gen(rng, lim)
+        let g = self.g;
+        let f = self.f;
+
+        let t = g.gen_once(rng, lim);
+        let u = f(t);
+
+        u
     }
 }
 
