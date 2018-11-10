@@ -25,8 +25,5 @@ pub mod tests {
     pub use crate::gens;
     pub use crate::prop::{Prop, GenArgExt};
     pub use crate::props;
-    pub use crate::checker::{
-        assert_prop, assert_prop_with_seed, assert_prop_with_params,
-        debug_prop_eval, debug_prop_eval_with_code, debug_prop_eval_with_params,
-    };
+    pub use crate::asserts::assert_prop;
 }

@@ -1,7 +1,7 @@
 use crate::prop::Prints;
-use crate::checker::{EvalParams, EvalSummary, Params, Status, ThreadErr};
+use crate::brooder::{EvalParams, EvalSummary, Params, Status, ThreadErr};
 
-/// The result of the checker.
+/// The result of the brooder.
 #[derive(Debug, Clone)]
 #[must_use]
 pub struct Report {
@@ -9,7 +9,7 @@ pub struct Report {
     ///
     /// The seed is taken from `Params::seed` or else generated randomly.
     pub seed: u64,
-    /// The orginal parameters passed to the checker.
+    /// The orginal parameters passed to the brooder.
     pub params: Params,
     /// The merged result of all property evaluations.
     pub status: Status,

@@ -1,7 +1,7 @@
 use crate::prop::{Prints, Eval};
-use crate::checker::{EvalParams, EvalSummary};
+use crate::brooder::{EvalParams, EvalSummary};
 
-/// Contains the results of a series of property evaluations.
+/// The result of a series of property evaluations.
 #[derive(Debug, Clone)]
 #[must_use]
 pub struct EvalSeries {
@@ -52,7 +52,7 @@ impl EvalSeries {
         }
     }
 
-    /// Merge opertation for `EvalSeries`.
+    /// Merge operation for `EvalSeries`.
     pub fn merge(self, other: Self) -> Self {
         let summary = self.summary.merge(other.summary);
         let passed_tests = self.passed_tests + other.passed_tests;

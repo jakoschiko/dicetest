@@ -2,10 +2,10 @@ use std::time::Duration;
 
 use crate::gen::Limit;
 
-/// The parameters for the checker.
+/// The parameters for the brooder.
 #[derive(Debug, Clone)]
 pub struct Params {
-    /// The initial seed for the random value generation. If `None` the checker uses a random seed.
+    /// The initial seed for the random value generation. If `None` the brooder uses a random seed.
     pub seed: Option<u64>,
     // The upper size limit of generated dynamic data structures used for the first property
     // evaluation. The next property evaluations use an interpolated limit between `start_limit`
@@ -22,14 +22,14 @@ pub struct Params {
     /// The upper limit for the number of property evaluations.
     ///
     /// If the property evalutes to `prop::Status::Passed` and `min_passed` is not reached,
-    /// the checker evaluates the property again. In all other cases, the checker is finished.
+    /// the brooder evaluates the property again. In all other cases, the brooder is finished.
     pub min_passed: u64,
     /// The number of worker threads used for evaluating the property.
     ///
     /// If set to `0`, no worker thread is used and the property is evaluated in the caller thread.
-    /// In this case, the checker cannot handle timeouts or panicked threads.
+    /// In this case, the brooder cannot handle timeouts or panicked threads.
     pub worker_count: u64,
-    /// A timeout for the worker threads. If the timeout is reached, the checker aborts the
+    /// A timeout for the worker threads. If the timeout is reached, the brooder aborts the
     /// evaluation even though there are workers still running. `None` means unlimited time.
     ///
     /// The timeout will be ignored if `worker_count` is set to `0`.

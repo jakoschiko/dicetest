@@ -3,38 +3,14 @@ use rand::{self, Rng as LibRng};
 use crate::util::workers;
 use crate::rng::Rng;
 use crate::prop::{Log, Prop};
-use crate::checker::{
-    LimitSeries, EvalSummary, EvalSeries,
+use crate::brooder::{
+    EvalParams, EvalSummary, EvalSeries,
     Params, ThreadErr, Status, Report,
-    Portions, eval_runner,
+    LimitSeries, Portions,
 };
 
-/// Evaluates the property several times with default parameters and returns a report.
-pub fn check_prop<P, F>(prop_fn: F) -> Report
-where
-    P: Prop + 'static,
-    F: Fn() -> P + Send + Clone + 'static,
-{
-    let params = Params::default();
-
-    check_prop_with_params(params, prop_fn)
-}
-
-/// Evaluates the property several times with default parameters and the given seed and returns a
-/// report.
-pub fn check_prop_with_seed<P, F>(seed: u64, prop_fn: F) -> Report
-where
-    P: Prop + 'static,
-    F: Fn() -> P + Send + Clone + 'static,
-{
-    let params = Params::default()
-        .seed(Some(seed));
-
-    check_prop_with_params(params, prop_fn)
-}
-
-/// Evaluates the property several times with the given parameters and returns a report.
-pub fn check_prop_with_params<P, F>(params: Params, prop_fn: F) -> Report
+/// Checks the property by evaluting it several times.
+pub fn brood_prop<P, F>(params: Params, prop_fn: F) -> Report
 where
     P: Prop + 'static,
     F: Fn() -> P + Send + Clone + 'static,
@@ -52,7 +28,7 @@ where
             params.min_passed,
         );
 
-        let eval_series = eval_runner::run(rng, limit_series, prop_fn.clone());
+        let eval_series = brood_series(rng, limit_series, prop_fn.clone());
 
         Status::Checked(eval_series)
     } else {
@@ -69,7 +45,7 @@ where
                 min_passed,
             );
             let prop_fn = prop_fn.clone();
-            move || eval_runner::run(worker_rng, limit_series, prop_fn)
+            move || brood_series(worker_rng, limit_series, prop_fn)
         }).collect();
 
         let joined_result = workers::run(funs, params.timeout);
@@ -82,6 +58,48 @@ where
     calculate_prints_if_falsified(&mut report, prop_fn);
 
     report
+}
+
+fn brood_series<P, F>(
+    mut rng: Rng,
+    limit_series: LimitSeries,
+    prop_fn: F
+) -> EvalSeries
+where
+    P: Prop + 'static,
+    F: Fn() -> P + Send + Clone + 'static
+{
+    let mut series_acc = EvalSeries::new();
+
+    for limit in limit_series.into_iter() {
+        // For performance reasons, we disable print here.
+        // If the property will be falsified and all workers are
+        // done, we reevalute the property with enabled print.
+        let mut log = Log::with_all_disabled();
+
+        // We clone the `Rng` to be able to reevalute the property
+        let eval_rng = rng.clone();
+
+        let prop = prop_fn();
+        let eval = prop.eval(&mut log, &mut rng, limit);
+
+        let series_next = EvalSeries::from_eval(eval, log.data().prints, move || {
+            EvalParams {
+                rng: eval_rng,
+                limit,
+            }
+        });
+
+        series_acc = series_acc.merge(series_next);
+
+        match series_acc.summary {
+            EvalSummary::True => break,
+            EvalSummary::Passed => (),
+            EvalSummary::False { .. } => break,
+        }
+    }
+
+    series_acc
 }
 
 fn status_from_joined_result(joined_result: workers::JoinedResult<EvalSeries>) -> Status {
@@ -137,11 +155,11 @@ mod tests {
     use std::thread;
 
     use crate::prop::{Eval, Prints};
-    use crate::checker::{
+    use crate::brooder::{
         EvalParams,
         EvalSummary, EvalSeries,
         Params, Status, Report,
-        check_prop_with_params
+        brood_prop
     };
 
     fn expect_status_checked(report: Report) -> EvalSeries {
@@ -178,7 +196,7 @@ mod tests {
                 let params = Params::default()
                     .worker_count(worker_count);
 
-                let report = check_prop_with_params(params, move || truth);
+                let report = brood_prop(params, move || truth);
                 let eval_series = expect_status_checked(report);
 
                 assert_eq!(0, eval_series.passed_tests)
@@ -194,7 +212,7 @@ mod tests {
                     .worker_count(worker_count)
                     .min_passed(min_passed);
 
-                let report = check_prop_with_params(params, || Eval::Passed);
+                let report = brood_prop(params, || Eval::Passed);
                 let eval_series = expect_status_checked(report);
 
                 assert_eq!(min_passed, eval_series.passed_tests)
@@ -208,7 +226,7 @@ mod tests {
             let params = Params::default()
                 .worker_count(worker_count);
 
-            let report = check_prop_with_params(params, || Eval::False);
+            let report = brood_prop(params, || Eval::False);
             let eval_series = expect_status_checked(report);
             let (_, prints) = expect_eval_summary_false(eval_series);
 
@@ -222,7 +240,7 @@ mod tests {
             .worker_count(0)
             .timeout(Some(Duration::from_millis(10)));
 
-        let report = check_prop_with_params(params, || {
+        let report = brood_prop(params, || {
             thread::sleep(Duration::from_millis(100));
             Eval::True
         });
@@ -236,7 +254,7 @@ mod tests {
             .worker_count(1)
             .timeout(Some(Duration::from_millis(1)));
 
-        let report = check_prop_with_params(params, || {
+        let report = brood_prop(params, || {
             thread::sleep(Duration::from_millis(1000));
             Eval::True
         });

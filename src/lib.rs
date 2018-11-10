@@ -12,6 +12,8 @@ pub mod prop;
 
 pub mod props;
 
-pub mod checker;
+pub mod brooder;
+
+pub mod asserts;
 
 pub mod prelude;

@@ -55,3 +55,11 @@ impl EvalParams {
         Ok(eval_params)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn eval_code_is_right_inverse_of_from_eval_code() {
+        // TODO: test
+    }
+}
