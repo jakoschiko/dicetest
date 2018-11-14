@@ -4,7 +4,7 @@ use crate::prop::{Show, IntoArg};
 macro_rules! fn_forall_n {
     (
         $forall_n:ident:
-        $($Ti:ident, $Gi:ident, $Li:ident, $Si:ident, $Ai:ident, $arg_i:ident, $value_i:ident)+
+        $($Ti:ident, $Gi:ident, $Si:ident, $Ai:ident, $arg_i:ident, $value_i:ident)+
     ) => (
         /// A property that represents an universal quantifier.
         ///
@@ -19,15 +19,14 @@ macro_rules! fn_forall_n {
         ///
         /// In general universal quantifier cannot be proven in finite time. Hence this property
         /// never evaluates to `Status::True`.
-        pub fn $forall_n<$($Ti,)* $($Gi,)* $($Li,)* $($Si,)* $($Ai,)* P, F>(
+        pub fn $forall_n<$($Ti,)* $($Gi,)* $($Si,)* $($Ai,)* P, F>(
             $($arg_i: $Ai,)*
             predicate: F,
         ) -> impl Prop
         where
             $($Gi: GenOnce<$Ti>,)*
-            $($Li: LazyString,)*
             $($Si: Show<$Ti>,)*
-            $($Ai: IntoArg<$Ti, $Gi, $Li, $Si>,)*
+            $($Ai: IntoArg<$Ti, $Gi, $Si>,)*
             P: Prop,
             F: FnOnce($($Ti,)*) -> P,
         {
@@ -62,86 +61,84 @@ macro_rules! fn_forall_n {
 }
 
 fn_forall_n! { forall_1:
-    T1, G1, L1, S1, A1, arg_1, value_1
+    T1, G1, S1, A1, arg_1, value_1
 }
 
 fn_forall_n! { forall_2:
-    T1, G1, L1, S1, A1, arg_1, value_1
-    T2, G2, L2, S2, A2, arg_2, value_2
+    T1, G1, S1, A1, arg_1, value_1
+    T2, G2, S2, A2, arg_2, value_2
 }
 
 fn_forall_n! { forall_3:
-    T1, G1, L1, S1, A1, arg_1, value_1
-    T2, G2, L2, S2, A2, arg_2, value_2
-    T3, G3, L3, S3, A3, arg_3, value_3
+    T1, G1, S1, A1, arg_1, value_1
+    T2, G2, S2, A2, arg_2, value_2
+    T3, G3, S3, A3, arg_3, value_3
 }
 
 fn_forall_n! { forall_4:
-    T1, G1, L1, S1, A1, arg_1, value_1
-    T2, G2, L2, S2, A2, arg_2, value_2
-    T3, G3, L3, S3, A3, arg_3, value_3
-    T4, G4, L4, S4, A4, arg_4, value_4
+    T1, G1, S1, A1, arg_1, value_1
+    T2, G2, S2, A2, arg_2, value_2
+    T3, G3, S3, A3, arg_3, value_3
+    T4, G4, S4, A4, arg_4, value_4
 }
 
 fn_forall_n! { forall_5:
-    T1, G1, L1, S1, A1, arg_1, value_1
-    T2, G2, L2, S2, A2, arg_2, value_2
-    T3, G3, L3, S3, A3, arg_3, value_3
-    T4, G4, L4, S4, A4, arg_4, value_4
-    T5, G5, L5, S5, A5, arg_5, value_5
+    T1, G1, S1, A1, arg_1, value_1
+    T2, G2, S2, A2, arg_2, value_2
+    T3, G3, S3, A3, arg_3, value_3
+    T4, G4, S4, A4, arg_4, value_4
+    T5, G5, S5, A5, arg_5, value_5
 }
 
 fn_forall_n! { forall_6:
-    T1, G1, L1, S1, A1, arg_1, value_1
-    T2, G2, L2, S2, A2, arg_2, value_2
-    T3, G3, L3, S3, A3, arg_3, value_3
-    T4, G4, L4, S4, A4, arg_4, value_4
-    T5, G5, L5, S5, A5, arg_5, value_5
-    T6, G6, L6, S6, A6, arg_6, value_6
+    T1, G1, S1, A1, arg_1, value_1
+    T2, G2, S2, A2, arg_2, value_2
+    T3, G3, S3, A3, arg_3, value_3
+    T4, G4, S4, A4, arg_4, value_4
+    T5, G5, S5, A5, arg_5, value_5
+    T6, G6, S6, A6, arg_6, value_6
 }
 
 fn_forall_n! { forall_7:
-    T1, G1, L1, S1, A1, arg_1, value_1
-    T2, G2, L2, S2, A2, arg_2, value_2
-    T3, G3, L3, S3, A3, arg_3, value_3
-    T4, G4, L4, S4, A4, arg_4, value_4
-    T5, G5, L5, S5, A5, arg_5, value_5
-    T6, G6, L6, S6, A6, arg_6, value_6
-    T7, G7, L7, S7, A7, arg_7, value_7
+    T1, G1, S1, A1, arg_1, value_1
+    T2, G2, S2, A2, arg_2, value_2
+    T3, G3, S3, A3, arg_3, value_3
+    T4, G4, S4, A4, arg_4, value_4
+    T5, G5, S5, A5, arg_5, value_5
+    T6, G6, S6, A6, arg_6, value_6
+    T7, G7, S7, A7, arg_7, value_7
 }
 
 fn_forall_n! { forall_8:
-    T1, G1, L1, S1, A1, arg_1, value_1
-    T2, G2, L2, S2, A2, arg_2, value_2
-    T3, G3, L3, S3, A3, arg_3, value_3
-    T4, G4, L4, S4, A4, arg_4, value_4
-    T5, G5, L5, S5, A5, arg_5, value_5
-    T6, G6, L6, S6, A6, arg_6, value_6
-    T7, G7, L7, S7, A7, arg_7, value_7
-    T8, G8, L8, S8, A8, arg_8, value_8
+    T1, G1, S1, A1, arg_1, value_1
+    T2, G2, S2, A2, arg_2, value_2
+    T3, G3, S3, A3, arg_3, value_3
+    T4, G4, S4, A4, arg_4, value_4
+    T5, G5, S5, A5, arg_5, value_5
+    T6, G6, S6, A6, arg_6, value_6
+    T7, G7, S7, A7, arg_7, value_7
+    T8, G8, S8, A8, arg_8, value_8
 }
 
 fn_forall_n! { forall_9:
-    T1, G1, L1, S1, A1, arg_1, value_1
-    T2, G2, L2, S2, A2, arg_2, value_2
-    T3, G3, L3, S3, A3, arg_3, value_3
-    T4, G4, L4, S4, A4, arg_4, value_4
-    T5, G5, L5, S5, A5, arg_5, value_5
-    T6, G6, L6, S6, A6, arg_6, value_6
-    T7, G7, L7, S7, A7, arg_7, value_7
-    T8, G8, L8, S8, A8, arg_8, value_8
-    T9, G9, L9, S9, A9, arg_9, value_9
+    T1, G1, S1, A1, arg_1, value_1
+    T2, G2, S2, A2, arg_2, value_2
+    T3, G3, S3, A3, arg_3, value_3
+    T4, G4, S4, A4, arg_4, value_4
+    T5, G5, S5, A5, arg_5, value_5
+    T6, G6, S6, A6, arg_6, value_6
+    T7, G7, S7, A7, arg_7, value_7
+    T8, G8, S8, A8, arg_8, value_8
+    T9, G9, S9, A9, arg_9, value_9
 }
 
-fn arg_info<T, N, S>(index: u32, name_opt: Option<N>, value: &T, show: S) -> String
+fn arg_info<T, S>(index: u32, name_opt: Option<&'static str>, value: &T, show: S) -> String
 where
-    N: LazyString,
     S: Show<T>,
 {
     let name_string = match name_opt {
         None => String::new(),
         Some(name) => {
-            let name = name.create_string();
             format!("{}: ", name)
         }
     };

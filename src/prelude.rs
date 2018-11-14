@@ -16,7 +16,7 @@ pub mod props {
     pub use crate::rng::Rng;
     pub use crate::gen::{Limit, GenOnce, Gen};
     pub use crate::gens;
-    pub use crate::prop::{LazyString, Eval, Prop, GenArgExt};
+    pub use crate::prop::{Eval, Prop, GenArgExt};
     pub use crate::props;
 }
 

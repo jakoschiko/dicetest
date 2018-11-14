@@ -1,8 +1,5 @@
 //! Provides the property trait `Prop` for defining test expectations.
 
-mod lazy_string;
-pub use self::lazy_string::{LazyString, NoString};
-
 mod eval;
 pub use self::eval::Eval;
 
