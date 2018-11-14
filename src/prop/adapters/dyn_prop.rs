@@ -1,6 +1,6 @@
 use crate::rng::Rng;
 use crate::gen::Limit;
-use crate::prop::{Log, Eval, Prop};
+use crate::prop::{Eval, Prop};
 
 /// Adapter for `Prop::dyn`.
 pub struct DynProp<'a> {
@@ -21,13 +21,13 @@ impl<'a> DynProp<'a> {
 }
 
 impl<'a> Prop for DynProp<'a> {
-    fn eval(mut self, log: &mut Log, rng: &mut Rng, lim: Limit) -> Eval {
-        self.dyn.eval(log, rng, lim)
+    fn eval(mut self, rng: &mut Rng, lim: Limit) -> Eval {
+        self.dyn.eval(rng, lim)
     }
 }
 
 trait Wrapper {
-    fn eval(&mut self, log: &mut Log, &mut Rng, Limit) -> Eval;
+    fn eval(&mut self, &mut Rng, Limit) -> Eval;
 }
 
 struct PropWrapper<P>
@@ -41,8 +41,8 @@ impl<P> Wrapper for PropWrapper<P>
 where
     P: Prop,
 {
-    fn eval(&mut self, log: &mut Log, rng: &mut Rng, lim: Limit) -> Eval {
-        let prop = self.prop.take().expect("PropWrapper::eval should not be called twice");
-        prop.eval(log, rng, lim)
+    fn eval(&mut self, rng: &mut Rng, lim: Limit) -> Eval {
+        let prop = self.prop.take().unwrap();
+        prop.eval(rng, lim)
     }
 }

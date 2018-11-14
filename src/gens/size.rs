@@ -111,11 +111,11 @@ mod tests {
             gens::rng_fork().name("rng"),
             gens::u64(..).name("limit"),
             range_data_gen.name("range_data"),
-            |log, mut rng, limit, range_data| {
+            |mut rng, limit, range_data| {
                 let range = create_range(range_data);
-                log.print(|| format!("range: {:?}", range));
+                log_var!(range);
                 let size = gens::size(range).gen(&mut rng, Limit(limit));
-                log.print(|| format!("size: {}", size));
+                log_var!(size);
                 is_in_range(range_data, size)
             }
         )

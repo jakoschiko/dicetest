@@ -6,16 +6,24 @@ macro_rules! fn_all_n {
         pub fn $all_n(
             $($prop_i: impl Prop,)*
         ) -> impl Prop {
-            props::from_fn(|log, rng, lim| {
+            props::from_fn(|rng, lim| {
                 let mut index = 0;
                 let mut acc = Eval::True;
 
                 $(
                     index += 1;
-                    log.print(|| format!("all term {}:", index));
-                    log.indent_print();
-                    acc = acc.and($prop_i.eval(log, rng, lim));
-                    log.unindent_print();
+
+                    let logger_enabled = logger::enabled();
+                    if logger_enabled {
+                        log!("all term {}:", index);
+                        logger::indent();
+                    }
+
+                    acc = acc.and($prop_i.eval(rng, lim));
+
+                    if logger_enabled {
+                        logger::unindent()
+                    }
 
                     if acc == Eval::False {
                         return acc;
@@ -84,7 +92,7 @@ mod tests {
     #[test]
     fn all_is_short_circuit() {
         let prop_2_was_evalutated = Rc::new(Cell::new(false));
-        let prop_2 = props::from_fn(|_, _, _| {
+        let prop_2 = props::from_fn(|_, _| {
             prop_2_was_evalutated.set(true);
             Eval::False
         });

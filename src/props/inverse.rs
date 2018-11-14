@@ -13,10 +13,10 @@ where
 {
     props::forall_1(
         gen_x.name("x"),
-        move |log, x| {
+        move |x| {
             let y = f(x.clone());
             let other_x = g(y);
-            log.print(|| format!("g(f(x)): {:?}", other_x));
+            log!("g(f(x)): {:?}", other_x);
             props::equal(x, other_x)
         }
     )
@@ -33,10 +33,10 @@ where
 {
     props::forall_1(
         gen_y.name("y"),
-        move |log, y| {
+        move |y| {
             let x = h(y.clone());
             let other_y = f(x);
-            log.print(|| format!("f(g(y)): {:?}", other_y));
+            log!("f(g(y)): {:?}", other_y);
             props::equal(y, other_y)
         }
     )

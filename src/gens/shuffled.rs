@@ -36,11 +36,11 @@ mod tests {
         assert_prop(|| {
             props::forall_1(
                 gens::vec(gens::u8(..), ..).name("orig_vec"),
-                |_, orig_vec| {
+                |orig_vec| {
                     let orig_vec_elems = count_vec_elems(&orig_vec);
                     props::forall_1(
                         gens::shuffled_vec(orig_vec).name("shuffled_vec"),
-                        move |_, shuffled_vec| {
+                        move |shuffled_vec| {
                             let shuffled_vec_elems = count_vec_elems(&shuffled_vec);
                             props::equal(orig_vec_elems, shuffled_vec_elems)
                         }

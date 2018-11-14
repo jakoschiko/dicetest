@@ -3,9 +3,6 @@
 mod lazy_string;
 pub use self::lazy_string::{LazyString, NoString};
 
-mod log;
-pub use self::log::{Prints, LogData, Log};
-
 mod eval;
 pub use self::eval::Eval;
 

@@ -1,8 +1,9 @@
 use rand::{self, Rng as LibRng};
 
 use crate::util::workers;
+use crate::logger::{self, Messages};
 use crate::rng::Rng;
-use crate::prop::{Log, Prop};
+use crate::prop::Prop;
 use crate::brooder::{
     EvalParams, EvalSummary, EvalSeries,
     Params, ThreadErr, Status, Report,
@@ -55,7 +56,7 @@ where
 
     let mut report = Report { seed, params, status };
 
-    calculate_prints_if_falsified(&mut report, prop_fn);
+    collect_log_messages_if_falsified(&mut report, prop_fn);
 
     report
 }
@@ -72,18 +73,18 @@ where
     let mut series_acc = EvalSeries::new();
 
     for limit in limit_series.into_iter() {
-        // For performance reasons, we disable print here.
-        // If the property will be falsified and all workers are
-        // done, we reevalute the property with enabled print.
-        let mut log = Log::with_all_disabled();
+        // For performance reasons, we do not enable the logger here.
+        // If we need the log messages of the counterexample, we will
+        // reevaluate the property afterwards.
+        let messages = Messages::new();
 
         // We clone the `Rng` to be able to reevalute the property
         let eval_rng = rng.clone();
 
         let prop = prop_fn();
-        let eval = prop.eval(&mut log, &mut rng, limit);
+        let eval = prop.eval(&mut rng, limit);
 
-        let series_next = EvalSeries::from_eval(eval, log.data().prints, move || {
+        let series_next = EvalSeries::from_eval(eval, messages, move || {
             EvalParams {
                 rng: eval_rng,
                 limit,
@@ -124,7 +125,7 @@ fn status_from_joined_result(joined_result: workers::JoinedResult<EvalSeries>) -
     }
 }
 
-fn calculate_prints_if_falsified<P, F>(report: &mut Report, prop_fn: F)
+fn collect_log_messages_if_falsified<P, F>(report: &mut Report, prop_fn: F)
 where
     P: Prop + 'static,
     F: Fn() -> P + Send + Clone + 'static,
@@ -133,19 +134,20 @@ where
         EvalSeries {
             summary: EvalSummary::False {
                 ref counterexample,
-                ref mut prints,
+                ref mut messages,
             },
             ..
         }
     ) = report.status {
-        let mut log = Log::with_print_enabled();
         let mut rng = counterexample.rng.clone();
         let lim = counterexample.limit;
 
         let prop = prop_fn();
-        let _ = prop.eval(&mut log, &mut rng, lim);
+        let (_, counterexample_messages) = logger::collect_messages(|| {
+            prop.eval(&mut rng, lim)
+        });
 
-        *prints = log.data().prints;
+        *messages = counterexample_messages;
     }
 }
 
@@ -154,7 +156,8 @@ mod tests {
     use std::time::Duration;
     use std::thread;
 
-    use crate::prop::{Eval, Prints};
+    use crate::logger::Messages;
+    use crate::prop::Eval;
     use crate::brooder::{
         EvalParams,
         EvalSummary, EvalSeries,
@@ -176,9 +179,9 @@ mod tests {
         }
     }
 
-    fn expect_eval_summary_false(eval_series: EvalSeries) -> (EvalParams, Prints) {
+    fn expect_eval_summary_false(eval_series: EvalSeries) -> (EvalParams, Messages) {
         match eval_series.summary {
-            EvalSummary::False { counterexample, prints } => (counterexample, prints),
+            EvalSummary::False { counterexample, messages } => (counterexample, messages),
             unexpected => panic!("Expecting EvalSummary::False, but got {:?}", unexpected),
         }
     }
@@ -220,17 +223,18 @@ mod tests {
         })
     }
 
+    #[cfg(not(feature = "disabled_logger"))]
     #[test]
-    fn contains_prints_if_prop_evaluates_to_false() {
+    fn contains_log_messages_if_prop_evaluates_to_false() {
         test_with_different_worker_count(|worker_count| {
             let params = Params::default()
                 .worker_count(worker_count);
 
             let report = brood_prop(params, || Eval::False);
             let eval_series = expect_status_checked(report);
-            let (_, prints) = expect_eval_summary_false(eval_series);
+            let (_, messages) = expect_eval_summary_false(eval_series);
 
-            assert!(!prints.0.is_empty())
+            assert!(!messages.0.is_empty())
         })
     }
 

@@ -154,9 +154,9 @@ mod tests {
         assert_prop(|| {
             props::forall_1(
                 gens::vec(gens::u8(..), 1..).name("bytes"),
-                |log, bytes| {
+                |bytes| {
                     let base64 = base64::encode(&bytes);
-                    log.print(|| format!("base64: {:?}", base64));
+                    log_var!(base64);
                     props::assert(!base64.is_empty(), "base64 should be non-empty")
                 }
             ).dyn()
@@ -168,9 +168,9 @@ mod tests {
         assert_prop(|| {
             props::forall_1(
                 gens::vec(gens::u8(..), ..).name("bytes"),
-                |log, bytes| {
+                |bytes| {
                     let base64 = base64::encode(&bytes);
-                    log.print(|| format!("base64: {:?}", base64));
+                    log_var!(base64);
                     let decoded_bytes = base64::decode(&base64);
                     props::result_ok(decoded_bytes, move |decoded_bytes| {
                         props::equal(bytes, decoded_bytes)
@@ -187,10 +187,10 @@ mod tests {
 
             props::forall_1(
                 valid_len_gen.name("len"),
-                move |_, len| {
+                move |len| {
                     props::forall_1(
                         gens::string(gens::char(), len).name("base64"),
-                        |_, base64| {
+                        |base64| {
                             let is_invalid = base64.chars().any(base64::is_invalid_char);
 
                             props::implies(is_invalid, move || {
@@ -213,10 +213,10 @@ mod tests {
 
             props::forall_1(
                 invalid_len_gen.name("len"),
-                move |_, len| {
+                move |len| {
                     props::forall_1(
                         gens::string(base_64_char_gen, len).name("invalid_base64"),
-                        |_, invalid_base64| {
+                        |invalid_base64| {
                             let bytes = base64::decode(&invalid_base64);
                             props::result_err(bytes, |_| true)
                         }

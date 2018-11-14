@@ -2,15 +2,17 @@ pub use crate::prelude::props::*;
 
 /// This property holds if `assertion` is true.
 pub fn assert(assertion: bool, message: impl LazyString) -> impl Prop {
-    props::from_fn(move |log, _, _| {
+    props::from_fn(move |_, _| {
         if assertion {
-            log.print("Assertion holds");
+            log!("Assertion holds");
             Eval::True
         } else {
-            log.print("Assertion does not hold:");
-            log.indent_print();
-            log.print(message);
-            log.unindent_print();
+            if logger::enabled() {
+                log!("Assertion does not hold:");
+                logger::indent();
+                log!("{}", message.create_string());
+                logger::unindent();
+            }
             Eval::False
         }
     })

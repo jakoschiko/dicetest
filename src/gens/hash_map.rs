@@ -27,7 +27,7 @@ where
 /// Generates a `HashMap` that uses a custom `BuildHasher` and contains keys of type `K` with
 /// values of type `V`.
 ///
-/// The range specifies the number of tries to generate key-value-entries with distinct keys.
+/// The range specifies the number of tries to generate key-value entries with distinct keys.
 pub fn hash_map_with_hasher<K, V, S>(
     build_hasher_gen: impl Gen<S>,
     elem_gen: impl Gen<(K, V)>,
@@ -44,7 +44,7 @@ where
 /// Generates a `HashMap` that uses a default pseudorando `BuildHasher` and contains keys of type
 /// `K` with values of type `V`.
 ///
-/// The range specifies the number of tries to generate key-value-entries with distinct keys.
+/// The range specifies the number of tries to generate key-value entries with distinct keys.
 pub fn hash_map<K, V>(
     elem_gen: impl Gen<(K, V)>,
     tries_range: impl SizeRange,

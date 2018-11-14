@@ -11,16 +11,20 @@ pub mod gens {
 pub mod props {
     //! Contains the most useful import for defining properties.
 
+    pub use crate::{log, log_var};
+    pub use crate::logger;
     pub use crate::rng::Rng;
     pub use crate::gen::{Limit, GenOnce, Gen};
     pub use crate::gens;
-    pub use crate::prop::{LazyString, Log, Eval, Prop, GenArgExt};
+    pub use crate::prop::{LazyString, Eval, Prop, GenArgExt};
     pub use crate::props;
 }
 
 pub mod tests {
     //! Contains the most useful imports for using properties in unit tests.
 
+    pub use crate::{log, log_var};
+    pub use crate::logger;
     pub use crate::gen::{GenOnce, Gen};
     pub use crate::gens;
     pub use crate::prop::{Prop, GenArgExt};

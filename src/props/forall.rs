@@ -29,15 +29,17 @@ macro_rules! fn_forall_n {
             $($Si: Show<$Ti>,)*
             $($Ai: IntoArg<$Ti, $Gi, $Li, $Si>,)*
             P: Prop,
-            F: FnOnce(&mut Log, $($Ti,)*) -> P,
+            F: FnOnce($($Ti,)*) -> P,
         {
-            props::from_fn(move |log, rng, lim| {
+            props::from_fn(move |rng, lim| {
                 $(let $arg_i = $arg_i.into_arg();)*
                 $(let $value_i = $arg_i.gen.gen_once(rng, lim);)*
 
                 let mut arg_infos = Vec::new();
 
-                if log.print_enabled() {
+                let logger_enabled = logger::enabled();
+
+                if logger_enabled {
                     let mut index = 0;
 
                     $({
@@ -50,8 +52,8 @@ macro_rules! fn_forall_n {
                 eval_predicate(
                     rng,
                     lim,
-                    log,
-                    move |log| predicate(log, $($value_i,)*),
+                    predicate($($value_i,)*),
+                    logger_enabled,
                     arg_infos,
                 )
             })
@@ -149,32 +151,29 @@ where
     format!("{}.) {}{}", index, name_string, value_string)
 }
 
-fn eval_predicate<P, F>(
+fn eval_predicate(
     rng: &mut Rng,
     lim: Limit,
-    log: &mut Log,
-    predicate: F,
+    predicate: impl Prop,
+    logger_enabled: bool,
     arg_infos: Vec<String>,
-) -> Eval
-where
-    P: Prop,
-    F: FnOnce(&mut Log) -> P,
-{
-    if log.print_enabled() {
-        log.print("forall args:");
-        log.indent_print();
+) -> Eval {
+    if logger_enabled {
+        log!("forall args:");
+        logger::indent();
         for arg_info in arg_infos.into_iter() {
-            log.print(move || arg_info);
+            log!("{}", arg_info);
         }
-        log.unindent_print();
-        log.print("forall predicate:");
-        log.indent_print();
+        logger::unindent();
+        log!("forall predicate:");
+        logger::indent();
     }
 
-    let predicate_prop = predicate(log);
-    let eval = predicate_prop.eval(log, rng, lim);
+    let eval = predicate.eval(rng, lim);
 
-    log.unindent_print();
+    if logger_enabled {
+        logger::unindent();
+    }
 
     match eval {
         Eval::True => Eval::Passed,

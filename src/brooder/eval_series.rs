@@ -1,4 +1,5 @@
-use crate::prop::{Prints, Eval};
+use crate::logger::Messages;
+use crate::prop::Eval;
 use crate::brooder::{EvalParams, EvalSummary};
 
 /// The result of a series of property evaluations.
@@ -24,7 +25,7 @@ impl EvalSeries {
     /// Creates an instance for a single property evaluation.
     pub fn from_eval(
         eval: Eval,
-        prints: Prints,
+        messages: Messages,
         eval_params: impl FnOnce() -> EvalParams,
     ) -> Self {
         match eval {
@@ -44,7 +45,7 @@ impl EvalSeries {
                 EvalSeries {
                     summary: EvalSummary::False {
                         counterexample: eval_params(),
-                        prints,
+                        messages,
                     },
                     passed_tests: 0,
                 }

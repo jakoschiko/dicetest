@@ -60,14 +60,16 @@ fn compare<A>(
 where
     A: Debug
 {
-    props::from_fn(move |log, _, _| {
+    props::from_fn(move |_, _| {
         let expectation = compare_op(&left, &right);
 
-        log.print(|| format!("Assertion `left {} right` is {}", compare_str, expectation));
-        log.indent_print();
-        log.print(|| format!(" left: {:?}", left));
-        log.print(|| format!("right: {:?}", right));
-        log.unindent_print();
+        if logger::enabled() {
+          log!("Assertion `left {} right` is {}", compare_str, expectation);
+          logger::indent();
+          log!(" left: {:?}", left);
+          log!("right: {:?}", right);
+          logger::unindent();
+        }
 
         if expectation { Eval::True } else { Eval::False }
     })

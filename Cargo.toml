@@ -5,3 +5,7 @@ authors = [""]
 
 [dependencies]
 rand = "0.5"
+
+[features]
+default = []
+disabled_logger = []

@@ -139,12 +139,12 @@ mod tests {
         assert_prop(|| {
             props::forall_1(
                 gens::u64(..).name("seed"),
-                |log, seed| {
+                |seed| {
                     let rng_init = Rng::init(seed);
-                    log.print(|| format!("Rng after init: {:?}", rng_init));
+                    log!("Rng after init: {:?}", rng_init);
                     let mut rng_next = rng_init.clone();
                     let _ = rng_next.next();
-                    log.print(|| format!("Rng after next: {:?}", rng_next));
+                    log!("Rng after next: {:?}", rng_next);
                     let cycle_length_is_zero = rng_init == rng_next;
                     props::assert(!cycle_length_is_zero, "Cycle length is not zero")
                 }
@@ -180,10 +180,10 @@ mod tests {
             props::forall_2(
                 gens::rng_fork().name("rng"),
                 gens::u64(..).name("seed"),
-                |log, rng, seed| {
+                |rng, seed| {
                     let mut rng_reseeded = rng.clone();
                     rng_reseeded.reseed(seed);
-                    log.print(|| format!("rng_reseeded: {:?}", rng_reseeded));
+                    log_var!(rng_reseeded);
                     let rngs_are_equal = rng == rng_reseeded;
                     props::assert(!rngs_are_equal, "Reseeded Rng is not equal")
                 }

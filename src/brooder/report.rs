@@ -1,4 +1,4 @@
-use crate::prop::Prints;
+use crate::logger::Messages;
 use crate::brooder::{EvalParams, EvalSummary, Params, Status, ThreadErr};
 
 /// The result of the brooder.
@@ -62,7 +62,7 @@ fn headline_and_sections(report: &Report) -> (String, Vec<String>) {
 
                     (headline, sections)
                 }
-                EvalSummary::False { ref counterexample, ref prints } => {
+                EvalSummary::False { ref counterexample, ref messages } => {
                     let headline = format!(
                         "Property was falsified after {} passed tests",
                         eval_series.passed_tests,
@@ -70,7 +70,7 @@ fn headline_and_sections(report: &Report) -> (String, Vec<String>) {
 
                     let sections = vec!(
                         section_parameters(report.seed, &report.params),
-                        section_counterexample(counterexample, prints),
+                        section_counterexample(counterexample, messages),
                     );
 
                     (headline, sections)
@@ -122,17 +122,17 @@ fn section_parameters(seed: u64, params: &Params) -> String {
     section("Parameters", &parameters_text)
 }
 
-fn section_counterexample(counterexample: &EvalParams, prints: &Prints) -> String {
+fn section_counterexample(counterexample: &EvalParams, messages: &Messages) -> String {
     let eval_code = counterexample.eval_code();
     let eval_code_help = format!(
         "You can rerun the counterexample by using its evaluation code:\n\
         debug_prop_eval_with_code(\"{}\", ...)",
         eval_code,
     );
-    let pretty_prints = if prints.0.is_empty() {
-        "The counterexample has no prints".to_string()
+    let pretty_prints = if messages.0.is_empty() {
+        "The counterexample has no log messages".to_string()
     } else {
-        format!("Prints of the counterexample:\n{}", prints.pretty())
+        format!("Log messages of the counterexample:\n{}", messages.pretty())
     };
     let debug_help = format!("{}\n\n{}", eval_code_help, pretty_prints);
     section("Counterexample", &debug_help)

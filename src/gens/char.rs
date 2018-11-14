@@ -78,7 +78,7 @@ mod tests {
         assert_prop(|| {
             props::forall_1(
                 gens::char_ascii_alphabetic_lowercase(),
-                |_, char| char.is_ascii_alphabetic() && char.is_ascii_lowercase()
+                |char| char.is_ascii_alphabetic() && char.is_ascii_lowercase()
             ).dyn()
         })
     }
@@ -88,7 +88,7 @@ mod tests {
         assert_prop(|| {
             props::forall_1(
                 gens::char_ascii_alphabetic_uppercase(),
-                |_, char| char.is_ascii_alphabetic() && char.is_ascii_uppercase()
+                |char| char.is_ascii_alphabetic() && char.is_ascii_uppercase()
             ).dyn()
         })
     }
@@ -98,7 +98,7 @@ mod tests {
         assert_prop(|| {
             props::forall_1(
                 gens::char_ascii_alphabetic(),
-                |_, char| char.is_ascii_alphabetic()
+                |char| char.is_ascii_alphabetic()
             ).dyn()
         })
     }
@@ -109,7 +109,7 @@ mod tests {
         assert_prop(|| {
             props::forall_1(
                 gens::char_ascii_digit(),
-                |_, char| char.is_ascii_digit()
+                |char| char.is_ascii_digit()
             ).dyn()
         })
     }
@@ -119,7 +119,7 @@ mod tests {
         assert_prop(|| {
             props::forall_1(
                 gens::char_ascii_alphanumeric(),
-                |_, char| char.is_ascii_alphanumeric()
+                |char| char.is_ascii_alphanumeric()
             ).dyn()
         })
     }
@@ -129,7 +129,7 @@ mod tests {
         assert_prop(|| {
             props::forall_1(
                 gens::char_ascii_printable(),
-                |_, char| char.is_ascii() && !char.is_ascii_control()
+                |char| char.is_ascii() && !char.is_ascii_control()
             ).dyn()
         })
     }
@@ -139,7 +139,7 @@ mod tests {
         assert_prop(|| {
             props::forall_1(
                 gens::char_ascii(),
-                |_, char| char.is_ascii()
+                |char| char.is_ascii()
             ).dyn()
         })
     }
@@ -149,7 +149,7 @@ mod tests {
         assert_prop(|| {
             props::forall_1(
                 gens::char(),
-                |_, char| std::char::from_u32(char as u32).is_some()
+                |char| std::char::from_u32(char as u32).is_some()
             ).dyn()
         })
     }

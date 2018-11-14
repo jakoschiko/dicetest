@@ -1,6 +1,10 @@
 extern crate rand;
 
+mod macros;
+
 mod util;
+
+pub mod logger;
 
 pub mod rng;
 

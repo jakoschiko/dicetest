@@ -1,6 +1,8 @@
+use crate::log;
+use crate::logger;
 use crate::rng::Rng;
 use crate::gen::Limit;
-use crate::prop::{Log, Eval, Sample};
+use crate::prop::{Eval, Sample};
 use crate::prop::adapters::DynProp;
 
 /// Trait for implementing properties. A property represents a logic expression and can be evaluated
@@ -14,7 +16,7 @@ pub trait Prop {
     /// The parameters `Rng` and `Limit` corresponds to parameters needed for using `GenOnce` and
     /// `Gen`. The `Rng` is the only source of the randomness. Besides that, the evaluation is
     /// derterministic.
-    fn eval(self, &mut Log, &mut Rng, Limit) -> Eval;
+    fn eval(self, &mut Rng, Limit) -> Eval;
 
     /// Puts `self` behind a pointer.
     fn dyn<'a>(self) -> DynProp<'a>
@@ -24,8 +26,8 @@ pub trait Prop {
         DynProp::new(self)
     }
 
-    /// Calls `Prop::eval` with a random seed, default limit and enabled `Log`. Useful for debugging
-    /// the property.
+    /// Calls `Prop::eval` with a random seed, default limit and enabled `logger`. Useful for
+    /// debugging the property.
     fn sample(self) -> Sample
     where
         Self: Sized,
@@ -36,34 +38,32 @@ pub trait Prop {
         self.sample_with_params(&mut rng, lim)
     }
 
-    /// Calls `Prop::eval` with the given seed, the given limit and enabled `Log`. Useful for
+    /// Calls `Prop::eval` with the given seed, the given limit and enabled `logger`. Useful for
     /// debugging the property.
     fn sample_with_params(self, rng: &mut Rng, lim: Limit) -> Sample
     where
         Self: Sized,
     {
-        let mut log = Log::with_print_enabled();
+        let (eval, messages) = logger::collect_messages(|| {
+            self.eval(rng, lim)
+        });
 
-        let eval = self.eval(&mut log, rng, lim);
-        let log_data = log.data();
-        let prints = log_data.prints;
-
-        Sample { eval, prints }
+        Sample { eval, messages }
     }
 }
 
 impl<F> Prop for F
 where
-    F: FnOnce(&mut Log, &mut Rng, Limit) -> Eval,
+    F: FnOnce(&mut Rng, Limit) -> Eval,
 {
-    fn eval(self, log: &mut Log, rng: &mut Rng, lim: Limit) -> Eval {
-        self(log, rng, lim)
+    fn eval(self, rng: &mut Rng, lim: Limit) -> Eval {
+        self(rng, lim)
     }
 }
 
 impl Prop for Eval {
-    fn eval(self, log: &mut Log, _rng: &mut Rng, _lim: Limit) -> Eval {
-        log.print(|| {
+    fn eval(self, _rng: &mut Rng, _lim: Limit) -> Eval {
+        log!("{}", {
             match self {
                 Eval::True => "True",
                 Eval::Passed => "Passed",
@@ -76,8 +76,8 @@ impl Prop for Eval {
 }
 
 impl Prop for bool {
-    fn eval(self, log: &mut Log, _rng: &mut Rng, _lim: Limit) -> Eval {
-        log.print(|| {
+    fn eval(self, _rng: &mut Rng, _lim: Limit) -> Eval {
+        log!("{}", {
             if self {
                 "True from bool"
             } else {

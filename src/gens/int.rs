@@ -294,12 +294,12 @@ mod tests {
     {
         props::forall_1(
             range_data_gen.name("range_data"),
-            move |log, range_data| {
+            move |range_data| {
                 let range = create_range(range_data);
-                log.print(|| format!("range: {:?}", range));
+                log_var!(range);
                 props::forall_1(
                     int_gen(range).name("int"),
-                    move |_, int| is_in_range(range_data, int)
+                    move |int| is_in_range(range_data, int)
                 )
             }
         )

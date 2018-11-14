@@ -1,4 +1,4 @@
-use crate::prop::Prints;
+use crate::logger::Messages;
 use crate::brooder::EvalParams;
 
 /// The merged result of several property evaluations.
@@ -13,8 +13,8 @@ pub enum EvalSummary {
     False {
         /// The parameters that was used when the property was evaluted to `prop::Status::False`.
         counterexample: EvalParams,
-        /// The prints that were collected when the property was evaluted to `prop::Status::False`.
-        prints: Prints,
+        /// The messages that were logged when the property was evaluted to `prop::Status::False`.
+        messages: Messages,
     },
 }
 
@@ -36,14 +36,14 @@ impl EvalSummary {
             (f@False { .. }, True) => f,
             (f@False { .. }, Passed) => f,
             (
-                False { counterexample: left_counterexample, prints: left_prints },
-                False { counterexample: right_counterexample, prints: right_prints }
+                False { counterexample: left_counterexample, messages: left_messages },
+                False { counterexample: right_counterexample, messages: right_messages }
             ) => {
                 // We prefer the counterexample that is probably smaller
                 if left_counterexample.limit < right_counterexample.limit {
-                    False { counterexample: left_counterexample, prints: left_prints }
+                    False { counterexample: left_counterexample, messages: left_messages }
                 } else {
-                    False { counterexample: right_counterexample, prints: right_prints }
+                    False { counterexample: right_counterexample, messages: right_messages }
                 }
             }
         }
