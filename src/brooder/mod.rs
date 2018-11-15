@@ -9,8 +9,8 @@ pub use self::eval_summary::EvalSummary;
 mod eval_series;
 pub use self::eval_series::EvalSeries;
 
-mod params;
-pub use self::params::Params;
+mod config;
+pub use self::config::Config;
 
 mod thread_err;
 pub use self::thread_err::ThreadErr;

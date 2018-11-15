@@ -6,27 +6,27 @@ use crate::rng::Rng;
 use crate::prop::Prop;
 use crate::brooder::{
     EvalParams, EvalSummary, EvalSeries,
-    Params, ThreadErr, Status, Report,
+    Config, ThreadErr, Status, Report,
     LimitSeries, Portions,
 };
 
 /// Checks the property by evaluting it several times.
-pub fn brood_prop<P, F>(params: Params, prop_fn: F) -> Report
+pub fn brood_prop<P, F>(config: Config, prop_fn: F) -> Report
 where
     P: Prop + 'static,
     F: Fn() -> P + Send + Clone + 'static,
 {
-    let seed = params.seed.unwrap_or_else(|| {
+    let seed = config.seed.unwrap_or_else(|| {
         rand::thread_rng().gen()
     });
 
     let mut rng = Rng::init(seed);
 
-    let status = if params.worker_count == 0 {
+    let status = if config.worker_count == 0 {
         let limit_series = LimitSeries::new(
-            params.start_limit,
-            params.end_limit,
-            params.min_passed,
+            config.start_limit,
+            config.end_limit,
+            config.min_passed,
         );
 
         let eval_series = brood_series(rng, limit_series, prop_fn.clone());
@@ -34,27 +34,27 @@ where
         Status::Checked(eval_series)
     } else {
         let min_passed_portions = Portions::new(
-            params.min_passed,
-            params.worker_count,
+            config.min_passed,
+            config.worker_count,
         );
 
         let funs = min_passed_portions.into_iter().map(|min_passed| {
             let worker_rng =  rng.fork();
             let limit_series = LimitSeries::new(
-                params.start_limit,
-                params.end_limit,
+                config.start_limit,
+                config.end_limit,
                 min_passed,
             );
             let prop_fn = prop_fn.clone();
             move || brood_series(worker_rng, limit_series, prop_fn)
         }).collect();
 
-        let joined_result = workers::run(funs, params.timeout);
+        let joined_result = workers::run(funs, config.timeout);
 
         status_from_joined_result(joined_result)
     };
 
-    let mut report = Report { seed, params, status };
+    let mut report = Report { seed, config, status };
 
     collect_log_messages_if_falsified(&mut report, prop_fn);
 
@@ -161,7 +161,7 @@ mod tests {
     use crate::brooder::{
         EvalParams,
         EvalSummary, EvalSeries,
-        Params, Status, Report,
+        Config, Status, Report,
         brood_prop
     };
 
@@ -196,10 +196,10 @@ mod tests {
     fn no_passed_if_prop_evaluates_to_true_or_false() {
         test_with_different_worker_count(|worker_count| {
             for &truth in &[Eval::True, Eval::False] {
-                let params = Params::default()
+                let config = Config::default()
                     .worker_count(worker_count);
 
-                let report = brood_prop(params, move || truth);
+                let report = brood_prop(config, move || truth);
                 let eval_series = expect_status_checked(report);
 
                 assert_eq!(0, eval_series.passed_tests)
@@ -211,11 +211,11 @@ mod tests {
     fn full_min_passed_if_prop_evaluates_to_passed() {
         test_with_different_worker_count(|worker_count| {
             for &min_passed in &[0, 1, 2, 100] {
-                let params = Params::default()
+                let config = Config::default()
                     .worker_count(worker_count)
                     .min_passed(min_passed);
 
-                let report = brood_prop(params, || Eval::Passed);
+                let report = brood_prop(config, || Eval::Passed);
                 let eval_series = expect_status_checked(report);
 
                 assert_eq!(min_passed, eval_series.passed_tests)
@@ -227,10 +227,10 @@ mod tests {
     #[test]
     fn contains_log_messages_if_prop_evaluates_to_false() {
         test_with_different_worker_count(|worker_count| {
-            let params = Params::default()
+            let config = Config::default()
                 .worker_count(worker_count);
 
-            let report = brood_prop(params, || Eval::False);
+            let report = brood_prop(config, || Eval::False);
             let eval_series = expect_status_checked(report);
             let (_, messages) = expect_eval_summary_false(eval_series);
 
@@ -240,11 +240,11 @@ mod tests {
 
     #[test]
     fn does_not_timeout_if_no_workers() {
-        let params = Params::default()
+        let config = Config::default()
             .worker_count(0)
             .timeout(Some(Duration::from_millis(10)));
 
-        let report = brood_prop(params, || {
+        let report = brood_prop(config, || {
             thread::sleep(Duration::from_millis(100));
             Eval::True
         });
@@ -254,11 +254,11 @@ mod tests {
 
     #[test]
     fn does_timeout_if_at_least_one_worker() {
-        let params = Params::default()
+        let config = Config::default()
             .worker_count(1)
             .timeout(Some(Duration::from_millis(1)));
 
-        let report = brood_prop(params, || {
+        let report = brood_prop(config, || {
             thread::sleep(Duration::from_millis(1000));
             Eval::True
         });

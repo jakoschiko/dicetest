@@ -1,5 +1,5 @@
 use crate::logger::Messages;
-use crate::brooder::{EvalParams, EvalSummary, Params, Status, ThreadErr};
+use crate::brooder::{EvalParams, EvalSummary, Config, Status, ThreadErr};
 
 /// The result of the brooder.
 #[derive(Debug, Clone)]
@@ -7,10 +7,11 @@ use crate::brooder::{EvalParams, EvalSummary, Params, Status, ThreadErr};
 pub struct Report {
     /// The inital seed used for random number generation.
     ///
-    /// The seed is taken from `Params::seed` or else generated randomly.
+    /// If defined, the seed was taken from `Config::seed`. Otherwise the seed was generated
+    /// randomly.
     pub seed: u64,
-    /// The orginal parameters passed to the brooder.
-    pub params: Params,
+    /// The configuration that the brooder used to generate this report.
+    pub config: Config,
     /// The merged result of all property evaluations.
     pub status: Status,
 }
@@ -45,7 +46,7 @@ fn headline_and_sections(report: &Report) -> (String, Vec<String>) {
                     );
 
                     let sections = vec!(
-                        section_parameters(report.seed, &report.params),
+                        section_config(report.seed, &report.config),
                     );
 
                     (headline, sections)
@@ -57,7 +58,7 @@ fn headline_and_sections(report: &Report) -> (String, Vec<String>) {
                     );
 
                     let sections = vec!(
-                        section_parameters(report.seed, &report.params),
+                        section_config(report.seed, &report.config),
                     );
 
                     (headline, sections)
@@ -69,7 +70,7 @@ fn headline_and_sections(report: &Report) -> (String, Vec<String>) {
                     );
 
                     let sections = vec!(
-                        section_parameters(report.seed, &report.params),
+                        section_config(report.seed, &report.config),
                         section_counterexample(counterexample, messages),
                     );
 
@@ -82,7 +83,7 @@ fn headline_and_sections(report: &Report) -> (String, Vec<String>) {
                 "Property could not be checked because a thread had panicked".to_string();
 
             let sections = vec!(
-                section_parameters(report.seed, &report.params),
+                section_config(report.seed, &report.config),
                 section_panic(thread_err),
             );
 
@@ -91,11 +92,11 @@ fn headline_and_sections(report: &Report) -> (String, Vec<String>) {
         Status::Timeout => {
             let headline = format!(
                 "Property could not be checked because a timeout occured after {:?}",
-                &report.params.timeout,
+                &report.config.timeout,
             );
 
             let sections = vec!(
-                section_parameters(report.seed, &report.params),
+                section_config(report.seed, &report.config),
             );
 
             (headline, sections)
@@ -107,19 +108,19 @@ fn section(title: &str, body: &str) -> String {
     format!("-- {} --\n{}", title, body)
 }
 
-fn section_parameters(seed: u64, params: &Params) -> String {
-    let parameters_text = format!(
+fn section_config(seed: u64, config: &Config) -> String {
+    let config_text = format!(
         "Seed: {}\n\
         Start limit: {}; End limit: {}\n\
         Min passed: {}; Worker count: {}; Timeout: {:?}",
         seed,
-        params.start_limit,
-        params.end_limit,
-        params.min_passed,
-        params.worker_count,
-        params.timeout,
+        config.start_limit,
+        config.end_limit,
+        config.min_passed,
+        config.worker_count,
+        config.timeout,
     );
-    section("Parameters", &parameters_text)
+    section("Config", &config_text)
 }
 
 fn section_counterexample(counterexample: &EvalParams, messages: &Messages) -> String {

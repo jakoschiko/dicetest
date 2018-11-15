@@ -1,25 +1,25 @@
 use crate::prop::Prop;
-use crate::brooder::{EvalParams, Params, brood_prop};
+use crate::brooder::{EvalParams, Config, brood_prop};
 use crate::asserts::Panic;
 
-/// Checks the property using default parameters.
+/// Checks the property using default configuration.
 pub fn assert_prop<P, F>(prop_fn: F)
 where
     P: Prop + 'static,
     F: Fn() -> P + Send + Clone + 'static,
 {
-    let params = Params::default();
+    let config = Config::default();
 
-    assert_prop_brooding(Panic::default(), params, prop_fn)
+    assert_prop_brooding(Panic::default(), config, prop_fn)
 }
 
-/// Checks the property by evaluating it serveral times using the given parameters.
-pub fn assert_prop_brooding<P, F>(panic: Panic, params: Params, prop_fn: F)
+/// Checks the property by evaluating it serveral times using the given configuration.
+pub fn assert_prop_brooding<P, F>(panic: Panic, config: Config, prop_fn: F)
 where
     P: Prop + 'static,
     F: Fn() -> P + Send + Clone + 'static,
 {
-    let report = brood_prop(params, prop_fn);
+    let report = brood_prop(config, prop_fn);
 
     let should_panic = panic.should_panic_with_status(&report.status);
 

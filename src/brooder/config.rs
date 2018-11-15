@@ -2,9 +2,9 @@ use std::time::Duration;
 
 use crate::gen::Limit;
 
-/// The parameters for the brooder.
+/// The configuration for the brooder.
 #[derive(Debug, Clone)]
-pub struct Params {
+pub struct Config {
     /// The initial seed for the random value generation. If `None` the brooder uses a random seed.
     pub seed: Option<u64>,
     // The upper size limit of generated dynamic data structures used for the first property
@@ -36,41 +36,41 @@ pub struct Params {
     pub timeout: Option<Duration>,
 }
 
-impl Params {
+impl Config {
     /// Sets the field `seed`.
     pub fn seed(self, seed: Option<u64>) -> Self {
-        Params { seed, ..self }
+        Config { seed, ..self }
     }
 
     /// Sets the field `start_limit`.
     pub fn start_limit(self, start_limit: u64) -> Self {
-        Params { start_limit, ..self }
+        Config { start_limit, ..self }
     }
 
     /// Sets the field `end_limit`.
     pub fn end_limit(self, end_limit: u64) -> Self {
-        Params { end_limit, ..self }
+        Config { end_limit, ..self }
     }
 
     /// Sets the field `min_passed`.
     pub fn min_passed(self, min_passed: u64) -> Self {
-        Params { min_passed, ..self }
+        Config { min_passed, ..self }
     }
 
     /// Sets the field `worker_count`.
     pub fn worker_count(self, worker_count: u64) -> Self {
-        Params { worker_count, ..self }
+        Config { worker_count, ..self }
     }
 
     /// Sets the field `timeout`.
     pub fn timeout(self, timeout: Option<Duration>) -> Self {
-        Params { timeout, ..self }
+        Config { timeout, ..self }
     }
 }
 
-impl Default for Params {
+impl Default for Config {
     fn default() -> Self {
-        Params {
+        Config {
             seed: None,
             start_limit: 0,
             end_limit: Limit::default().0,
