@@ -33,7 +33,7 @@ mod tests {
 
     #[test]
     fn shuffled_vec_contains_same_elems() {
-        assert_prop(|| {
+        assert_prop!(
             props::forall_1(
                 gens::vec(gens::u8(..), ..).name("orig_vec"),
                 |orig_vec| {
@@ -47,6 +47,6 @@ mod tests {
                     )
                 }
             ).dyn()
-        })
+        )
     }
 }

@@ -24,24 +24,24 @@ mod tests {
 
     #[test]
     fn bytes_to_u64_is_left_inverse() {
-        assert_prop(|| {
+        assert_prop!(
             props::left_inverse(
                 gens::array_8(gens::u8(..)),
                 conversion::bytes_to_u64,
                 conversion::u64_to_bytes,
             )
-        })
+        )
     }
 
     #[test]
     fn u64_to_bytes_is_left_inverse() {
-        assert_prop(|| {
+        assert_prop!(
             props::left_inverse(
                 gens::u64(..),
                 conversion::u64_to_bytes,
                 conversion::bytes_to_u64,
             )
-        })
+        )
     }
 
 }

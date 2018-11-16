@@ -126,8 +126,7 @@ fn section_config(seed: u64, config: &Config) -> String {
 fn section_counterexample(counterexample: &EvalParams, messages: &Messages) -> String {
     let eval_code = counterexample.eval_code();
     let eval_code_help = format!(
-        "You can rerun the counterexample by using its evaluation code:\n\
-        debug_prop_eval_with_code(\"{}\", ...)",
+        "You can rerun the counterexample by using its evaluation code:\n{}",
         eval_code,
     );
     let pretty_prints = if messages.0.is_empty() {

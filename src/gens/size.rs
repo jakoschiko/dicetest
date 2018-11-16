@@ -123,70 +123,70 @@ mod tests {
 
     #[test]
     fn size_is_equal_to_target() {
-        assert_prop(|| {
+        assert_prop!(
             range_contains_size_prop(
                 gens::usize(..),
                 |target| target,
                 |target, size| size == target,
             ).dyn()
-        })
+        )
     }
 
     #[test]
     fn size_is_in_range() {
-        assert_prop(|| {
+        assert_prop!(
             range_contains_size_prop(
                 gens::array_2(gens::usize(..usize::max_value() - 1))
                     .map(|[a, b]| (a.min(b), a.max(b) + 1)),
                 |(lower, upper)| lower..upper,
                 |(lower, upper), size| lower <= size && size < upper,
             ).dyn()
-        })
+        )
     }
 
     #[test]
     fn size_is_in_range_from() {
-        assert_prop(|| {
+        assert_prop!(
             range_contains_size_prop(
                 gens::usize(..),
                 |lower| lower..,
                 |lower, size| lower <= size,
             ).dyn()
-        })
+        )
     }
 
     #[test]
     fn size_is_in_range_inclusive() {
-        assert_prop(|| {
+        assert_prop!(
             range_contains_size_prop(
                 gens::array_2(gens::usize(..))
                     .map(|[a, b]| (a.min(b), a.max(b))),
                 |(lower, upper)| lower..=upper,
                 |(lower, upper), size| lower <= size && size <= upper,
             ).dyn()
-        })
+        )
     }
 
     #[test]
     fn size_is_in_range_to() {
-        assert_prop(|| {
+        assert_prop!(
             range_contains_size_prop(
                 gens::usize(1..),
                 |upper| ..upper,
                 |upper, size| size < upper,
             ).dyn()
-        })
+        )
     }
 
     #[test]
     fn size_is_in_range_to_inclusive() {
-        assert_prop(|| {
+        assert_prop!(
             range_contains_size_prop(
                 gens::usize(..),
                 |upper| ..=upper,
                 |upper, size| size <= upper,
             ).dyn()
-        })
+        )
     }
 
 }

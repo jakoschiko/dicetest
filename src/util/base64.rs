@@ -151,7 +151,7 @@ mod tests {
 
     #[test]
     fn encode_produces_non_empty_string_if_bytes_is_non_empty() {
-        assert_prop(|| {
+        assert_prop!(
             props::forall_1(
                 gens::vec(gens::u8(..), 1..).name("bytes"),
                 |bytes| {
@@ -160,12 +160,12 @@ mod tests {
                     props::assert(!base64.is_empty(), "base64 should be non-empty")
                 }
             ).dyn()
-        })
+        )
     }
 
     #[test]
     fn decode_is_left_inverse() {
-        assert_prop(|| {
+        assert_prop!(
             props::forall_1(
                 gens::vec(gens::u8(..), ..).name("bytes"),
                 |bytes| {
@@ -177,12 +177,12 @@ mod tests {
                     })
                 }
             ).dyn()
-        })
+        )
     }
 
     #[test]
     fn decode_fails_if_string_contains_invalid_char() {
-        assert_prop(|| {
+        assert_prop!({
             let valid_len_gen = gens::size(4..).map(|len| len - (len % 4));
 
             props::forall_1(
@@ -206,7 +206,7 @@ mod tests {
 
     #[test]
     fn decode_fails_if_string_has_invalid_length() {
-        assert_prop(|| {
+        assert_prop!({
             let base_64_char_gen = gens::one_of_array(&base64::BYTE_TO_CHAR);
             let invalid_len_gen = gens::size(1..)
                 .map(|len| if len % 4 == 0 { len + 1 } else { len } );

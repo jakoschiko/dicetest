@@ -316,7 +316,7 @@ mod tests {
         ) => (
             #[test]
             fn $int_is_in_range() {
-                assert_prop(|| {
+                assert_prop!(
                     range_contains_int_prop(
                         gens::array_2(gens::$int(..$int::max_value() - 1))
                             .map(|[a, b]| (a.min(b), a.max(b) + 1)),
@@ -324,24 +324,24 @@ mod tests {
                         gens::$int,
                         |(lower, upper), int| lower <= int && int < upper,
                     ).dyn()
-                })
+                )
             }
 
             #[test]
             fn $int_is_in_range_from() {
-                assert_prop(|| {
+                assert_prop!(
                     range_contains_int_prop(
                         gens::$int(..),
                         |lower| lower..,
                         gens::$int,
                         |lower, size| lower <= size,
                     ).dyn()
-                })
+                )
             }
 
             #[test]
             fn $int_is_in_range_inclusive() {
-                assert_prop(|| {
+                assert_prop!(
                     range_contains_int_prop(
                         gens::array_2(gens::$int(..))
                             .map(|[a, b]| (a.min(b), a.max(b))),
@@ -349,31 +349,31 @@ mod tests {
                         gens::$int,
                         |(lower, upper), size| lower <= size && size <= upper,
                     ).dyn()
-                })
+                )
             }
 
             #[test]
             fn $int_is_in_range_to() {
-                assert_prop(|| {
+                assert_prop!(
                     range_contains_int_prop(
                         gens::$int(1..),
                         |upper| ..upper,
                         gens::$int,
                         |upper, size| size < upper,
                     ).dyn()
-                })
+                )
             }
 
             #[test]
             fn $int_is_in_range_to_inclusive() {
-                assert_prop(|| {
+                assert_prop!(
                     range_contains_int_prop(
                         gens::$int(..),
                         |upper| ..=upper,
                         gens::$int,
                         |upper, size| size <= upper,
                     ).dyn()
-                })
+                )
             }
         )
     }

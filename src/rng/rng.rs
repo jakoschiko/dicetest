@@ -136,7 +136,7 @@ mod tests {
 
     #[test]
     fn init_must_not_have_cycle_length_zero() {
-        assert_prop(|| {
+        assert_prop!(
             props::forall_1(
                 gens::u64(..).name("seed"),
                 |seed| {
@@ -149,34 +149,34 @@ mod tests {
                     props::assert(!cycle_length_is_zero, "Cycle length is not zero")
                 }
             )
-        })
+        )
     }
 
     #[test]
     fn init_with_bytes_is_left_inverse() {
-        assert_prop(|| {
+        assert_prop!(
             props::left_inverse(
                 gens::rng_fork(),
                 |rng| rng.seed_as_bytes(),
                 Rng::init_with_bytes,
             )
-        })
+        )
     }
 
     #[test]
     fn seed_as_bytes_is_left_inverse() {
-        assert_prop(|| {
+        assert_prop!(
             props::left_inverse(
                 gens::array_32(gens::u8(..)),
                 Rng::init_with_bytes,
                 |rng| rng.seed_as_bytes(),
             )
-        })
+        )
     }
 
     #[test]
     fn reseed_changes_rng() {
-        assert_prop(|| {
+        assert_prop!(
             props::forall_2(
                 gens::rng_fork().name("rng"),
                 gens::u64(..).name("seed"),
@@ -188,6 +188,6 @@ mod tests {
                     props::assert(!rngs_are_equal, "Reseeded Rng is not equal")
                 }
             )
-        })
+        )
     }
 }

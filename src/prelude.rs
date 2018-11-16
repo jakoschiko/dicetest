@@ -23,11 +23,11 @@ pub mod props {
 pub mod tests {
     //! Contains the most useful imports for using properties in unit tests.
 
-    pub use crate::{log, log_var};
+    pub use crate::{log, log_var, assert_prop};
     pub use crate::logger;
     pub use crate::gen::{GenOnce, Gen};
     pub use crate::gens;
     pub use crate::prop::{Prop, GenArgExt};
     pub use crate::props;
-    pub use crate::asserts::assert_prop;
+    pub use crate::brooder::Config;
 }
