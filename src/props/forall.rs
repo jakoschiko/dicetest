@@ -51,7 +51,7 @@ macro_rules! fn_forall_n {
                 eval_predicate(
                     rng,
                     lim,
-                    predicate($($value_i,)*),
+                    move || predicate($($value_i,)*),
                     logger_enabled,
                     arg_infos,
                 )
@@ -148,13 +148,17 @@ where
     format!("{}.) {}{}", index, name_string, value_string)
 }
 
-fn eval_predicate(
+fn eval_predicate<P, F>(
     rng: &mut Rng,
     lim: Limit,
-    predicate: impl Prop,
+    predicate: F,
     logger_enabled: bool,
     arg_infos: Vec<String>,
-) -> Eval {
+) -> Eval
+where
+    P: Prop,
+    F: FnOnce() -> P,
+{
     if logger_enabled {
         log!("forall args:");
         logger::indent();
@@ -166,7 +170,8 @@ fn eval_predicate(
         logger::indent();
     }
 
-    let eval = predicate.eval(rng, lim);
+    let prop = predicate();
+    let eval = prop.eval(rng, lim);
 
     if logger_enabled {
         logger::unindent();
