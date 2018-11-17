@@ -27,7 +27,7 @@ pub struct Config {
     /// The number of worker threads used for evaluating the property.
     ///
     /// If set to `0`, no worker thread is used and the property is evaluated in the caller thread.
-    /// In this case, the brooder cannot handle timeouts or panicked threads.
+    /// In this case, the brooder cannot handle timeouts.
     pub worker_count: u64,
     /// A timeout for the worker threads. If the timeout is reached, the brooder aborts the
     /// evaluation even though there are workers still running. `None` means unlimited time.
@@ -75,7 +75,7 @@ impl Default for Config {
             start_limit: 0,
             end_limit: Limit::default().0,
             min_passed: 1000,
-            worker_count: 1,
+            worker_count: 0,
             timeout: None,
         }
     }

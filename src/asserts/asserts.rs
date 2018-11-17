@@ -1,3 +1,5 @@
+use std::panic::UnwindSafe;
+
 use crate::rng::Rng;
 use crate::gen::Limit;
 use crate::prop::Prop;
@@ -94,7 +96,7 @@ use crate::asserts::{Panic, Mode, env};
 pub fn assert_prop<P, F>(config: Config, prop_fn: F)
 where
     P: Prop + 'static,
-    F: Fn() -> P + Send + Clone + 'static,
+    F: Fn() -> P + Clone + Send + UnwindSafe + 'static,
 {
     let debug_params = env::read_debug(None).unwrap();
 
@@ -145,7 +147,7 @@ where
 pub fn assert_prop_with_brooder<P, F>(panic: Panic, config: Config, prop_fn: F)
 where
     P: Prop + 'static,
-    F: Fn() -> P + Send + Clone + 'static,
+    F: Fn() -> P + Clone + Send + UnwindSafe + 'static,
 {
     let report = brood_prop(config, prop_fn);
 

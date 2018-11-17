@@ -1,3 +1,4 @@
+use std::panic::{UnwindSafe, catch_unwind};
 use rand::{self, Rng as LibRng};
 
 use crate::util::workers;
@@ -14,7 +15,7 @@ use crate::brooder::{
 pub fn brood_prop<P, F>(config: Config, prop_fn: F) -> Report
 where
     P: Prop + 'static,
-    F: Fn() -> P + Send + Clone + 'static,
+    F: Fn() -> P + Clone + Send + UnwindSafe + 'static,
 {
     let seed = config.seed.unwrap_or_else(|| {
         rand::thread_rng().gen()
@@ -29,9 +30,18 @@ where
             config.min_passed,
         );
 
-        let eval_series = brood_series(rng, limit_series, prop_fn.clone());
+        let prop_fn = prop_fn.clone();
+        let result = catch_unwind(move || {
+            brood_series(rng, limit_series, prop_fn)
+        });
 
-        Status::Checked(eval_series)
+        match result {
+            Ok(eval_series) => Status::Checked(eval_series),
+            Err(err) => {
+                let thread_err = ThreadErr::new(err);
+                Status::Panic(thread_err)
+            }
+        }
     } else {
         let min_passed_portions = Portions::new(
             config.min_passed,
