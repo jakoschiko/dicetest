@@ -1,6 +1,7 @@
 use std::sync::mpsc::{channel, Sender};
 use std::thread;
 use std::time::Duration;
+use std::panic::{UnwindSafe, catch_unwind};
 
 use util::workers::{SingleResult, JoinedResult};
 
@@ -15,7 +16,7 @@ pub fn run<R, F>(
 ) -> JoinedResult<R>
 where
     R: Send + 'static,
-    F: FnOnce() -> R + Send + 'static,
+    F: FnOnce() -> R + Send + UnwindSafe + 'static,
 {
     if funs.is_empty() {
         let joined_result = JoinedResult {
@@ -72,13 +73,10 @@ where
 fn spawn_thread<R, F>(index: u64, fun: F, tx: Sender<Msg<R>>)
 where
     R: Send + 'static,
-    F: FnOnce() -> R + Send + 'static,
+    F: FnOnce() -> R + Send + UnwindSafe + 'static,
 {
     thread::spawn(move || {
-        let thread = thread::spawn(move || {
-            fun()
-        });
-        let result = thread.join();
+        let result = catch_unwind(fun);
         let single_result = SingleResult { index, result };
         tx.send(Msg::Finished(single_result))
             .expect("Timeout thread failed to send its timeout message");

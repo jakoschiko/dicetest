@@ -13,9 +13,7 @@ where
         .into_iter()
         .enumerate()
         .map(move |(index, fun)| {
-            let thread = thread::spawn(move || {
-                fun()
-            });
+            let thread = thread::spawn(move || fun());
             (index as u64, thread)
         })
         .collect();

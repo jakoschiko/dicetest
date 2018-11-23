@@ -1,4 +1,5 @@
 use std::time::Duration;
+use std::panic::UnwindSafe;
 
 use util::workers::{JoinedResult, without_timeout, with_timeout};
 
@@ -10,7 +11,7 @@ pub fn run<R, F>(
 ) -> JoinedResult<R>
 where
     R: Send + 'static,
-    F: FnOnce() -> R + Send + 'static,
+    F: FnOnce() -> R + Send + UnwindSafe + 'static,
 {
     match timeout {
         None => without_timeout::run(funs),
