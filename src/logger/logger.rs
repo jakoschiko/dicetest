@@ -1,52 +1,7 @@
-//! Provides a logger that stores messages in thread-local memory.
-//!
-//! Can be completely disabled with the feature `disabled_logger`.
-
 #[cfg(not(feature = "disabled_logger"))]
 use std::cell::RefCell;
 
-/// A collection of logged messages.
-#[derive(Debug, Clone)]
-pub struct Messages(pub Vec<Message>);
-
-impl Messages {
-    pub fn new() -> Self {
-        Messages(Vec::new())
-    }
-
-    /// Returns a `String` that contains all messages in a pretty format.
-    pub fn pretty(&self) -> String {
-        let mut acc = String::new();
-        let mut iter = self.0.iter();
-
-        let add_message = |acc: &mut String, message: &Message| {
-            for _ in 0..message.indention {
-                acc.push('\t');
-            }
-            acc.push_str(&message.text);
-        };
-
-        if let Some(message) = iter.next() {
-            add_message(&mut acc, message);
-        }
-
-        for message in iter {
-            acc.push('\n');
-            add_message(&mut acc, message);
-        }
-
-        acc
-    }
-}
-
-/// A logged message.
-#[derive(Debug, Clone)]
-pub struct Message {
-    /// The indention at the beginning of the text.
-    pub indention: usize,
-    /// The text passed to the logger.
-    pub text: String,
-}
+use crate::logger::{Message, Messages};
 
 #[cfg(not(feature = "disabled_logger"))]
 struct Collection {
@@ -104,7 +59,8 @@ pub fn enabled() -> bool {
     {
         LOCAL.with(move |cell| enabled_with_cell(&cell))
     }
-    #[cfg(feature = "disabled_logger")] {
+    #[cfg(feature = "disabled_logger")]
+    {
         false
     }
 }
@@ -132,7 +88,8 @@ pub fn log(message_text: impl FnOnce() -> String) {
             }
         });
     }
-    #[cfg(feature = "disabled_logger")] {
+    #[cfg(feature = "disabled_logger")]
+    {
         drop(message_text)
     }
 }
