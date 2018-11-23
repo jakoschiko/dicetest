@@ -152,8 +152,8 @@ where
         let mut rng = counterexample.rng.clone();
         let lim = counterexample.limit;
 
-        let prop = prop_fn();
         let (_, counterexample_messages) = logger::collect_messages(|| {
+            let prop = prop_fn();
             prop.eval(&mut rng, lim)
         });
 
