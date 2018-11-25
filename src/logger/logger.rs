@@ -1,7 +1,11 @@
 #[cfg(not(feature = "disabled_logger"))]
 use std::cell::RefCell;
 
-use crate::logger::{Message, Messages};
+#[cfg(not(feature = "disabled_logger"))]
+use crate::util::Finalizer;
+#[cfg(not(feature = "disabled_logger"))]
+use crate::logger::Message;
+use crate::logger::Messages;
 
 #[cfg(not(feature = "disabled_logger"))]
 struct Collection {
@@ -9,13 +13,13 @@ struct Collection {
     messages: Messages,
 }
 
+#[cfg(not(feature = "disabled_logger"))]
 thread_local! {
-    #[cfg(not(feature = "disabled_logger"))]
     static LOCAL: RefCell<Vec<Collection>> = RefCell::new(Vec::new());
 }
 
-/// Returns all messages that were logged during the evaluation of `code`.
-pub fn collect_messages<R>(code: impl FnOnce() -> R) -> (R, Messages) {
+/// Returns all messages that were logged during the evaluation of `f`.
+pub fn collect_messages<R>(f: impl FnOnce() -> R) -> (R, Messages) {
     #[cfg(not(feature = "disabled_logger"))]
     {
         LOCAL.with(move |cell| {
@@ -28,20 +32,31 @@ pub fn collect_messages<R>(code: impl FnOnce() -> R) -> (R, Messages) {
                 collections.push(collection);
             }
 
-            let result = code();
+            // Removes the collection even in case of panic
+            let finalizer = Finalizer::new(|| {
+                LOCAL.with(move |cell| {
+                    let mut collections = cell.borrow_mut();
+                    collections.pop();
+                })
+            });
+
+            // This function may panic
+            let result = f();
 
             let messages = {
                 let mut collections = cell.borrow_mut();
-                let collection = collections.pop().unwrap();
-                collection.messages
+                let collection = collections.last_mut().unwrap();
+                collection.messages.take()
             };
+
+            drop(finalizer);
 
             (result, messages)
         })
     }
     #[cfg(feature = "disabled_logger")]
     {
-        (code(), Messages::new())
+        (f(), Messages::new())
     }
 }
 
@@ -52,7 +67,7 @@ fn enabled_with_cell(cell: &RefCell<Vec<Collection>>) -> bool {
 
 /// Returns if the logger is currently enabled.
 ///
-/// The logger is enabled iff the code is executed inside of `collect_messages` and
+/// The logger is enabled iff this function is executed inside of `collect_messages` and
 /// the feature `disabled_logger` is not present.
 pub fn enabled() -> bool {
     #[cfg(not(feature = "disabled_logger"))]
@@ -127,5 +142,47 @@ pub fn unindent() {
                     });
             }
         })
+    }
+}
+
+#[cfg(not(feature = "disabled_logger"))]
+#[cfg(test)]
+mod tests {
+    use std::panic::catch_unwind;
+
+    use crate::logger;
+
+    #[test]
+    fn logger_is_only_enabled_during_collection() {
+        assert!(!logger::enabled());
+        logger::collect_messages(|| {
+            assert!(logger::enabled());
+        });
+        assert!(!logger::enabled());
+    }
+
+    #[test]
+    fn logger_is_not_enabled_after_panic() {
+        let _ = catch_unwind(|| {
+            logger::collect_messages(|| {
+                panic!();
+            })
+        });
+        assert!(!logger::enabled());
+    }
+}
+
+#[cfg(feature = "disabled_logger")]
+#[cfg(test)]
+mod tests {
+    use crate::logger;
+
+    #[test]
+    fn logger_is_never_enabled() {
+        assert!(!logger::enabled());
+        logger::collect_messages(|| {
+            assert!(!logger::enabled());
+        });
+        assert!(!logger::enabled());
     }
 }

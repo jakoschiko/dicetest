@@ -12,8 +12,14 @@ pub struct Message {
 pub struct Messages(pub Vec<Message>);
 
 impl Messages {
+    /// Returns an instance without any messages.
     pub fn new() -> Self {
         Messages(Vec::new())
+    }
+
+    // Takes ownership of the messages.
+    pub fn take(&mut self) -> Messages {
+        Messages(self.0.drain(..).collect())
     }
 
     /// Returns a `String` that contains all messages in a pretty format.

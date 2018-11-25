@@ -233,7 +233,6 @@ mod tests {
         })
     }
 
-    #[cfg(not(feature = "disabled_logger"))]
     #[test]
     fn contains_log_messages_if_prop_evaluates_to_false() {
         test_with_different_worker_count(|worker_count| {
@@ -243,8 +242,9 @@ mod tests {
             let report = brood_prop(config, || Eval::False);
             let eval_series = expect_status_checked(report);
             let (_, messages) = expect_eval_summary_false(eval_series);
+            let disabled_logger = cfg!(feature = "disabled_logger");
 
-            assert!(!messages.0.is_empty())
+            assert!(disabled_logger || !messages.0.is_empty())
         })
     }
 
