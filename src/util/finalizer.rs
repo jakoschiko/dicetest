@@ -23,7 +23,6 @@ where
     F: FnOnce(),
 {
     fn drop(&mut self) {
-        let f = self.f.take().unwrap();
-        f()
+        self.f.take().map(|f| f());
     }
 }
