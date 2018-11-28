@@ -14,6 +14,7 @@ const KEY_END_LIMIT: &'static str = "RUSTCHECK_END_LIMIT";
 const KEY_MIN_PASSED: &'static str = "RUSTCHECK_MIN_PASSED";
 const KEY_WORKER_COUNT: &'static str = "RUSTCHECK_WORKER_COUNT";
 const KEY_TIMEOUT: &'static str = "RUSTCHECK_TIMEOUT";
+const KEY_COUNTER_ENABLED: &'static str = "RUSTCHECK_COUNTER_ENABLED";
 const KEY_LIMIT: &'static str = "RUSTCHECK_LIMIT";
 const KEY_CODE: &'static str = "RUSTCHECK_CODE";
 const KEY_DEBUG: &'static str = "RUSTCHECK_DEBUG";
@@ -78,6 +79,10 @@ pub fn read_worker_count(default: u64) -> Result<u64, String> {
 pub fn read_timeout(default: Option<Duration>) -> Result<Option<Duration>, String> {
     read_option_value(KEY_TIMEOUT, "a f64", default,
         |s| f32::from_str(s).map(|secs| Duration::from_nanos((secs * 1e-9) as u64)))
+}
+
+pub fn read_counter_enabled(default: bool) -> Result<bool, String> {
+    read_value(KEY_COUNTER_ENABLED, "a bool", default, bool::from_str)
 }
 
 pub fn read_panic(default: Panic) -> Result<Panic, String> {

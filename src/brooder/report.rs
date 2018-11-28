@@ -1,4 +1,5 @@
 use crate::logger::Messages;
+use crate::counter::Stats;
 use crate::brooder::{EvalParams, EvalSummary, Config, Status, ThreadErr};
 
 /// The result of the brooder.
@@ -41,38 +42,44 @@ fn headline_and_sections(report: &Report) -> (String, Vec<String>) {
             match eval_series.summary {
                 EvalSummary::True => {
                     let headline = format!(
-                        "Property was proven after {} passed tests",
+                        "Property was proven after {} passed tests.",
                         eval_series.passed_tests,
                     );
 
                     let sections = vec!(
                         section_config(report.seed, &report.config),
+                        section_stats(&eval_series.stats),
                     );
 
                     (headline, sections)
                 }
                 EvalSummary::Passed => {
                     let headline = format!(
-                        "Property has passed {} tests",
+                        "Property has passed {} tests.",
                         eval_series.passed_tests,
                     );
 
                     let sections = vec!(
                         section_config(report.seed, &report.config),
+                        section_stats(&eval_series.stats),
                     );
 
                     (headline, sections)
                 }
                 EvalSummary::False { ref counterexample, ref messages } => {
                     let headline = format!(
-                        "Property was falsified after {} passed tests",
+                        "Property was falsified after {} passed tests.",
                         eval_series.passed_tests,
                     );
 
-                    let sections = vec!(
+                    let mut sections = vec!(
                         section_config(report.seed, &report.config),
-                        section_counterexample(counterexample, messages),
+                        section_stats(&eval_series.stats),
                     );
+
+                    if report.config.counter_enabled {
+                        sections.push(section_counterexample(counterexample, messages));
+                    }
 
                     (headline, sections)
                 }
@@ -80,7 +87,7 @@ fn headline_and_sections(report: &Report) -> (String, Vec<String>) {
         }
         Status::Panic(ref thread_err) => {
             let headline =
-                "Property could not be checked because a thread had panicked".to_string();
+                "Property could not be checked because a thread had panicked.".to_string();
 
             let sections = vec!(
                 section_config(report.seed, &report.config),
@@ -91,7 +98,7 @@ fn headline_and_sections(report: &Report) -> (String, Vec<String>) {
         }
         Status::Timeout => {
             let headline = format!(
-                "Property could not be checked because a timeout occured after {:?}",
+                "Property could not be checked because a timeout occured after {:?}.",
                 &report.config.timeout,
             );
 
@@ -123,25 +130,34 @@ fn section_config(seed: u64, config: &Config) -> String {
     section("Config", &config_text)
 }
 
+fn section_stats(stats: &Stats) -> String {
+   let pretty_stats = if stats.0.is_empty() {
+        "No stats were collected.".to_string()
+    } else {
+        format!("These stats were collected during all evaluations:\n{}", stats.pretty())
+    };
+    section("Stats", &pretty_stats)
+}
+
 fn section_counterexample(counterexample: &EvalParams, messages: &Messages) -> String {
     let eval_code = counterexample.eval_code();
     let eval_code_help = format!(
         "You can rerun the counterexample by using its evaluation code:\n{}",
         eval_code,
     );
-    let pretty_prints = if messages.0.is_empty() {
-        "The counterexample has no log messages".to_string()
+    let pretty_messages = if messages.0.is_empty() {
+        "The counterexample has no log messages.".to_string()
     } else {
         format!("Log messages of the counterexample:\n{}", messages.pretty())
     };
-    let debug_help = format!("{}\n\n{}", eval_code_help, pretty_prints);
+    let debug_help = format!("{}\n\n{}", eval_code_help, pretty_messages);
     section("Counterexample", &debug_help)
 }
 
 fn section_panic(thread_err: &ThreadErr) -> String {
     let pretty_error = match thread_err.error_string() {
         Some(error) => format!("Error: {:?}", error),
-        None => "The error has an unknown type and cannot be displayed".to_string(),
+        None => "The error has an unknown type and cannot be displayed.".to_string(),
     };
     section("Panic", &pretty_error)
 }

@@ -34,6 +34,8 @@ pub struct Config {
     ///
     /// The timeout will be ignored if `worker_count` is set to `0`.
     pub timeout: Option<Duration>,
+    /// Defines whether the counter will be enabled during the property evaluations.
+    pub counter_enabled: bool,
 }
 
 impl Config {
@@ -66,6 +68,11 @@ impl Config {
     pub fn timeout(self, timeout: Option<Duration>) -> Self {
         Config { timeout, ..self }
     }
+
+    /// Sets the field `counter_enabled`.
+    pub fn counter_enabled(self, counter_enabled: bool) -> Self {
+        Config { counter_enabled, ..self }
+    }
 }
 
 impl Default for Config {
@@ -77,6 +84,7 @@ impl Default for Config {
             min_passed: 1000,
             worker_count: 0,
             timeout: None,
+            counter_enabled: false,
         }
     }
 }

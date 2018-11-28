@@ -65,7 +65,8 @@ use crate::asserts::{Panic, Mode, env};
 ///     There is no timeout.
 ///     - `<f64>`
 ///     The timeout in seconds.
-///
+/// - `RUSTCHECK_COUNTER_ENABLED=<bool>`
+/// Enables the counter for collecting stats. See `Config::counter_enabled`.
 ///
 /// # Sample mode configuration
 ///
@@ -115,6 +116,7 @@ where
                 let min_passed = env::read_min_passed(config.min_passed).unwrap();
                 let worker_count = env::read_worker_count(config.worker_count).unwrap();
                 let timeout  = env::read_timeout(config.timeout).unwrap();
+                let counter_enabled  = env::read_counter_enabled(config.counter_enabled).unwrap();
 
                 let overriden_config = Config {
                     seed,
@@ -123,6 +125,7 @@ where
                     min_passed,
                     worker_count,
                     timeout,
+                    counter_enabled,
                 };
 
                 assert_prop_with_brooder(panic, overriden_config, prop_fn);

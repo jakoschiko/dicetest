@@ -1,6 +1,6 @@
-#[cfg(not(feature = "disabled_logger"))]
+#[cfg(any(not(feature = "disabled_logger"), not(feature = "disabled_counter")))]
 mod finalizer;
-#[cfg(not(feature = "disabled_logger"))]
+#[cfg(any(not(feature = "disabled_logger"), not(feature = "disabled_counter")))]
 pub use self::finalizer::Finalizer;
 
 pub mod conversion;

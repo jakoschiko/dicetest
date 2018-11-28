@@ -3,6 +3,7 @@ use rand::{self, Rng as LibRng};
 
 use crate::util::workers;
 use crate::logger::{self, Messages};
+use crate::counter::{self, Stats};
 use crate::rng::Rng;
 use crate::prop::Prop;
 use crate::brooder::{
@@ -17,6 +18,8 @@ where
     P: Prop + 'static,
     F: Fn() -> P + Clone + Send + UnwindSafe + 'static,
 {
+    let counter_enabled = config.counter_enabled;
+
     let seed = config.seed.unwrap_or_else(|| {
         rand::thread_rng().gen()
     });
@@ -32,7 +35,7 @@ where
 
         let prop_fn = prop_fn.clone();
         let result = catch_unwind(move || {
-            brood_series(rng, limit_series, prop_fn)
+            brood_series(rng, limit_series, counter_enabled, prop_fn)
         });
 
         match result {
@@ -56,7 +59,7 @@ where
                 min_passed,
             );
             let prop_fn = prop_fn.clone();
-            move || brood_series(worker_rng, limit_series, prop_fn)
+            move || brood_series(worker_rng, limit_series, counter_enabled, prop_fn)
         }).collect();
 
         let joined_result = workers::run(funs, config.timeout);
@@ -74,6 +77,7 @@ where
 fn brood_series<P, F>(
     mut rng: Rng,
     limit_series: LimitSeries,
+    counter_enabled: bool,
     prop_fn: F
 ) -> EvalSeries
 where
@@ -91,10 +95,16 @@ where
         // We clone the `Rng` to be able to reevalute the property
         let eval_rng = rng.clone();
 
-        let prop = prop_fn();
-        let eval = prop.eval(&mut rng, limit);
+        let (eval, stats) = {
+            let mut eval = || {
+                let prop = prop_fn();
+                prop.eval(&mut rng, limit)
+            };
+            if !counter_enabled { (eval(), Stats::new()) }
+            else { counter::collect_stats(eval) }
+        };
 
-        let series_next = EvalSeries::from_eval(eval, messages, move || {
+        let series_next = EvalSeries::from_eval(eval, messages, stats, move || {
             EvalParams {
                 rng: eval_rng,
                 limit,
@@ -167,6 +177,7 @@ mod tests {
     use std::thread;
 
     use crate::logger::Messages;
+    use crate::counter;
     use crate::prop::Eval;
     use crate::brooder::{
         EvalParams,
@@ -234,7 +245,7 @@ mod tests {
     }
 
     #[test]
-    fn contains_log_messages_if_prop_evaluates_to_false() {
+    fn report_contains_counterproof_log_messages() {
         test_with_different_worker_count(|worker_count| {
             let config = Config::default()
                 .worker_count(worker_count);
@@ -246,6 +257,35 @@ mod tests {
 
             assert!(disabled_logger || !messages.0.is_empty())
         })
+    }
+
+    fn check_stats_in_report(counter_enabled: bool) {
+        test_with_different_worker_count(|worker_count| {
+            let config = Config::default()
+                .worker_count(worker_count)
+                .counter_enabled(counter_enabled);
+
+            let report = brood_prop(config, || {
+                counter::count("foo", || "bar".to_string());
+                Eval::False
+            });
+
+            let eval_series = expect_status_checked(report);
+            let stats = eval_series.stats;
+            let disabled_counter = cfg!(feature = "disabled_counter");
+
+            assert!(disabled_counter || counter_enabled != stats.0.is_empty())
+        })
+    }
+
+    #[test]
+    fn report_contains_stats_if_enabled() {
+        check_stats_in_report(true)
+    }
+
+    #[test]
+    fn report_does_not_contain_stats_if_disabled() {
+        check_stats_in_report(false)
     }
 
     #[test]

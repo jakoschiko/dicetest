@@ -1,4 +1,5 @@
 use crate::logger::Messages;
+use crate::counter::Stats;
 use crate::prop::Eval;
 use crate::brooder::{EvalParams, EvalSummary};
 
@@ -10,6 +11,8 @@ pub struct EvalSeries {
     pub summary: EvalSummary,
     /// The number of property evaluations with the result `Eval::Passed`.
     pub passed_tests: u64,
+    /// The stats that were collected during all property evaluations.
+    pub stats: Stats,
 }
 
 impl EvalSeries {
@@ -19,6 +22,7 @@ impl EvalSeries {
             // `EvalSummary::Passed` is the most neutral element of `EvalSummary::merge`
             summary: EvalSummary::Passed,
             passed_tests: 0,
+            stats: Stats::new(),
         }
     }
 
@@ -26,6 +30,7 @@ impl EvalSeries {
     pub fn from_eval(
         eval: Eval,
         messages: Messages,
+        stats: Stats,
         eval_params: impl FnOnce() -> EvalParams,
     ) -> Self {
         match eval {
@@ -33,12 +38,14 @@ impl EvalSeries {
                 EvalSeries {
                     summary: EvalSummary::True,
                     passed_tests: 0,
+                    stats,
                 }
             }
             Eval::Passed => {
                 EvalSeries {
                     summary: EvalSummary::Passed,
                     passed_tests: 1,
+                    stats,
                 }
             }
             Eval::False => {
@@ -48,6 +55,7 @@ impl EvalSeries {
                         messages,
                     },
                     passed_tests: 0,
+                    stats,
                 }
             }
         }
@@ -57,6 +65,7 @@ impl EvalSeries {
     pub fn merge(self, other: Self) -> Self {
         let summary = self.summary.merge(other.summary);
         let passed_tests = self.passed_tests + other.passed_tests;
-        EvalSeries { summary, passed_tests }
+        let stats = self.stats.merge(other.stats);
+        EvalSeries { summary, passed_tests, stats }
     }
 }
