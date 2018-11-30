@@ -1,7 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::rng::Rng;
-use crate::gen::{Limit, GenOnce, Gen};
+use crate::gen::{Dice, GenOnce, Gen};
 
 /// Adapter for `GenOnce::flatten_once` and `Gen::flatten`.
 pub struct FlattenGen<T, GT, GGT> {
@@ -25,11 +24,11 @@ where
     GT: GenOnce<T>,
     GGT: GenOnce<GT>,
 {
-    fn gen_once(self, rng: &mut Rng, lim: Limit) -> T {
+    fn gen_once(self, dice: &mut Dice) -> T {
         let ggt = self.ggt;
 
-        let gt = ggt.gen_once(rng, lim);
-        let t = gt.gen_once(rng, lim);
+        let gt = ggt.gen_once(dice);
+        let t = gt.gen_once(dice);
 
         t
     }
@@ -40,11 +39,11 @@ where
     GT: GenOnce<T>,
     GGT: Gen<GT>,
 {
-    fn gen(&self, rng: &mut Rng, lim: Limit) -> T {
+    fn gen(&self, dice: &mut Dice) -> T {
         let ggt = &self.ggt;
 
-        let gt = ggt.gen(rng, lim);
-        let t = gt.gen_once(rng, lim);
+        let gt = ggt.gen(dice);
+        let t = gt.gen_once(dice);
 
         t
     }

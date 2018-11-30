@@ -4,7 +4,7 @@ pub mod gens {
     //! Contains the most useful import for defining generators.
 
     pub use crate::rng::Rng;
-    pub use crate::gen::{Limit, GenOnce, Gen};
+    pub use crate::gen::{Limit, Dice, GenOnce, Gen};
     pub use crate::gens;
 }
 
@@ -13,8 +13,7 @@ pub mod props {
 
     pub use crate::{log, log_var};
     pub use crate::logger;
-    pub use crate::rng::Rng;
-    pub use crate::gen::{Limit, GenOnce, Gen};
+    pub use crate::gen::{Dice, GenOnce, Gen};
     pub use crate::gens;
     pub use crate::prop::{Eval, Prop, GenArgExt};
     pub use crate::props;

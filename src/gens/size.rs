@@ -96,7 +96,7 @@ mod tests {
     use std::fmt::Debug;
 
     use crate::prelude::tests::*;
-    use crate::gen::Limit;
+    use crate::gen::{Limit, Dice};
 
     fn range_contains_size_prop<B, R>(
         range_data_gen: impl GenOnce<B>,
@@ -112,10 +112,14 @@ mod tests {
             gens::u64(..).name("limit"),
             range_data_gen.name("range_data"),
             |mut rng, limit, range_data| {
+                let mut dice = Dice::new(&mut rng, Limit(limit));
+
                 let range = create_range(range_data);
                 log_var!(range);
-                let size = gens::size(range).gen(&mut rng, Limit(limit));
+
+                let size = gens::size(range).gen(&mut dice);
                 log_var!(size);
+
                 is_in_range(range_data, size)
             }
         )

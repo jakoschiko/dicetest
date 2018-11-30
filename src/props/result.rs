@@ -9,11 +9,11 @@ where
     P: Prop,
     F: FnOnce(T) -> P,
 {
-    props::from_fn(move |rng, lim| {
+    props::from_fn(move |dice| {
         match result {
             Ok(value) => {
                 let prop = f(value);
-                prop.eval(rng, lim)
+                prop.eval(dice)
             },
             Err(err) => {
                 log!("Expects Result::Ok, but got Result::Err with: {:?}", err);
@@ -31,7 +31,7 @@ where
     P: Prop,
     F: FnOnce(E) -> P,
 {
-    props::from_fn(move |rng, lim| {
+    props::from_fn(move |dice| {
         match result {
             Ok(value) => {
                 log!("Expects Result::Err, but got Result::Ok with: {:?}", value);
@@ -39,7 +39,7 @@ where
             },
             Err(err) => {
                 let prop = f(err);
-                prop.eval(rng, lim)
+                prop.eval(dice)
             },
         }
     })

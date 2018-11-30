@@ -28,10 +28,10 @@ macro_rules! fn_one_of_n {
         pub fn $one_of_gen_n_once<T>(
             $($gen_i: impl GenOnce<T>,)*
         ) -> impl GenOnce<T> {
-            gens::from_fn_once(move |rng, lim| {
-                let choice = rng.next() % $n;
+            gens::from_fn_once(move |dice| {
+                let choice = dice.rng.next() % $n;
                     match choice {
-                    $($i => $gen_i.gen_once(rng, lim),)*
+                    $($i => $gen_i.gen_once(dice),)*
                     _ => panic!(),
                 }
             })
@@ -44,10 +44,10 @@ macro_rules! fn_one_of_n {
         where
             T: Clone,
         {
-            gens::from_fn(move |rng, lim| {
-                let choice = rng.next() % $n;
+            gens::from_fn(move |dice| {
+                let choice = dice.rng.next() % $n;
                 match choice {
-                    $($i => $gen_i.gen(rng, lim),)*
+                    $($i => $gen_i.gen(dice),)*
                     _ => panic!(),
                 }
             })
@@ -125,8 +125,8 @@ fn_one_of_n! { 9, one_of_9_once, one_of_9, one_of_gen_9_once, one_of_gen_9:
 
 /// Generates a element randomly chosen from the given `Vec`.
 pub fn one_of_vec_once<T>(mut values: Vec<T>) -> impl GenOnce<T> {
-    gens::from_fn_once(move |rng, _| {
-        let choice = (rng.next() as usize) % values.len();
+    gens::from_fn_once(move |dice| {
+        let choice = (dice.rng.next() as usize) % values.len();
         values.swap_remove(choice)
     })
 }
@@ -136,8 +136,8 @@ pub fn one_of_vec<T>(values: Vec<T>) -> impl Gen<T>
 where
     T: Clone,
 {
-    gens::from_fn(move |rng, _| {
-        let choice = (rng.next() as usize) % values.len();
+    gens::from_fn(move |dice| {
+        let choice = (dice.rng.next() as usize) % values.len();
         values[choice].clone()
     })
 }
@@ -147,8 +147,8 @@ pub fn one_of_array<'a, T>(values: &'a [T]) -> impl Gen<T> + 'a
 where
     T: Clone,
 {
-    gens::from_fn(move |rng, _| {
-        let choice = (rng.next() as usize) % values.len();
+    gens::from_fn(move |dice| {
+        let choice = (dice.rng.next() as usize) % values.len();
         values[choice].clone()
     })
 }

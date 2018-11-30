@@ -30,9 +30,9 @@ macro_rules! fn_forall_n {
             P: Prop,
             F: FnOnce($($Ti,)*) -> P,
         {
-            props::from_fn(move |rng, lim| {
+            props::from_fn(move |dice| {
                 $(let $arg_i = $arg_i.into_arg();)*
-                $(let $value_i = $arg_i.gen.gen_once(rng, lim);)*
+                $(let $value_i = $arg_i.gen.gen_once(dice);)*
 
                 let mut arg_infos = Vec::new();
 
@@ -49,8 +49,7 @@ macro_rules! fn_forall_n {
                 }
 
                 eval_predicate(
-                    rng,
-                    lim,
+                    dice,
                     move || predicate($($value_i,)*),
                     logger_enabled,
                     arg_infos,
@@ -149,8 +148,7 @@ where
 }
 
 fn eval_predicate<P, F>(
-    rng: &mut Rng,
-    lim: Limit,
+    dice: &mut Dice,
     predicate: F,
     logger_enabled: bool,
     arg_infos: Vec<String>,
@@ -171,7 +169,7 @@ where
     }
 
     let prop = predicate();
-    let eval = prop.eval(rng, lim);
+    let eval = prop.eval(dice);
 
     if logger_enabled {
         logger::unindent();

@@ -5,6 +5,7 @@ use crate::util::workers;
 use crate::logger::{self, Messages};
 use crate::counter::{self, Stats};
 use crate::rng::Rng;
+use crate::gen::Dice;
 use crate::prop::Prop;
 use crate::brooder::{
     EvalParams, EvalSummary, EvalSeries,
@@ -95,10 +96,12 @@ where
         // We clone the `Rng` to be able to reevalute the property
         let eval_rng = rng.clone();
 
+        let mut dice = Dice::new(&mut rng, limit);
+
         let (eval, stats) = {
             let mut eval = || {
                 let prop = prop_fn();
-                prop.eval(&mut rng, limit)
+                prop.eval(&mut dice)
             };
             if !counter_enabled { (eval(), Stats::new()) }
             else { counter::collect_stats(eval) }
@@ -160,11 +163,12 @@ where
         }
     ) = report.status {
         let mut rng = counterexample.rng.clone();
-        let lim = counterexample.limit;
+        let limit = counterexample.limit;
+        let mut dice = Dice::new(&mut rng, limit);
 
         let (_, counterexample_messages) = logger::collect_messages(|| {
             let prop = prop_fn();
-            prop.eval(&mut rng, lim)
+            prop.eval(&mut dice)
         });
 
         *messages = counterexample_messages;

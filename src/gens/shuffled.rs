@@ -4,11 +4,11 @@ use crate::prelude::gens::*;
 ///
 /// [Fisher-Yates shuffle]: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
 pub fn shuffled_vec<T>(mut vec: Vec<T>) -> impl GenOnce<Vec<T>> {
-    gens::from_fn_once(move |rng, lim| {
+    gens::from_fn_once(move |dice| {
         let n = vec.len();
         if n > 0 {
             for i in 0..(n - 1) {
-                let j = gens::usize_uniform(i..n).gen(rng, lim);
+                let j = gens::usize_uniform(i..n).gen(dice);
                 vec.swap(i, j);
             }
         }

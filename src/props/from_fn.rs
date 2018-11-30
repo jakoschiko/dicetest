@@ -6,7 +6,7 @@ use crate::prelude::props::*;
 /// type inference.
 pub fn from_fn<F>(f: F) -> impl Prop
 where
-    F: FnOnce(&mut Rng, Limit) -> Eval,
+    F: FnOnce(&mut Dice) -> Eval,
 {
     f
 }

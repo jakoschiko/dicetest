@@ -2,7 +2,7 @@ pub use crate::prelude::props::*;
 
 /// This property holds if `assertion` is true.
 pub fn assert(assertion: bool, message: &'static str) -> impl Prop {
-    props::from_fn(move |_, _| {
+    props::from_fn(move |_| {
         if assertion {
             log!("Assertion holds");
             Eval::True

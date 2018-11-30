@@ -1,5 +1,4 @@
-use crate::rng::Rng;
-use crate::gen::Limit;
+use crate::gen::Dice;
 use crate::prop::{Eval, Prop};
 
 /// Adapter for `Prop::dyn`.
@@ -21,13 +20,13 @@ impl<'a> DynProp<'a> {
 }
 
 impl<'a> Prop for DynProp<'a> {
-    fn eval(mut self, rng: &mut Rng, lim: Limit) -> Eval {
-        self.dyn.eval(rng, lim)
+    fn eval(mut self, dice: &mut Dice) -> Eval {
+        self.dyn.eval(dice)
     }
 }
 
 trait Wrapper {
-    fn eval(&mut self, &mut Rng, Limit) -> Eval;
+    fn eval(&mut self, dice: &mut Dice) -> Eval;
 }
 
 struct PropWrapper<P>
@@ -41,8 +40,8 @@ impl<P> Wrapper for PropWrapper<P>
 where
     P: Prop,
 {
-    fn eval(&mut self, rng: &mut Rng, lim: Limit) -> Eval {
+    fn eval(&mut self, dice: &mut Dice) -> Eval {
         let prop = self.prop.take().unwrap();
-        prop.eval(rng, lim)
+        prop.eval(dice)
     }
 }

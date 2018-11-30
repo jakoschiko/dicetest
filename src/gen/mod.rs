@@ -4,6 +4,9 @@
 mod limit;
 pub use self::limit::Limit;
 
+mod dice;
+pub use self::dice::Dice;
+
 mod gen_once;
 pub use self::gen_once::GenOnce;
 

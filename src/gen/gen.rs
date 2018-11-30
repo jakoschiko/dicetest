@@ -1,19 +1,19 @@
 use crate::rng::Rng;
-use crate::gen::{Limit, GenOnce};
+use crate::gen::{Limit, Dice, GenOnce};
 use crate::gen::adapters::{MapGen, FlattenGen, FlatMapGen, DynGen, DynRcGen, DynArcGen};
 
 /// Trait for generating random values of type `T`.
 ///
-/// `Gen` trait represents a subset of `GenOnce`. It mirrors all methods of `GenOnce` without
+/// The `Gen` trait represents a subset of `GenOnce`. It mirrors all methods of `GenOnce` without
 /// the suffix `_once`. These methods must behave in the same way. For example an implementation
 /// of `Gen` must produce the same value with its methods `gen` and `gen_once` if they are called
-/// with the same `Rng` and `Limit`.
+/// with the same `Dice`.
 pub trait Gen<T>: GenOnce<T> {
     /// Generates a random value using.
     ///
-    /// The `Rng` is the only source of the randomness. Besides that, the generation is
+    /// The `Dice` is the only source of the randomness. Besides that, the generation is
     /// derterministic.
-    fn gen(&self, &mut Rng, Limit) -> T;
+    fn gen(&self, dice: &mut Dice) -> T;
 
     /// Creates a new `Gen` by mapping the generated values of `self`.
     ///
@@ -80,16 +80,17 @@ pub trait Gen<T>: GenOnce<T> {
     fn sample(&self) -> T {
         let mut rng = Rng::random();
         let lim = Limit::default();
+        let mut dice = Dice::new(&mut rng, lim);
 
-        self.gen(&mut rng, lim)
+        self.gen(&mut dice)
     }
 }
 
 impl<T, F> Gen<T> for F
 where
-    F: Fn(&mut Rng, Limit) -> T,
+    F: Fn(&mut Dice) -> T,
 {
-    fn gen(&self, rng: &mut Rng, lim: Limit) -> T {
-        self(rng, lim)
+    fn gen(&self, dice: &mut Dice) -> T {
+        self(dice)
     }
 }

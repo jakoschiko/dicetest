@@ -6,7 +6,7 @@ use crate::prelude::gens::*;
 /// type inference.
 pub fn from_fn_once<T, F>(f: F) -> impl GenOnce<T>
 where
-    F: FnOnce(&mut Rng, Limit) -> T,
+    F: FnOnce(&mut Dice) -> T,
 {
     f
 }
@@ -17,7 +17,7 @@ where
 /// type inference.
 pub fn from_fn<T, F>(f: F) -> impl Gen<T>
 where
-    F: Fn(&mut Rng, Limit) -> T,
+    F: Fn(&mut Dice) -> T,
 {
     f
 }

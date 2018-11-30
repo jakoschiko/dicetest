@@ -22,10 +22,10 @@ where
     B: CollectionBuilder<T, C>,
 {
     let elem_count_gen = gens::size(elem_count_range);
-    gens::from_fn(move |rng, lim| {
-        let builder = builder_gen.gen(rng, lim);
-        let elem_count = elem_count_gen.gen(rng, lim);
-        let elems = (0..elem_count).map(|_| elem_gen.gen(rng, lim));
+    gens::from_fn(move |dice| {
+        let builder = builder_gen.gen(dice);
+        let elem_count = elem_count_gen.gen(dice);
+        let elems = (0..elem_count).map(|_| elem_gen.gen(dice));
         builder.build(elems)
     })
 }

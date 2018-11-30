@@ -1,7 +1,6 @@
 use std::rc::Rc;
 
-use crate::rng::Rng;
-use crate::gen::{Limit, GenOnce, Gen};
+use crate::gen::{Dice, GenOnce, Gen};
 
 /// Adapter for `GenOnce::dyn_rc`.
 #[derive(Clone)]
@@ -20,13 +19,13 @@ impl<'a, T> DynRcGen<'a, T> {
 }
 
 impl<'a, T> Gen<T> for DynRcGen<'a, T> {
-    fn gen(&self, rng: &mut Rng, lim: Limit) -> T {
-        self.dyn.gen(rng, lim)
+    fn gen(&self, dice: &mut Dice) -> T {
+        self.dyn.gen(dice)
     }
 }
 
 impl<'a, T> GenOnce<T> for DynRcGen<'a, T> {
-    fn gen_once(self, rng: &mut Rng, lim: Limit) -> T {
-        self.gen(rng, lim)
+    fn gen_once(self, dice: &mut Dice) -> T {
+        self.gen(dice)
     }
 }

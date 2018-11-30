@@ -132,12 +132,12 @@ macro_rules! fn_int {
             // `IntRange::bounds` guarantees that `lower <= upper`
             let (lower, upper) = range.bounds();
 
-            gens::from_fn(move |rng, _| {
+            gens::from_fn(move |dice| {
                 if lower == upper {
                     // The range contains exactly one value
                     lower
                 } else {
-                    let random_int = $rng_int(rng);
+                    let random_int = $rng_int(dice.rng);
 
                     if lower == $int::min_value() && upper == $int::max_value() {
                         // Full integer range, hence the randomly chosen integer is already inside
@@ -180,14 +180,14 @@ macro_rules! fn_int {
                 let extremum_gen = move || gens::one_of_2(lower, upper);
                 let special_fallback_gen = extremum_gen();
                 let special_gen = {
-                    gens::from_fn(move |rng, lim| {
+                    gens::from_fn(move |dice| {
                         let special_values = $special;
-                        let special_value = gens::one_of_array(&special_values).gen(rng, lim);
+                        let special_value = gens::one_of_array(&special_values).gen(dice);
                         if lower <= special_value && special_value <= upper {
                             special_value
                         } else {
                             // `special_value` is outside the range, fallback to other generator
-                            special_fallback_gen.gen(rng, lim)
+                            special_fallback_gen.gen(dice)
                         }
                     })
                 };

@@ -1,7 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::rng::Rng;
-use crate::gen::{Limit, GenOnce};
+use crate::gen::{Dice, GenOnce};
 
 /// Adapter for `GenOnce::dyn_once`.
 pub struct DynGenOnce<'a, T>
@@ -32,13 +31,13 @@ impl<'a, T> GenOnce<T> for DynGenOnce<'a, T>
 where
     T: 'a,
 {
-    fn gen_once(mut self, rng: &mut Rng, lim: Limit) -> T {
-        self.dyn.gen_once(rng, lim)
+    fn gen_once(mut self, dice: &mut Dice) -> T {
+        self.dyn.gen_once(dice)
     }
 }
 
 trait Wrapper<T> {
-    fn gen_once(&mut self, &mut Rng, Limit) -> T;
+    fn gen_once(&mut self, dice: &mut Dice) -> T;
 }
 
 struct GenOnceWrapper<T, G>
@@ -53,8 +52,8 @@ impl<T, G> Wrapper<T> for GenOnceWrapper<T, G>
 where
     G: GenOnce<T>,
 {
-    fn gen_once(&mut self, rng: &mut Rng, lim: Limit) -> T {
-        let gen = self.gen.take().expect("GenOnceWrapper::gen should not be called twice");
-        gen.gen_once(rng, lim)
+    fn gen_once(&mut self, dice: &mut Dice) -> T {
+        let gen = self.gen.take().unwrap();
+        gen.gen_once(dice)
     }
 }

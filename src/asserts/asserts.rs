@@ -1,7 +1,7 @@
 use std::panic::UnwindSafe;
 
 use crate::rng::Rng;
-use crate::gen::Limit;
+use crate::gen::{Limit, Dice};
 use crate::prop::Prop;
 use crate::brooder::{EvalParams, Config, brood_prop};
 use crate::asserts::{Panic, Mode, env};
@@ -169,8 +169,9 @@ where
     let eval_code = params.eval_code();
 
     let mut rng = params.rng;
-    let lim = params.limit;
-    let sample = prop.sample_with_params(&mut rng, lim);
+    let limit = params.limit;
+    let mut dice = Dice::new(&mut rng, limit);
+    let sample = prop.sample_with_dice(&mut dice);
 
     let should_panic = panic.should_panic_with_eval(sample.eval);
 
@@ -183,7 +184,7 @@ where
             {}\n\
             ",
             eval_code,
-            lim.0,
+            limit.0,
             sample.pretty(),
         );
     }

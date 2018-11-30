@@ -6,13 +6,13 @@ where
     P: Prop,
     F: FnOnce() -> P,
 {
-    props::from_fn(move |rng, lim| {
+    props::from_fn(move |dice| {
         if premise {
             log!("Premise is false");
             Eval::True
         } else {
             let prop = conclusion();
-            prop.eval(rng, lim)
+            prop.eval(dice)
         }
     })
 }

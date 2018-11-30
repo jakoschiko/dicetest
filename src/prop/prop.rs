@@ -1,7 +1,7 @@
 use crate::log;
 use crate::logger;
 use crate::rng::Rng;
-use crate::gen::Limit;
+use crate::gen::{Limit, Dice};
 use crate::prop::{Eval, Sample};
 use crate::prop::adapters::DynProp;
 
@@ -13,10 +13,9 @@ use crate::prop::adapters::DynProp;
 pub trait Prop {
     /// Consumes the property and evalutes it.
     ///
-    /// The parameters `Rng` and `Limit` corresponds to parameters needed for using `GenOnce` and
-    /// `Gen`. The `Rng` is the only source of the randomness. Besides that, the evaluation is
+    /// The `Dice` is the only source of the randomness. Besides that, the evaluation is
     /// derterministic.
-    fn eval(self, &mut Rng, Limit) -> Eval;
+    fn eval(self, dice: &mut Dice) -> Eval;
 
     /// Puts `self` behind a pointer.
     fn dyn<'a>(self) -> DynProp<'a>
@@ -32,20 +31,20 @@ pub trait Prop {
     where
         Self: Sized,
     {
-        let mut rng = Rng::random();
+        let rng = &mut Rng::random();
         let lim = Limit::default();
 
-        self.sample_with_params(&mut rng, lim)
+        self.sample_with_dice(&mut Dice::new(rng, lim))
     }
 
-    /// Calls `Prop::eval` with the given seed, the given limit and enabled `logger`. Useful for
+    /// Calls `Prop::eval` with the given dice and enabled `logger`. Useful for
     /// debugging the property.
-    fn sample_with_params(self, rng: &mut Rng, lim: Limit) -> Sample
+    fn sample_with_dice(self, dice: &mut Dice) -> Sample
     where
         Self: Sized,
     {
         let (eval, messages) = logger::collect_messages(|| {
-            self.eval(rng, lim)
+            self.eval(dice)
         });
 
         Sample { eval, messages }
@@ -54,15 +53,15 @@ pub trait Prop {
 
 impl<F> Prop for F
 where
-    F: FnOnce(&mut Rng, Limit) -> Eval,
+    F: FnOnce(&mut Dice) -> Eval,
 {
-    fn eval(self, rng: &mut Rng, lim: Limit) -> Eval {
-        self(rng, lim)
+    fn eval(self, dice: &mut Dice) -> Eval {
+        self(dice)
     }
 }
 
 impl Prop for Eval {
-    fn eval(self, _rng: &mut Rng, _lim: Limit) -> Eval {
+    fn eval(self, _dice: &mut Dice) -> Eval {
         log!("{}", {
             match self {
                 Eval::True => "True",
@@ -76,7 +75,7 @@ impl Prop for Eval {
 }
 
 impl Prop for bool {
-    fn eval(self, _rng: &mut Rng, _lim: Limit) -> Eval {
+    fn eval(self, _dice: &mut Dice) -> Eval {
         log!("{}", {
             if self {
                 "True from bool"

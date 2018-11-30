@@ -60,7 +60,7 @@ fn compare<A>(
 where
     A: Debug
 {
-    props::from_fn(move |_, _| {
+    props::from_fn(move |_| {
         let expectation = compare_op(&left, &right);
 
         if logger::enabled() {
