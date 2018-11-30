@@ -2,7 +2,7 @@ use crate::util::{conversion, base64};
 use crate::gen::{Prng, Limit};
 
 /// The parameters for evaluating a property.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EvalParams {
     pub prng: Prng,
     pub limit: Limit,
@@ -55,8 +55,23 @@ impl EvalParams {
 
 #[cfg(test)]
 mod tests {
+    use crate::prelude::tests::*;
+    use crate::gen::Limit;
+    use crate::brooder::EvalParams;
+
     #[test]
-    fn eval_code_is_right_inverse_of_from_eval_code() {
-        // TODO: test
+    fn eval_code_is_right_inverse_for_from_eval_code() {
+        assert_prop!({
+            let eval_params_gen = gens::zip_2(
+                gens::prng_fork(),
+                gens::u64(..).map(Limit),
+            ).map(|(prng, limit)| EvalParams { prng, limit });
+
+            props::right_inverse(
+                eval_params_gen,
+                |eval_code: String| EvalParams::from_eval_code(&eval_code).unwrap(),
+                |eval_params: EvalParams| eval_params.eval_code(),
+            )
+        });
     }
 }
