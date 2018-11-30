@@ -40,37 +40,37 @@ pub struct Config {
 
 impl Config {
     /// Sets the field `seed`.
-    pub fn seed(self, seed: Option<u64>) -> Self {
+    pub fn with_seed(self, seed: Option<u64>) -> Self {
         Config { seed, ..self }
     }
 
     /// Sets the field `start_limit`.
-    pub fn start_limit(self, start_limit: u64) -> Self {
+    pub fn with_start_limit(self, start_limit: u64) -> Self {
         Config { start_limit, ..self }
     }
 
     /// Sets the field `end_limit`.
-    pub fn end_limit(self, end_limit: u64) -> Self {
+    pub fn with_end_limit(self, end_limit: u64) -> Self {
         Config { end_limit, ..self }
     }
 
     /// Sets the field `min_passed`.
-    pub fn min_passed(self, min_passed: u64) -> Self {
+    pub fn with_min_passed(self, min_passed: u64) -> Self {
         Config { min_passed, ..self }
     }
 
     /// Sets the field `worker_count`.
-    pub fn worker_count(self, worker_count: u64) -> Self {
+    pub fn with_worker_count(self, worker_count: u64) -> Self {
         Config { worker_count, ..self }
     }
 
     /// Sets the field `timeout`.
-    pub fn timeout(self, timeout: Option<Duration>) -> Self {
+    pub fn with_timeout(self, timeout: Option<Duration>) -> Self {
         Config { timeout, ..self }
     }
 
     /// Sets the field `counter_enabled`.
-    pub fn counter_enabled(self, counter_enabled: bool) -> Self {
+    pub fn with_counter_enabled(self, counter_enabled: bool) -> Self {
         Config { counter_enabled, ..self }
     }
 }

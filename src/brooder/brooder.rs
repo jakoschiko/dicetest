@@ -222,7 +222,7 @@ mod tests {
         test_with_different_worker_count(|worker_count| {
             for &truth in &[Eval::True, Eval::False] {
                 let config = Config::default()
-                    .worker_count(worker_count);
+                    .with_worker_count(worker_count);
 
                 let report = brood_prop(config, move || truth);
                 let eval_series = expect_status_checked(report);
@@ -237,8 +237,8 @@ mod tests {
         test_with_different_worker_count(|worker_count| {
             for &min_passed in &[0, 1, 2, 100] {
                 let config = Config::default()
-                    .worker_count(worker_count)
-                    .min_passed(min_passed);
+                    .with_worker_count(worker_count)
+                    .with_min_passed(min_passed);
 
                 let report = brood_prop(config, || Eval::Passed);
                 let eval_series = expect_status_checked(report);
@@ -252,7 +252,7 @@ mod tests {
     fn report_contains_counterproof_log_messages() {
         test_with_different_worker_count(|worker_count| {
             let config = Config::default()
-                .worker_count(worker_count);
+                .with_worker_count(worker_count);
 
             let report = brood_prop(config, || Eval::False);
             let eval_series = expect_status_checked(report);
@@ -266,8 +266,8 @@ mod tests {
     fn check_stats_in_report(counter_enabled: bool) {
         test_with_different_worker_count(|worker_count| {
             let config = Config::default()
-                .worker_count(worker_count)
-                .counter_enabled(counter_enabled);
+                .with_worker_count(worker_count)
+                .with_counter_enabled(counter_enabled);
 
             let report = brood_prop(config, || {
                 counter::count("foo", || "bar".to_string());
@@ -295,8 +295,8 @@ mod tests {
     #[test]
     fn does_not_timeout_if_no_workers() {
         let config = Config::default()
-            .worker_count(0)
-            .timeout(Some(Duration::from_millis(10)));
+            .with_worker_count(0)
+            .with_timeout(Some(Duration::from_millis(10)));
 
         let report = brood_prop(config, || {
             thread::sleep(Duration::from_millis(100));
@@ -309,8 +309,8 @@ mod tests {
     #[test]
     fn does_timeout_if_at_least_one_worker() {
         let config = Config::default()
-            .worker_count(1)
-            .timeout(Some(Duration::from_millis(1)));
+            .with_worker_count(1)
+            .with_timeout(Some(Duration::from_millis(1)));
 
         let report = brood_prop(config, || {
             thread::sleep(Duration::from_millis(1000));
