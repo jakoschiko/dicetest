@@ -4,49 +4,49 @@ use std::hash::BuildHasher;
 #[allow(deprecated)]
 use std::hash::SipHasher;
 
-use rand::{self, Rng as LibRng};
+use rand::{self, Rng};
 
 use crate::util::conversion;
 
-/// Deterministic generator for pseudo random numbers.
+/// This pseudo random number generator is the base for more complex random value generators.
 ///
 /// The algorithms are based on [this article] by Bob Jenkins.
 ///
 /// [this article]: http://burtleburtle.net/bob/rand/smallprng.html
 #[derive(Debug, Clone, Eq, PartialEq)]
-pub struct Rng {
+pub struct Prng {
     seed: (u64, u64, u64, u64),
 }
 
-impl Rng {
-    /// Creates an `Rng` using a `u64` as seed.
+impl Prng {
+    /// Creates an `Prng` using a `u64` as seed.
     ///
     /// The result has a satisfying cycle length.
-    pub fn init(seed_u64: u64) -> Rng {
+    pub fn init(seed_u64: u64) -> Prng {
         let seed = (0xf1ea5eed, seed_u64, seed_u64, seed_u64);
-        let mut rng = Rng { seed };
+        let mut prng = Prng { seed };
         for _ in 0..20 {
-            rng.next();
+            prng.next();
         }
-        rng
+        prng
     }
 
-    /// Creates an `Rng` using a random seed.
+    /// Creates an `Prng` using a random seed.
     ///
     /// The result has a satisfying cycle length.
-    pub fn random() -> Rng {
+    pub fn random() -> Prng {
         let seed = rand::thread_rng().gen();
-        Rng::init(seed)
+        Prng::init(seed)
     }
 
-    /// Creates an `Rng` using a byte array as seed.
+    /// Creates an `Prng` using a byte array as seed.
     ///
-    /// This function is a left and right inverse for `Rng::seed_as_bytes`.
+    /// This function is a left and right inverse for `Prng::seed_as_bytes`.
     ///
-    /// A satisfying cycle length is only guaranteed for bytes from `Rng::seed_as_bytes` called
-    /// with an `Rng` that has a satisfying cycle length. Other bytes should not be passed to this
-    /// function. For initializing an `Rng` with an arbitrary seed, use `Rng::init` instead.
-    pub fn init_with_bytes(seed_bytes: [u8; 32]) -> Rng {
+    /// A satisfying cycle length is only guaranteed for bytes from `Prng::seed_as_bytes` called
+    /// with an `Prng` that has a satisfying cycle length. Other bytes should not be passed to this
+    /// function. For initializing an `Prng` with an arbitrary seed, use `Prng::init` instead.
+    pub fn init_with_bytes(seed_bytes: [u8; 32]) -> Prng {
         let arrays: [[u8; 8]; 4] = unsafe { mem::transmute(seed_bytes) };
 
         let a = conversion::bytes_to_u64(arrays[0]);
@@ -55,12 +55,12 @@ impl Rng {
         let d = conversion::bytes_to_u64(arrays[3]);
 
         let seed = (a, b, c, d);
-        Rng { seed }
+        Prng { seed }
     }
 
     /// Returns the seed as a byte array.
     ///
-    /// This function is a left and right inverse for `Rng::init_with_bytes`.
+    /// This function is a left and right inverse for `Prng::init_with_bytes`.
     pub fn seed_as_bytes(&self) -> [u8; 32] {
         let (a, b, c, d) = self.seed;
 
@@ -107,22 +107,22 @@ impl Rng {
         }
     }
 
-    /// Splits off a new `Rng` from self. The seed of the new `Rng` is generated with self.
-    pub fn fork(&mut self) -> Rng {
+    /// Splits off a new `Prng` from self. The seed of the new `Prng` is generated with self.
+    pub fn fork(&mut self) -> Prng {
         let random_number = self.next();
-        let mut reseeded_rng = self.clone();
-        reseeded_rng.reseed(random_number);
-        reseeded_rng
+        let mut reseeded_prng = self.clone();
+        reseeded_prng.reseed(random_number);
+        reseeded_prng
     }
 }
 
-impl BuildHasher for Rng {
+impl BuildHasher for Prng {
     #[allow(deprecated)]
     type Hasher = SipHasher;
 
     fn build_hasher(&self) -> Self::Hasher {
-        let mut rng = self.clone();
-        let (key0, key1) = (rng.next(), rng.next());
+        let mut prng = self.clone();
+        let (key0, key1) = (prng.next(), prng.next());
         #[allow(deprecated)]
         let hasher = SipHasher::new_with_keys(key0, key1);
         hasher
@@ -132,7 +132,7 @@ impl BuildHasher for Rng {
 #[cfg(test)]
 mod tests {
     use crate::prelude::tests::*;
-    use crate::rng::Rng;
+    use crate::gen::Prng;
 
     #[test]
     fn init_must_not_have_cycle_length_zero() {
@@ -140,12 +140,12 @@ mod tests {
             props::forall_1(
                 gens::u64(..).name("seed"),
                 |seed| {
-                    let rng_init = Rng::init(seed);
-                    log!("Rng after init: {:?}", rng_init);
-                    let mut rng_next = rng_init.clone();
-                    let _ = rng_next.next();
-                    log!("Rng after next: {:?}", rng_next);
-                    let cycle_length_is_zero = rng_init == rng_next;
+                    let prng_init = Prng::init(seed);
+                    log!("Prng after init: {:?}", prng_init);
+                    let mut prng_next = prng_init.clone();
+                    let _ = prng_next.next();
+                    log!("Prng after next: {:?}", prng_next);
+                    let cycle_length_is_zero = prng_init == prng_next;
                     props::assert(!cycle_length_is_zero, "Cycle length is not zero")
                 }
             )
@@ -156,9 +156,9 @@ mod tests {
     fn init_with_bytes_is_left_inverse() {
         assert_prop!(
             props::left_inverse(
-                gens::rng_fork(),
-                |rng| rng.seed_as_bytes(),
-                Rng::init_with_bytes,
+                gens::prng_fork(),
+                |prng| prng.seed_as_bytes(),
+                Prng::init_with_bytes,
             )
         )
     }
@@ -168,24 +168,24 @@ mod tests {
         assert_prop!(
             props::left_inverse(
                 gens::array_32(gens::u8(..)),
-                Rng::init_with_bytes,
-                |rng| rng.seed_as_bytes(),
+                Prng::init_with_bytes,
+                |prng| prng.seed_as_bytes(),
             )
         )
     }
 
     #[test]
-    fn reseed_changes_rng() {
+    fn reseed_changes_prng() {
         assert_prop!(
             props::forall_2(
-                gens::rng_fork().name("rng"),
+                gens::prng_fork().name("prng"),
                 gens::u64(..).name("seed"),
-                |rng, seed| {
-                    let mut rng_reseeded = rng.clone();
-                    rng_reseeded.reseed(seed);
-                    log_var!(rng_reseeded);
-                    let rngs_are_equal = rng == rng_reseeded;
-                    props::assert(!rngs_are_equal, "Reseeded Rng is not equal")
+                |prng, seed| {
+                    let mut prng_reseeded = prng.clone();
+                    prng_reseeded.reseed(seed);
+                    log_var!(prng_reseeded);
+                    let prngs_are_equal = prng == prng_reseeded;
+                    props::assert(!prngs_are_equal, "Reseeded Prng is not equal")
                 }
             )
         )

@@ -47,9 +47,9 @@ where
 pub fn hash_set<T>(
     elem_gen: impl Gen<T>,
     tries_range: impl SizeRange,
-) -> impl Gen<HashSet<T, Rng>>
+) -> impl Gen<HashSet<T, Prng>>
 where
     T: Eq + Hash,
 {
-    hash_set_with_hasher(gens::rng_fork(), elem_gen, tries_range)
+    hash_set_with_hasher(gens::prng_fork(), elem_gen, tries_range)
 }

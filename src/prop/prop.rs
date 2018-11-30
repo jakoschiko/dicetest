@@ -1,7 +1,6 @@
 use crate::log;
 use crate::logger;
-use crate::rng::Rng;
-use crate::gen::{Limit, Dice};
+use crate::gen::{Prng, Limit, Dice};
 use crate::prop::{Eval, Sample};
 use crate::prop::adapters::DynProp;
 
@@ -31,10 +30,10 @@ pub trait Prop {
     where
         Self: Sized,
     {
-        let rng = &mut Rng::random();
+        let prng = &mut Prng::random();
         let lim = Limit::default();
 
-        self.sample_with_dice(&mut Dice::new(rng, lim))
+        self.sample_with_dice(&mut Dice::new(prng, lim))
     }
 
     /// Calls `Prop::eval` with the given dice and enabled `logger`. Useful for

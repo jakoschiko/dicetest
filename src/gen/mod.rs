@@ -1,6 +1,9 @@
 //! Provides the random value generator traits `GenOnce` and `Gen` for generating different kind
 //! of data.
 
+mod prng;
+pub use self::prng::Prng;
+
 mod limit;
 pub use self::limit::Limit;
 

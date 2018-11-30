@@ -29,7 +29,7 @@ macro_rules! fn_one_of_n {
             $($gen_i: impl GenOnce<T>,)*
         ) -> impl GenOnce<T> {
             gens::from_fn_once(move |dice| {
-                let choice = dice.rng.next() % $n;
+                let choice = dice.prng.next() % $n;
                     match choice {
                     $($i => $gen_i.gen_once(dice),)*
                     _ => panic!(),
@@ -45,7 +45,7 @@ macro_rules! fn_one_of_n {
             T: Clone,
         {
             gens::from_fn(move |dice| {
-                let choice = dice.rng.next() % $n;
+                let choice = dice.prng.next() % $n;
                 match choice {
                     $($i => $gen_i.gen(dice),)*
                     _ => panic!(),
@@ -126,7 +126,7 @@ fn_one_of_n! { 9, one_of_9_once, one_of_9, one_of_gen_9_once, one_of_gen_9:
 /// Generates a element randomly chosen from the given `Vec`.
 pub fn one_of_vec_once<T>(mut values: Vec<T>) -> impl GenOnce<T> {
     gens::from_fn_once(move |dice| {
-        let choice = (dice.rng.next() as usize) % values.len();
+        let choice = (dice.prng.next() as usize) % values.len();
         values.swap_remove(choice)
     })
 }
@@ -137,7 +137,7 @@ where
     T: Clone,
 {
     gens::from_fn(move |dice| {
-        let choice = (dice.rng.next() as usize) % values.len();
+        let choice = (dice.prng.next() as usize) % values.len();
         values[choice].clone()
     })
 }
@@ -148,7 +148,7 @@ where
     T: Clone,
 {
     gens::from_fn(move |dice| {
-        let choice = (dice.rng.next() as usize) % values.len();
+        let choice = (dice.prng.next() as usize) % values.len();
         values[choice].clone()
     })
 }

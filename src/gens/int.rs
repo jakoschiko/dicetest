@@ -111,7 +111,7 @@ impl_int_range! { usize }
 impl_int_range! { isize }
 
 macro_rules! fn_int {
-    ($int:ident, $int_uniform:ident, $uint:ident, $rng_int:ident, $special:expr) => (
+    ($int:ident, $int_uniform:ident, $uint:ident, $random_int:ident, $special:expr) => (
         /// Generates an integer inside the given range. All integers are uniformly distributed.
         ///
         /// # Panics
@@ -137,7 +137,7 @@ macro_rules! fn_int {
                     // The range contains exactly one value
                     lower
                 } else {
-                    let random_int = $rng_int(dice.rng);
+                    let random_int = $random_int(dice.prng);
 
                     if lower == $int::min_value() && upper == $int::max_value() {
                         // Full integer range, hence the randomly chosen integer is already inside
@@ -200,78 +200,78 @@ macro_rules! fn_int {
     )
 }
 
-fn rng_u8(rng: &mut Rng) -> u8 {
-    rng.next() as u8
+fn random_u8(prng: &mut Prng) -> u8 {
+    prng.next() as u8
 }
 
-fn rng_i8(rng: &mut Rng) -> i8 {
-    rng.next() as i8
+fn random_i8(prng: &mut Prng) -> i8 {
+    prng.next() as i8
 }
 
-fn rng_u16(rng: &mut Rng) -> u16 {
-    rng.next() as u16
+fn random_u16(prng: &mut Prng) -> u16 {
+    prng.next() as u16
 }
 
-fn rng_i16(rng: &mut Rng) -> i16 {
-    rng.next() as i16
+fn random_i16(prng: &mut Prng) -> i16 {
+    prng.next() as i16
 }
 
-fn rng_u32(rng: &mut Rng) -> u32 {
-    rng.next() as u32
+fn random_u32(prng: &mut Prng) -> u32 {
+    prng.next() as u32
 }
 
-fn rng_i32(rng: &mut Rng) -> i32 {
-    rng.next() as i32
+fn random_i32(prng: &mut Prng) -> i32 {
+    prng.next() as i32
 }
 
-fn rng_u64(rng: &mut Rng) -> u64 {
-    rng.next() as u64
+fn random_u64(prng: &mut Prng) -> u64 {
+    prng.next() as u64
 }
 
-fn rng_i64(rng: &mut Rng) -> i64 {
-    rng.next() as i64
+fn random_i64(prng: &mut Prng) -> i64 {
+    prng.next() as i64
 }
 
-fn rng_u128(rng: &mut Rng) -> u128 {
-    ((rng.next() as u128) << 64) | (rng.next() as u128)
+fn random_u128(prng: &mut Prng) -> u128 {
+    ((prng.next() as u128) << 64) | (prng.next() as u128)
 }
 
-fn rng_i128(rng: &mut Rng) -> i128 {
-    rng_u128(rng) as i128
+fn random_i128(prng: &mut Prng) -> i128 {
+    random_u128(prng) as i128
 }
 
-fn rng_usize(rng: &mut Rng) -> usize {
+fn random_usize(prng: &mut Prng) -> usize {
     if size_of::<usize>() <= size_of::<u64>() {
-        rng_u64(rng) as usize
+        random_u64(prng) as usize
     } else if size_of::<usize>() == size_of::<u128>() {
-        rng_u128(rng) as usize
+        random_u128(prng) as usize
     } else {
         panic!("Can't generate `usize` because it has an unsupported size");
     }
 }
 
-fn rng_isize(rng: &mut Rng) -> isize {
+fn random_isize(prng: &mut Prng) -> isize {
     if size_of::<isize>() <= size_of::<i64>() {
-        rng_i64(rng) as isize
+        random_i64(prng) as isize
     } else if size_of::<isize>() == size_of::<i128>() {
-        rng_i128(rng) as isize
+        random_i128(prng) as isize
     } else {
         panic!("Can't generate `isize` because it has an unsupported size");
     }
 }
 
-fn_int! { u8, u8_uniform, u8, rng_u8, [1, 2] }
-fn_int! { i8, i8_uniform, u8, rng_i8, [-2, -1, 0, 1, 2] }
-fn_int! { u16, u16_uniform, u16, rng_u16, [1, 2] }
-fn_int! { i16, i16_uniform, u16, rng_i16, [-2, -1, 0, 1, 2] }
-fn_int! { u32, u32_uniform, u32, rng_u32, [1, 2] }
-fn_int! { i32, i32_uniform, u32, rng_i32, [-2, -1, 0, 1, 2] }
-fn_int! { u64, u64_uniform, u64, rng_u64, [1, 2] }
-fn_int! { i64, i64_uniform, u64, rng_i64, [-2, -1, 0, 1, 2] }
-fn_int! { u128, u128_uniform, u128, rng_u128, [1, 2] }
-fn_int! { i128, i128_uniform, u128, rng_i128, [-2, -1, 0, 1, 2] }
-fn_int! { usize, usize_uniform, usize, rng_usize, [1, 2] }
-fn_int! { isize, isize_uniform, usize, rng_isize, [-2, -1, 0, 1, 2] }
+fn_int! { u8, u8_uniform, u8, random_u8, [1, 2] }
+fn_int! { i8, i8_uniform, u8, random_i8, [-2, -1, 0, 1, 2] }
+fn_int! { u16, u16_uniform, u16, random_u16, [1, 2] }
+fn_int! { i16, i16_uniform, u16, random_i16, [-2, -1, 0, 1, 2] }
+fn_int! { u32, u32_uniform, u32, random_u32, [1, 2] }
+fn_int! { i32, i32_uniform, u32, random_i32, [-2, -1, 0, 1, 2] }
+fn_int! { u64, u64_uniform, u64, random_u64, [1, 2] }
+fn_int! { i64, i64_uniform, u64, random_i64, [-2, -1, 0, 1, 2] }
+fn_int! { u128, u128_uniform, u128, random_u128, [1, 2] }
+fn_int! { i128, i128_uniform, u128, random_i128, [-2, -1, 0, 1, 2] }
+fn_int! { usize, usize_uniform, usize, random_usize, [1, 2] }
+fn_int! { isize, isize_uniform, usize, random_isize, [-2, -1, 0, 1, 2] }
 
 #[cfg(test)]
 mod tests {

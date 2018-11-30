@@ -8,8 +8,6 @@ pub mod logger;
 
 pub mod counter;
 
-pub mod rng;
-
 pub mod gen;
 
 pub mod gens;

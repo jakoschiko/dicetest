@@ -1,5 +1,4 @@
-use crate::rng::Rng;
-use crate::gen::{Limit, Dice, GenOnce};
+use crate::gen::{Prng, Limit, Dice, GenOnce};
 use crate::gen::adapters::{MapGen, FlattenGen, FlatMapGen, DynGen, DynRcGen, DynArcGen};
 
 /// Trait for generating random values of type `T`.
@@ -78,9 +77,9 @@ pub trait Gen<T>: GenOnce<T> {
     /// Calls `Gen::gen` with random seed and default parameters. Useful for debugging the
     /// generator.
     fn sample(&self) -> T {
-        let mut rng = Rng::random();
+        let mut prng = Prng::random();
         let lim = Limit::default();
-        let mut dice = Dice::new(&mut rng, lim);
+        let mut dice = Dice::new(&mut prng, lim);
 
         self.gen(&mut dice)
     }

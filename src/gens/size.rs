@@ -108,11 +108,11 @@ mod tests {
         R: gens::SizeRange + Debug,
     {
         props::forall_3(
-            gens::rng_fork().name("rng"),
+            gens::prng_fork().name("prng"),
             gens::u64(..).name("limit"),
             range_data_gen.name("range_data"),
-            |mut rng, limit, range_data| {
-                let mut dice = Dice::new(&mut rng, Limit(limit));
+            |mut prng, limit, range_data| {
+                let mut dice = Dice::new(&mut prng, Limit(limit));
 
                 let range = create_range(range_data);
                 log_var!(range);

@@ -9,8 +9,8 @@ pub use self::just::*;
 mod meta;
 pub use self::meta::*;
 
-mod rng;
-pub use self::rng::*;
+mod prng;
+pub use self::prng::*;
 
 mod zip;
 pub use self::zip::*;

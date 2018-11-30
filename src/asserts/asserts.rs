@@ -1,7 +1,6 @@
 use std::panic::UnwindSafe;
 
-use crate::rng::Rng;
-use crate::gen::{Limit, Dice};
+use crate::gen::{Prng, Limit, Dice};
 use crate::prop::Prop;
 use crate::brooder::{EvalParams, Config, brood_prop};
 use crate::asserts::{Panic, Mode, env};
@@ -74,7 +73,7 @@ use crate::asserts::{Panic, Mode, env};
 /// parameters by using the following environment variables:
 ///
 /// - `RUSTCHECK_SEED=<seed>`
-/// The initial seed. See `Rng::init`. Ignored if `RUSTCHECK_CODE` is present. There are the
+/// The initial seed. See `Prng::init`. Ignored if `RUSTCHECK_CODE` is present. There are the
 /// following options for `<seed>`:
 ///     - `none`
 ///     The seed will be generated randomly.
@@ -134,9 +133,9 @@ where
                 let code_params = env::read_code(None).unwrap();
                 let params = code_params.unwrap_or_else(|| {
                     let seed = env::read_seed(None).unwrap();
-                    let rng = seed.map_or_else(|| Rng::random(), Rng::init);
+                    let prng = seed.map_or_else(|| Prng::random(), Prng::init);
                     let limit = env::read_limit(Limit::default()).unwrap();
-                    EvalParams { rng, limit }
+                    EvalParams { prng, limit }
                 });
 
                 assert_prop_with_sample(panic, params, prop_fn())
@@ -168,9 +167,9 @@ where
 {
     let eval_code = params.eval_code();
 
-    let mut rng = params.rng;
+    let mut prng = params.prng;
     let limit = params.limit;
-    let mut dice = Dice::new(&mut rng, limit);
+    let mut dice = Dice::new(&mut prng, limit);
     let sample = prop.sample_with_dice(&mut dice);
 
     let should_panic = panic.should_panic_with_eval(sample.eval);

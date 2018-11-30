@@ -1,5 +1,4 @@
-use crate::rng::Rng;
-use crate::gen::{Limit, Dice};
+use crate::gen::{Prng, Limit, Dice};
 use crate::gen::adapters::{MapGen, FlattenGen, FlatMapGen, DynGenOnce};
 
 /// Trait for generating a single random value of type `T`.
@@ -61,9 +60,9 @@ pub trait GenOnce<T> {
     where
         Self: Sized,
     {
-        let mut rng = Rng::random();
+        let mut prng = Prng::random();
         let lim = Limit::default();
-        let mut dice = Dice::new(&mut rng, lim);
+        let mut dice = Dice::new(&mut prng, lim);
 
         self.gen_once(&mut dice)
     }

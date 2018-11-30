@@ -1,13 +1,10 @@
 use crate::util::{conversion, base64};
-use crate::rng::Rng;
-use crate::gen::Limit;
+use crate::gen::{Prng, Limit};
 
-/// The parameters for evaluating a property one time.
+/// The parameters for evaluating a property.
 #[derive(Debug, Clone)]
 pub struct EvalParams {
-    /// The random number generator for calling `Prop::eval`.
-    pub rng: Rng,
-    /// The generation limit for calling `Prop::eval`.
+    pub prng: Prng,
     pub limit: Limit,
 }
 
@@ -18,7 +15,7 @@ impl EvalParams {
     pub fn eval_code(&self) -> String {
         let mut bytes = Vec::new();
 
-        bytes.extend_from_slice(&self.rng.seed_as_bytes());
+        bytes.extend_from_slice(&self.prng.seed_as_bytes());
         bytes.extend_from_slice(&conversion::u64_to_bytes(self.limit.0));
 
         let eval_code = base64::encode(&bytes);
@@ -35,10 +32,10 @@ impl EvalParams {
             return Err("Test code has invalid length".to_string());
         }
 
-        let rng = {
+        let prng = {
             let mut seed_bytes = [0; 32];
             seed_bytes.copy_from_slice(&bytes[0..32]);
-            Rng::init_with_bytes(seed_bytes)
+            Prng::init_with_bytes(seed_bytes)
         };
 
         let limit = {
@@ -48,7 +45,7 @@ impl EvalParams {
         };
 
         let eval_params = EvalParams {
-            rng,
+            prng,
             limit,
         };
 

@@ -48,9 +48,9 @@ where
 pub fn hash_map<K, V>(
     elem_gen: impl Gen<(K, V)>,
     tries_range: impl SizeRange,
-) -> impl Gen<HashMap<K, V, Rng>>
+) -> impl Gen<HashMap<K, V, Prng>>
 where
     K: Eq + Hash,
 {
-    hash_map_with_hasher(gens::rng_fork(), elem_gen, tries_range)
+    hash_map_with_hasher(gens::prng_fork(), elem_gen, tries_range)
 }

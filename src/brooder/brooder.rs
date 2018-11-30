@@ -1,11 +1,10 @@
 use std::panic::{UnwindSafe, catch_unwind};
-use rand::{self, Rng as LibRng};
+use rand::{self, Rng};
 
 use crate::util::workers;
 use crate::logger::{self, Messages};
 use crate::counter::{self, Stats};
-use crate::rng::Rng;
-use crate::gen::Dice;
+use crate::gen::{Prng, Dice};
 use crate::prop::Prop;
 use crate::brooder::{
     EvalParams, EvalSummary, EvalSeries,
@@ -25,7 +24,7 @@ where
         rand::thread_rng().gen()
     });
 
-    let mut rng = Rng::init(seed);
+    let mut prng = Prng::init(seed);
 
     let status = if config.worker_count == 0 {
         let limit_series = LimitSeries::new(
@@ -36,7 +35,7 @@ where
 
         let prop_fn = prop_fn.clone();
         let result = catch_unwind(move || {
-            brood_series(rng, limit_series, counter_enabled, prop_fn)
+            brood_series(prng, limit_series, counter_enabled, prop_fn)
         });
 
         match result {
@@ -53,14 +52,14 @@ where
         );
 
         let funs = min_passed_portions.into_iter().map(|min_passed| {
-            let worker_rng =  rng.fork();
+            let worker_prng =  prng.fork();
             let limit_series = LimitSeries::new(
                 config.start_limit,
                 config.end_limit,
                 min_passed,
             );
             let prop_fn = prop_fn.clone();
-            move || brood_series(worker_rng, limit_series, counter_enabled, prop_fn)
+            move || brood_series(worker_prng, limit_series, counter_enabled, prop_fn)
         }).collect();
 
         let joined_result = workers::run(funs, config.timeout);
@@ -76,7 +75,7 @@ where
 }
 
 fn brood_series<P, F>(
-    mut rng: Rng,
+    mut prng: Prng,
     limit_series: LimitSeries,
     counter_enabled: bool,
     prop_fn: F
@@ -93,10 +92,10 @@ where
         // reevaluate the property afterwards.
         let messages = Messages::new();
 
-        // We clone the `Rng` to be able to reevalute the property
-        let eval_rng = rng.clone();
+        // We clone the `Prng` to be able to reevalute the property
+        let eval_prng = prng.clone();
 
-        let mut dice = Dice::new(&mut rng, limit);
+        let mut dice = Dice::new(&mut prng, limit);
 
         let (eval, stats) = {
             let mut eval = || {
@@ -109,7 +108,7 @@ where
 
         let series_next = EvalSeries::from_eval(eval, messages, stats, move || {
             EvalParams {
-                rng: eval_rng,
+                prng: eval_prng,
                 limit,
             }
         });
@@ -162,9 +161,9 @@ where
             ..
         }
     ) = report.status {
-        let mut rng = counterexample.rng.clone();
+        let mut prng = counterexample.prng.clone();
         let limit = counterexample.limit;
-        let mut dice = Dice::new(&mut rng, limit);
+        let mut dice = Dice::new(&mut prng, limit);
 
         let (_, counterexample_messages) = logger::collect_messages(|| {
             let prop = prop_fn();

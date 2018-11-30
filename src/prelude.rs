@@ -3,8 +3,7 @@
 pub mod gens {
     //! Contains the most useful import for defining generators.
 
-    pub use crate::rng::Rng;
-    pub use crate::gen::{Limit, Dice, GenOnce, Gen};
+    pub use crate::gen::{Prng, Limit, Dice, GenOnce, Gen};
     pub use crate::gens;
 }
 
