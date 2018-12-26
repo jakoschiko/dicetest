@@ -84,6 +84,7 @@ use crate::checker::{Panic, Mode, env};
 /// to present details of the test run. It's a shortcut for
 /// `DICETEST_PANIC=always DICETEST_MODE=once DICETEST_RUN_CODE=<run code>`.
 /// All other environment variables will be ignored.
+#[allow(clippy::needless_pass_by_value)]
 pub fn check<T>(config: Config, test: T)
 where
     T: Fn(&mut Dice) + UnwindSafe + RefUnwindSafe,

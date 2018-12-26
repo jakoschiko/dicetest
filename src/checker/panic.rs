@@ -1,3 +1,4 @@
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 /// Defines when the checker should panic.
 pub enum Panic {
     /// The checker panics always.

@@ -31,9 +31,7 @@ where
         let f = self.f;
 
         let t = g.gen_once(dice);
-        let u = f(t);
-
-        u
+        f(t)
     }
 }
 
@@ -47,8 +45,6 @@ where
         let f = &self.f;
 
         let t = g.gen(dice);
-        let u = f(t);
-
-        u
+        f(t)
     }
 }

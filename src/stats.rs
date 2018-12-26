@@ -55,8 +55,14 @@ impl Counter {
     }
 }
 
+impl Default for Counter {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 /// Contains the counters of different values with the same key.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Stat(pub BTreeMap<String, Counter>);
 
 impl Stat {
@@ -70,7 +76,7 @@ impl Stat {
     pub fn inc(&mut self, value: String) {
         let counter_entry = self.0
             .entry(value)
-            .or_insert(Counter::new());
+            .or_insert_with(Counter::new);
         *counter_entry = counter_entry.inc();
     }
 
@@ -102,7 +108,7 @@ impl Stat {
 }
 
 /// Contains the stats for different keys.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Stats(pub BTreeMap<&'static str, Stat>);
 
 impl Stats {
@@ -113,7 +119,7 @@ impl Stats {
 
     // Increases the counter for the given key and value by one.
     pub fn inc(&mut self, key: &'static str, value: String) {
-        let stat_entry = self.0.entry(key).or_insert_with(|| Stat::new());
+        let stat_entry = self.0.entry(key).or_insert_with(Stat::new);
         stat_entry.inc(value);
     }
 
@@ -143,7 +149,7 @@ impl events::Events for Stats {
     }
 
     fn take(&mut self) -> Self {
-        let first_key = self.0.keys().next().map(|k| *k);
+        let first_key = self.0.keys().next().cloned();
         match first_key {
             None => Stats::new(),
             Some(first_key) => {

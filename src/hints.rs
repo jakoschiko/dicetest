@@ -18,7 +18,7 @@ pub struct Hint {
 }
 
 /// A collection of hints.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Hints(pub Vec<Hint>);
 
 impl Hints {

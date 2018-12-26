@@ -18,8 +18,7 @@ impl Run {
         bytes.extend_from_slice(&self.prng.seed_as_bytes());
         bytes.extend_from_slice(&conversion::u64_to_bytes(self.limit.0));
 
-        let run_code = base64::encode(&bytes);
-        run_code
+        base64::encode(&bytes)
     }
 
     /// Tries to convert the string to `Run`.

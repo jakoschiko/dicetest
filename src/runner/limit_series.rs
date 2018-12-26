@@ -29,7 +29,7 @@ impl LimitSeries {
     }
 
     fn nth_with_min(&self, n: u64, min: u64) -> Limit {
-        let delta = ((n as u128 * self.diff as u128) / self.len as u128) as u64;
+        let delta = ((u128::from(n) * u128::from(self.diff)) / u128::from(self.len)) as u64;
         Limit(min + delta)
     }
 

@@ -7,6 +7,7 @@ macro_rules! fn_one_of_n {
         $one_of_gen_n_once:ident, $one_of_gen_n:ident:
         $($i:expr, $value_i:ident, $gen_i:ident)+
     ) => (
+        #[allow(clippy::too_many_arguments)]
         /// Generates a value randomly chosen from the given values.
         pub fn $one_of_n_once<T>(
             $($value_i: T,)*
@@ -14,6 +15,7 @@ macro_rules! fn_one_of_n {
             $one_of_gen_n_once($(gens::just_once($value_i),)*)
         }
 
+        #[allow(clippy::too_many_arguments)]
         /// Generates a clone of a value randomly chosen from the given values.
         pub fn $one_of_n<T>(
             $($value_i: T,)*
@@ -24,12 +26,13 @@ macro_rules! fn_one_of_n {
             $one_of_gen_n($(gens::just($value_i),)*)
         }
 
+        #[allow(clippy::too_many_arguments)]
         /// Generates a value with a randomly chosen generator.
         pub fn $one_of_gen_n_once<T>(
             $($gen_i: impl GenOnce<T>,)*
         ) -> impl GenOnce<T> {
             gens::from_fn_once(move |dice| {
-                let choice = dice.prng.next() % $n;
+                let choice = dice.prng.next_number() % $n;
                     match choice {
                     $($i => $gen_i.gen_once(dice),)*
                     _ => panic!(),
@@ -37,6 +40,7 @@ macro_rules! fn_one_of_n {
             })
         }
 
+        #[allow(clippy::too_many_arguments)]
         /// Generates a value with a randomly chosen generator.
         pub fn $one_of_gen_n<T>(
             $($gen_i: impl Gen<T>,)*
@@ -45,7 +49,7 @@ macro_rules! fn_one_of_n {
             T: Clone,
         {
             gens::from_fn(move |dice| {
-                let choice = dice.prng.next() % $n;
+                let choice = dice.prng.next_number() % $n;
                 match choice {
                     $($i => $gen_i.gen(dice),)*
                     _ => panic!(),
@@ -126,7 +130,7 @@ fn_one_of_n! { 9, one_of_9_once, one_of_9, one_of_gen_9_once, one_of_gen_9:
 /// Generates a element randomly chosen from the given `Vec`.
 pub fn one_of_vec_once<T>(mut values: Vec<T>) -> impl GenOnce<T> {
     gens::from_fn_once(move |dice| {
-        let choice = (dice.prng.next() as usize) % values.len();
+        let choice = (dice.prng.next_number() as usize) % values.len();
         values.swap_remove(choice)
     })
 }
@@ -137,7 +141,7 @@ where
     T: Clone,
 {
     gens::from_fn(move |dice| {
-        let choice = (dice.prng.next() as usize) % values.len();
+        let choice = (dice.prng.next_number() as usize) % values.len();
         values[choice].clone()
     })
 }
@@ -148,7 +152,7 @@ where
     T: Clone,
 {
     gens::from_fn(move |dice| {
-        let choice = (dice.prng.next() as usize) % values.len();
+        let choice = (dice.prng.next_number() as usize) % values.len();
         values[choice].clone()
     })
 }

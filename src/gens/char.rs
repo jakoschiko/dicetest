@@ -65,7 +65,7 @@ pub fn char_ascii() -> impl Gen<char> {
 pub fn char() -> impl Gen<char> {
     gens::one_of_gen_2(
         char_in_range(0x0, 0xD7FF),
-        char_in_range(0xE000, 0x10FFFF),
+        char_in_range(0xE000, 0x0010_FFFF),
     )
 }
 

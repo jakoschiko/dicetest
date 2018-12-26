@@ -13,6 +13,7 @@ pub use self::dice::Dice;
 mod gen_once;
 pub use self::gen_once::GenOnce;
 
+#[allow(clippy::module_inception)]
 mod gen;
 pub use self::gen::Gen;
 

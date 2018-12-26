@@ -17,6 +17,7 @@ const BYTE_TO_CHAR: [char; 64] = [
     '4', '5', '6', '7', '8', '9', '+', '/',
 ];
 
+#[allow(clippy::zero_prefixed_literal)]
 const CHAR_TO_BYTE: [u8; 256] = [
     64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
     64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
@@ -62,9 +63,9 @@ pub fn encode(bytes: &[u8]) -> String {
 
     while let (Some(b0), Some(b1), Some(b2)) = (i.next(), i.next(), i.next()) {
         let n =
-            ((*b0 as u32) << 16) |
-            ((*b1 as u32) << 8) |
-            (*b2 as u32);
+            ((u32::from(*b0)) << 16) |
+            ((u32::from(*b1)) << 8) |
+            u32::from(*b2);
 
         let n0 = (n >> 18) & 63;
         let n1 = (n >> 12) & 63;
@@ -93,7 +94,7 @@ pub fn encode(bytes: &[u8]) -> String {
 pub fn decode(base64: &str) -> Result<Vec<u8>, String> {
     let suffix =
         if base64.ends_with("==") { "AA" }
-        else if base64.ends_with("=") { "A" }
+        else if base64.ends_with('=') { "A" }
         else { "" };
 
     let prefix = &base64[0..base64.len() - suffix.len()];
@@ -118,16 +119,16 @@ pub fn decode(base64: &str) -> Result<Vec<u8>, String> {
     let mut result = Vec::new();
 
     while let (Some(n0), Some(n1), Some(n2), Some(n3)) = (i.next(), i.next(), i.next(), i.next()) {
-        let n = ((n0 as u32) << 18)
-            | ((n1 as u32) << 12)
-            | ((n2 as u32) << 6)
-            | (n3 as u32);
+        let n = (u32::from(n0) << 18)
+            | (u32::from(n1) << 12)
+            | (u32::from(n2) << 6)
+            | u32::from(n3);
 
         let b1 = ((n >> 16) & 0xFF) as u8;
         let b2 = ((n >> 8) & 0xFF) as u8;
         let b3 = (n & 0xFF) as u8;
 
-        result.extend_from_slice(&mut [b1, b2, b3]);
+        result.extend_from_slice(&[b1, b2, b3]);
     }
 
     for _ in 0..suffix.len() {

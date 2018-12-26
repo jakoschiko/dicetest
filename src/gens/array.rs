@@ -5,6 +5,7 @@ macro_rules! fn_array_n {
         /// Generates an array with random elements.
         pub fn $array_n<T>(element_gen: impl Gen<T>) -> impl Gen<[T; $N]> {
             gens::from_fn(move |dice| {
+                #[allow(clippy::no_effect)]
                 [
                     $({ $i; element_gen.gen(dice) }, )*
                 ]

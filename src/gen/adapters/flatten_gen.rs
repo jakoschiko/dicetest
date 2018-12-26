@@ -28,9 +28,7 @@ where
         let ggt = self.ggt;
 
         let gt = ggt.gen_once(dice);
-        let t = gt.gen_once(dice);
-
-        t
+        gt.gen_once(dice)
     }
 }
 
@@ -43,8 +41,6 @@ where
         let ggt = &self.ggt;
 
         let gt = ggt.gen(dice);
-        let t = gt.gen_once(dice);
-
-        t
+        gt.gen_once(dice)
     }
 }

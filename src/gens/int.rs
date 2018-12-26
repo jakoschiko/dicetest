@@ -201,39 +201,39 @@ macro_rules! fn_int {
 }
 
 fn random_u8(prng: &mut Prng) -> u8 {
-    prng.next() as u8
+    prng.next_number() as u8
 }
 
 fn random_i8(prng: &mut Prng) -> i8 {
-    prng.next() as i8
+    prng.next_number() as i8
 }
 
 fn random_u16(prng: &mut Prng) -> u16 {
-    prng.next() as u16
+    prng.next_number() as u16
 }
 
 fn random_i16(prng: &mut Prng) -> i16 {
-    prng.next() as i16
+    prng.next_number() as i16
 }
 
 fn random_u32(prng: &mut Prng) -> u32 {
-    prng.next() as u32
+    prng.next_number() as u32
 }
 
 fn random_i32(prng: &mut Prng) -> i32 {
-    prng.next() as i32
+    prng.next_number() as i32
 }
 
 fn random_u64(prng: &mut Prng) -> u64 {
-    prng.next() as u64
+    prng.next_number() as u64
 }
 
 fn random_i64(prng: &mut Prng) -> i64 {
-    prng.next() as i64
+    prng.next_number() as i64
 }
 
 fn random_u128(prng: &mut Prng) -> u128 {
-    ((prng.next() as u128) << 64) | (prng.next() as u128)
+    (u128::from(prng.next_number()) << 64) | u128::from(prng.next_number())
 }
 
 fn random_i128(prng: &mut Prng) -> i128 {

@@ -5,23 +5,23 @@ use crate::gen::Limit;
 use crate::runner::Run;
 use crate::checker::{Panic, Mode};
 
-const KEY_PANIC: &'static str = "DICETEST_PANIC";
-const KEY_MODE: &'static str = "DICETEST_MODE";
-const KEY_SEED: &'static str = "DICETEST_SEED";
-const KEY_START_LIMIT: &'static str = "DICETEST_START_LIMIT";
-const KEY_END_LIMIT: &'static str = "DICETEST_END_LIMIT";
-const KEY_PASSES: &'static str = "DICETEST_PASSES";
-const KEY_HINTS_ENABLED: &'static str = "DICETEST_HINTS_ENABLED";
-const KEY_STATS_ENABLED: &'static str = "DICETEST_STATS_ENABLED";
-const KEY_LIMIT: &'static str = "DICETEST_LIMIT";
-const KEY_RUN_CODE: &'static str = "DICETEST_RUN_CODE";
-const KEY_DEBUG: &'static str = "DICETEST_DEBUG";
+const KEY_PANIC: &str = "DICETEST_PANIC";
+const KEY_MODE: &str = "DICETEST_MODE";
+const KEY_SEED: &str = "DICETEST_SEED";
+const KEY_START_LIMIT: &str = "DICETEST_START_LIMIT";
+const KEY_END_LIMIT: &str = "DICETEST_END_LIMIT";
+const KEY_PASSES: &str = "DICETEST_PASSES";
+const KEY_HINTS_ENABLED: &str = "DICETEST_HINTS_ENABLED";
+const KEY_STATS_ENABLED: &str = "DICETEST_STATS_ENABLED";
+const KEY_LIMIT: &str = "DICETEST_LIMIT";
+const KEY_RUN_CODE: &str = "DICETEST_RUN_CODE";
+const KEY_DEBUG: &str = "DICETEST_DEBUG";
 
-const VALUE_NONE: &'static str = "none";
-const VALUE_ALWAYS: &'static str = "always";
-const VALUE_ON_FAILURE: &'static str = "on_failure";
-const VALUE_REPEATEDLY: &'static str = "repeatedly";
-const VALUE_ONCE: &'static str = "once";
+const VALUE_NONE: &str = "none";
+const VALUE_ALWAYS: &str = "always";
+const VALUE_ON_FAILURE: &str = "on_failure";
+const VALUE_REPEATEDLY: &str = "repeatedly";
+const VALUE_ONCE: &str = "once";
 
 fn read_value<T, E>(
     key: &str,
@@ -34,7 +34,7 @@ fn read_value<T, E>(
         let result = parse(&s);
         result.map_err(|_|format!("Value for '{}' must be {}", key, typ))
     });
-    parsed.unwrap_or(Ok(default))
+    parsed.unwrap_or_else(|_| Ok(default))
 }
 
 fn read_option_value<T, E>(
@@ -45,12 +45,12 @@ fn read_option_value<T, E>(
 ) -> Result<Option<T>, String> {
     let var = env::var(key);
     let parsed = var.map(|s| {
-        let result = if &s == VALUE_NONE { Ok(None) } else { parse(&s).map(|v| Some(v)) };
+        let result = if s == VALUE_NONE { Ok(None) } else { parse(&s).map(Some) };
         result.map_err(|_| {
             format!("Value for '{}' must be either '{}' or {}", key, VALUE_NONE, typ)
         })
     });
-    parsed.unwrap_or(Ok(default))
+    parsed.unwrap_or_else(|_| Ok(default))
 }
 
 pub fn read_seed(default: Option<u64>) -> Result<Option<u64>, String> {
@@ -114,7 +114,7 @@ pub fn read_mode(default: Mode) -> Result<Mode, String> {
 }
 
 pub fn read_limit(default: Limit) -> Result<Limit, String> {
-    read_value(KEY_LIMIT, "an u64", default, |s| u64::from_str(s).map(|lim| Limit(lim)))
+    read_value(KEY_LIMIT, "an u64", default, |s| u64::from_str(s).map(Limit))
 }
 
 fn read_run_code_with_key(

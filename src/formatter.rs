@@ -1,5 +1,7 @@
 use std::iter;
 use std::fmt::{Debug, Display};
+use std::mem;
+use std::str::Chars;
 
 use crate::hints::Hints;
 use crate::stats::Stats;
@@ -29,12 +31,10 @@ fn run_section(sample: &Sample) -> impl Iterator<Item=char> {
             .chain(limit_item(0, sample.run.limit))
             .chain(hints_item(0, &sample.hints)));
 
-        let acc = match sample.error {
+        match sample.error {
             None => acc,
             Some(ref error) => boxed(acc.chain(error_item(0, &error))),
-        };
-
-        acc
+        }
     };
 
     section(title, content)
@@ -172,9 +172,7 @@ fn counterexample_section(
             Some(ref hints) => boxed(acc.chain(hints_item(0, hints))),
         };
 
-        let acc = acc.chain(error_item(0, &counterexample.error));
-
-        acc
+        acc.chain(error_item(0, &counterexample.error))
     };
 
     section(title, content)
@@ -281,10 +279,20 @@ fn str(str: &'static str) -> impl Iterator<Item=char> {
 }
 
 fn string(string: String) -> impl Iterator<Item=char> {
-    string
-        .chars()
-        .collect::<Vec<_>>()
-        .into_iter()
+    struct OwningChars {
+        _chars_owner: String,
+        chars: Chars<'static>,
+    }
+
+    impl Iterator for OwningChars {
+        type Item = char;
+        fn next(&mut self) -> Option<Self::Item> {
+            self.chars.next()
+        }
+    }
+
+    let chars = unsafe { mem::transmute(string.chars()) };
+    OwningChars { _chars_owner: string, chars }
 }
 
 fn line_feed(n: usize) -> impl Iterator<Item=char> {

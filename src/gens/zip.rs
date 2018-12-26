@@ -2,6 +2,7 @@ use crate::prelude::gens::*;
 
 macro_rules! fn_zip_n {
     ($zip_n_once:ident, $zip_n:ident: $($Ti:ident, $gen_i:ident)+) => (
+        #[allow(clippy::too_many_arguments)]
         /// Generates a tuple containing the generated values of several generators.
         pub fn $zip_n_once<$($Ti,)*>(
             $($gen_i: impl GenOnce<$Ti>,)*
@@ -11,6 +12,7 @@ macro_rules! fn_zip_n {
             })
         }
 
+        #[allow(clippy::too_many_arguments)]
         /// Generates a tuple containing the generated values of several generators.
         pub fn $zip_n<$($Ti,)*>(
             $($gen_i: impl Gen<$Ti>,)*

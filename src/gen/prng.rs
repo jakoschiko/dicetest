@@ -23,10 +23,10 @@ impl Prng {
     ///
     /// The result has a satisfying cycle length.
     pub fn init(seed_u64: u64) -> Prng {
-        let seed = (0xf1ea5eed, seed_u64, seed_u64, seed_u64);
+        let seed = (0xf1ea_5eed, seed_u64, seed_u64, seed_u64);
         let mut prng = Prng { seed };
         for _ in 0..20 {
-            prng.next();
+            prng.next_number();
         }
         prng
     }
@@ -71,12 +71,12 @@ impl Prng {
             conversion::u64_to_bytes(d),
         ];
 
-        let seed_bytes = unsafe { mem::transmute(arrays) };
-        seed_bytes
+        unsafe { mem::transmute(arrays) }
     }
 
-    /// Returns the next pseudo random numver.
-    pub fn next(&mut self) -> u64 {
+    #[allow(clippy::many_single_char_names)]
+    /// Returns the next pseudo random number.
+    pub fn next_number(&mut self) -> u64 {
         let (a, b, c, d) = self.seed;
 
         // We use `Wrapping` because overflow and underflow is intended
@@ -90,6 +90,7 @@ impl Prng {
         i
     }
 
+    #[allow(clippy::many_single_char_names)]
     /// Replaces the seed of self with a new seed. The new seed is generated using the old seed
     /// and the given `u64` value.
     ///
@@ -97,19 +98,19 @@ impl Prng {
     pub fn reseed(&mut self, n: u64) {
         let (a, b, c, d) = self.seed;
 
-        let n0 = (n >> 32) & 0xffffffff;
-        let n1 = n & 0xffffffff;
+        let n0 = (n >> 32) & 0xffff_ffff;
+        let n1 = n & 0xffff_ffff;
 
         self.seed = (a ^ n0, b ^ n1, c, d);
 
         for _ in 0..16 {
-            self.next();
+            self.next_number();
         }
     }
 
     /// Splits off a new `Prng` from self. The seed of the new `Prng` is generated with self.
     pub fn fork(&mut self) -> Prng {
-        let random_number = self.next();
+        let random_number = self.next_number();
         let mut reseeded_prng = self.clone();
         reseeded_prng.reseed(random_number);
         reseeded_prng
@@ -122,10 +123,9 @@ impl BuildHasher for Prng {
 
     fn build_hasher(&self) -> Self::Hasher {
         let mut prng = self.clone();
-        let (key0, key1) = (prng.next(), prng.next());
+        let (key0, key1) = (prng.next_number(), prng.next_number());
         #[allow(deprecated)]
-        let hasher = SipHasher::new_with_keys(key0, key1);
-        hasher
+        SipHasher::new_with_keys(key0, key1)
     }
 }
 
@@ -142,7 +142,7 @@ mod tests {
 
             let prng_init = Prng::init(seed);
             let mut prng_next = prng_init.clone();
-            let _ = prng_next.next();
+            let _ = prng_next.next_number();
             let cycle_length_is_zero = prng_init == prng_next;
 
             hint_dbg!(seed);

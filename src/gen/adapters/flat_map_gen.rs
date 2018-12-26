@@ -35,9 +35,7 @@ where
 
         let t = gt.gen_once(dice);
         let gu = f(t);
-        let u = gu.gen_once(dice);
-
-        u
+        gu.gen_once(dice)
     }
 }
 
@@ -53,8 +51,6 @@ where
 
         let t = gt.gen(dice);
         let gu = f(t);
-        let u = gu.gen_once(dice);
-
-        u
+        gu.gen_once(dice)
     }
 }
