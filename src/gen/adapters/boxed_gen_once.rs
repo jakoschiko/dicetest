@@ -2,15 +2,15 @@ use std::marker::PhantomData;
 
 use crate::gen::{Dice, GenOnce};
 
-/// Adapter for `GenOnce::dyn_once`.
-pub struct DynGenOnce<'a, T>
+/// Adapter for `GenOnce::boxed_once`.
+pub struct BoxedGenOnce<'a, T>
 where
     T: 'a,
 {
-    dyn: Box<dyn Wrapper<T> + 'a>,
+    r#dyn: Box<dyn Wrapper<T> + 'a>,
 }
 
-impl<'a, T> DynGenOnce<'a, T>
+impl<'a, T> BoxedGenOnce<'a, T>
 where
     T: 'a,
 {
@@ -22,17 +22,17 @@ where
             gen: Some(gen),
             _t: PhantomData,
         };
-        let dyn = Box::new(wrapper);
-        DynGenOnce { dyn }
+        let r#dyn = Box::new(wrapper);
+        BoxedGenOnce { r#dyn }
     }
 }
 
-impl<'a, T> GenOnce<T> for DynGenOnce<'a, T>
+impl<'a, T> GenOnce<T> for BoxedGenOnce<'a, T>
 where
     T: 'a,
 {
     fn gen_once(mut self, dice: &mut Dice) -> T {
-        self.dyn.gen_once(dice)
+        self.r#dyn.gen_once(dice)
     }
 }
 

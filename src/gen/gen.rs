@@ -1,5 +1,5 @@
 use crate::gen::{Prng, Limit, Dice, GenOnce};
-use crate::gen::adapters::{MapGen, FlattenGen, FlatMapGen, DynGen, DynRcGen, DynArcGen};
+use crate::gen::adapters::{MapGen, FlattenGen, FlatMapGen, BoxedGen, RcGen, ArcGen};
 
 /// Trait for generating random values of type `T`.
 ///
@@ -50,28 +50,28 @@ pub trait Gen<T>: GenOnce<T> {
         FlatMapGen::new(self, f)
     }
 
-    /// Puts `self` behind a pointer.
-    fn dyn<'a>(self) -> DynGen<'a, T>
+    /// Puts `self` behind a `Box` pointer.
+    fn boxed<'a>(self) -> BoxedGen<'a, T>
     where
         Self: Sized + 'a,
     {
-        DynGen::new(self)
+        BoxedGen::new(self)
     }
 
     /// Puts `self` behind an `Rc` pointer.
-    fn dyn_rc<'a>(self) -> DynRcGen<'a, T>
+    fn rc<'a>(self) -> RcGen<'a, T>
     where
         Self: Sized + 'a,
     {
-        DynRcGen::new(self)
+        RcGen::new(self)
     }
 
     /// Puts `self` behind an `Arc` pointer.
-    fn dyn_arc(self) -> DynArcGen<T>
+    fn arc(self) -> ArcGen<T>
     where
         Self: Sized + 'static,
     {
-        DynArcGen::new(self)
+        ArcGen::new(self)
     }
 
     /// Calls `Gen::gen` with random seed and default parameters. Useful for debugging the

@@ -1,5 +1,5 @@
 use crate::gen::{Prng, Limit, Dice};
-use crate::gen::adapters::{MapGen, FlattenGen, FlatMapGen, DynGenOnce};
+use crate::gen::adapters::{MapGen, FlattenGen, FlatMapGen, BoxedGenOnce};
 
 /// Trait for generating a single random value of type `T`.
 pub trait GenOnce<T> {
@@ -46,12 +46,12 @@ pub trait GenOnce<T> {
         FlatMapGen::new(self, f)
     }
 
-    /// Puts `self` behind a pointer.
-    fn dyn_once<'a>(self) -> DynGenOnce<'a, T>
+    /// Puts `self` behind a `Box` pointer.
+    fn boxed_once<'a>(self) -> BoxedGenOnce<'a, T>
     where
         Self: Sized + 'a,
     {
-        DynGenOnce::new(self)
+        BoxedGenOnce::new(self)
     }
 
     /// Calls `GenOnce::gen_once` with random seed and default parameters. Useful for debugging the

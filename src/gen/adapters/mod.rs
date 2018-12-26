@@ -9,14 +9,14 @@ pub use self::flatten_gen::FlattenGen;
 mod flat_map_gen;
 pub use self::flat_map_gen::FlatMapGen;
 
-mod dyn_gen_once;
-pub use self::dyn_gen_once::DynGenOnce;
+mod boxed_gen_once;
+pub use self::boxed_gen_once::BoxedGenOnce;
 
-mod dyn_gen;
-pub use self::dyn_gen::DynGen;
+mod boxed_gen;
+pub use self::boxed_gen::BoxedGen;
 
-mod dyn_rc_gen;
-pub use self::dyn_rc_gen::DynRcGen;
+mod rc_gen;
+pub use self::rc_gen::RcGen;
 
-mod dyn_arc_gen;
-pub use self::dyn_arc_gen::DynArcGen;
+mod arc_gen;
+pub use self::arc_gen::ArcGen;
