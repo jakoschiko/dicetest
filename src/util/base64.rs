@@ -151,78 +151,71 @@ mod tests {
 
     #[test]
     fn encode_produces_non_empty_string_if_bytes_is_non_empty() {
-        assert_prop!(
-            props::forall_1(
-                gens::vec(gens::u8(..), 1..).name("bytes"),
-                |bytes| {
-                    let base64 = base64::encode(&bytes);
-                    log_var!(base64);
-                    props::assert(!base64.is_empty(), "base64 should be non-empty")
-                }
-            ).dyn()
-        )
+        dicetest!(|dice| {
+            let bytes = gens::vec(gens::u8(..), 1..).gen(dice);
+            let base64 = base64::encode(&bytes);
+
+            hint_dbg!(bytes);
+            hint_dbg!(&base64);
+
+            assert!(!base64.is_empty())
+        })
     }
 
     #[test]
     fn decode_is_left_inverse() {
-        assert_prop!(
-            props::forall_1(
-                gens::vec(gens::u8(..), ..).name("bytes"),
-                |bytes| {
-                    let base64 = base64::encode(&bytes);
-                    log_var!(base64);
-                    let decoded_bytes = base64::decode(&base64);
-                    props::result_ok(decoded_bytes, move |decoded_bytes| {
-                        props::equal(bytes, decoded_bytes)
-                    })
-                }
-            ).dyn()
-        )
+        dicetest!(|dice| {
+            let bytes = gens::vec(gens::u8(..), ..).gen(dice);
+            let base64 = base64::encode(&bytes);
+
+            hint_dbg!(&bytes);
+            hint_dbg!(&base64);
+
+            let decoded_bytes = base64::decode(&base64).unwrap();
+
+            assert_eq!(bytes, decoded_bytes);
+        })
     }
 
     #[test]
     fn decode_fails_if_string_contains_invalid_char() {
-        assert_prop!({
+        dicetest!(|dice| {
             let valid_len_gen = gens::size(4..).map(|len| len - (len % 4));
 
-            props::forall_1(
-                valid_len_gen.name("len"),
-                move |len| {
-                    props::forall_1(
-                        gens::string(gens::char(), len).name("base64"),
-                        |base64| {
-                            let is_invalid = base64.chars().any(base64::is_invalid_char);
+            let len = valid_len_gen.gen(dice);
+            let base64 = gens::string(gens::char(), len).gen(dice);
 
-                            props::implies(is_invalid, move || {
-                                let bytes = base64::decode(&base64);
-                                props::result_err(bytes, |_| true)
-                            })
-                        }
-                    )
-                }
-            ).dyn()
+            let is_invalid = base64.chars().any(base64::is_invalid_char);
+
+            if !is_invalid {
+                return;
+            }
+
+            let bytes = base64::decode(&base64);
+
+            hint_dbg!(&base64);
+            hint_dbg!(&bytes);
+
+            assert!(bytes.is_err());
         })
     }
 
     #[test]
     fn decode_fails_if_string_has_invalid_length() {
-        assert_prop!({
+        dicetest!(|dice| {
             let base_64_char_gen = gens::one_of_array(&base64::BYTE_TO_CHAR);
             let invalid_len_gen = gens::size(1..)
                 .map(|len| if len % 4 == 0 { len + 1 } else { len } );
 
-            props::forall_1(
-                invalid_len_gen.name("len"),
-                move |len| {
-                    props::forall_1(
-                        gens::string(base_64_char_gen, len).name("invalid_base64"),
-                        |invalid_base64| {
-                            let bytes = base64::decode(&invalid_base64);
-                            props::result_err(bytes, |_| true)
-                        }
-                    )
-                }
-            ).dyn()
+            let len = invalid_len_gen.gen(dice);
+            let invalid_base64 = gens::string(base_64_char_gen, len).gen(dice);
+
+            let bytes = base64::decode(&invalid_base64);
+
+            hint_dbg!(&invalid_base64);
+            hint_dbg!(&bytes);
+
+            assert!(bytes.is_err());
         })
     }
 }

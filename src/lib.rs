@@ -4,20 +4,21 @@ mod macros;
 
 mod util;
 
-pub mod logger;
+pub mod hints;
 
-pub mod counter;
+pub mod stats;
 
 pub mod gen;
 
 pub mod gens;
 
-pub mod prop;
+pub mod runner;
 
-pub mod props;
+pub mod formatter;
 
-pub mod brooder;
-
-pub mod asserts;
+pub mod checker;
 
 pub mod prelude;
+
+#[cfg(test)]
+mod asserts;

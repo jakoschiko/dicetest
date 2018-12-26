@@ -1,31 +1,29 @@
 //! Contains preludes for different use cases.
 
 pub mod gens {
-    //! Contains the most useful import for defining generators.
+    //! Contains the most useful import for writing generators.
 
     pub use crate::gen::{Prng, Limit, Dice, GenOnce, Gen};
     pub use crate::gens;
 }
 
-pub mod props {
-    //! Contains the most useful import for defining properties.
+pub mod asserts {
+    //! Contains the most useful import for writing assertions.
 
-    pub use crate::{log, log_var};
-    pub use crate::logger;
+    pub use crate::{hint, hint_dbg, stat, stat_dbg};
+    pub use crate::hints;
+    pub use crate::stats;
     pub use crate::gen::{Dice, GenOnce, Gen};
     pub use crate::gens;
-    pub use crate::prop::{Eval, Prop, GenArgExt};
-    pub use crate::props;
 }
 
 pub mod tests {
-    //! Contains the most useful imports for using properties in unit tests.
+    //! Contains the most useful imports for writing tests.
 
-    pub use crate::{log, log_var, assert_prop};
-    pub use crate::logger;
-    pub use crate::gen::{GenOnce, Gen};
+    pub use crate::{hint, hint_dbg, stat, stat_dbg, dicetest};
+    pub use crate::hints;
+    pub use crate::stats;
+    pub use crate::gen::{Dice, GenOnce, Gen};
     pub use crate::gens;
-    pub use crate::prop::{Prop, GenArgExt};
-    pub use crate::props;
-    pub use crate::brooder::Config;
+    pub use crate::runner::Config;
 }

@@ -279,12 +279,13 @@ mod tests {
 
     use crate::prelude::tests::*;
 
-    fn range_contains_int_prop<I, GI, B, GB, R>(
+    fn range_contains_int<I, GI, B, GB, R>(
+        dice: &mut Dice,
         range_data_gen: GB,
         create_range: fn(B) -> R,
         int_gen: fn(R) -> GI,
         is_in_range: fn(B, I) -> bool,
-    ) -> impl Prop
+    )
     where
         I: Debug,
         GI: GenOnce<I>,
@@ -292,17 +293,16 @@ mod tests {
         GB: GenOnce<B>,
         R: gens::IntRange<I> + Debug,
     {
-        props::forall_1(
-            range_data_gen.name("range_data"),
-            move |range_data| {
-                let range = create_range(range_data);
-                log_var!(range);
-                props::forall_1(
-                    int_gen(range).name("int"),
-                    move |int| is_in_range(range_data, int)
-                )
-            }
-        )
+        let range_data = range_data_gen.gen_once(dice);
+        hint_dbg!(&range_data);
+
+        let range = create_range(range_data);
+        hint_dbg!(&range);
+
+        let int = int_gen(range).gen_once(dice);
+        hint_dbg!(&int);
+
+        assert!(is_in_range(range_data, int));
     }
 
     macro_rules! range_tests {
@@ -316,64 +316,69 @@ mod tests {
         ) => (
             #[test]
             fn $int_is_in_range() {
-                assert_prop!(
-                    range_contains_int_prop(
+                dicetest!(|dice| {
+                    range_contains_int(
+                        dice,
                         gens::array_2(gens::$int(..$int::max_value() - 1))
                             .map(|[a, b]| (a.min(b), a.max(b) + 1)),
                         |(lower, upper)| lower..upper,
                         gens::$int,
                         |(lower, upper), int| lower <= int && int < upper,
-                    ).dyn()
-                )
+                    );
+                })
             }
 
             #[test]
             fn $int_is_in_range_from() {
-                assert_prop!(
-                    range_contains_int_prop(
+                dicetest!(|dice| {
+                    range_contains_int(
+                        dice,
                         gens::$int(..),
                         |lower| lower..,
                         gens::$int,
                         |lower, size| lower <= size,
-                    ).dyn()
-                )
+                    );
+                })
             }
 
             #[test]
             fn $int_is_in_range_inclusive() {
-                assert_prop!(
-                    range_contains_int_prop(
+                dicetest!(|dice| {
+                    range_contains_int(
+                        dice,
                         gens::array_2(gens::$int(..))
                             .map(|[a, b]| (a.min(b), a.max(b))),
                         |(lower, upper)| lower..=upper,
                         gens::$int,
                         |(lower, upper), size| lower <= size && size <= upper,
-                    ).dyn()
-                )
+                    );
+                })
             }
 
             #[test]
             fn $int_is_in_range_to() {
-                assert_prop!(
-                    range_contains_int_prop(
+                dicetest!(|dice| {
+                    range_contains_int(
+                        dice,
                         gens::$int(1..),
                         |upper| ..upper,
                         gens::$int,
                         |upper, size| size < upper,
-                    ).dyn()
-                )
+                    );
+                })
             }
 
             #[test]
             fn $int_is_in_range_to_inclusive() {
-                assert_prop!(
-                    range_contains_int_prop(
+                dicetest!(|dice| {
+                    range_contains_int(
+                        dice,
                         gens::$int(..),
                         |upper| ..=upper,
                         gens::$int,
                         |upper, size| size <= upper,
-                    ).dyn()
-                )
+                    );
+                })
             }
         )
     }

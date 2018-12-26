@@ -33,20 +33,16 @@ mod tests {
 
     #[test]
     fn shuffled_vec_contains_same_elems() {
-        assert_prop!(
-            props::forall_1(
-                gens::vec(gens::u8(..), ..).name("orig_vec"),
-                |orig_vec| {
-                    let orig_vec_elems = count_vec_elems(&orig_vec);
-                    props::forall_1(
-                        gens::shuffled_vec(orig_vec).name("shuffled_vec"),
-                        move |shuffled_vec| {
-                            let shuffled_vec_elems = count_vec_elems(&shuffled_vec);
-                            props::equal(orig_vec_elems, shuffled_vec_elems)
-                        }
-                    )
-                }
-            ).dyn()
-        )
+        dicetest!(|dice| {
+            let orig_vec = gens::vec(gens::u8(..), ..).gen(dice);
+            let orig_vec_elems = count_vec_elems(&orig_vec);
+            hint_dbg!(&orig_vec);
+
+            let shuffled_vec = gens::shuffled_vec(orig_vec).gen_once(dice);
+            let shuffled_vec_elems = count_vec_elems(&shuffled_vec);
+            hint_dbg!(&shuffled_vec);
+
+            assert_eq!(orig_vec_elems, shuffled_vec_elems);
+        })
     }
 }
