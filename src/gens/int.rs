@@ -111,12 +111,12 @@ impl_int_range! { usize }
 impl_int_range! { isize }
 
 macro_rules! fn_int {
-    ($int:ident, $int_uniform:ident, $uint:ident, $random_int:ident, $special:expr) => (
+    ($int:ident, $uni_int:ident, $uint:ident, $random_int:ident, $special:expr) => (
         /// Generates an integer inside the given range. All integers are uniformly distributed.
         ///
         /// # Panics
         /// Panics if the range is invalid, see `IntRange::bounds`.
-        pub fn $int_uniform(range: impl IntRange<$int>) -> impl Gen<$int> {
+        pub fn $uni_int(range: impl IntRange<$int>) -> impl Gen<$int> {
             fn to_shifted_unsigned(i: $int) -> $uint {
                 let uoffset = $int::min_value() as $uint;
                 let x = i as $uint;
@@ -172,9 +172,9 @@ macro_rules! fn_int {
         /// Panics if the range is invalid, see `IntRange::bounds`.
         pub fn $int(range: impl IntRange<$int>) -> impl Gen<$int> {
             let (lower, upper) = range.bounds();
-            // `int_uniform` does not need to check the range again
+            // `uni_int` does not need to check the range again
             let unchecked_range = UncheckedRange { lower, upper };
-            let all_gen = $int_uniform(unchecked_range);
+            let all_gen = $uni_int(unchecked_range);
 
             let special_gen = {
                 let extremum_gen = move || gens::one_of_2(lower, upper);
@@ -260,18 +260,18 @@ fn random_isize(prng: &mut Prng) -> isize {
     }
 }
 
-fn_int! { u8, u8_uniform, u8, random_u8, [1, 2] }
-fn_int! { i8, i8_uniform, u8, random_i8, [-2, -1, 0, 1, 2] }
-fn_int! { u16, u16_uniform, u16, random_u16, [1, 2] }
-fn_int! { i16, i16_uniform, u16, random_i16, [-2, -1, 0, 1, 2] }
-fn_int! { u32, u32_uniform, u32, random_u32, [1, 2] }
-fn_int! { i32, i32_uniform, u32, random_i32, [-2, -1, 0, 1, 2] }
-fn_int! { u64, u64_uniform, u64, random_u64, [1, 2] }
-fn_int! { i64, i64_uniform, u64, random_i64, [-2, -1, 0, 1, 2] }
-fn_int! { u128, u128_uniform, u128, random_u128, [1, 2] }
-fn_int! { i128, i128_uniform, u128, random_i128, [-2, -1, 0, 1, 2] }
-fn_int! { usize, usize_uniform, usize, random_usize, [1, 2] }
-fn_int! { isize, isize_uniform, usize, random_isize, [-2, -1, 0, 1, 2] }
+fn_int! { u8, uni_u8, u8, random_u8, [1, 2] }
+fn_int! { i8, uni_i8, u8, random_i8, [-2, -1, 0, 1, 2] }
+fn_int! { u16, uni_u16, u16, random_u16, [1, 2] }
+fn_int! { i16, uni_i16, u16, random_i16, [-2, -1, 0, 1, 2] }
+fn_int! { u32, uni_u32, u32, random_u32, [1, 2] }
+fn_int! { i32, uni_i32, u32, random_i32, [-2, -1, 0, 1, 2] }
+fn_int! { u64, uni_u64, u64, random_u64, [1, 2] }
+fn_int! { i64, uni_i64, u64, random_i64, [-2, -1, 0, 1, 2] }
+fn_int! { u128, uni_u128, u128, random_u128, [1, 2] }
+fn_int! { i128, uni_i128, u128, random_i128, [-2, -1, 0, 1, 2] }
+fn_int! { usize, uni_usize, usize, random_usize, [1, 2] }
+fn_int! { isize, uni_isize, usize, random_isize, [-2, -1, 0, 1, 2] }
 
 #[cfg(test)]
 mod tests {

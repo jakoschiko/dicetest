@@ -87,7 +87,7 @@ impl SizeRange for RangeToInclusive<usize> {
 pub fn size(range: impl SizeRange) -> impl Gen<usize> {
     gens::reveal_limit().flat_map(move |lim| {
         let (lower, upper) = range.bounds(lim);
-        gens::usize_uniform(lower..=upper)
+        gens::uni_usize(lower..=upper)
     })
 }
 

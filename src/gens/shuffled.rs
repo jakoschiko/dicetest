@@ -8,7 +8,7 @@ pub fn shuffled_vec<T>(mut vec: Vec<T>) -> impl GenOnce<Vec<T>> {
         let n = vec.len();
         if n > 0 {
             for i in 0..(n - 1) {
-                let j = gens::usize_uniform(i..n).gen(dice);
+                let j = gens::uni_usize(i..n).gen(dice);
                 vec.swap(i, j);
             }
         }

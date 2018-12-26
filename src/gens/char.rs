@@ -1,7 +1,7 @@
 use crate::prelude::gens::*;
 
 fn char_in_range(lower: u32, upper: u32) -> impl Gen<char> {
-    gens::u32_uniform(lower..=upper)
+    gens::uni_u32(lower..=upper)
         .map(std::char::from_u32)
         .map(Option::unwrap)
 }
