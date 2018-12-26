@@ -1,28 +1,59 @@
-/// Macro for logging a message with `logger::log`. Supports the `format!` syntax.
+/// Macro for adding a hint. Supports the `format!` syntax.
 #[macro_export]
-macro_rules! log {
+macro_rules! hint {
     ($($arg:tt)*) => ({
-        $crate::logger::log(|| format!($($arg)*))
+        $crate::hints::add(|| format!($($arg)*))
     })
 }
 
-/// Macro for logging a variable with `logger::log`. Uses `Debug` formatting.
+/// Similar to dbg from rust stdlib. Adds a hint with the expression value using `Debug` formatting
+/// and returns it.
 #[macro_export]
-macro_rules! log_var {
-    ($arg:tt) => ({
-        $crate::logger::log(|| format!(concat!(stringify!($arg), ": {:?}"), $arg))
+macro_rules! hint_dbg {
+    ($val:expr) => {
+        // Takes ownership.
+        match $val {
+            tmp => {
+                $crate::hints::add(|| format!(concat!(stringify!($val), " = {:?}"), &tmp));
+                tmp
+            }
+        }
+    }
+}
+
+/// Macro for creating a stat with the given key and value. Supports the `format!` syntax for
+/// the value.
+#[macro_export]
+macro_rules! stat {
+    ($key:tt, $($arg:tt)*) => ({
+        $crate::stats::inc($key, || format!($($arg)*))
     })
 }
 
-/// Macro for checking the property with `asserts::assert_prop`. If the `Config` parameter is
-/// omitted, it uses the default `Config`.
+/// Similar to dbg from rust stdlib. Creates a stat with the expression as key and the
+/// expression value as value using `Debug` formatting. Returns the expression value.
 #[macro_export]
-macro_rules! assert_prop {
-    ($config:expr, $prop:expr) => ({
-        $crate::asserts::assert_prop($config, || $prop);
+macro_rules! stat_dbg {
+    ($val:expr) => {
+        // Takes ownership.
+        match $val {
+            tmp => {
+                $crate::stats::inc(stringify!($val), || format!("{:?}", &tmp));
+                tmp
+            }
+        }
+    }
+}
+
+/// Macro for checking the test with `checker::check`. If the `Config` parameter is omitted,
+/// the default `Config` will be used.
+#[macro_export]
+macro_rules! dicetest {
+    ($config:expr, $test:expr) => ({
+        $crate::checker::check($config, $test);
     });
-    ($prop:expr) => ({
-        let config = $crate::brooder::Config::default();
-        $crate::asserts::assert_prop(config, || $prop);
+    ($test:expr) => ({
+        let config = $crate::runner::Config::default();
+        $crate::checker::check(config, $test);
     })
 }

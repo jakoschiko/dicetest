@@ -75,82 +75,93 @@ mod tests {
 
     #[test]
     fn char_ascii_alphabetic_lowercase_generates_only_valid_values() {
-        assert_prop!(
-            props::forall_1(
-                gens::char_ascii_alphabetic_lowercase(),
-                |char| char.is_ascii_alphabetic() && char.is_ascii_lowercase()
-            ).dyn()
-        )
+        dicetest!(|dice| {
+            let char = gens::char_ascii_alphabetic_lowercase().gen(dice);
+
+            hint_dbg!(char);
+
+            assert!(char.is_ascii_alphabetic());
+            assert!(char.is_ascii_lowercase());
+        })
     }
 
     #[test]
     fn char_ascii_alphabetic_uppercase_generates_only_valid_values() {
-        assert_prop!(
-            props::forall_1(
-                gens::char_ascii_alphabetic_uppercase(),
-                |char| char.is_ascii_alphabetic() && char.is_ascii_uppercase()
-            ).dyn()
-        )
+        dicetest!(|dice| {
+            let char = gens::char_ascii_alphabetic_uppercase().gen(dice);
+
+            hint_dbg!(char);
+
+            assert!(char.is_ascii_alphabetic());
+            assert!(char.is_ascii_uppercase());
+        })
     }
 
     #[test]
     fn char_ascii_alphabetic_generates_only_valid_values() {
-        assert_prop!(
-            props::forall_1(
-                gens::char_ascii_alphabetic(),
-                |char| char.is_ascii_alphabetic()
-            ).dyn()
-        )
+        dicetest!(|dice| {
+            let char = gens::char_ascii_alphabetic().gen(dice);
+
+            hint_dbg!(char);
+
+            assert!(char.is_ascii_alphabetic());
+        })
     }
 
 
     #[test]
     fn char_ascii_digit_generates_only_valid_values() {
-        assert_prop!(
-            props::forall_1(
-                gens::char_ascii_digit(),
-                |char| char.is_ascii_digit()
-            ).dyn()
-        )
+        dicetest!(|dice| {
+            let char = gens::char_ascii_digit().gen(dice);
+
+            hint_dbg!(char);
+
+            assert!(char.is_ascii_digit());
+        })
     }
 
     #[test]
     fn char_ascii_alphanumeric_generates_only_valid_values() {
-        assert_prop!(
-            props::forall_1(
-                gens::char_ascii_alphanumeric(),
-                |char| char.is_ascii_alphanumeric()
-            ).dyn()
-        )
+        dicetest!(|dice| {
+            let char = gens::char_ascii_alphanumeric().gen(dice);
+
+            hint_dbg!(char);
+
+            assert!(char.is_ascii_alphanumeric());
+        })
     }
 
     #[test]
     fn char_ascii_printable_generates_only_valid_values() {
-        assert_prop!(
-            props::forall_1(
-                gens::char_ascii_printable(),
-                |char| char.is_ascii() && !char.is_ascii_control()
-            ).dyn()
-        )
+        dicetest!(|dice| {
+            let char = gens::char_ascii_printable().gen(dice);
+
+            hint_dbg!(char);
+
+            assert!(char.is_ascii());
+            assert!(!char.is_ascii_control());
+        })
     }
 
     #[test]
     fn char_ascii_generates_only_valid_values() {
-        assert_prop!(
-            props::forall_1(
-                gens::char_ascii(),
-                |char| char.is_ascii()
-            ).dyn()
-        )
+        dicetest!(|dice| {
+            let char = gens::char_ascii().gen(dice);
+
+            hint_dbg!(char);
+
+            assert!(char.is_ascii());
+        })
     }
 
     #[test]
     fn char_generates_only_valid_values() {
-        assert_prop!(
-            props::forall_1(
-                gens::char(),
-                |char| std::char::from_u32(char as u32).is_some()
-            ).dyn()
-        )
+        dicetest!(|dice| {
+            let char = gens::char().gen(dice);
+
+            hint_dbg!(char);
+
+            assert!(std::char::from_u32(char as u32).is_some());
+        })
     }
 }

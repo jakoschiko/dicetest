@@ -1,5 +1,5 @@
 [package]
-name = "rustcheck"
+name = "dicetest"
 version = "0.1.0"
 authors = [""]
 
@@ -7,6 +7,6 @@ authors = [""]
 rand = "0.5"
 
 [features]
-default = []
-disabled_logger = []
-disabled_counter = []
+default = ["hints", "stats"]
+hints = []
+stats = []

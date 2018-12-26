@@ -98,99 +98,107 @@ mod tests {
     use crate::prelude::tests::*;
     use crate::gen::{Limit, Dice};
 
-    fn range_contains_size_prop<B, R>(
+    fn range_contains_size<B, R>(
+        dice: &mut Dice,
         range_data_gen: impl GenOnce<B>,
         create_range: impl FnOnce(B) -> R,
         is_in_range: impl FnOnce(B, usize) -> bool,
-    ) -> impl Prop
+    )
     where
         B: Copy + Debug,
         R: gens::SizeRange + Debug,
     {
-        props::forall_3(
-            gens::prng_fork().name("prng"),
-            gens::u64(..).name("limit"),
-            range_data_gen.name("range_data"),
-            |mut prng, limit, range_data| {
-                let mut dice = Dice::new(&mut prng, Limit(limit));
+        let mut prng = gens::prng_fork().gen(dice);
+        let limit = gens::u64(..).gen(dice);
+        let range_data = range_data_gen.gen_once(dice);
 
-                let range = create_range(range_data);
-                log_var!(range);
+        hint_dbg!(&prng);
+        hint_dbg!(&limit);
+        hint_dbg!(&range_data);
 
-                let size = gens::size(range).gen(&mut dice);
-                log_var!(size);
+        let mut dice = Dice::new(&mut prng, Limit(limit));
 
-                is_in_range(range_data, size)
-            }
-        )
+        let range = create_range(range_data);
+        hint_dbg!(&range);
+
+        let size = gens::size(range).gen(&mut dice);
+        hint_dbg!(&size);
+
+        assert!(is_in_range(range_data, size));
     }
 
     #[test]
     fn size_is_equal_to_target() {
-        assert_prop!(
-            range_contains_size_prop(
+        dicetest!(|dice| {
+            range_contains_size(
+                dice,
                 gens::usize(..),
                 |target| target,
                 |target, size| size == target,
-            ).dyn()
-        )
+            );
+        })
     }
 
     #[test]
     fn size_is_in_range() {
-        assert_prop!(
-            range_contains_size_prop(
+        dicetest!(|dice| {
+            range_contains_size(
+                dice,
                 gens::array_2(gens::usize(..usize::max_value() - 1))
                     .map(|[a, b]| (a.min(b), a.max(b) + 1)),
                 |(lower, upper)| lower..upper,
                 |(lower, upper), size| lower <= size && size < upper,
-            ).dyn()
-        )
+            );
+        })
     }
 
     #[test]
     fn size_is_in_range_from() {
-        assert_prop!(
-            range_contains_size_prop(
+        dicetest!(|dice| {
+            range_contains_size(
+                dice,
                 gens::usize(..),
                 |lower| lower..,
                 |lower, size| lower <= size,
-            ).dyn()
-        )
+            );
+        })
     }
 
     #[test]
     fn size_is_in_range_inclusive() {
-        assert_prop!(
-            range_contains_size_prop(
+        dicetest!(|dice| {
+            range_contains_size(
+                dice,
                 gens::array_2(gens::usize(..))
                     .map(|[a, b]| (a.min(b), a.max(b))),
                 |(lower, upper)| lower..=upper,
                 |(lower, upper), size| lower <= size && size <= upper,
-            ).dyn()
-        )
+            );
+        })
     }
 
     #[test]
     fn size_is_in_range_to() {
-        assert_prop!(
-            range_contains_size_prop(
+        dicetest!(|dice| {
+            range_contains_size(
+                dice,
                 gens::usize(1..),
                 |upper| ..upper,
                 |upper, size| size < upper,
-            ).dyn()
-        )
+            );
+        })
     }
 
     #[test]
     fn size_is_in_range_to_inclusive() {
-        assert_prop!(
-            range_contains_size_prop(
+        dicetest!(|dice| {
+            range_contains_size(
+                dice,
                 gens::usize(..),
                 |upper| ..=upper,
                 |upper, size| size <= upper,
-            ).dyn()
-        )
+            );
+        })
     }
 
 }

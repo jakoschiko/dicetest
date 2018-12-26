@@ -133,61 +133,64 @@ impl BuildHasher for Prng {
 mod tests {
     use crate::prelude::tests::*;
     use crate::gen::Prng;
+    use crate::asserts;
 
     #[test]
     fn init_must_not_have_cycle_length_zero() {
-        assert_prop!(
-            props::forall_1(
-                gens::u64(..).name("seed"),
-                |seed| {
-                    let prng_init = Prng::init(seed);
-                    log!("Prng after init: {:?}", prng_init);
-                    let mut prng_next = prng_init.clone();
-                    let _ = prng_next.next();
-                    log!("Prng after next: {:?}", prng_next);
-                    let cycle_length_is_zero = prng_init == prng_next;
-                    props::assert(!cycle_length_is_zero, "Cycle length is not zero")
-                }
-            )
-        )
+        dicetest!(|dice| {
+            let seed = gens::u64(..).gen(dice);
+
+            let prng_init = Prng::init(seed);
+            let mut prng_next = prng_init.clone();
+            let _ = prng_next.next();
+            let cycle_length_is_zero = prng_init == prng_next;
+
+            hint_dbg!(seed);
+            hint_dbg!(prng_init);
+            hint_dbg!(prng_next);
+
+            assert!(!cycle_length_is_zero);
+        })
     }
 
     #[test]
     fn init_with_bytes_is_left_inverse() {
-        assert_prop!(
-            props::left_inverse(
+        dicetest!(|dice| {
+            asserts::left_inverse(
+                dice,
                 gens::prng_fork(),
                 |prng| prng.seed_as_bytes(),
                 Prng::init_with_bytes,
-            )
-        )
+            );
+        })
     }
 
     #[test]
     fn seed_as_bytes_is_left_inverse() {
-        assert_prop!(
-            props::left_inverse(
+        dicetest!(|dice| {
+            asserts::left_inverse(
+                dice,
                 gens::array_32(gens::u8(..)),
                 Prng::init_with_bytes,
                 |prng| prng.seed_as_bytes(),
-            )
-        )
+            );
+        })
     }
 
     #[test]
     fn reseed_changes_prng() {
-        assert_prop!(
-            props::forall_2(
-                gens::prng_fork().name("prng"),
-                gens::u64(..).name("seed"),
-                |prng, seed| {
-                    let mut prng_reseeded = prng.clone();
-                    prng_reseeded.reseed(seed);
-                    log_var!(prng_reseeded);
-                    let prngs_are_equal = prng == prng_reseeded;
-                    props::assert(!prngs_are_equal, "Reseeded Prng is not equal")
-                }
-            )
-        )
+        dicetest!(|dice| {
+            let prng = gens::prng_fork().gen(dice);
+            let seed = gens::u64(..).gen(dice);
+
+            let mut prng_reseeded = prng.clone();
+            prng_reseeded.reseed(seed);
+
+            hint_dbg!(&prng);
+            hint_dbg!(&seed);
+            hint_dbg!(&prng_reseeded);
+
+            assert_ne!(prng, prng_reseeded);
+        })
     }
 }
