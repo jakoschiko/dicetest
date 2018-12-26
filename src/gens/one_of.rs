@@ -44,10 +44,7 @@ macro_rules! fn_one_of_n {
         /// Generates a value with a randomly chosen generator.
         pub fn $one_of_gen_n<T>(
             $($gen_i: impl Gen<T>,)*
-        ) -> impl Gen<T>
-        where
-            T: Clone,
-        {
+        ) -> impl Gen<T> {
             gens::from_fn(move |dice| {
                 let choice = dice.prng.next_number() % $n;
                 match choice {
