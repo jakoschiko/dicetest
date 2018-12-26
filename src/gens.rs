@@ -30,6 +30,9 @@ pub use self::char::*;
 mod array;
 pub use self::array::*;
 
+mod option;
+pub use self::option::*;
+
 mod size;
 pub use self::size::*;
 
