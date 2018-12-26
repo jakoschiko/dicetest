@@ -1,5 +1,3 @@
-extern crate rand;
-
 mod macros;
 
 mod util;
