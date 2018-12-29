@@ -6,6 +6,10 @@ pub mod hints;
 
 pub mod stats;
 
+pub mod cogen;
+
+pub mod cogens;
+
 pub mod gen;
 
 pub mod gens;
