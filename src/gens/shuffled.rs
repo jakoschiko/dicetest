@@ -36,11 +36,11 @@ mod tests {
         dicetest!(|dice| {
             let orig_vec = gens::vec(gens::u8(..), ..).gen(dice);
             let orig_vec_elems = count_vec_elems(&orig_vec);
-            hint_dbg!(&orig_vec);
+            hint!(orig_vec);
 
             let shuffled_vec = gens::shuffled_vec(orig_vec).gen_once(dice);
             let shuffled_vec_elems = count_vec_elems(&shuffled_vec);
-            hint_dbg!(&shuffled_vec);
+            hint!(shuffled_vec);
 
             assert_eq!(orig_vec_elems, shuffled_vec_elems);
         })

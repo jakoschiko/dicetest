@@ -101,15 +101,15 @@ mod tests {
     }
 
     #[test]
-    fn if_len_gt_1_start_is_first_limit() {
+    fn if_len_gt_1_then_start_is_first_limit() {
         dicetest!(|dice| {
             let start = gens::u64(..).gen(dice);
             let end = gens::u64(..).gen(dice);
             let len = gens::u64(1..).gen(dice);
 
-            hint_dbg!(start);
-            hint_dbg!(end);
-            hint_dbg!(len);
+            hint!(start);
+            hint!(end);
+            hint!(len);
 
             let series = LimitSeries::new(start, end, len);
             let first_limit = series.nth(0).unwrap().0;
@@ -119,15 +119,15 @@ mod tests {
     }
 
     #[test]
-    fn if_len_is_gt_2_end_is_last_limit() {
+    fn if_len_is_gt_2_then_end_is_last_limit() {
         dicetest!(|dice| {
             let start = gens::u64(..).gen(dice);
             let end = gens::u64(..).gen(dice);
             let len = gens::u64(2..).gen(dice);
 
-            hint_dbg!(start);
-            hint_dbg!(end);
-            hint_dbg!(len);
+            hint!(start);
+            hint!(end);
+            hint!(len);
 
             let series = LimitSeries::new(start, end, len);
             let last_limit = series.nth(len - 1).unwrap().0;

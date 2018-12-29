@@ -156,8 +156,8 @@ mod tests {
             let bytes = gens::vec(gens::u8(..), 1..).gen(dice);
             let base64 = base64::encode(&bytes);
 
-            hint_dbg!(bytes);
-            hint_dbg!(&base64);
+            hint!(bytes);
+            hint!(base64);
 
             assert!(!base64.is_empty())
         })
@@ -169,8 +169,8 @@ mod tests {
             let bytes = gens::vec(gens::u8(..), ..).gen(dice);
             let base64 = base64::encode(&bytes);
 
-            hint_dbg!(&bytes);
-            hint_dbg!(&base64);
+            hint!(bytes);
+            hint!(base64);
 
             let decoded_bytes = base64::decode(&base64).unwrap();
 
@@ -194,8 +194,8 @@ mod tests {
 
             let bytes = base64::decode(&base64);
 
-            hint_dbg!(&base64);
-            hint_dbg!(&bytes);
+            hint!(base64);
+            hint!(bytes);
 
             assert!(bytes.is_err());
         })
@@ -213,8 +213,8 @@ mod tests {
 
             let bytes = base64::decode(&invalid_base64);
 
-            hint_dbg!(&invalid_base64);
-            hint_dbg!(&bytes);
+            hint!(invalid_base64);
+            hint!(bytes);
 
             assert!(bytes.is_err());
         })

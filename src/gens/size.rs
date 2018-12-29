@@ -112,17 +112,17 @@ mod tests {
         let limit = gens::u64(..).gen(dice);
         let range_data = range_data_gen.gen_once(dice);
 
-        hint_dbg!(&prng);
-        hint_dbg!(&limit);
-        hint_dbg!(&range_data);
+        hint!(prng);
+        hint!(limit);
+        hint!(range_data);
 
         let mut dice = Dice::new(&mut prng, Limit(limit));
 
         let range = create_range(range_data);
-        hint_dbg!(&range);
+        hint!(range);
 
         let size = gens::size(range).gen(&mut dice);
-        hint_dbg!(&size);
+        hint!(size);
 
         assert!(is_in_range(range_data, size));
     }

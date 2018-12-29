@@ -294,13 +294,13 @@ mod tests {
         R: gens::IntRange<I> + Debug,
     {
         let range_data = range_data_gen.gen_once(dice);
-        hint_dbg!(&range_data);
+        hint!(range_data);
 
         let range = create_range(range_data);
-        hint_dbg!(&range);
+        hint!(range);
 
         let int = int_gen(range).gen_once(dice);
-        hint_dbg!(&int);
+        hint!(int);
 
         assert!(is_in_range(range_data, int));
     }

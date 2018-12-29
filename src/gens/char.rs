@@ -78,7 +78,7 @@ mod tests {
         dicetest!(|dice| {
             let char = gens::char_ascii_alphabetic_lowercase().gen(dice);
 
-            hint_dbg!(char);
+            hint!(char);
 
             assert!(char.is_ascii_alphabetic());
             assert!(char.is_ascii_lowercase());
@@ -90,7 +90,7 @@ mod tests {
         dicetest!(|dice| {
             let char = gens::char_ascii_alphabetic_uppercase().gen(dice);
 
-            hint_dbg!(char);
+            hint!(char);
 
             assert!(char.is_ascii_alphabetic());
             assert!(char.is_ascii_uppercase());
@@ -102,7 +102,7 @@ mod tests {
         dicetest!(|dice| {
             let char = gens::char_ascii_alphabetic().gen(dice);
 
-            hint_dbg!(char);
+            hint!(char);
 
             assert!(char.is_ascii_alphabetic());
         })
@@ -114,7 +114,7 @@ mod tests {
         dicetest!(|dice| {
             let char = gens::char_ascii_digit().gen(dice);
 
-            hint_dbg!(char);
+            hint!(char);
 
             assert!(char.is_ascii_digit());
         })
@@ -125,7 +125,7 @@ mod tests {
         dicetest!(|dice| {
             let char = gens::char_ascii_alphanumeric().gen(dice);
 
-            hint_dbg!(char);
+            hint!(char);
 
             assert!(char.is_ascii_alphanumeric());
         })
@@ -136,7 +136,7 @@ mod tests {
         dicetest!(|dice| {
             let char = gens::char_ascii_printable().gen(dice);
 
-            hint_dbg!(char);
+            hint!(char);
 
             assert!(char.is_ascii());
             assert!(!char.is_ascii_control());
@@ -148,7 +148,7 @@ mod tests {
         dicetest!(|dice| {
             let char = gens::char_ascii().gen(dice);
 
-            hint_dbg!(char);
+            hint!(char);
 
             assert!(char.is_ascii());
         })
@@ -159,7 +159,7 @@ mod tests {
         dicetest!(|dice| {
             let char = gens::char().gen(dice);
 
-            hint_dbg!(char);
+            hint!(char);
 
             assert!(std::char::from_u32(char as u32).is_some());
         })
