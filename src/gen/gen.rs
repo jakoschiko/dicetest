@@ -84,12 +84,3 @@ pub trait Gen<T>: GenOnce<T> {
         self.gen(&mut dice)
     }
 }
-
-impl<T, F> Gen<T> for F
-where
-    F: Fn(&mut Dice) -> T,
-{
-    fn gen(&self, dice: &mut Dice) -> T {
-        self(dice)
-    }
-}
