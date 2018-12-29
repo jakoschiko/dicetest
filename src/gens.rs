@@ -6,9 +6,6 @@ pub use self::from::*;
 mod just;
 pub use self::just::*;
 
-mod meta;
-pub use self::meta::*;
-
 mod prng;
 pub use self::prng::*;
 
