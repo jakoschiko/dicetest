@@ -1,7 +1,7 @@
 //! The standard collection of `GenOnce` and `Gen` implementations.
 
-mod from_fn;
-pub use self::from_fn::*;
+mod from;
+pub use self::from::*;
 
 mod just;
 pub use self::just::*;
