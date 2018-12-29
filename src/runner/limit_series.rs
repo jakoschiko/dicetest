@@ -21,16 +21,22 @@ impl LimitSeries {
     pub fn nth(&self, n: u64) -> Option<Limit> {
         if n >= self.len {
             None
+        } else if self.len == 1 {
+            Some(Limit(self.start))
         } else if self.start <= self.end {
-            Some(self.nth_with_min(n, self.start))
+            Some(self.interpolate(n, self.start))
         } else {
-            Some(self.nth_with_min(self.len - n, self.end))
+            Some(self.interpolate(self.len - n - 1, self.end))
         }
     }
 
-    fn nth_with_min(&self, n: u64, min: u64) -> Limit {
-        let delta = ((u128::from(n) * u128::from(self.diff)) / u128::from(self.len)) as u64;
-        Limit(min + delta)
+    fn interpolate(&self, x: u64, offset_y: u64) -> Limit {
+        let delta_x = u128::from(self.len) - 1;
+        let delta_y = u128::from(self.diff);
+
+        let ipol_y = ((u128::from(x) * delta_y) / delta_x) as u64;
+
+        Limit(offset_y + ipol_y)
     }
 
     /// Returns an interator that emits all `Limit`s.
@@ -59,4 +65,74 @@ impl Iterator for LimitSeriesIntoIter {
     }
 }
 
-// TODO: Tests
+#[cfg(test)]
+mod tests {
+    use crate::prelude::tests::*;
+    use crate::runner::LimitSeries;
+
+    fn assert_example(start: u64, end: u64, len: u64, expected_limits: Vec<u64>) {
+        let series = LimitSeries::new(start, end, len);
+        let actual_limits = series.into_iter().map(|limit| limit.0).collect::<Vec<_>>();
+
+        assert_eq!(actual_limits, expected_limits);
+    }
+
+    #[test]
+    fn examples() {
+        assert_example(0, 2, 2, vec![0, 2]);
+        assert_example(2, 0, 2, vec![2, 0]);
+        assert_example(0, 2, 3, vec![0, 1, 2]);
+        assert_example(2, 0, 3, vec![2, 1, 0]);
+    }
+
+    #[test]
+    fn iterator_produces_exact_len_limits() {
+        dicetest!(|dice| {
+            let start = gens::u64(..).gen(dice);
+            let end = gens::u64(..).gen(dice);
+            let len = gens::u64(..=dice.limit().0).gen(dice);
+
+            let series = LimitSeries::new(start, end, len);
+            let iter = series.into_iter();
+            let iter_len: u64 = iter.map(|_| 1).sum();
+
+            assert_eq!(iter_len, len);
+        })
+    }
+
+    #[test]
+    fn if_len_gt_1_start_is_first_limit() {
+        dicetest!(|dice| {
+            let start = gens::u64(..).gen(dice);
+            let end = gens::u64(..).gen(dice);
+            let len = gens::u64(1..).gen(dice);
+
+            hint_dbg!(start);
+            hint_dbg!(end);
+            hint_dbg!(len);
+
+            let series = LimitSeries::new(start, end, len);
+            let first_limit = series.nth(0).unwrap().0;
+
+            assert_eq!(first_limit, start);
+        })
+    }
+
+    #[test]
+    fn if_len_is_gt_2_end_is_last_limit() {
+        dicetest!(|dice| {
+            let start = gens::u64(..).gen(dice);
+            let end = gens::u64(..).gen(dice);
+            let len = gens::u64(2..).gen(dice);
+
+            hint_dbg!(start);
+            hint_dbg!(end);
+            hint_dbg!(len);
+
+            let series = LimitSeries::new(start, end, len);
+            let last_limit = series.nth(len - 1).unwrap().0;
+
+            assert_eq!(last_limit, end);
+        })
+    }
+}
