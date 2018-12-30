@@ -4,11 +4,21 @@ use std::hash::{Hash, BuildHasher};
 use crate::prelude::gens::*;
 use crate::gens::{SizeRange, CollectionBuilder};
 
-struct HashMapBuilder<S>
+/// `HashMap` builder for `gens::collection`.
+pub struct HashMapBuilder<S>
 where
     S: BuildHasher,
 {
     build_hasher: S,
+}
+
+impl<S> HashMapBuilder<S>
+where
+    S: BuildHasher,
+{
+    pub fn new(build_hasher: S) -> Self {
+        HashMapBuilder { build_hasher }
+    }
 }
 
 impl<K, V, S> CollectionBuilder<(K, V), HashMap<K, V, S>> for HashMapBuilder<S>
@@ -37,7 +47,7 @@ where
     K: Eq + Hash,
     S: BuildHasher,
 {
-    let builder_gen = build_hasher_gen.map(|build_hasher| HashMapBuilder { build_hasher });
+    let builder_gen = build_hasher_gen.map(|build_hasher| HashMapBuilder::new(build_hasher));
     gens::collection(builder_gen, elem_gen, tries_range)
 }
 

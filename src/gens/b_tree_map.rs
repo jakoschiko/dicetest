@@ -3,8 +3,9 @@ use std::collections::BTreeMap;
 use crate::prelude::gens::*;
 use crate::gens::{SizeRange, CollectionBuilder};
 
+/// `BTreeMap` builder for `gens::collection`.
 #[derive(Clone)]
-struct BTreeMapBuilder;
+pub struct BTreeMapBuilder;
 
 impl<K: Ord, V> CollectionBuilder<(K, V), BTreeMap<K, V>> for BTreeMapBuilder {
     fn build(self, elems: impl ExactSizeIterator<Item = (K, V)>) -> BTreeMap<K, V> {

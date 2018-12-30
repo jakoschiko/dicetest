@@ -3,8 +3,9 @@ use std::collections::LinkedList;
 use crate::prelude::gens::*;
 use crate::gens::{SizeRange, CollectionBuilder};
 
+/// `LinkedList` builder for `gens::collection`.
 #[derive(Clone)]
-struct LinkedListBuilder;
+pub struct LinkedListBuilder;
 
 impl<T> CollectionBuilder<T, LinkedList<T>> for LinkedListBuilder {
     fn build(self, elems: impl ExactSizeIterator<Item = T>) -> LinkedList<T> {

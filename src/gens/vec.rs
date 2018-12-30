@@ -1,8 +1,9 @@
 use crate::prelude::gens::*;
 use crate::gens::{SizeRange, CollectionBuilder};
 
+/// `Vec` builder for `gens::collection`.
 #[derive(Clone)]
-struct VecBuilder;
+pub struct VecBuilder;
 
 impl<T> CollectionBuilder<T, Vec<T>> for VecBuilder {
     fn build(self, elems: impl ExactSizeIterator<Item = T>) -> Vec<T> {

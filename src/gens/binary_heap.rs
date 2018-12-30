@@ -3,8 +3,9 @@ use std::collections::BinaryHeap;
 use crate::prelude::gens::*;
 use crate::gens::{SizeRange, CollectionBuilder};
 
+/// `BinaryHeap` builder for `gens::collection`.
 #[derive(Clone)]
-struct BinaryHeapBuilder;
+pub struct BinaryHeapBuilder;
 
 impl<T: Ord> CollectionBuilder<T, BinaryHeap<T>> for BinaryHeapBuilder {
     fn build(self, elems: impl ExactSizeIterator<Item = T>) -> BinaryHeap<T> {

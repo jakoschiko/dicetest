@@ -3,8 +3,9 @@ use std::collections::VecDeque;
 use crate::prelude::gens::*;
 use crate::gens::{SizeRange, CollectionBuilder};
 
+/// `VecDeque` builder for `gens::collection`.
 #[derive(Clone)]
-struct VecDequeBuilder;
+pub struct VecDequeBuilder;
 
 impl<T> CollectionBuilder<T, VecDeque<T>> for VecDequeBuilder {
     fn build(self, elems: impl ExactSizeIterator<Item = T>) -> VecDeque<T> {
