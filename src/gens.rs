@@ -42,11 +42,26 @@ pub use self::collection::*;
 mod vec;
 pub use self::vec::*;
 
-mod hash_set;
-pub use self::hash_set::*;
+mod vec_deque;
+pub use self::vec_deque::*;
+
+mod linked_list;
+pub use self::linked_list::*;
 
 mod hash_map;
 pub use self::hash_map::*;
+
+mod b_tree_map;
+pub use self::b_tree_map::*;
+
+mod hash_set;
+pub use self::hash_set::*;
+
+mod b_tree_set;
+pub use self::b_tree_set::*;
+
+mod binary_heap;
+pub use self::binary_heap::*;
 
 mod string;
 pub use self::string::*;
