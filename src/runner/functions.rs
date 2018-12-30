@@ -192,7 +192,7 @@ mod tests {
     #[test]
     fn no_hints_if_enabled_but_failure_not_reproduceable() {
         for _ in 0..10 {
-            let config = Config::default().with_passes(1);
+            let config = Config::default().with_hints_enabled(true).with_passes(1);
             let (summary, has_failed) = hints::collect(|| {
                 runner::run_repeatedly(config, |_| {
                     let should_fail = Prng::random().next_number() % 2 == 0;
