@@ -152,48 +152,91 @@ where
 
 #[cfg(test)]
 mod tests {
+    use crate::hints;
+    use crate::gen::Prng;
+    use crate::runner::{self, Config};
+
     #[test]
     fn zero_passes_if_test_fails() {
-        // TODO: impl test
+        let summary = runner::run_repeatedly(Config::default(), |_| panic!());
+        assert_eq!(summary.passes, 0);
     }
 
     #[test]
     fn full_passes_if_test_succeeds() {
-        // TODO: impl test
+        let config = Config::default();
+        let summary = runner::run_repeatedly(config.clone(), |_| ());
+        assert_eq!(summary.passes, config.passes);
     }
 
     #[test]
     fn has_counterproof_if_test_fails() {
-        // TODO: impl test
+        let summary = runner::run_repeatedly(Config::default(), |_| panic!());
+        assert!(summary.counterexample.is_some());
     }
 
     #[test]
     fn no_counterproof_if_test_succeeds() {
-        // TODO: impl test
+        let summary = runner::run_repeatedly(Config::default(), |_| ());
+        assert!(summary.counterexample.is_none());
     }
 
     #[test]
     fn no_hints_if_disabled() {
-        // TODO: impl test
+        let config = Config::default().with_hints_enabled(false);
+        let summary = runner::run_repeatedly(config, |_| panic!());
+        let counterexample = summary.counterexample.unwrap();
+        assert!(counterexample.hints.is_none());
     }
 
     #[test]
-    fn no_hints_if_enabled_but_test_not_deterministic() {
-        // TODO: impl test
+    fn no_hints_if_enabled_but_failure_not_reproduceable() {
+        for _ in 0..10 {
+            let config = Config::default().with_passes(1);
+            let (summary, has_failed) = hints::collect(|| {
+                runner::run_repeatedly(config, |_| {
+                    let should_fail = Prng::random().next_number() % 2 == 0;
+
+                    hints::add(|| format!("{}", should_fail));
+
+                    if should_fail {
+                        panic!();
+                    }
+                })
+            });
+
+            let failure_was_not_reproduceable =
+                &has_failed.0[0].text == "true" &&
+                &has_failed.0[1].text == "false";
+
+            if failure_was_not_reproduceable {
+               let counterexample = summary.counterexample.unwrap();
+               assert!(counterexample.hints.is_none());
+            }
+        }
     }
 
     #[test]
     fn has_hints_if_enabled_and_test_deteministic() {
-        // TODO: impl test
+        let config = Config::default().with_hints_enabled(true);
+        let summary = runner::run_repeatedly(config, |_| panic!());
+        let counterexample = summary.counterexample.unwrap();
+        assert!(counterexample.hints.is_some());
     }
 
     #[test]
     fn no_stats_if_disabled() {
-        // TODO: impl test
+        let config = Config::default().with_stats_enabled(false);
+        let summary = runner::run_repeatedly(config, |_| ());
+        let stats = summary.stats;
+        assert!(stats.is_none());
     }
 
     #[test]
     fn has_stats_if_enabled() {
-        // TODO: impl test
+        let config = Config::default().with_stats_enabled(true);
+        let summary = runner::run_repeatedly(config, |_| ());
+        let stats = summary.stats;
+        assert!(stats.is_some());
     }
 }
