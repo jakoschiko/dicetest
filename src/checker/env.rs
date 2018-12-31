@@ -3,9 +3,9 @@ use std::str::FromStr;
 
 use crate::gen::Limit;
 use crate::runner::Run;
-use crate::checker::{Panic, Mode};
+use crate::checker::{LogCondition, Mode};
 
-const KEY_PANIC: &str = "DICETEST_PANIC";
+const KEY_LOG_CONDITION: &str = "DICETEST_LOG_CONDITION";
 const KEY_MODE: &str = "DICETEST_MODE";
 const KEY_SEED: &str = "DICETEST_SEED";
 const KEY_START_LIMIT: &str = "DICETEST_START_LIMIT";
@@ -77,17 +77,17 @@ pub fn read_stats_enabled(default: bool) -> Result<bool, String> {
     read_value(KEY_STATS_ENABLED, "a bool", default, bool::from_str)
 }
 
-pub fn read_panic(default: Panic) -> Result<Panic, String> {
-    match env::var(KEY_PANIC) {
+pub fn read_log_condition(default: LogCondition) -> Result<LogCondition, String> {
+    match env::var(KEY_LOG_CONDITION) {
         Err(_) => Ok(default),
         Ok(var) => {
             let str = var.as_str();
-            if str == VALUE_ALWAYS { Ok(Panic::Always) }
-            else if str == VALUE_ON_FAILURE { Ok(Panic::OnFailure) }
+            if str == VALUE_ALWAYS { Ok(LogCondition::Always) }
+            else if str == VALUE_ON_FAILURE { Ok(LogCondition::OnFailure) }
             else {
                 let error = format!(
                     "Value for '{}' must be either '{}' or '{}'",
-                    KEY_PANIC, VALUE_ALWAYS, VALUE_ON_FAILURE
+                    KEY_LOG_CONDITION, VALUE_ALWAYS, VALUE_ON_FAILURE
                 );
                 Err(error)
             }

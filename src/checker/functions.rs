@@ -1,25 +1,27 @@
-use std::panic::{UnwindSafe, RefUnwindSafe};
+use std::panic::{UnwindSafe, RefUnwindSafe, resume_unwind};
 
 use crate::gen::{Prng, Limit, Dice};
 use crate::runner::{Run, Config, run_once, run_repeatedly};
 use crate::formatter;
-use crate::checker::{Panic, Mode, env};
+use crate::checker::{LogCondition, Mode, env};
 
 /// Checks the test. How the test is checked can be configured with environment variables.
 ///
 /// # Panics
 ///
-/// You can configure in which cases this function should panic by using the following environment
-/// variable:
+/// Panics if and only if a test run has failed or an malformed environment variable is present.
 ///
-/// - `DICETEST_PANIC=<panic>`
-/// Whether this function panics depends on `<panic>` with the following options:
+/// # Stdout
+///
+/// You can configure in which cases the test result will be logged to stdout by using the following
+/// environment variable:
+///
+/// - `DICETEST_LOG_CONDITION=<log condition>`
+/// Whether the test result will be logged depends on `<log condition>` with the following options:
 ///     - `always`
-///     This function panics always.
+///     The test result will be always logged.
 ///     - `on_failure`
-///     The default value. This function panics once a test run has failed.
-///
-/// The panic message contains a summary of the test runs.
+///     The default value. The test result will be logged if and only if a test run has failed.
 ///
 /// # Modes
 ///
@@ -80,9 +82,9 @@ use crate::checker::{Panic, Mode, env};
 /// The following environment variable allows to debug a falsified property easily:
 ///
 /// - `DICETEST_DEBUG=<run code>` Both seed and `Limit` will be decoded from the
-/// run code and the test will be checked a single time. This function will always panic
-/// to present details of the test run. It's a shortcut for
-/// `DICETEST_PANIC=always DICETEST_MODE=once DICETEST_RUN_CODE=<run code>`.
+/// run code and the test will be checked a single time. This function logs always the test result.
+/// It's a shortcut for
+/// `DICETEST_LOG_CONDITION=always DICETEST_MODE=once DICETEST_RUN_CODE=<run code>`.
 /// All other environment variables will be ignored.
 #[allow(clippy::needless_pass_by_value)]
 pub fn check<T>(config: Config, test: T)
@@ -92,11 +94,11 @@ where
     let debug_params = env::read_debug(None).unwrap();
 
     if let Some(params) = debug_params {
-        let panic = Panic::Always;
-        check_once(panic, params, |dice| test(dice));
+        let log_condition = LogCondition::Always;
+        check_once(log_condition, params, |dice| test(dice));
     } else {
         let mode = env::read_mode(Mode::Repeatedly).unwrap();
-        let panic = env::read_panic(Panic::default()).unwrap();
+        let log_condition = env::read_log_condition(LogCondition::default()).unwrap();
 
         match mode {
             Mode::Repeatedly => {
@@ -116,7 +118,7 @@ where
                     stats_enabled,
                 };
 
-                check_repeatedly(panic, overriden_config, test);
+                check_repeatedly(log_condition, overriden_config, test);
             }
             Mode::Once => {
                 let code_params = env::read_run_code(None).unwrap();
@@ -127,7 +129,7 @@ where
                     Run { prng, limit }
                 });
 
-                check_once(panic, run, |dice| test(dice))
+                check_once(log_condition, run, |dice| test(dice))
             }
         }
     }
@@ -137,21 +139,29 @@ where
 ///
 /// # Panics
 ///
-/// Panics depending on the given `panic`.
-pub fn check_once<T>(panic: Panic, run: Run, test: T)
+/// Panics if and only if the test run has failed.
+///
+/// # Stdout
+///
+/// Depending on `log_condition` the test result will be logged to stdout.
+pub fn check_once<T>(log_condition: LogCondition, run: Run, test: T)
 where
     T: FnOnce(&mut Dice) + UnwindSafe + RefUnwindSafe,
 {
     let sample = run_once(run, test);
 
-    let should_panic = match panic {
-        Panic::Always => true,
-        Panic::OnFailure => sample.error.is_some(),
+    let should_print = match log_condition {
+        LogCondition::Always => true,
+        LogCondition::OnFailure => sample.error.is_some(),
     };
 
-    if should_panic {
+    if should_print {
         let message = formatter::pretty_sample(&sample);
-        panic!(message);
+        log(&message);
+    }
+
+    if let Some(err) = sample.error.map(|e| e.0) {
+        resume_unwind(err);
     }
 }
 
@@ -162,20 +172,32 @@ where
 ///
 /// # Panics
 ///
-/// Panics depending on the given `panic`.
-pub fn check_repeatedly<T>(panic: Panic, config: Config, test: T)
+/// Panics if and only if a test run has failed.
+///
+/// # Stdout
+///
+/// Depending on `log_condition` the test result will be logged to stdout.
+pub fn check_repeatedly<T>(log_condition: LogCondition, config: Config, test: T)
 where
     T: Fn(&mut Dice) + UnwindSafe + RefUnwindSafe,
 {
     let summary = run_repeatedly(config, test);
 
-    let should_panic = match panic {
-        Panic::Always => true,
-        Panic::OnFailure => summary.counterexample.is_some(),
+    let should_log = match log_condition {
+        LogCondition::Always => true,
+        LogCondition::OnFailure => summary.counterexample.is_some(),
     };
 
-    if should_panic {
+    if should_log {
         let message = formatter::pretty_summary(&summary);
-        panic!(message);
+        log(&message);
     }
+
+    if let Some(err) = summary.counterexample.map(|c| c.error.0) {
+        resume_unwind(err);
+    }
+}
+
+fn log(text: &str) {
+    print!("{}", text);
 }

@@ -1,8 +1,8 @@
 //! A unit-test friendly interface for the `runner`. Provides configuration by environment variables
-//! and panics on test failure with a human-readable summary of the test runs.
+//! and panics on test failure. Logs a human-readable summary of the test runs to stdout.
 
-mod panic;
-pub use self::panic::Panic;
+mod log_condition;
+pub use self::log_condition::LogCondition;
 
 mod mode;
 use self::mode::Mode;
