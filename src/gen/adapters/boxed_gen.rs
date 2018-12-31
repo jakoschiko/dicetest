@@ -1,4 +1,4 @@
-use crate::gen::{Dice, GenOnce, Gen};
+use crate::gen::{Dice, Gen, GenOnce};
 
 /// Adapter for `Gen::boxed`.
 pub struct BoxedGen<'a, T> {

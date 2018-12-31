@@ -6,6 +6,7 @@
 
 use std::iter;
 
+#[rustfmt::skip]
 const BYTE_TO_CHAR: [char; 64] = [
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
     'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
@@ -17,6 +18,7 @@ const BYTE_TO_CHAR: [char; 64] = [
     '4', '5', '6', '7', '8', '9', '+', '/',
 ];
 
+#[rustfmt::skip]
 #[allow(clippy::zero_prefixed_literal)]
 const CHAR_TO_BYTE: [u8; 256] = [
     64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
@@ -34,7 +36,7 @@ const CHAR_TO_BYTE: [u8; 256] = [
     64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
     64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
     64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64
+    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
 ];
 
 const PAD_CHAR: char = '=';
@@ -55,17 +57,12 @@ pub fn encode(bytes: &[u8]) -> String {
 
     let bytes_padding = iter::repeat_with(|| &0).take(pad_count);
 
-    let mut i = bytes
-        .into_iter()
-        .chain(bytes_padding);
+    let mut i = bytes.into_iter().chain(bytes_padding);
 
     let mut result = String::new();
 
     while let (Some(b0), Some(b1), Some(b2)) = (i.next(), i.next(), i.next()) {
-        let n =
-            ((u32::from(*b0)) << 16) |
-            ((u32::from(*b1)) << 8) |
-            u32::from(*b2);
+        let n = ((u32::from(*b0)) << 16) | ((u32::from(*b1)) << 8) | u32::from(*b2);
 
         let n0 = (n >> 18) & 63;
         let n1 = (n >> 12) & 63;
@@ -92,19 +89,23 @@ pub fn encode(bytes: &[u8]) -> String {
 ///
 /// This function is a left inverse for `encode`.
 pub fn decode(base64: &str) -> Result<Vec<u8>, String> {
-    let suffix =
-        if base64.ends_with("==") { "AA" }
-        else if base64.ends_with('=') { "A" }
-        else { "" };
+    let suffix = if base64.ends_with("==") {
+        "AA"
+    } else if base64.ends_with('=') {
+        "A"
+    } else {
+        ""
+    };
 
     let prefix = &base64[0..base64.len() - suffix.len()];
 
-    let invalid_char = prefix
-        .chars()
-        .find(|&c| is_invalid_char(c));
+    let invalid_char = prefix.chars().find(|&c| is_invalid_char(c));
 
     if let Some(invalid_char) = invalid_char {
-        return Err(format!("Base64 string contains invalid character: {:?}", invalid_char))
+        return Err(format!(
+            "Base64 string contains invalid character: {:?}",
+            invalid_char
+        ));
     }
 
     let has_invalid_length = (prefix.len() + suffix.len()) % 4 != 0;
@@ -119,10 +120,8 @@ pub fn decode(base64: &str) -> Result<Vec<u8>, String> {
     let mut result = Vec::new();
 
     while let (Some(n0), Some(n1), Some(n2), Some(n3)) = (i.next(), i.next(), i.next(), i.next()) {
-        let n = (u32::from(n0) << 18)
-            | (u32::from(n1) << 12)
-            | (u32::from(n2) << 6)
-            | u32::from(n3);
+        let n =
+            (u32::from(n0) << 18) | (u32::from(n1) << 12) | (u32::from(n2) << 6) | u32::from(n3);
 
         let b1 = ((n >> 16) & 0xFF) as u8;
         let b2 = ((n >> 8) & 0xFF) as u8;
@@ -205,8 +204,8 @@ mod tests {
     fn decode_fails_if_string_has_invalid_length() {
         dicetest!(|dice| {
             let base_64_char_gen = gens::one_of_array(&base64::BYTE_TO_CHAR);
-            let invalid_len_gen = gens::size(1..)
-                .map(|len| if len % 4 == 0 { len + 1 } else { len } );
+            let invalid_len_gen =
+                gens::size(1..).map(|len| if len % 4 == 0 { len + 1 } else { len });
 
             let len = invalid_len_gen.gen(dice);
             let invalid_base64 = gens::string(base_64_char_gen, len).gen(dice);

@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::gen::{Dice, GenOnce, Gen};
+use crate::gen::{Dice, Gen, GenOnce};
 
 /// Adapter for `GenOnce::rc`.
 #[derive(Clone)]

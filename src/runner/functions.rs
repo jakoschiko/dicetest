@@ -1,11 +1,11 @@
-use std::panic::{UnwindSafe, RefUnwindSafe, catch_unwind};
+use std::panic::{catch_unwind, RefUnwindSafe, UnwindSafe};
 
 use rand::{self, Rng};
 
+use crate::gen::{Dice, Prng};
 use crate::hints;
+use crate::runner::{Config, Counterexample, Error, LimitSeries, Run, Sample, Summary};
 use crate::stats;
-use crate::gen::{Prng, Dice};
-use crate::runner::{LimitSeries, Run, Config, Error, Sample, Counterexample, Summary};
 
 /// Runs the test once with the given configuration.
 pub fn run_once<T>(run: Run, test: T) -> Sample
@@ -25,11 +25,7 @@ where
 
     let error = test_result.err().map(Error);
 
-    Sample {
-        run,
-        hints,
-        error,
-    }
+    Sample { run, hints, error }
 }
 
 /// Runs the test repeatedly with the given configuration and different seeds.
@@ -40,15 +36,9 @@ pub fn run_repeatedly<T>(config: Config, test: T) -> Summary
 where
     T: Fn(&mut Dice) + UnwindSafe + RefUnwindSafe,
 {
-    let seed = config.seed.unwrap_or_else(|| {
-        rand::thread_rng().gen()
-    });
+    let seed = config.seed.unwrap_or_else(|| rand::thread_rng().gen());
 
-    let limit_series = LimitSeries::new(
-        config.start_limit,
-        config.end_limit,
-        config.passes,
-    );
+    let limit_series = LimitSeries::new(config.start_limit, config.end_limit, config.passes);
 
     let test_runs = || search_counterexample(seed, limit_series, &test);
 
@@ -60,7 +50,7 @@ where
         (passes, counterexample, None)
     };
 
-    let counterexample =  if config.hints_enabled {
+    let counterexample = if config.hints_enabled {
         counterexample_without_hints
             .map(|counterexample| rerun_counterexample(counterexample, &test))
     } else {
@@ -79,7 +69,7 @@ where
 fn search_counterexample<T>(
     seed: u64,
     limit_series: LimitSeries,
-    test: &T
+    test: &T,
 ) -> (u64, Option<Counterexample>)
 where
     T: Fn(&mut Dice) + UnwindSafe + RefUnwindSafe,
@@ -106,12 +96,15 @@ where
 
         prng = match test_result {
             Err(err) => {
-                let run = Run { prng: prng_before_run, limit };
+                let run = Run {
+                    prng: prng_before_run,
+                    limit,
+                };
                 let hints = None;
                 let error = Error(err);
                 let counterexample = Counterexample { run, hints, error };
-                break Some(counterexample)
-            },
+                break Some(counterexample);
+            }
             Ok(prng_after_run) => prng_after_run,
         };
 
@@ -137,23 +130,19 @@ where
     };
 
     match test_result {
-        Ok(()) => {
-            counterexample
-        }
-        Err(err) => {
-            Counterexample {
-                run: counterexample.run,
-                hints: Some(hints),
-                error: Error(err),
-            }
-        }
+        Ok(()) => counterexample,
+        Err(err) => Counterexample {
+            run: counterexample.run,
+            hints: Some(hints),
+            error: Error(err),
+        },
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::hints;
     use crate::gen::Prng;
+    use crate::hints;
     use crate::runner::{self, Config};
 
     #[test]
@@ -206,12 +195,11 @@ mod tests {
             });
 
             let failure_was_not_reproduceable =
-                &has_failed.0[0].text == "true" &&
-                &has_failed.0[1].text == "false";
+                &has_failed.0[0].text == "true" && &has_failed.0[1].text == "false";
 
             if failure_was_not_reproduceable {
-               let counterexample = summary.counterexample.unwrap();
-               assert!(counterexample.hints.is_none());
+                let counterexample = summary.counterexample.unwrap();
+                assert!(counterexample.hints.is_none());
             }
         }
     }

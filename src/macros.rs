@@ -3,7 +3,7 @@
 macro_rules! hint {
     ($val:expr) => {
         $crate::hints::add(|| format!(concat!(stringify!($val), " = {:?}"), $val));
-    }
+    };
 }
 
 /// Adds a hint that contains the result of the arguments applied to the `format` macro.
@@ -20,7 +20,7 @@ macro_rules! hint_format {
 macro_rules! stat {
     ($expr:expr) => {
         $crate::stats::inc(stringify!($expr), || format!("{:?}", $expr));
-    }
+    };
 }
 
 /// Creates a stat with the first argument as key and the remaining arguments applied to the
@@ -36,11 +36,11 @@ macro_rules! stat_format {
 /// the default `Config` will be used.
 #[macro_export]
 macro_rules! dicetest {
-    ($config:expr, $test:expr) => ({
+    ($config:expr, $test:expr) => {{
         $crate::checker::check($config, $test);
-    });
-    ($test:expr) => ({
+    }};
+    ($test:expr) => {{
         let config = $crate::runner::Config::default();
         $crate::checker::check(config, $test);
-    })
+    }};
 }

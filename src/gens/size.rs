@@ -1,5 +1,5 @@
-use std::ops::{Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive};
 use std::fmt::Debug;
+use std::ops::{Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive};
 
 use crate::prelude::gens::*;
 
@@ -14,7 +14,10 @@ pub trait SizeRange: Clone + Debug {
 }
 
 fn empty_size_range(range: &(impl SizeRange + Debug)) -> ! {
-    panic!("SizeRange is invalid because it contains no values: {:?}", range)
+    panic!(
+        "SizeRange is invalid because it contains no values: {:?}",
+        range
+    )
 }
 
 impl SizeRange for usize {
@@ -95,16 +98,15 @@ pub fn size(range: impl SizeRange) -> impl Gen<usize> {
 mod tests {
     use std::fmt::Debug;
 
+    use crate::gen::{Dice, Limit};
     use crate::prelude::tests::*;
-    use crate::gen::{Limit, Dice};
 
     fn range_contains_size<B, R>(
         dice: &mut Dice,
         range_data_gen: impl GenOnce<B>,
         create_range: impl FnOnce(B) -> R,
         is_in_range: impl FnOnce(B, usize) -> bool,
-    )
-    where
+    ) where
         B: Copy + Debug,
         R: gens::SizeRange + Debug,
     {
@@ -169,8 +171,7 @@ mod tests {
         dicetest!(|dice| {
             range_contains_size(
                 dice,
-                gens::array_2(gens::usize(..))
-                    .map(|[a, b]| (a.min(b), a.max(b))),
+                gens::array_2(gens::usize(..)).map(|[a, b]| (a.min(b), a.max(b))),
                 |(lower, upper)| lower..=upper,
                 |(lower, upper), size| lower <= size && size <= upper,
             );

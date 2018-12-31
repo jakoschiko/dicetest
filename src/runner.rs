@@ -21,4 +21,4 @@ mod summary;
 pub use self::summary::{Counterexample, Summary};
 
 mod functions;
-pub use self::functions::{run_repeatedly, run_once};
+pub use self::functions::{run_once, run_repeatedly};

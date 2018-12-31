@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::gen::{Dice, GenOnce, Gen};
+use crate::gen::{Dice, Gen, GenOnce};
 
 /// Adapter for `GenOnce::map_once` and `Gen::map`.
 pub struct MapGen<T, U, G, F> {

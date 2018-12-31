@@ -1,8 +1,8 @@
-use std::num::Wrapping;
-use std::mem;
 use std::hash::BuildHasher;
 #[allow(deprecated)]
 use std::hash::SipHasher;
+use std::mem;
+use std::num::Wrapping;
 
 use rand::{self, Rng};
 
@@ -131,9 +131,9 @@ impl BuildHasher for Prng {
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::tests::*;
-    use crate::gen::Prng;
     use crate::asserts;
+    use crate::gen::Prng;
+    use crate::prelude::tests::*;
 
     #[test]
     fn init_must_not_have_cycle_length_zero() {

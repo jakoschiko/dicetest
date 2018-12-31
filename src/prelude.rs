@@ -12,31 +12,31 @@ pub mod gens {
 
     pub use crate::cogen::Cogen;
     pub use crate::cogens;
-    pub use crate::gen::{Prng, Limit, Dice, GenOnce, Gen};
+    pub use crate::gen::{Dice, Gen, GenOnce, Limit, Prng};
     pub use crate::gens;
 }
 
 pub mod asserts {
     //! Contains the most useful import for writing assertions.
 
-    pub use crate::{hint, hint_format, stat, stat_format};
-    pub use crate::hints;
-    pub use crate::stats;
     pub use crate::cogen::Cogen;
     pub use crate::cogens;
-    pub use crate::gen::{Dice, GenOnce, Gen};
+    pub use crate::gen::{Dice, Gen, GenOnce};
     pub use crate::gens;
+    pub use crate::hints;
+    pub use crate::stats;
+    pub use crate::{hint, hint_format, stat, stat_format};
 }
 
 pub mod tests {
     //! Contains the most useful imports for writing tests.
 
-    pub use crate::{hint, hint_format, stat, stat_format, dicetest};
-    pub use crate::hints;
-    pub use crate::stats;
     pub use crate::cogen::Cogen;
     pub use crate::cogens;
-    pub use crate::gen::{Dice, GenOnce, Gen};
+    pub use crate::gen::{Dice, Gen, GenOnce};
     pub use crate::gens;
+    pub use crate::hints;
     pub use crate::runner::Config;
+    pub use crate::stats;
+    pub use crate::{dicetest, hint, hint_format, stat, stat_format};
 }

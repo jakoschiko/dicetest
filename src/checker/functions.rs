@@ -1,9 +1,9 @@
-use std::panic::{UnwindSafe, RefUnwindSafe, resume_unwind};
+use std::panic::{resume_unwind, RefUnwindSafe, UnwindSafe};
 
-use crate::gen::{Prng, Limit, Dice};
-use crate::runner::{Run, Config, run_once, run_repeatedly};
+use crate::checker::{env, LogCondition, Mode};
 use crate::formatter;
-use crate::checker::{LogCondition, Mode, env};
+use crate::gen::{Dice, Limit, Prng};
+use crate::runner::{run_once, run_repeatedly, Config, Run};
 
 /// Checks the test. How the test is checked can be configured with environment variables.
 ///
@@ -106,8 +106,8 @@ where
                 let start_limit = env::read_start_limit(config.start_limit).unwrap();
                 let end_limit = env::read_end_limit(config.end_limit).unwrap();
                 let passes = env::read_passes(config.passes).unwrap();
-                let hints_enabled  = env::read_hints_enabled(config.hints_enabled).unwrap();
-                let stats_enabled  = env::read_stats_enabled(config.stats_enabled).unwrap();
+                let hints_enabled = env::read_hints_enabled(config.hints_enabled).unwrap();
+                let stats_enabled = env::read_stats_enabled(config.stats_enabled).unwrap();
 
                 let overriden_config = Config {
                     seed,

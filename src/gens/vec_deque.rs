@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
+use crate::gens::{CollectionBuilder, SizeRange};
 use crate::prelude::gens::*;
-use crate::gens::{SizeRange, CollectionBuilder};
 
 /// `VecDeque` builder for `gens::collection`.
 #[derive(Clone)]
@@ -18,10 +18,7 @@ impl<T> CollectionBuilder<T, VecDeque<T>> for VecDequeBuilder {
 /// Generates a `VecDeque` that contains elements of type `T`.
 ///
 /// The range specifies the length of the `VecDeque`.
-pub fn vec_deque<T>(
-    elem_gen: impl Gen<T>,
-    len_range: impl SizeRange,
-) -> impl Gen<VecDeque<T>> {
+pub fn vec_deque<T>(elem_gen: impl Gen<T>, len_range: impl SizeRange) -> impl Gen<VecDeque<T>> {
     let builder_gen = gens::just(VecDequeBuilder);
     gens::collection(builder_gen, elem_gen, len_range)
 }

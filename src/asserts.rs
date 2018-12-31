@@ -10,8 +10,7 @@ pub fn left_inverse<X, Y>(
     gen_x: impl GenOnce<X>,
     f: impl FnOnce(X) -> Y,
     g: impl FnOnce(Y) -> X,
-)
-where
+) where
     X: Debug + Clone + PartialEq,
 {
     let x = gen_x.gen_once(dice);
@@ -27,12 +26,12 @@ pub fn right_inverse<X, Y>(
     gen_y: impl GenOnce<Y>,
     f: impl FnOnce(X) -> Y,
     h: impl FnOnce(Y) -> X,
-)
-where
+) where
     Y: Debug + Clone + PartialEq,
 {
     let y = gen_y.gen_once(dice);
     let x = h(y.clone());
     let other_y = f(x);
 
-    assert_eq!(y, other_y) }
+    assert_eq!(y, other_y)
+}

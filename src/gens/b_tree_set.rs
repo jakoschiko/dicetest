@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 
+use crate::gens::{CollectionBuilder, SizeRange};
 use crate::prelude::gens::*;
-use crate::gens::{SizeRange, CollectionBuilder};
 
 /// `BTreeSet` builder for `gens::collection`.
 #[derive(Clone)]

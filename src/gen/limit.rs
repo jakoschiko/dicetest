@@ -23,7 +23,7 @@ impl Limit {
 
         if limit_fits_into_usize {
             self.0 as usize
-        } else  {
+        } else {
             usize::max_value()
         }
     }

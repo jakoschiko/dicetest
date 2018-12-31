@@ -1,9 +1,9 @@
 use std::env;
 use std::str::FromStr;
 
+use crate::checker::{LogCondition, Mode};
 use crate::gen::Limit;
 use crate::runner::Run;
-use crate::checker::{LogCondition, Mode};
 
 const KEY_LOG_CONDITION: &str = "DICETEST_LOG_CONDITION";
 const KEY_MODE: &str = "DICETEST_MODE";
@@ -32,7 +32,7 @@ fn read_value<T, E>(
     let var = env::var(key);
     let parsed = var.map(|s| {
         let result = parse(&s);
-        result.map_err(|_|format!("Value for '{}' must be {}", key, typ))
+        result.map_err(|_| format!("Value for '{}' must be {}", key, typ))
     });
     parsed.unwrap_or_else(|_| Ok(default))
 }
@@ -45,9 +45,16 @@ fn read_option_value<T, E>(
 ) -> Result<Option<T>, String> {
     let var = env::var(key);
     let parsed = var.map(|s| {
-        let result = if s == VALUE_NONE { Ok(None) } else { parse(&s).map(Some) };
+        let result = if s == VALUE_NONE {
+            Ok(None)
+        } else {
+            parse(&s).map(Some)
+        };
         result.map_err(|_| {
-            format!("Value for '{}' must be either '{}' or {}", key, VALUE_NONE, typ)
+            format!(
+                "Value for '{}' must be either '{}' or {}",
+                key, VALUE_NONE, typ
+            )
         })
     });
     parsed.unwrap_or_else(|_| Ok(default))
@@ -82,9 +89,11 @@ pub fn read_log_condition(default: LogCondition) -> Result<LogCondition, String>
         Err(_) => Ok(default),
         Ok(var) => {
             let str = var.as_str();
-            if str == VALUE_ALWAYS { Ok(LogCondition::Always) }
-            else if str == VALUE_ON_FAILURE { Ok(LogCondition::OnFailure) }
-            else {
+            if str == VALUE_ALWAYS {
+                Ok(LogCondition::Always)
+            } else if str == VALUE_ON_FAILURE {
+                Ok(LogCondition::OnFailure)
+            } else {
                 let error = format!(
                     "Value for '{}' must be either '{}' or '{}'",
                     KEY_LOG_CONDITION, VALUE_ALWAYS, VALUE_ON_FAILURE
@@ -100,9 +109,11 @@ pub fn read_mode(default: Mode) -> Result<Mode, String> {
         Err(_) => Ok(default),
         Ok(var) => {
             let str = var.as_str();
-            if str == VALUE_REPEATEDLY { Ok(Mode::Repeatedly) }
-            else if str == VALUE_ONCE { Ok(Mode::Once) }
-            else {
+            if str == VALUE_REPEATEDLY {
+                Ok(Mode::Repeatedly)
+            } else if str == VALUE_ONCE {
+                Ok(Mode::Once)
+            } else {
                 let error = format!(
                     "Value for '{}' must be either '{}', or '{}'",
                     KEY_MODE, VALUE_REPEATEDLY, VALUE_ONCE
@@ -114,13 +125,12 @@ pub fn read_mode(default: Mode) -> Result<Mode, String> {
 }
 
 pub fn read_limit(default: Limit) -> Result<Limit, String> {
-    read_value(KEY_LIMIT, "an u64", default, |s| u64::from_str(s).map(Limit))
+    read_value(KEY_LIMIT, "an u64", default, |s| {
+        u64::from_str(s).map(Limit)
+    })
 }
 
-fn read_run_code_with_key(
-    key: &'static str,
-    default: Option<Run>
-) -> Result<Option<Run>, String> {
+fn read_run_code_with_key(key: &'static str, default: Option<Run>) -> Result<Option<Run>, String> {
     read_option_value(key, "a valid run code", default, Run::from_run_code)
 }
 

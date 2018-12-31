@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 
+use crate::gens::{CollectionBuilder, SizeRange};
 use crate::prelude::gens::*;
-use crate::gens::{SizeRange, CollectionBuilder};
 
 /// `BTreeMap` builder for `gens::collection`.
 #[derive(Clone)]

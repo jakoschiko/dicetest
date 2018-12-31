@@ -18,32 +18,28 @@ pub fn bytes_to_u64(bytes: [u8; 8]) -> u64 {
 
 #[cfg(test)]
 mod tests {
+    use crate::asserts;
     use crate::prelude::tests::*;
     use crate::util::conversion;
-    use crate::asserts;
 
     #[test]
     fn bytes_to_u64_is_left_inverse() {
-        dicetest!(|dice| {
-            asserts::left_inverse(
-                dice,
-                gens::array_8(gens::u8(..)),
-                conversion::bytes_to_u64,
-                conversion::u64_to_bytes,
-            )
-        })
+        dicetest!(|dice| asserts::left_inverse(
+            dice,
+            gens::array_8(gens::u8(..)),
+            conversion::bytes_to_u64,
+            conversion::u64_to_bytes,
+        ))
     }
 
     #[test]
     fn u64_to_bytes_is_left_inverse() {
-        dicetest!(|dice| {
-            asserts::left_inverse(
-                dice,
-                gens::u64(..),
-                conversion::u64_to_bytes,
-                conversion::bytes_to_u64,
-            )
-        })
+        dicetest!(|dice| asserts::left_inverse(
+            dice,
+            gens::u64(..),
+            conversion::u64_to_bytes,
+            conversion::bytes_to_u64,
+        ))
     }
 
 }

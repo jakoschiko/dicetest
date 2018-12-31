@@ -37,7 +37,10 @@ impl Config {
     }
 
     pub fn with_start_limit(self, start_limit: u64) -> Self {
-        Config { start_limit, ..self }
+        Config {
+            start_limit,
+            ..self
+        }
     }
 
     pub fn with_end_limit(self, end_limit: u64) -> Self {
@@ -49,11 +52,17 @@ impl Config {
     }
 
     pub fn with_hints_enabled(self, hints_enabled: bool) -> Self {
-        Config { hints_enabled, ..self }
+        Config {
+            hints_enabled,
+            ..self
+        }
     }
 
     pub fn with_stats_enabled(self, stats_enabled: bool) -> Self {
-        Config { stats_enabled, ..self }
+        Config {
+            stats_enabled,
+            ..self
+        }
     }
 }
 

@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::gen::{Dice, GenOnce, Gen};
+use crate::gen::{Dice, Gen, GenOnce};
 
 /// Adapter for `GenOnce::flatten_once` and `Gen::flatten`.
 pub struct FlattenGen<T, GT, GGT> {

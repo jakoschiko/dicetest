@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::gen::{Dice, GenOnce, Gen};
+use crate::gen::{Dice, Gen, GenOnce};
 
 /// Adapter for `GenOnce::flat_map_once` and `Gen::flat_map`.
 pub struct FlatMapGen<T, U, GT, GU, F> {

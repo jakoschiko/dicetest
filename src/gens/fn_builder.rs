@@ -63,18 +63,16 @@ pub fn fn_builder<I, O, IC, OG>(
     input_cogen: IC,
     output_gen: OG,
 ) -> impl GenOnce<FnBuilder<I, O, IC, OG>>
-    where
-        IC: Cogen<I>,
-        OG: GenOnce<O>,
+where
+    IC: Cogen<I>,
+    OG: GenOnce<O>,
 {
-    gens::from_fn_once(|dice| {
-        FnBuilder {
-            input_cogen,
-            output_gen,
-            prng: dice.prng.fork(),
-            limit: dice.limit(),
-            _i: PhantomData,
-            _o: PhantomData,
-        }
+    gens::from_fn_once(|dice| FnBuilder {
+        input_cogen,
+        output_gen,
+        prng: dice.prng.fork(),
+        limit: dice.limit(),
+        _i: PhantomData,
+        _o: PhantomData,
     })
 }

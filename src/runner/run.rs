@@ -1,5 +1,5 @@
-use crate::util::{conversion, base64};
 use crate::gen::{Limit, Prng};
+use crate::util::{base64, conversion};
 
 /// The configuration for running the test once.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -43,10 +43,7 @@ impl Run {
             Limit(conversion::bytes_to_u64(limit_bytes))
         };
 
-        let run = Run {
-            prng,
-            limit,
-        };
+        let run = Run { prng, limit };
 
         Ok(run)
     }
@@ -54,18 +51,16 @@ impl Run {
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::tests::*;
-    use crate::gen::Limit;
-    use crate::runner::Run;
     use crate::asserts;
+    use crate::gen::Limit;
+    use crate::prelude::tests::*;
+    use crate::runner::Run;
 
     #[test]
     fn run_code_is_right_inverse_for_from_run_code() {
         dicetest!(|dice| {
-            let run_gen = gens::zip_2(
-                gens::prng_fork(),
-                gens::u64(..).map(Limit),
-            ).map(|(prng, limit)| Run { prng, limit });
+            let run_gen = gens::zip_2(gens::prng_fork(), gens::u64(..).map(Limit))
+                .map(|(prng, limit)| Run { prng, limit });
 
             asserts::right_inverse(
                 dice,

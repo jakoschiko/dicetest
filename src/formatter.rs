@@ -1,12 +1,12 @@
-use std::iter;
 use std::fmt::{Debug, Display};
+use std::iter;
 use std::mem;
 use std::str::Chars;
 
-use crate::hints::Hints;
-use crate::stats::Stats;
 use crate::gen::Limit;
-use crate::runner::{Run, Config, Error, Sample, Counterexample, Summary};
+use crate::hints::Hints;
+use crate::runner::{Config, Counterexample, Error, Run, Sample, Summary};
+use crate::stats::Stats;
 
 pub fn pretty_sample(sample: &Sample) -> String {
     let passed = sample.error.is_none();
@@ -18,18 +18,24 @@ pub fn pretty_sample(sample: &Sample) -> String {
         .collect()
 }
 
-fn sample_headline(passed: bool) -> impl Iterator<Item=char> {
-    let text = if passed { "The test passed." } else { "The test failed." };
+fn sample_headline(passed: bool) -> impl Iterator<Item = char> {
+    let text = if passed {
+        "The test passed."
+    } else {
+        "The test failed."
+    };
     str(text)
 }
 
-fn run_section(sample: &Sample) -> impl Iterator<Item=char> {
+fn run_section(sample: &Sample) -> impl Iterator<Item = char> {
     let title = str("Run");
     let content = {
-        let acc = boxed(empty()
-            .chain(run_code_item(0, &sample.run))
-            .chain(limit_item(0, sample.run.limit))
-            .chain(hints_item(0, &sample.hints)));
+        let acc = boxed(
+            empty()
+                .chain(run_code_item(0, &sample.run))
+                .chain(limit_item(0, sample.run.limit))
+                .chain(hints_item(0, &sample.hints)),
+        );
 
         match sample.error {
             None => acc,
@@ -45,18 +51,16 @@ pub fn pretty_summary(summary: &Summary) -> String {
     let counterexample = &summary.counterexample;
     let passed = summary.counterexample.is_none();
 
-    let acc = boxed(empty()
-        .chain(summary_headline(passed, summary.passes))
-        .chain(line_feed(2))
-        .chain(config_section(config)));
+    let acc = boxed(
+        empty()
+            .chain(summary_headline(passed, summary.passes))
+            .chain(line_feed(2))
+            .chain(config_section(config)),
+    );
 
     let acc = match summary.stats {
         None => acc,
-        Some(ref stats) => {
-            boxed(acc
-                .chain(line_feed(1))
-                .chain(stats_section(&stats)))
-        }
+        Some(ref stats) => boxed(acc.chain(line_feed(1)).chain(stats_section(&stats))),
     };
 
     let acc = match counterexample {
@@ -64,18 +68,22 @@ pub fn pretty_summary(summary: &Summary) -> String {
         Some(ref counterexample) => {
             let hints_enabled = cfg!(feature = "hints") && config.hints_enabled;
 
-            boxed(acc
-                .chain(line_feed(1))
-                .chain(counterexample_section(hints_enabled, &counterexample)))
+            boxed(
+                acc.chain(line_feed(1))
+                    .chain(counterexample_section(hints_enabled, &counterexample)),
+            )
         }
     };
 
     acc.collect()
 }
 
-
-fn summary_headline(passed: bool, passes: u64) -> impl Iterator<Item=char> {
-    let suffix = if passed { "The test withstood " } else { "The test failed after " };
+fn summary_headline(passed: bool, passes: u64) -> impl Iterator<Item = char> {
+    let suffix = if passed {
+        "The test withstood "
+    } else {
+        "The test failed after "
+    };
 
     empty()
         .chain(str(suffix))
@@ -83,18 +91,26 @@ fn summary_headline(passed: bool, passes: u64) -> impl Iterator<Item=char> {
         .chain(str(" passes."))
 }
 
-fn config_section(config: &Config) -> impl Iterator<Item=char> {
+fn config_section(config: &Config) -> impl Iterator<Item = char> {
     let title = str("Config");
     let content = empty()
         .chain(keyed_item(0, str("seed"), display(config.seed.as_ref())))
-        .chain(keyed_item(0, str("start limit"), display(Some(&config.start_limit))))
-        .chain(keyed_item(0, str("end limit"), display(Some(&config.end_limit))))
+        .chain(keyed_item(
+            0,
+            str("start limit"),
+            display(Some(&config.start_limit)),
+        ))
+        .chain(keyed_item(
+            0,
+            str("end limit"),
+            display(Some(&config.end_limit)),
+        ))
         .chain(keyed_item(0, str("passes"), display(Some(&config.passes))));
 
     section(title, content)
 }
 
-fn stats_section(stats: &Stats) -> impl Iterator<Item=char> {
+fn stats_section(stats: &Stats) -> impl Iterator<Item = char> {
     let title = str("Stats");
     let content = if stats.0.is_empty() {
         boxed(item(0, str("No stats has been collected.")))
@@ -105,9 +121,7 @@ fn stats_section(stats: &Stats) -> impl Iterator<Item=char> {
             let total = stat.total_counter().value().filter(|&n| n != 0);
 
             let stat_iter = {
-                let mut sorted = stat.0
-                    .into_iter()
-                    .collect::<Vec<_>>();
+                let mut sorted = stat.0.into_iter().collect::<Vec<_>>();
 
                 sorted.sort_by_key(|&(_, counter)| counter);
 
@@ -129,9 +143,8 @@ fn stats_section(stats: &Stats) -> impl Iterator<Item=char> {
                         _ => overflow(),
                     }
                 };
-                let pretty_count = count.map_or_else(overflow, |count| {
-                    boxed(display(Some(&count)))
-                });
+                let pretty_count =
+                    count.map_or_else(overflow, |count| boxed(display(Some(&count))));
 
                 let pretty_occurrence = empty()
                     .chain(pretty_percent)
@@ -155,20 +168,22 @@ fn stats_section(stats: &Stats) -> impl Iterator<Item=char> {
 
 fn counterexample_section(
     hints_enabled: bool,
-    counterexample: &Counterexample
-) -> impl Iterator<Item=char> {
+    counterexample: &Counterexample,
+) -> impl Iterator<Item = char> {
     let title = str("Counterexample");
     let content = {
-        let acc = boxed(empty()
-            .chain(run_code_item(0, &counterexample.run))
-            .chain(limit_item(0, counterexample.run.limit)));
+        let acc = boxed(
+            empty()
+                .chain(run_code_item(0, &counterexample.run))
+                .chain(limit_item(0, counterexample.run.limit)),
+        );
 
         let acc = match counterexample.hints {
             None if !hints_enabled => acc,
             None => {
                 let text = "Hints could not be collected afterwards, test is not deterministic.";
                 boxed(acc.chain(item(0, str(text))))
-            },
+            }
             Some(ref hints) => boxed(acc.chain(hints_item(0, hints))),
         };
 
@@ -179,9 +194,9 @@ fn counterexample_section(
 }
 
 fn section(
-    title: impl Iterator<Item=char>,
-    content: impl Iterator<Item=char>
-) -> impl Iterator<Item=char> {
+    title: impl Iterator<Item = char>,
+    content: impl Iterator<Item = char>,
+) -> impl Iterator<Item = char> {
     empty()
         .chain(str("# "))
         .chain(title)
@@ -189,45 +204,44 @@ fn section(
         .chain(content)
 }
 
-fn run_code_item(indent: usize, run: &Run) -> impl Iterator<Item=char> {
+fn run_code_item(indent: usize, run: &Run) -> impl Iterator<Item = char> {
     let run_code = run.run_code();
     keyed_item(indent, str("run code"), debug(Some(&run_code)))
 }
 
-fn limit_item(indent: usize, limit: Limit) -> impl Iterator<Item=char> {
+fn limit_item(indent: usize, limit: Limit) -> impl Iterator<Item = char> {
     keyed_item(indent, str("limit"), display(Some(&limit.0)))
 }
 
-fn hints_item(indent: usize, hints: &Hints) -> impl Iterator<Item=char> {
+fn hints_item(indent: usize, hints: &Hints) -> impl Iterator<Item = char> {
     if hints.0.is_empty() {
         boxed(item(indent, str("No hints has been collected.")))
     } else {
         let hints_ident = indent.saturating_add(1);
 
-        let pretty_hints = hints.0
-            .clone()
-            .into_iter()
-            .flat_map(move |hint| {
+        let pretty_hints =
+            hints.0.clone().into_iter().flat_map(move |hint| {
                 item(hints_ident.saturating_add(hint.indent), string(hint.text))
             });
 
-        boxed(empty()
-            .chain(keyed_item(indent, str("hints"), empty()))
-            .chain(pretty_hints))
+        boxed(
+            empty()
+                .chain(keyed_item(indent, str("hints"), empty()))
+                .chain(pretty_hints),
+        )
     }
 }
 
-fn error_item(indent: usize, error: &Error) -> impl Iterator<Item=char> {
+fn error_item(indent: usize, error: &Error) -> impl Iterator<Item = char> {
     let err = &error.0;
 
-    let string_repr =
-        if let Some(string) = err.downcast_ref::<String>() {
-            Some(string.clone())
-        } else if let Some(str) = err.downcast_ref::<&str>() {
-            Some(str.to_string())
-        } else {
-            None
-        };
+    let string_repr = if let Some(string) = err.downcast_ref::<String>() {
+        Some(string.clone())
+    } else if let Some(str) = err.downcast_ref::<&str>() {
+        Some(str.to_string())
+    } else {
+        None
+    };
 
     match string_repr {
         None => {
@@ -240,14 +254,14 @@ fn error_item(indent: usize, error: &Error) -> impl Iterator<Item=char> {
 
 fn keyed_item(
     indent: usize,
-    key: impl Iterator<Item=char>,
-    content: impl Iterator<Item=char>
-) -> impl Iterator<Item=char> {
+    key: impl Iterator<Item = char>,
+    content: impl Iterator<Item = char>,
+) -> impl Iterator<Item = char> {
     let key_with_content = key.chain(str(": ")).chain(content);
     item(indent, key_with_content)
 }
 
-fn item(indent: usize, content: impl Iterator<Item=char>) -> impl Iterator<Item=char> {
+fn item(indent: usize, content: impl Iterator<Item = char>) -> impl Iterator<Item = char> {
     iter::repeat("\t")
         .take(indent)
         .flat_map(|indent| str(indent))
@@ -256,29 +270,29 @@ fn item(indent: usize, content: impl Iterator<Item=char>) -> impl Iterator<Item=
         .chain(line_feed(1))
 }
 
-fn boxed(iter: impl Iterator<Item=char> + 'static) -> Box<dyn Iterator<Item=char>> {
+fn boxed(iter: impl Iterator<Item = char> + 'static) -> Box<dyn Iterator<Item = char>> {
     Box::new(iter)
 }
 
-fn debug(content: Option<&impl Debug>) -> impl Iterator<Item=char> {
+fn debug(content: Option<&impl Debug>) -> impl Iterator<Item = char> {
     match content {
         None => boxed(str("none")),
         Some(content) => boxed(string(format!("{:?}", content))),
     }
 }
 
-fn display(content: Option<&impl Display>) -> impl Iterator<Item=char> {
+fn display(content: Option<&impl Display>) -> impl Iterator<Item = char> {
     match content {
         None => boxed(str("none")),
         Some(content) => boxed(string(format!("{}", content))),
     }
 }
 
-fn str(str: &'static str) -> impl Iterator<Item=char> {
+fn str(str: &'static str) -> impl Iterator<Item = char> {
     str.chars()
 }
 
-fn string(string: String) -> impl Iterator<Item=char> {
+fn string(string: String) -> impl Iterator<Item = char> {
     struct OwningChars {
         _chars_owner: String,
         chars: Chars<'static>,
@@ -292,14 +306,17 @@ fn string(string: String) -> impl Iterator<Item=char> {
     }
 
     let chars = unsafe { mem::transmute(string.chars()) };
-    OwningChars { _chars_owner: string, chars }
+    OwningChars {
+        _chars_owner: string,
+        chars,
+    }
 }
 
-fn line_feed(n: usize) -> impl Iterator<Item=char> {
+fn line_feed(n: usize) -> impl Iterator<Item = char> {
     iter::repeat('\n').take(n)
 }
 
-fn empty() -> impl Iterator<Item=char> {
+fn empty() -> impl Iterator<Item = char> {
     iter::empty()
 }
 

@@ -13,8 +13,17 @@ impl LimitSeries {
     /// Creates a new instance that produces `len` linearly interpolated `Limit`s between `start`
     /// and `end`.
     pub fn new(start: u64, end: u64, len: u64) -> Self {
-        let diff = if start <= end { end - start } else { start - end };
-        LimitSeries { start, end, diff, len }
+        let diff = if start <= end {
+            end - start
+        } else {
+            start - end
+        };
+        LimitSeries {
+            start,
+            end,
+            diff,
+            len,
+        }
     }
 
     /// Returns the n-th interpolated `Limit` or `None` if `n` is out of bounds.
@@ -40,7 +49,7 @@ impl LimitSeries {
     }
 
     /// Returns an interator that emits all `Limit`s.
-    pub fn into_iter(self) -> impl Iterator<Item=Limit> {
+    pub fn into_iter(self) -> impl Iterator<Item = Limit> {
         LimitSeriesIntoIter {
             series: self,
             idx: 0,

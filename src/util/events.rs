@@ -68,7 +68,7 @@ pub fn modify<E: Events>(local: &'static Local<E>, f: impl FnOnce(&mut Vec<E>)) 
 mod tests {
     use std::panic::catch_unwind;
 
-    use crate::util::events::{self, Stack, Events};
+    use crate::util::events::{self, Events, Stack};
 
     struct Counter(u32);
 

@@ -4,7 +4,7 @@
 //! distribution of generated test data or the probability of branches.
 //! Stats must enabled with the feature `stats`.
 
-use std::collections::{BTreeMap, btree_map::Entry};
+use std::collections::{btree_map::Entry, BTreeMap};
 
 #[cfg(feature = "stats")]
 use crate::util::events;
@@ -15,7 +15,7 @@ pub enum Counter {
     /// The counter has overflowed.
     Overflow,
     /// Contains the current count.
-    Value(u64)
+    Value(u64),
 }
 
 impl Counter {
@@ -31,7 +31,7 @@ impl Counter {
             Counter::Value(n) => {
                 let incremented = n.checked_add(1);
                 incremented.map_or(Counter::Overflow, Counter::Value)
-            },
+            }
         }
     }
 
@@ -74,9 +74,7 @@ impl Stat {
 
     // Increases the counter for the given value by one.
     pub fn inc(&mut self, value: String) {
-        let counter_entry = self.0
-            .entry(value)
-            .or_insert_with(Counter::new);
+        let counter_entry = self.0.entry(value).or_insert_with(Counter::new);
         *counter_entry = counter_entry.inc();
     }
 
@@ -103,7 +101,9 @@ impl Stat {
 
     // Returns the total occurrence count for all keys.
     pub fn total_counter(&self) -> Counter {
-        self.0.values().fold(Counter::new(), |left, &right| left.merge(right))
+        self.0
+            .values()
+            .fold(Counter::new(), |left, &right| left.merge(right))
     }
 }
 
@@ -169,7 +169,7 @@ thread_local! {
 pub fn collect<R>(f: impl FnOnce() -> R) -> (R, Stats) {
     #[cfg(feature = "stats")]
     {
-       events::collect(&LOCAL, f)
+        events::collect(&LOCAL, f)
     }
     #[cfg(not(feature = "stats"))]
     {
@@ -201,10 +201,10 @@ pub fn inc(key: &'static str, value: impl FnOnce() -> String) {
             let value = value();
             let len = stack.len();
 
-            stack[0..len-1]
+            stack[0..len - 1]
                 .iter_mut()
                 .for_each(|stats| stats.inc(key, value.clone()));
-            stack[len-1].inc(key, value);
+            stack[len - 1].inc(key, value);
         });
     }
     #[cfg(not(feature = "stats"))]
@@ -216,7 +216,7 @@ pub fn inc(key: &'static str, value: impl FnOnce() -> String) {
 
 #[cfg(test)]
 mod tests {
-    use crate::stats::Counter::{self, Value, Overflow};
+    use crate::stats::Counter::{self, Overflow, Value};
 
     #[test]
     fn counter_inc_examples() {

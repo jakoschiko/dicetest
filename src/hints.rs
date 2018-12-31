@@ -60,15 +60,14 @@ thread_local! {
 pub fn collect<R>(f: impl FnOnce() -> R) -> (R, Hints) {
     #[cfg(feature = "hints")]
     {
-       let (result, interim) = events::collect(&LOCAL, f);
-       (result, interim.hints)
+        let (result, interim) = events::collect(&LOCAL, f);
+        (result, interim.hints)
     }
     #[cfg(not(feature = "hints"))]
     {
         (f(), Hints::new())
     }
 }
-
 
 /// Returns if hints are currently enabled.
 ///
@@ -100,10 +99,10 @@ pub fn add(message_text: impl FnOnce() -> String) {
                 interim.hints.0.push(message);
             }
 
-            stack[0..len-1]
+            stack[0..len - 1]
                 .iter_mut()
                 .for_each(|collection| add_message(collection, text.clone()));
-            add_message(&mut stack[len-1], text);
+            add_message(&mut stack[len - 1], text);
         });
     }
     #[cfg(not(feature = "hints"))]
@@ -117,12 +116,10 @@ pub fn indent() {
     #[cfg(feature = "hints")]
     {
         events::modify(&LOCAL, |stack| {
-            stack
-                .iter_mut()
-                .for_each(|interim| {
-                    let current_indent = interim.current_indent;
-                    interim.current_indent = current_indent.saturating_add(1);
-                });
+            stack.iter_mut().for_each(|interim| {
+                let current_indent = interim.current_indent;
+                interim.current_indent = current_indent.saturating_add(1);
+            });
         });
     }
 }
@@ -132,12 +129,10 @@ pub fn unindent() {
     #[cfg(feature = "hints")]
     {
         events::modify(&LOCAL, |stack| {
-            stack
-                .iter_mut()
-                .for_each(|interim| {
-                    let current_indent = interim.current_indent;
-                    interim.current_indent = current_indent.saturating_sub(1);
-                });
+            stack.iter_mut().for_each(|interim| {
+                let current_indent = interim.current_indent;
+                interim.current_indent = current_indent.saturating_sub(1);
+            });
         });
     }
 }

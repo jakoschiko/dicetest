@@ -1,5 +1,5 @@
-use std::mem::size_of;
 use std::fmt::Debug;
+use std::mem::size_of;
 use std::ops::{Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive};
 
 use crate::prelude::gens::*;
@@ -22,11 +22,14 @@ struct UncheckedRange<I> {
 }
 
 fn empty_int_range<I>(bounds: &(impl IntRange<I> + Debug)) -> ! {
-    panic!("IntRange is invalid because it contains no values: {:?}", bounds)
+    panic!(
+        "IntRange is invalid because it contains no values: {:?}",
+        bounds
+    )
 }
 
 macro_rules! impl_int_range {
-    ($int:ident) => (
+    ($int:ident) => {
         impl IntRange<$int> for $int {
             fn bounds(&self) -> ($int, $int) {
                 (*self, *self)
@@ -94,7 +97,7 @@ macro_rules! impl_int_range {
                 (self.lower, self.upper)
             }
         }
-    )
+    };
 }
 
 impl_int_range! { u8 }
@@ -111,7 +114,7 @@ impl_int_range! { usize }
 impl_int_range! { isize }
 
 macro_rules! fn_int {
-    ($int:ident, $uni_int:ident, $uint:ident, $random_int:ident, $special:expr) => (
+    ($int:ident, $uni_int:ident, $uint:ident, $random_int:ident, $special:expr) => {
         /// Generates an integer inside the given range. All integers are uniformly distributed.
         ///
         /// # Panics
@@ -197,7 +200,7 @@ macro_rules! fn_int {
 
             gens::one_of_gen_2(all_gen, special_gen)
         }
-    )
+    };
 }
 
 fn random_u8(prng: &mut Prng) -> u8 {
@@ -285,8 +288,7 @@ mod tests {
         create_range: fn(B) -> R,
         int_gen: fn(R) -> GI,
         is_in_range: fn(B, I) -> bool,
-    )
-    where
+    ) where
         I: Debug,
         GI: GenOnce<I>,
         B: Copy + Debug,
@@ -313,7 +315,7 @@ mod tests {
             $int_is_in_range_inclusive:ident
             $int_is_in_range_to:ident
             $int_is_in_range_to_inclusive:ident
-        ) => (
+        ) => {
             #[test]
             fn $int_is_in_range() {
                 dicetest!(|dice| {
@@ -346,8 +348,7 @@ mod tests {
                 dicetest!(|dice| {
                     range_contains_int(
                         dice,
-                        gens::array_2(gens::$int(..))
-                            .map(|[a, b]| (a.min(b), a.max(b))),
+                        gens::array_2(gens::$int(..)).map(|[a, b]| (a.min(b), a.max(b))),
                         |(lower, upper)| lower..=upper,
                         gens::$int,
                         |(lower, upper), size| lower <= size && size <= upper,
@@ -380,7 +381,7 @@ mod tests {
                     );
                 })
             }
-        )
+        };
     }
 
     range_tests! { u8:

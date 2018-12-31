@@ -1,7 +1,7 @@
 use std::collections::BinaryHeap;
 
+use crate::gens::{CollectionBuilder, SizeRange};
 use crate::prelude::gens::*;
-use crate::gens::{SizeRange, CollectionBuilder};
 
 /// `BinaryHeap` builder for `gens::collection`.
 #[derive(Clone)]

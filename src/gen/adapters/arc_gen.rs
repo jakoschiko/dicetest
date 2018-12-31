@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::gen::{Dice, GenOnce, Gen};
+use crate::gen::{Dice, Gen, GenOnce};
 
 /// Adapter for `Gen::arc`.
 #[derive(Clone)]

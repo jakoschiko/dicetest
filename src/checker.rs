@@ -10,4 +10,4 @@ use self::mode::Mode;
 mod env;
 
 mod functions;
-pub use self::functions::{check, check_repeatedly, check_once};
+pub use self::functions::{check, check_once, check_repeatedly};

@@ -1,5 +1,5 @@
+use crate::gens::{CollectionBuilder, SizeRange};
 use crate::prelude::gens::*;
-use crate::gens::{SizeRange, CollectionBuilder};
 
 #[derive(Clone)]
 struct StringBuilder;
@@ -15,10 +15,7 @@ impl CollectionBuilder<char, String> for StringBuilder {
 /// Generates a `String` that contains the specified `chars`.
 ///
 /// The range specifies the length of the `String`.
-pub fn string(
-    char_gen: impl Gen<char>,
-    len_range: impl SizeRange,
-) -> impl Gen<String> {
+pub fn string(char_gen: impl Gen<char>, len_range: impl SizeRange) -> impl Gen<String> {
     let builder_gen = gens::just(StringBuilder);
     gens::collection(builder_gen, char_gen, len_range)
 }

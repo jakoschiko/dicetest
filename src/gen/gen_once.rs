@@ -1,5 +1,5 @@
-use crate::gen::{Prng, Limit, Dice};
-use crate::gen::adapters::{MapGen, FlattenGen, FlatMapGen, BoxedGenOnce};
+use crate::gen::adapters::{BoxedGenOnce, FlatMapGen, FlattenGen, MapGen};
+use crate::gen::{Dice, Limit, Prng};
 
 /// Trait for generating a single random value of type `T`.
 pub trait GenOnce<T> {
@@ -25,7 +25,7 @@ pub trait GenOnce<T> {
     fn flatten_once<U>(self) -> FlattenGen<U, T, Self>
     where
         Self: Sized,
-        T: GenOnce<U>
+        T: GenOnce<U>,
     {
         FlattenGen::new(self)
     }

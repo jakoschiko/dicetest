@@ -1,5 +1,5 @@
 use crate::hints::Hints;
-use crate::runner::{Run, Error};
+use crate::runner::{Error, Run};
 
 // The result of a single test run.
 pub struct Sample {

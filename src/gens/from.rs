@@ -11,7 +11,6 @@ where
     }
 }
 
-
 impl<T, F> Gen<T> for Fun<F>
 where
     F: Fn(&mut Dice) -> T,

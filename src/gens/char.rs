@@ -108,7 +108,6 @@ mod tests {
         })
     }
 
-
     #[test]
     fn char_ascii_digit_generates_only_valid_values() {
         dicetest!(|dice| {

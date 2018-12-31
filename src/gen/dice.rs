@@ -1,4 +1,4 @@
-use crate::gen::{Prng, Limit};
+use crate::gen::{Limit, Prng};
 
 /// Represents the randomness used by `GenOnce::gen` and `Gen::gen`.
 pub struct Dice<'a> {

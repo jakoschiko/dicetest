@@ -1,5 +1,5 @@
-use crate::prelude::gens::*;
 use crate::gens::SizeRange;
+use crate::prelude::gens::*;
 
 /// Builds collections for `gens::collection`.
 pub trait CollectionBuilder<T, C> {

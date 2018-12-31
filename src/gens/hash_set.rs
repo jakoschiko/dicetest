@@ -1,8 +1,8 @@
 use std::collections::HashSet;
-use std::hash::{Hash, BuildHasher};
+use std::hash::{BuildHasher, Hash};
 
+use crate::gens::{CollectionBuilder, SizeRange};
 use crate::prelude::gens::*;
-use crate::gens::{SizeRange, CollectionBuilder};
 
 /// `HashSet` builder for `gens::collection`.
 pub struct HashSetBuilder<S>
@@ -54,10 +54,7 @@ where
 /// type `T`.
 ///
 /// The range specifies the number of tries to generate distinct elements.
-pub fn hash_set<T>(
-    elem_gen: impl Gen<T>,
-    tries_range: impl SizeRange,
-) -> impl Gen<HashSet<T, Prng>>
+pub fn hash_set<T>(elem_gen: impl Gen<T>, tries_range: impl SizeRange) -> impl Gen<HashSet<T, Prng>>
 where
     T: Eq + Hash,
 {
