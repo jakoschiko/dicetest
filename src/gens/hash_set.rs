@@ -46,7 +46,7 @@ where
     T: Eq + Hash,
     S: BuildHasher,
 {
-    let builder_gen = build_hasher_gen.map(|build_hasher| HashSetBuilder::new(build_hasher));
+    let builder_gen = build_hasher_gen.map(HashSetBuilder::new);
     gens::collection(builder_gen, elem_gen, tries_range)
 }
 
