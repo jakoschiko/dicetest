@@ -2,7 +2,7 @@ use crate::gen::{Fate, Gen, GenOnce};
 
 /// Adapter for `Gen::boxed`.
 pub struct BoxedGen<'a, T> {
-    r#dyn: Box<dyn Gen<T> + 'a>,
+    gen: Box<dyn Gen<T> + 'a>,
 }
 
 impl<'a, T> BoxedGen<'a, T> {
@@ -10,14 +10,14 @@ impl<'a, T> BoxedGen<'a, T> {
     where
         G: Gen<T> + 'a,
     {
-        let r#dyn = Box::new(gen);
-        BoxedGen { r#dyn }
+        let gen = Box::new(gen);
+        BoxedGen { gen }
     }
 }
 
 impl<'a, T> Gen<T> for BoxedGen<'a, T> {
     fn gen(&self, fate: &mut Fate) -> T {
-        self.r#dyn.gen(fate)
+        self.gen.gen(fate)
     }
 }
 

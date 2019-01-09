@@ -5,7 +5,7 @@ use crate::gen::{Fate, Gen, GenOnce};
 /// Adapter for `Gen::arc`.
 #[derive(Clone)]
 pub struct ArcGen<T> {
-    r#dyn: Arc<dyn Gen<T>>,
+    gen: Arc<dyn Gen<T>>,
 }
 
 impl<T> ArcGen<T> {
@@ -13,14 +13,14 @@ impl<T> ArcGen<T> {
     where
         G: Gen<T> + 'static,
     {
-        let r#dyn = Arc::new(gen);
-        ArcGen { r#dyn }
+        let gen = Arc::new(gen);
+        ArcGen { gen }
     }
 }
 
 impl<T> Gen<T> for ArcGen<T> {
     fn gen(&self, fate: &mut Fate) -> T {
-        self.r#dyn.gen(fate)
+        self.gen.gen(fate)
     }
 }
 

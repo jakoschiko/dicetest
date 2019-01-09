@@ -7,7 +7,7 @@ pub struct BoxedGenOnce<'a, T>
 where
     T: 'a,
 {
-    r#dyn: Box<dyn Wrapper<T> + 'a>,
+    gen: Box<dyn Wrapper<T> + 'a>,
 }
 
 impl<'a, T> BoxedGenOnce<'a, T>
@@ -22,8 +22,8 @@ where
             gen: Some(gen),
             _t: PhantomData,
         };
-        let r#dyn = Box::new(wrapper);
-        BoxedGenOnce { r#dyn }
+        let gen = Box::new(wrapper);
+        BoxedGenOnce { gen }
     }
 }
 
@@ -32,7 +32,7 @@ where
     T: 'a,
 {
     fn gen_once(mut self, fate: &mut Fate) -> T {
-        self.r#dyn.gen_once(fate)
+        self.gen.gen_once(fate)
     }
 }
 
