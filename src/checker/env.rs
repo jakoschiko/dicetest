@@ -2,7 +2,7 @@ use std::env;
 use std::str::FromStr;
 
 use crate::checker::{LogCondition, Mode};
-use crate::gen::Limit;
+use crate::die::Limit;
 use crate::runner::Run;
 
 const KEY_LOG_CONDITION: &str = "DICETEST_LOG_CONDITION";

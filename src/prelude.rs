@@ -1,28 +1,28 @@
 //! Contains preludes for different use cases.
 
-pub mod cogens {
-    //! Contains the most useful import for writing co-generators.
+pub mod codice {
+    //! Contains the most useful import for writing `Codie`s.
 
-    pub use crate::cogen::Cogen;
-    pub use crate::cogens;
+    pub use crate::codie::Codie;
+    pub use crate::codice;
 }
 
-pub mod gens {
-    //! Contains the most useful import for writing generators.
+pub mod dice {
+    //! Contains the most useful import for writing `DieOnce`s and `Die`s.
 
-    pub use crate::cogen::Cogen;
-    pub use crate::cogens;
-    pub use crate::gen::{Fate, Gen, GenOnce, Limit, Prng};
-    pub use crate::gens;
+    pub use crate::codie::Codie;
+    pub use crate::codice;
+    pub use crate::die::{Fate, Die, DieOnce, Limit, Prng};
+    pub use crate::dice;
 }
 
 pub mod asserts {
-    //! Contains the most useful import for writing assertions.
+    //! Contains the most useful import for writing assertions that are using `DieOnce`s and `Die`s.
 
-    pub use crate::cogen::Cogen;
-    pub use crate::cogens;
-    pub use crate::gen::{Fate, Gen, GenOnce};
-    pub use crate::gens;
+    pub use crate::codie::Codie;
+    pub use crate::codice;
+    pub use crate::die::{Fate, Die, DieOnce};
+    pub use crate::dice;
     pub use crate::hints;
     pub use crate::stats;
     pub use crate::{hint, hint_format, stat, stat_format};
@@ -31,10 +31,10 @@ pub mod asserts {
 pub mod tests {
     //! Contains the most useful imports for writing tests.
 
-    pub use crate::cogen::Cogen;
-    pub use crate::cogens;
-    pub use crate::gen::{Fate, Gen, GenOnce};
-    pub use crate::gens;
+    pub use crate::codie::Codie;
+    pub use crate::codice;
+    pub use crate::die::{Fate, Die, DieOnce};
+    pub use crate::dice;
     pub use crate::hints;
     pub use crate::runner::Config;
     pub use crate::stats;

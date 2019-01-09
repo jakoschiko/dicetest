@@ -1,4 +1,4 @@
-use crate::gen::Limit;
+use crate::die::Limit;
 
 /// Generates a series of interpolated `Limit`s.
 #[derive(Debug, Clone)]
@@ -97,9 +97,9 @@ mod tests {
     #[test]
     fn iterator_produces_exact_len_limits() {
         dicetest!(|fate| {
-            let start = gens::u64(..).gen(fate);
-            let end = gens::u64(..).gen(fate);
-            let len = gens::u64(..=fate.limit().0).gen(fate);
+            let start = dice::u64(..).roll(fate);
+            let end = dice::u64(..).roll(fate);
+            let len = dice::u64(..=fate.limit().0).roll(fate);
 
             let series = LimitSeries::new(start, end, len);
             let iter = series.into_iter();
@@ -112,9 +112,9 @@ mod tests {
     #[test]
     fn if_len_gt_1_then_start_is_first_limit() {
         dicetest!(|fate| {
-            let start = gens::u64(..).gen(fate);
-            let end = gens::u64(..).gen(fate);
-            let len = gens::u64(1..).gen(fate);
+            let start = dice::u64(..).roll(fate);
+            let end = dice::u64(..).roll(fate);
+            let len = dice::u64(1..).roll(fate);
 
             hint!(start);
             hint!(end);
@@ -130,9 +130,9 @@ mod tests {
     #[test]
     fn if_len_is_gt_2_then_end_is_last_limit() {
         dicetest!(|fate| {
-            let start = gens::u64(..).gen(fate);
-            let end = gens::u64(..).gen(fate);
-            let len = gens::u64(2..).gen(fate);
+            let start = dice::u64(..).roll(fate);
+            let end = dice::u64(..).roll(fate);
+            let len = dice::u64(2..).roll(fate);
 
             hint!(start);
             hint!(end);

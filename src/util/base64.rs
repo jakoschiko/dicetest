@@ -152,7 +152,7 @@ mod tests {
     #[test]
     fn encode_produces_non_empty_string_if_bytes_is_non_empty() {
         dicetest!(|fate| {
-            let bytes = gens::vec(gens::u8(..), 1..).gen(fate);
+            let bytes = dice::vec(dice::u8(..), 1..).roll(fate);
             let base64 = base64::encode(&bytes);
 
             hint!(bytes);
@@ -165,7 +165,7 @@ mod tests {
     #[test]
     fn decode_is_left_inverse() {
         dicetest!(|fate| {
-            let bytes = gens::vec(gens::u8(..), ..).gen(fate);
+            let bytes = dice::vec(dice::u8(..), ..).roll(fate);
             let base64 = base64::encode(&bytes);
 
             hint!(bytes);
@@ -180,10 +180,10 @@ mod tests {
     #[test]
     fn decode_fails_if_string_contains_invalid_char() {
         dicetest!(|fate| {
-            let valid_len_gen = gens::size(4..).map(|len| len - (len % 4));
+            let valid_len_die = dice::size(4..).map(|len| len - (len % 4));
 
-            let len = valid_len_gen.gen(fate);
-            let base64 = gens::string(gens::char(), len).gen(fate);
+            let len = valid_len_die.roll(fate);
+            let base64 = dice::string(dice::char(), len).roll(fate);
 
             let is_invalid = base64.chars().any(base64::is_invalid_char);
 
@@ -203,12 +203,12 @@ mod tests {
     #[test]
     fn decode_fails_if_string_has_invalid_length() {
         dicetest!(|fate| {
-            let base_64_char_gen = gens::one_of_array(&base64::BYTE_TO_CHAR);
-            let invalid_len_gen =
-                gens::size(1..).map(|len| if len % 4 == 0 { len + 1 } else { len });
+            let base_64_char_die = dice::one_of_array(&base64::BYTE_TO_CHAR);
+            let invalid_len_die =
+                dice::size(1..).map(|len| if len % 4 == 0 { len + 1 } else { len });
 
-            let len = invalid_len_gen.gen(fate);
-            let invalid_base64 = gens::string(base_64_char_gen, len).gen(fate);
+            let len = invalid_len_die.roll(fate);
+            let invalid_base64 = dice::string(base_64_char_die, len).roll(fate);
 
             let bytes = base64::decode(&invalid_base64);
 

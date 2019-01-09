@@ -2,7 +2,7 @@ use std::panic::{catch_unwind, RefUnwindSafe, UnwindSafe};
 
 use rand::{self, Rng};
 
-use crate::gen::{Fate, Prng};
+use crate::die::{Fate, Prng};
 use crate::hints;
 use crate::runner::{Config, Counterexample, Error, LimitSeries, Run, Sample, Summary};
 use crate::stats;
@@ -141,7 +141,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::gen::Prng;
+    use crate::die::Prng;
     use crate::hints;
     use crate::runner::{self, Config};
 

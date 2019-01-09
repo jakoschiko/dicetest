@@ -3,7 +3,7 @@ use std::iter;
 use std::mem;
 use std::str::Chars;
 
-use crate::gen::Limit;
+use crate::die::Limit;
 use crate::hints::Hints;
 use crate::runner::{Config, Counterexample, Error, Run, Sample, Summary};
 use crate::stats::Stats;
