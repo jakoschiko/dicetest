@@ -6,13 +6,13 @@ pub mod hints;
 
 pub mod stats;
 
-pub mod cogen;
+pub mod codie;
 
-pub mod cogens;
+pub mod codice;
 
-pub mod gen;
+pub mod die;
 
-pub mod gens;
+pub mod dice;
 
 pub mod runner;
 

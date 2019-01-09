@@ -1,4 +1,4 @@
-use crate::gen::Limit;
+use crate::die::Limit;
 
 /// The configuration for running the test repeatedly.
 #[derive(Debug, Clone)]
@@ -8,12 +8,12 @@ pub struct Config {
     // The upper size limit of generated dynamic data structures used for the first test run.
     // The following test runs use an interpolated limit between `start_limit` and `end_limit`.
     //
-    // The limit is used by the generators, see `gen::Limit`.
+    // The limit is used by the generators, see `die::Limit`.
     pub start_limit: u64,
     // The upper size limit of generated dynamic data structures used for the last test run.
     // The previous test runs use an interpolated limit between `start_limit` and `end_limit`.
     //
-    // The limit is used by the generators, see `gen::Limit`.
+    // The limit is used by the generators, see `die::Limit`.
     pub end_limit: u64,
     /// Defines how many times the test needs to run without failing.
     ///

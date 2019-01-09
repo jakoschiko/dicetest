@@ -1,8 +1,8 @@
 use std::panic::{resume_unwind, RefUnwindSafe, UnwindSafe};
 
 use crate::checker::{env, LogCondition, Mode};
+use crate::die::{Fate, Limit, Prng};
 use crate::formatter;
-use crate::gen::{Dice, Limit, Prng};
 use crate::runner::{run_once, run_repeatedly, Config, Run};
 
 /// Checks the test. How the test is checked can be configured with environment variables.
@@ -89,13 +89,13 @@ use crate::runner::{run_once, run_repeatedly, Config, Run};
 #[allow(clippy::needless_pass_by_value)]
 pub fn check<T>(config: Config, test: T)
 where
-    T: Fn(&mut Dice) + UnwindSafe + RefUnwindSafe,
+    T: Fn(&mut Fate) + UnwindSafe + RefUnwindSafe,
 {
     let debug_params = env::read_debug(None).unwrap();
 
     if let Some(params) = debug_params {
         let log_condition = LogCondition::Always;
-        check_once(log_condition, params, |dice| test(dice));
+        check_once(log_condition, params, |fate| test(fate));
     } else {
         let mode = env::read_mode(Mode::Repeatedly).unwrap();
         let log_condition = env::read_log_condition(LogCondition::default()).unwrap();
@@ -129,7 +129,7 @@ where
                     Run { prng, limit }
                 });
 
-                check_once(log_condition, run, |dice| test(dice))
+                check_once(log_condition, run, |fate| test(fate))
             }
         }
     }
@@ -146,7 +146,7 @@ where
 /// Depending on `log_condition` the test result will be logged to stdout.
 pub fn check_once<T>(log_condition: LogCondition, run: Run, test: T)
 where
-    T: FnOnce(&mut Dice) + UnwindSafe + RefUnwindSafe,
+    T: FnOnce(&mut Fate) + UnwindSafe + RefUnwindSafe,
 {
     let sample = run_once(run, test);
 
@@ -179,7 +179,7 @@ where
 /// Depending on `log_condition` the test result will be logged to stdout.
 pub fn check_repeatedly<T>(log_condition: LogCondition, config: Config, test: T)
 where
-    T: Fn(&mut Dice) + UnwindSafe + RefUnwindSafe,
+    T: Fn(&mut Fate) + UnwindSafe + RefUnwindSafe,
 {
     let summary = run_repeatedly(config, test);
 
