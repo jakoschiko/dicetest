@@ -1,8 +1,8 @@
 use std::panic::{resume_unwind, RefUnwindSafe, UnwindSafe};
 
 use crate::checker::{env, LogCondition, Mode};
-use crate::formatter;
 use crate::die::{Fate, Limit, Prng};
+use crate::formatter;
 use crate::runner::{run_once, run_repeatedly, Config, Run};
 
 /// Checks the test. How the test is checked can be configured with environment variables.

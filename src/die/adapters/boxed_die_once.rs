@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::die::{Fate, DieOnce};
+use crate::die::{DieOnce, Fate};
 
 /// Adapter for `DieOnce::boxed_once`.
 pub struct BoxedDieOnce<'a, T>

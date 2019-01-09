@@ -35,8 +35,8 @@ pub fn from_default_hasher<T: Hash>() -> impl Codie<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::codice::Codie;
     use crate::codice;
+    use crate::codice::Codie;
 
     #[test]
     fn from_default_hasher_is_deterministic() {

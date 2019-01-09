@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::die::{Fate, Die, DieOnce};
+use crate::die::{Die, DieOnce, Fate};
 
 /// Adapter for `DieOnce::flat_map_once` and `Die::flat_map`.
 pub struct FlatMapDie<T, U, TD, UD, F> {

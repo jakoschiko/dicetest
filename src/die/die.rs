@@ -1,5 +1,5 @@
 use crate::die::adapters::{ArcDie, BoxedDie, FlatMapDie, FlattenDie, MapDie, RcDie};
-use crate::die::{Fate, DieOnce, Limit, Prng};
+use crate::die::{DieOnce, Fate, Limit, Prng};
 
 /// Trait for generating random values of type `T`.
 ///

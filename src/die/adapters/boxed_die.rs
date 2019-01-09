@@ -1,4 +1,4 @@
-use crate::die::{Fate, Die, DieOnce};
+use crate::die::{Die, DieOnce, Fate};
 
 /// Adapter for `Die::boxed`.
 pub struct BoxedDie<'a, T> {

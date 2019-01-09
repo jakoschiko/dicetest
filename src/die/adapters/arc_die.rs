@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::die::{Fate, Die, DieOnce};
+use crate::die::{Die, DieOnce, Fate};
 
 /// Adapter for `Die::arc`.
 #[derive(Clone)]
