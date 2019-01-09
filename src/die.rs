@@ -1,4 +1,4 @@
-//! Provides the random value generator traits `DieOnce` and `Die` for generating different kind
+//! Provides the pseudorandom value generator traits `DieOnce` and `Die` for generating any kind
 //! of data.
 
 mod prng;

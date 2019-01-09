@@ -8,7 +8,7 @@ use rand::{self, Rng};
 
 use crate::util::conversion;
 
-/// This pseudo random number generator is the base for more complex random value generators.
+/// This pseudorandom number generator is the base for more complex pseudorandom value generators.
 ///
 /// The algorithms are based on [this article] by Bob Jenkins.
 ///
