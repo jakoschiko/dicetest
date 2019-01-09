@@ -151,8 +151,8 @@ mod tests {
 
     #[test]
     fn encode_produces_non_empty_string_if_bytes_is_non_empty() {
-        dicetest!(|dice| {
-            let bytes = gens::vec(gens::u8(..), 1..).gen(dice);
+        dicetest!(|fate| {
+            let bytes = gens::vec(gens::u8(..), 1..).gen(fate);
             let base64 = base64::encode(&bytes);
 
             hint!(bytes);
@@ -164,8 +164,8 @@ mod tests {
 
     #[test]
     fn decode_is_left_inverse() {
-        dicetest!(|dice| {
-            let bytes = gens::vec(gens::u8(..), ..).gen(dice);
+        dicetest!(|fate| {
+            let bytes = gens::vec(gens::u8(..), ..).gen(fate);
             let base64 = base64::encode(&bytes);
 
             hint!(bytes);
@@ -179,11 +179,11 @@ mod tests {
 
     #[test]
     fn decode_fails_if_string_contains_invalid_char() {
-        dicetest!(|dice| {
+        dicetest!(|fate| {
             let valid_len_gen = gens::size(4..).map(|len| len - (len % 4));
 
-            let len = valid_len_gen.gen(dice);
-            let base64 = gens::string(gens::char(), len).gen(dice);
+            let len = valid_len_gen.gen(fate);
+            let base64 = gens::string(gens::char(), len).gen(fate);
 
             let is_invalid = base64.chars().any(base64::is_invalid_char);
 
@@ -202,13 +202,13 @@ mod tests {
 
     #[test]
     fn decode_fails_if_string_has_invalid_length() {
-        dicetest!(|dice| {
+        dicetest!(|fate| {
             let base_64_char_gen = gens::one_of_array(&base64::BYTE_TO_CHAR);
             let invalid_len_gen =
                 gens::size(1..).map(|len| if len % 4 == 0 { len + 1 } else { len });
 
-            let len = invalid_len_gen.gen(dice);
-            let invalid_base64 = gens::string(base_64_char_gen, len).gen(dice);
+            let len = invalid_len_gen.gen(fate);
+            let invalid_base64 = gens::string(base_64_char_gen, len).gen(fate);
 
             let bytes = base64::decode(&invalid_base64);
 

@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::gen::{Dice, Gen, GenOnce};
+use crate::gen::{Fate, Gen, GenOnce};
 
 /// Adapter for `Gen::arc`.
 #[derive(Clone)]
@@ -19,13 +19,13 @@ impl<T> ArcGen<T> {
 }
 
 impl<T> Gen<T> for ArcGen<T> {
-    fn gen(&self, dice: &mut Dice) -> T {
-        self.r#dyn.gen(dice)
+    fn gen(&self, fate: &mut Fate) -> T {
+        self.r#dyn.gen(fate)
     }
 }
 
 impl<T> GenOnce<T> for ArcGen<T> {
-    fn gen_once(self, dice: &mut Dice) -> T {
-        self.gen(dice)
+    fn gen_once(self, fate: &mut Fate) -> T {
+        self.gen(fate)
     }
 }

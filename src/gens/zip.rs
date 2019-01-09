@@ -7,8 +7,8 @@ macro_rules! fn_zip_n {
         pub fn $zip_n_once<$($Ti,)*>(
             $($gen_i: impl GenOnce<$Ti>,)*
         ) -> impl GenOnce<($($Ti,)*)> {
-            gens::from_fn_once(move |dice| {
-                ($($gen_i.gen_once(dice),)*)
+            gens::from_fn_once(move |fate| {
+                ($($gen_i.gen_once(fate),)*)
             })
         }
 
@@ -17,8 +17,8 @@ macro_rules! fn_zip_n {
         pub fn $zip_n<$($Ti,)*>(
             $($gen_i: impl Gen<$Ti>,)*
         ) -> impl Gen<($($Ti,)*)> {
-            gens::from_fn(move |dice| {
-                ($($gen_i.gen(dice),)*)
+            gens::from_fn(move |fate| {
+                ($($gen_i.gen(fate),)*)
             })
         }
     )

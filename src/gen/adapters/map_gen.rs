@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::gen::{Dice, Gen, GenOnce};
+use crate::gen::{Fate, Gen, GenOnce};
 
 /// Adapter for `GenOnce::map_once` and `Gen::map`.
 pub struct MapGen<T, U, G, F> {
@@ -26,11 +26,11 @@ where
     G: GenOnce<T>,
     F: FnOnce(T) -> U,
 {
-    fn gen_once(self, dice: &mut Dice) -> U {
+    fn gen_once(self, fate: &mut Fate) -> U {
         let g = self.g;
         let f = self.f;
 
-        let t = g.gen_once(dice);
+        let t = g.gen_once(fate);
         f(t)
     }
 }
@@ -40,11 +40,11 @@ where
     G: Gen<T>,
     F: Fn(T) -> U,
 {
-    fn gen(&self, dice: &mut Dice) -> U {
+    fn gen(&self, fate: &mut Fate) -> U {
         let g = &self.g;
         let f = &self.f;
 
-        let t = g.gen(dice);
+        let t = g.gen(fate);
         f(t)
     }
 }

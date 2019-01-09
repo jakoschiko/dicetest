@@ -12,7 +12,7 @@ pub mod gens {
 
     pub use crate::cogen::Cogen;
     pub use crate::cogens;
-    pub use crate::gen::{Dice, Gen, GenOnce, Limit, Prng};
+    pub use crate::gen::{Fate, Gen, GenOnce, Limit, Prng};
     pub use crate::gens;
 }
 
@@ -21,7 +21,7 @@ pub mod asserts {
 
     pub use crate::cogen::Cogen;
     pub use crate::cogens;
-    pub use crate::gen::{Dice, Gen, GenOnce};
+    pub use crate::gen::{Fate, Gen, GenOnce};
     pub use crate::gens;
     pub use crate::hints;
     pub use crate::stats;
@@ -33,7 +33,7 @@ pub mod tests {
 
     pub use crate::cogen::Cogen;
     pub use crate::cogens;
-    pub use crate::gen::{Dice, Gen, GenOnce};
+    pub use crate::gen::{Fate, Gen, GenOnce};
     pub use crate::gens;
     pub use crate::hints;
     pub use crate::runner::Config;

@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::gen::{Dice, Gen, GenOnce};
+use crate::gen::{Fate, Gen, GenOnce};
 
 /// Adapter for `GenOnce::rc`.
 #[derive(Clone)]
@@ -19,13 +19,13 @@ impl<'a, T> RcGen<'a, T> {
 }
 
 impl<'a, T> Gen<T> for RcGen<'a, T> {
-    fn gen(&self, dice: &mut Dice) -> T {
-        self.r#dyn.gen(dice)
+    fn gen(&self, fate: &mut Fate) -> T {
+        self.r#dyn.gen(fate)
     }
 }
 
 impl<'a, T> GenOnce<T> for RcGen<'a, T> {
-    fn gen_once(self, dice: &mut Dice) -> T {
-        self.gen(dice)
+    fn gen_once(self, fate: &mut Fate) -> T {
+        self.gen(fate)
     }
 }

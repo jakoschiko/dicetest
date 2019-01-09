@@ -2,7 +2,7 @@ use std::panic::{catch_unwind, RefUnwindSafe, UnwindSafe};
 
 use rand::{self, Rng};
 
-use crate::gen::{Dice, Prng};
+use crate::gen::{Fate, Prng};
 use crate::hints;
 use crate::runner::{Config, Counterexample, Error, LimitSeries, Run, Sample, Summary};
 use crate::stats;
@@ -10,15 +10,15 @@ use crate::stats;
 /// Runs the test once with the given configuration.
 pub fn run_once<T>(run: Run, test: T) -> Sample
 where
-    T: FnOnce(&mut Dice) + UnwindSafe,
+    T: FnOnce(&mut Fate) + UnwindSafe,
 {
     let (test_result, hints) = {
         let mut prng = run.prng.clone();
         let limit = run.limit;
         hints::collect(|| {
             catch_unwind(move || {
-                let mut dice = Dice::new(&mut prng, limit);
-                test(&mut dice)
+                let mut fate = Fate::new(&mut prng, limit);
+                test(&mut fate)
             })
         })
     };
@@ -34,7 +34,7 @@ where
 /// has failed.
 pub fn run_repeatedly<T>(config: Config, test: T) -> Summary
 where
-    T: Fn(&mut Dice) + UnwindSafe + RefUnwindSafe,
+    T: Fn(&mut Fate) + UnwindSafe + RefUnwindSafe,
 {
     let seed = config.seed.unwrap_or_else(|| rand::thread_rng().gen());
 
@@ -72,7 +72,7 @@ fn search_counterexample<T>(
     test: &T,
 ) -> (u64, Option<Counterexample>)
 where
-    T: Fn(&mut Dice) + UnwindSafe + RefUnwindSafe,
+    T: Fn(&mut Fate) + UnwindSafe + RefUnwindSafe,
 {
     let mut passes = 0;
     let mut prng = Prng::init(seed);
@@ -88,8 +88,8 @@ where
 
         let test_result = catch_unwind(|| {
             {
-                let mut dice = Dice::new(&mut prng, limit);
-                test(&mut dice);
+                let mut fate = Fate::new(&mut prng, limit);
+                test(&mut fate);
             }
             prng
         });
@@ -116,15 +116,15 @@ where
 
 fn rerun_counterexample<T>(counterexample: Counterexample, test: &T) -> Counterexample
 where
-    T: Fn(&mut Dice) + UnwindSafe + RefUnwindSafe,
+    T: Fn(&mut Fate) + UnwindSafe + RefUnwindSafe,
 {
     let (test_result, hints) = {
         let mut prng = counterexample.run.prng.clone();
         let limit = counterexample.run.limit;
         hints::collect(|| {
             catch_unwind(move || {
-                let mut dice = Dice::new(&mut prng, limit);
-                test(&mut dice)
+                let mut fate = Fate::new(&mut prng, limit);
+                test(&mut fate)
             })
         })
     };

@@ -22,8 +22,8 @@ where
             let randomness = self.input_cogen.cogen(input);
             let mut prng = self.prng;
             prng.reseed(randomness);
-            let mut dice = Dice::new(&mut prng, self.limit);
-            self.output_gen.gen_once(&mut dice)
+            let mut fate = Fate::new(&mut prng, self.limit);
+            self.output_gen.gen_once(&mut fate)
         }
     }
 }
@@ -38,8 +38,8 @@ where
             let randomness = self.input_cogen.cogen(input);
             let mut prng = self.prng.clone();
             prng.reseed(randomness);
-            let mut dice = Dice::new(&mut prng, self.limit);
-            self.output_gen.gen(&mut dice)
+            let mut fate = Fate::new(&mut prng, self.limit);
+            self.output_gen.gen(&mut fate)
         }
     }
 
@@ -48,8 +48,8 @@ where
             let randomness = self.input_cogen.cogen(input);
             let prng = &mut self.prng;
             prng.reseed(randomness);
-            let mut dice = Dice::new(prng, self.limit);
-            self.output_gen.gen(&mut dice)
+            let mut fate = Fate::new(prng, self.limit);
+            self.output_gen.gen(&mut fate)
         }
     }
 }
@@ -67,11 +67,11 @@ where
     IC: Cogen<I>,
     OG: GenOnce<O>,
 {
-    gens::from_fn_once(|dice| FnBuilder {
+    gens::from_fn_once(|fate| FnBuilder {
         input_cogen,
         output_gen,
-        prng: dice.prng.fork(),
-        limit: dice.limit(),
+        prng: fate.prng.fork(),
+        limit: fate.limit(),
         _i: PhantomData,
         _o: PhantomData,
     })

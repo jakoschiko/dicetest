@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::gen::{Dice, GenOnce};
+use crate::gen::{Fate, GenOnce};
 
 /// Adapter for `GenOnce::boxed_once`.
 pub struct BoxedGenOnce<'a, T>
@@ -31,13 +31,13 @@ impl<'a, T> GenOnce<T> for BoxedGenOnce<'a, T>
 where
     T: 'a,
 {
-    fn gen_once(mut self, dice: &mut Dice) -> T {
-        self.r#dyn.gen_once(dice)
+    fn gen_once(mut self, fate: &mut Fate) -> T {
+        self.r#dyn.gen_once(fate)
     }
 }
 
 trait Wrapper<T> {
-    fn gen_once(&mut self, dice: &mut Dice) -> T;
+    fn gen_once(&mut self, fate: &mut Fate) -> T;
 }
 
 struct GenOnceWrapper<T, G>
@@ -52,8 +52,8 @@ impl<T, G> Wrapper<T> for GenOnceWrapper<T, G>
 where
     G: GenOnce<T>,
 {
-    fn gen_once(&mut self, dice: &mut Dice) -> T {
+    fn gen_once(&mut self, fate: &mut Fate) -> T {
         let gen = self.gen.take().unwrap();
-        gen.gen_once(dice)
+        gen.gen_once(fate)
     }
 }

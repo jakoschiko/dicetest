@@ -27,8 +27,8 @@ mod tests {
     #[ignore]
     #[test]
     fn result_of_bubble_sort_is_sorted() {
-        dicetest!(|dice| {
-            let mut v = gens::vec(gens::u8(..), ..).gen(dice);
+        dicetest!(|fate| {
+            let mut v = gens::vec(gens::u8(..), ..).gen(fate);
             hint_format!("unsorted: {:?}", v);
 
             bubble_sort(&mut v);

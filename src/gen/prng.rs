@@ -137,8 +137,8 @@ mod tests {
 
     #[test]
     fn init_must_not_have_cycle_length_zero() {
-        dicetest!(|dice| {
-            let seed = gens::u64(..).gen(dice);
+        dicetest!(|fate| {
+            let seed = gens::u64(..).gen(fate);
 
             let prng_init = Prng::init(seed);
             let mut prng_next = prng_init.clone();
@@ -155,9 +155,9 @@ mod tests {
 
     #[test]
     fn init_with_bytes_is_left_inverse() {
-        dicetest!(|dice| {
+        dicetest!(|fate| {
             asserts::left_inverse(
-                dice,
+                fate,
                 gens::prng_fork(),
                 |prng| prng.seed_as_bytes(),
                 Prng::init_with_bytes,
@@ -167,9 +167,9 @@ mod tests {
 
     #[test]
     fn seed_as_bytes_is_left_inverse() {
-        dicetest!(|dice| {
+        dicetest!(|fate| {
             asserts::left_inverse(
-                dice,
+                fate,
                 gens::array_32(gens::u8(..)),
                 Prng::init_with_bytes,
                 |prng| prng.seed_as_bytes(),
@@ -179,9 +179,9 @@ mod tests {
 
     #[test]
     fn reseed_changes_prng() {
-        dicetest!(|dice| {
-            let prng = gens::prng_fork().gen(dice);
-            let seed = gens::u64(..).gen(dice);
+        dicetest!(|fate| {
+            let prng = gens::prng_fork().gen(fate);
+            let seed = gens::u64(..).gen(fate);
 
             let mut prng_reseeded = prng.clone();
             prng_reseeded.reseed(seed);

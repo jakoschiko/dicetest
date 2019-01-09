@@ -135,12 +135,12 @@ macro_rules! fn_int {
             // `IntRange::bounds` guarantees that `lower <= upper`
             let (lower, upper) = range.bounds();
 
-            gens::from_fn(move |dice| {
+            gens::from_fn(move |fate| {
                 if lower == upper {
                     // The range contains exactly one value
                     lower
                 } else {
-                    let random_int = $random_int(dice.prng);
+                    let random_int = $random_int(fate.prng);
 
                     if lower == $int::min_value() && upper == $int::max_value() {
                         // Full integer range, hence the randomly chosen integer is already inside
@@ -183,14 +183,14 @@ macro_rules! fn_int {
                 let extremum_gen = move || gens::one_of_2(lower, upper);
                 let special_fallback_gen = extremum_gen();
                 let special_gen = {
-                    gens::from_fn(move |dice| {
+                    gens::from_fn(move |fate| {
                         let special_values = $special;
-                        let special_value = gens::one_of_array(&special_values).gen(dice);
+                        let special_value = gens::one_of_array(&special_values).gen(fate);
                         if lower <= special_value && special_value <= upper {
                             special_value
                         } else {
                             // `special_value` is outside the range, fallback to other generator
-                            special_fallback_gen.gen(dice)
+                            special_fallback_gen.gen(fate)
                         }
                     })
                 };
@@ -283,7 +283,7 @@ mod tests {
     use crate::prelude::tests::*;
 
     fn range_contains_int<I, GI, B, GB, R>(
-        dice: &mut Dice,
+        fate: &mut Fate,
         range_data_gen: GB,
         create_range: fn(B) -> R,
         int_gen: fn(R) -> GI,
@@ -295,13 +295,13 @@ mod tests {
         GB: GenOnce<B>,
         R: gens::IntRange<I> + Debug,
     {
-        let range_data = range_data_gen.gen_once(dice);
+        let range_data = range_data_gen.gen_once(fate);
         hint!(range_data);
 
         let range = create_range(range_data);
         hint!(range);
 
-        let int = int_gen(range).gen_once(dice);
+        let int = int_gen(range).gen_once(fate);
         hint!(int);
 
         assert!(is_in_range(range_data, int));
@@ -318,9 +318,9 @@ mod tests {
         ) => {
             #[test]
             fn $int_is_in_range() {
-                dicetest!(|dice| {
+                dicetest!(|fate| {
                     range_contains_int(
-                        dice,
+                        fate,
                         gens::array_2(gens::$int(..$int::max_value() - 1))
                             .map(|[a, b]| (a.min(b), a.max(b) + 1)),
                         |(lower, upper)| lower..upper,
@@ -332,9 +332,9 @@ mod tests {
 
             #[test]
             fn $int_is_in_range_from() {
-                dicetest!(|dice| {
+                dicetest!(|fate| {
                     range_contains_int(
-                        dice,
+                        fate,
                         gens::$int(..),
                         |lower| lower..,
                         gens::$int,
@@ -345,9 +345,9 @@ mod tests {
 
             #[test]
             fn $int_is_in_range_inclusive() {
-                dicetest!(|dice| {
+                dicetest!(|fate| {
                     range_contains_int(
-                        dice,
+                        fate,
                         gens::array_2(gens::$int(..)).map(|[a, b]| (a.min(b), a.max(b))),
                         |(lower, upper)| lower..=upper,
                         gens::$int,
@@ -358,9 +358,9 @@ mod tests {
 
             #[test]
             fn $int_is_in_range_to() {
-                dicetest!(|dice| {
+                dicetest!(|fate| {
                     range_contains_int(
-                        dice,
+                        fate,
                         gens::$int(1..),
                         |upper| ..upper,
                         gens::$int,
@@ -371,9 +371,9 @@ mod tests {
 
             #[test]
             fn $int_is_in_range_to_inclusive() {
-                dicetest!(|dice| {
+                dicetest!(|fate| {
                     range_contains_int(
-                        dice,
+                        fate,
                         gens::$int(..),
                         |upper| ..=upper,
                         gens::$int,

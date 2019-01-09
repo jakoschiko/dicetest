@@ -1,13 +1,13 @@
 use crate::gen::adapters::{BoxedGenOnce, FlatMapGen, FlattenGen, MapGen};
-use crate::gen::{Dice, Limit, Prng};
+use crate::gen::{Fate, Limit, Prng};
 
 /// Trait for generating a single random value of type `T`.
 pub trait GenOnce<T> {
     /// Consumes the generator and generates a random value.
     ///
-    /// The `Dice` is the only source of the randomness. Besides that, the generation is
+    /// The `Fate` is the only source of the randomness. Besides that, the generation is
     /// derterministic.
-    fn gen_once(self, dice: &mut Dice) -> T;
+    fn gen_once(self, fate: &mut Fate) -> T;
 
     /// Creates a new `GenOnce` by mapping the generated values of `self`.
     ///
@@ -62,8 +62,8 @@ pub trait GenOnce<T> {
     {
         let mut prng = Prng::random();
         let lim = Limit::default();
-        let mut dice = Dice::new(&mut prng, lim);
+        let mut fate = Fate::new(&mut prng, lim);
 
-        self.gen_once(&mut dice)
+        self.gen_once(&mut fate)
     }
 }

@@ -58,12 +58,12 @@ mod tests {
 
     #[test]
     fn run_code_is_right_inverse_for_from_run_code() {
-        dicetest!(|dice| {
+        dicetest!(|fate| {
             let run_gen = gens::zip_2(gens::prng_fork(), gens::u64(..).map(Limit))
                 .map(|(prng, limit)| Run { prng, limit });
 
             asserts::right_inverse(
-                dice,
+                fate,
                 run_gen,
                 |run_code: String| Run::from_run_code(&run_code).unwrap(),
                 |run: Run| run.run_code(),

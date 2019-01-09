@@ -75,8 +75,8 @@ mod tests {
 
     #[test]
     fn char_ascii_alphabetic_lowercase_generates_only_valid_values() {
-        dicetest!(|dice| {
-            let char = gens::char_ascii_alphabetic_lowercase().gen(dice);
+        dicetest!(|fate| {
+            let char = gens::char_ascii_alphabetic_lowercase().gen(fate);
 
             hint!(char);
 
@@ -87,8 +87,8 @@ mod tests {
 
     #[test]
     fn char_ascii_alphabetic_uppercase_generates_only_valid_values() {
-        dicetest!(|dice| {
-            let char = gens::char_ascii_alphabetic_uppercase().gen(dice);
+        dicetest!(|fate| {
+            let char = gens::char_ascii_alphabetic_uppercase().gen(fate);
 
             hint!(char);
 
@@ -99,8 +99,8 @@ mod tests {
 
     #[test]
     fn char_ascii_alphabetic_generates_only_valid_values() {
-        dicetest!(|dice| {
-            let char = gens::char_ascii_alphabetic().gen(dice);
+        dicetest!(|fate| {
+            let char = gens::char_ascii_alphabetic().gen(fate);
 
             hint!(char);
 
@@ -110,8 +110,8 @@ mod tests {
 
     #[test]
     fn char_ascii_digit_generates_only_valid_values() {
-        dicetest!(|dice| {
-            let char = gens::char_ascii_digit().gen(dice);
+        dicetest!(|fate| {
+            let char = gens::char_ascii_digit().gen(fate);
 
             hint!(char);
 
@@ -121,8 +121,8 @@ mod tests {
 
     #[test]
     fn char_ascii_alphanumeric_generates_only_valid_values() {
-        dicetest!(|dice| {
-            let char = gens::char_ascii_alphanumeric().gen(dice);
+        dicetest!(|fate| {
+            let char = gens::char_ascii_alphanumeric().gen(fate);
 
             hint!(char);
 
@@ -132,8 +132,8 @@ mod tests {
 
     #[test]
     fn char_ascii_printable_generates_only_valid_values() {
-        dicetest!(|dice| {
-            let char = gens::char_ascii_printable().gen(dice);
+        dicetest!(|fate| {
+            let char = gens::char_ascii_printable().gen(fate);
 
             hint!(char);
 
@@ -144,8 +144,8 @@ mod tests {
 
     #[test]
     fn char_ascii_generates_only_valid_values() {
-        dicetest!(|dice| {
-            let char = gens::char_ascii().gen(dice);
+        dicetest!(|fate| {
+            let char = gens::char_ascii().gen(fate);
 
             hint!(char);
 
@@ -155,8 +155,8 @@ mod tests {
 
     #[test]
     fn char_generates_only_valid_values() {
-        dicetest!(|dice| {
-            let char = gens::char().gen(dice);
+        dicetest!(|fate| {
+            let char = gens::char().gen(fate);
 
             hint!(char);
 

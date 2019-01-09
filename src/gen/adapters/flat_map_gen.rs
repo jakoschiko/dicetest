@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::gen::{Dice, Gen, GenOnce};
+use crate::gen::{Fate, Gen, GenOnce};
 
 /// Adapter for `GenOnce::flat_map_once` and `Gen::flat_map`.
 pub struct FlatMapGen<T, U, GT, GU, F> {
@@ -29,13 +29,13 @@ where
     GU: GenOnce<U>,
     F: FnOnce(T) -> GU,
 {
-    fn gen_once(self, dice: &mut Dice) -> U {
+    fn gen_once(self, fate: &mut Fate) -> U {
         let gt = self.gt;
         let f = self.f;
 
-        let t = gt.gen_once(dice);
+        let t = gt.gen_once(fate);
         let gu = f(t);
-        gu.gen_once(dice)
+        gu.gen_once(fate)
     }
 }
 
@@ -45,12 +45,12 @@ where
     GU: GenOnce<U>,
     F: Fn(T) -> GU,
 {
-    fn gen(&self, dice: &mut Dice) -> U {
+    fn gen(&self, fate: &mut Fate) -> U {
         let gt = &self.gt;
         let f = &self.f;
 
-        let t = gt.gen(dice);
+        let t = gt.gen(fate);
         let gu = f(t);
-        gu.gen_once(dice)
+        gu.gen_once(fate)
     }
 }

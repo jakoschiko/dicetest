@@ -62,10 +62,10 @@ macro_rules! fn_one_of_n {
         pub fn $one_of_gen_n_once<T>(
             $($gen_i: impl GenOnce<T>,)*
         ) -> impl GenOnce<T> {
-            gens::from_fn_once(move |dice| {
-                let choice = dice.prng.next_number() % $n;
+            gens::from_fn_once(move |fate| {
+                let choice = fate.prng.next_number() % $n;
                     match choice {
-                    $($i => $gen_i.gen_once(dice),)*
+                    $($i => $gen_i.gen_once(fate),)*
                     _ => panic!(),
                 }
             })
@@ -79,11 +79,11 @@ macro_rules! fn_one_of_n {
         ) -> impl GenOnce<T> {
             $(let $weight_i = u64::from($weight_i);)*
             let total_weight = sum!($($weight_i,)*);
-            gens::from_fn_once(move |dice| {
-                let choice = dice.prng.next_number() % total_weight;
+            gens::from_fn_once(move |fate| {
+                let choice = fate.prng.next_number() % total_weight;
                 $(
                     if choice < $weight_i {
-                        return $gen_i.gen_once(dice);
+                        return $gen_i.gen_once(fate);
                     }
                     #[allow(unused_variables)]
                     let choice = choice - $weight_i;
@@ -98,10 +98,10 @@ macro_rules! fn_one_of_n {
         pub fn $one_of_gen_n<T>(
             $($gen_i: impl Gen<T>,)*
         ) -> impl Gen<T> {
-            gens::from_fn(move |dice| {
-                let choice = dice.prng.next_number() % $n;
+            gens::from_fn(move |fate| {
+                let choice = fate.prng.next_number() % $n;
                 match choice {
-                    $($i => $gen_i.gen(dice),)*
+                    $($i => $gen_i.gen(fate),)*
                     _ => panic!(),
                 }
             })
@@ -115,11 +115,11 @@ macro_rules! fn_one_of_n {
         ) -> impl Gen<T> {
             $(let $weight_i = u64::from($weight_i);)*
             let total_weight = sum!($($weight_i,)*);
-            gens::from_fn(move |dice| {
-                let choice = dice.prng.next_number() % total_weight;
+            gens::from_fn(move |fate| {
+                let choice = fate.prng.next_number() % total_weight;
                 $(
                     if choice < $weight_i {
-                        return $gen_i.gen(dice);
+                        return $gen_i.gen(fate);
                     }
                     #[allow(unused_variables)]
                     let choice = choice - $weight_i;
@@ -233,8 +233,8 @@ fn_one_of_n! { 9,
 /// Generates a element randomly chosen from the given `Vec`. All elements have the same
 /// probability.
 pub fn one_of_vec_once<T>(mut values: Vec<T>) -> impl GenOnce<T> {
-    gens::from_fn_once(move |dice| {
-        let choice = (dice.prng.next_number() as usize) % values.len();
+    gens::from_fn_once(move |fate| {
+        let choice = (fate.prng.next_number() as usize) % values.len();
         values.swap_remove(choice)
     })
 }
@@ -245,8 +245,8 @@ pub fn one_of_vec<T>(values: Vec<T>) -> impl Gen<T>
 where
     T: Clone,
 {
-    gens::from_fn(move |dice| {
-        let choice = (dice.prng.next_number() as usize) % values.len();
+    gens::from_fn(move |fate| {
+        let choice = (fate.prng.next_number() as usize) % values.len();
         values[choice].clone()
     })
 }
@@ -257,8 +257,8 @@ pub fn one_of_array<'a, T>(values: &'a [T]) -> impl Gen<T> + 'a
 where
     T: Clone,
 {
-    gens::from_fn(move |dice| {
-        let choice = (dice.prng.next_number() as usize) % values.len();
+    gens::from_fn(move |fate| {
+        let choice = (fate.prng.next_number() as usize) % values.len();
         values[choice].clone()
     })
 }

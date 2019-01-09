@@ -24,8 +24,8 @@ mod tests {
 
     #[test]
     fn bytes_to_u64_is_left_inverse() {
-        dicetest!(|dice| asserts::left_inverse(
-            dice,
+        dicetest!(|fate| asserts::left_inverse(
+            fate,
             gens::array_8(gens::u8(..)),
             conversion::bytes_to_u64,
             conversion::u64_to_bytes,
@@ -34,8 +34,8 @@ mod tests {
 
     #[test]
     fn u64_to_bytes_is_left_inverse() {
-        dicetest!(|dice| asserts::left_inverse(
-            dice,
+        dicetest!(|fate| asserts::left_inverse(
+            fate,
             gens::u64(..),
             conversion::u64_to_bytes,
             conversion::bytes_to_u64,
