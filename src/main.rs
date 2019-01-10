@@ -24,6 +24,7 @@ mod tests {
 
     use super::*;
 
+    #[ignore]
     #[test]
     fn result_of_bubble_sort_is_sorted() {
         dicetest!(|fate| {
