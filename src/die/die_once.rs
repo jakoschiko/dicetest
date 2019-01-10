@@ -1,9 +1,9 @@
 use crate::die::adapters::{BoxedDieOnce, FlatMapDie, FlattenDie, MapDie};
 use crate::die::{Fate, Limit, Prng};
 
-/// Trait for generating a single random value of type `T`.
+/// Trait for generating a single preudorandom value of type `T`.
 pub trait DieOnce<T> {
-    /// Consumes the generator and generates a random value.
+    /// Consumes the generator and generates a preudorandom value.
     ///
     /// The `Fate` is the only source of the randomness. Besides that, the generation is
     /// derterministic.

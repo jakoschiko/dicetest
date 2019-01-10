@@ -1,14 +1,14 @@
 use crate::die::adapters::{ArcDie, BoxedDie, FlatMapDie, FlattenDie, MapDie, RcDie};
 use crate::die::{DieOnce, Fate, Limit, Prng};
 
-/// Trait for generating random values of type `T`.
+/// Trait for generating preudorandom values of type `T`.
 ///
 /// The `Die` trait represents a subset of `DieOnce`. It mirrors all methods of `DieOnce` without
 /// the suffix `_once`. These methods must behave in the same way. For example an implementation
 /// of `Die` must produce the same value with its methods `roll` and `roll_once` if they are called
 /// with the same `Fate`.
 pub trait Die<T>: DieOnce<T> {
-    /// Generates a random value using.
+    /// Generates a preudorandom value using.
     ///
     /// The `Fate` is the only source of the randomness. Besides that, the generation is
     /// derterministic.
