@@ -47,8 +47,23 @@ impl Config {
         Config { end_limit, ..self }
     }
 
+    pub fn scale_limit(self, factor: f64) -> Self {
+        Config {
+            start_limit: scale(self.start_limit, factor),
+            end_limit: scale(self.end_limit, factor),
+            ..self
+        }
+    }
+
     pub fn with_passes(self, passes: u64) -> Self {
         Config { passes, ..self }
+    }
+
+    pub fn scale_passes(self, factor: f64) -> Self {
+        Config {
+            passes: scale(self.passes, factor),
+            ..self
+        }
     }
 
     pub fn with_hints_enabled(self, hints_enabled: bool) -> Self {
@@ -77,4 +92,8 @@ impl Default for Config {
             stats_enabled: false,
         }
     }
+}
+
+fn scale(value: u64, factor: f64) -> u64 {
+    (value as f64 * factor) as u64
 }

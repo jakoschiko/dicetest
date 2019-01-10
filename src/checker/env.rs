@@ -10,7 +10,9 @@ const KEY_MODE: &str = "DICETEST_MODE";
 const KEY_SEED: &str = "DICETEST_SEED";
 const KEY_START_LIMIT: &str = "DICETEST_START_LIMIT";
 const KEY_END_LIMIT: &str = "DICETEST_END_LIMIT";
+const KEY_SCALE_LIMIT: &str = "DICETEST_SCALE_LIMIT";
 const KEY_PASSES: &str = "DICETEST_PASSES";
+const KEY_SCALE_PASSES: &str = "DICETEST_SCALE_PASSES";
 const KEY_HINTS_ENABLED: &str = "DICETEST_HINTS_ENABLED";
 const KEY_STATS_ENABLED: &str = "DICETEST_STATS_ENABLED";
 const KEY_LIMIT: &str = "DICETEST_LIMIT";
@@ -72,8 +74,20 @@ pub fn read_end_limit(default: u64) -> Result<u64, String> {
     read_value(KEY_END_LIMIT, "an u64", default, u64::from_str)
 }
 
+pub fn read_scale_limit(default: Option<f64>) -> Result<Option<f64>, String> {
+    read_value(KEY_SCALE_LIMIT, "a f64", default, |s| {
+        f64::from_str(s).map(Some)
+    })
+}
+
 pub fn read_passes(default: u64) -> Result<u64, String> {
     read_value(KEY_PASSES, "an u64", default, u64::from_str)
+}
+
+pub fn read_scale_passes(default: Option<f64>) -> Result<Option<f64>, String> {
+    read_value(KEY_SCALE_PASSES, "a f64", default, |s| {
+        f64::from_str(s).map(Some)
+    })
 }
 
 pub fn read_hints_enabled(default: bool) -> Result<bool, String> {

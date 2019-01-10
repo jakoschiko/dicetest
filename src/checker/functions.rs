@@ -54,8 +54,12 @@ use crate::runner::{run_once, run_repeatedly, Config, Run};
 /// The initial `Limit` value. See `Config::start_limit`.
 /// - `DICETEST_END_LIMIT=<u64>`
 /// The final `Limit` value. See `Config::end_limit`.
+/// - `DICETEST_SCALE_LIMIT=<f64>`
+/// Scales the initial and the final `Limit` values with the given factor.
 /// - `DICETEST_PASSES=<u64>`
 /// The number of test runs. See `Config::passes`.
+/// - `DICETEST_SCALE_PASSES=<f64>`
+/// Scales the number of test runs with the given factor.
 /// - `DICETEST_HINTS_ENABLED=<bool>`
 /// Enables the hints. See `Config::hints_enabled`.
 /// - `DICETEST_STATS_ENABLED=<bool>`
@@ -117,6 +121,16 @@ where
                     passes,
                     hints_enabled,
                     stats_enabled,
+                };
+
+                let overriden_config = match env::read_scale_limit(None).unwrap() {
+                    Some(factor) => overriden_config.scale_limit(factor),
+                    None => overriden_config,
+                };
+
+                let overriden_config = match env::read_scale_passes(None).unwrap() {
+                    Some(factor) => overriden_config.scale_passes(factor),
+                    None => overriden_config,
                 };
 
                 check_repeatedly(log_condition, overriden_config, test);
