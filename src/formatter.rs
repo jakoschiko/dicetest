@@ -94,18 +94,26 @@ fn summary_headline(passed: bool, passes: u64) -> impl Iterator<Item = char> {
 fn config_section(config: &Config) -> impl Iterator<Item = char> {
     let title = str("Config");
     let content = empty()
-        .chain(keyed_item(0, str("seed"), display(config.seed.as_ref())))
-        .chain(keyed_item(
+        .chain(key_value_item(
+            0,
+            str("seed"),
+            display(config.seed.as_ref()),
+        ))
+        .chain(key_value_item(
             0,
             str("start limit"),
             display(Some(&config.start_limit)),
         ))
-        .chain(keyed_item(
+        .chain(key_value_item(
             0,
             str("end limit"),
             display(Some(&config.end_limit)),
         ))
-        .chain(keyed_item(0, str("passes"), display(Some(&config.passes))));
+        .chain(key_value_item(
+            0,
+            str("passes"),
+            display(Some(&config.passes)),
+        ));
 
     section(title, content)
 }
@@ -152,12 +160,10 @@ fn stats_section(stats: &Stats) -> impl Iterator<Item = char> {
                     .chain(pretty_count)
                     .chain(str(")"));
 
-                keyed_item(1, pretty_occurrence, string(value))
+                key_value_item(1, pretty_occurrence, string(value))
             });
 
-            empty()
-                .chain(keyed_item(0, str(key), empty()))
-                .chain(values)
+            empty().chain(key_item(0, str(key))).chain(values)
         });
 
         boxed(pretty_stats)
@@ -206,11 +212,11 @@ fn section(
 
 fn run_code_item(indent: usize, run: &Run) -> impl Iterator<Item = char> {
     let run_code = run.run_code();
-    keyed_item(indent, str("run code"), debug(Some(&run_code)))
+    key_value_item(indent, str("run code"), debug(Some(&run_code)))
 }
 
 fn limit_item(indent: usize, limit: Limit) -> impl Iterator<Item = char> {
-    keyed_item(indent, str("limit"), display(Some(&limit.0)))
+    key_value_item(indent, str("limit"), display(Some(&limit.0)))
 }
 
 fn hints_item(indent: usize, hints: &Hints) -> impl Iterator<Item = char> {
@@ -226,7 +232,7 @@ fn hints_item(indent: usize, hints: &Hints) -> impl Iterator<Item = char> {
 
         boxed(
             empty()
-                .chain(keyed_item(indent, str("hints"), empty()))
+                .chain(key_item(indent, str("hints")))
                 .chain(pretty_hints),
         )
     }
@@ -248,17 +254,21 @@ fn error_item(indent: usize, error: &Error) -> impl Iterator<Item = char> {
             let text = "The error has an unknown type and cannot be displayed.";
             boxed(item(indent, str(text)))
         }
-        Some(string_repr) => boxed(keyed_item(indent, str("error"), string(string_repr))),
+        Some(string_repr) => boxed(key_value_item(indent, str("error"), string(string_repr))),
     }
 }
 
-fn keyed_item(
+fn key_item(indent: usize, key: impl Iterator<Item = char>) -> impl Iterator<Item = char> {
+    item(indent, key.chain(str(":")))
+}
+
+fn key_value_item(
     indent: usize,
     key: impl Iterator<Item = char>,
-    content: impl Iterator<Item = char>,
+    value: impl Iterator<Item = char>,
 ) -> impl Iterator<Item = char> {
-    let key_with_content = key.chain(str(": ")).chain(content);
-    item(indent, key_with_content)
+    let key_with_value = key.chain(str(": ")).chain(value);
+    item(indent, key_with_value)
 }
 
 fn item(indent: usize, content: impl Iterator<Item = char>) -> impl Iterator<Item = char> {
@@ -320,4 +330,314 @@ fn empty() -> impl Iterator<Item = char> {
     iter::empty()
 }
 
-// TODO: tests
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use crate::die::{Limit, Prng};
+    use crate::hints::{Hint, Hints};
+    use crate::runner::{Config, Counterexample, Error, Run, Summary};
+    use crate::stats::{Counter, Stat, Stats};
+
+    fn contains_line(text: &str, expected_line: &str) -> bool {
+        text.lines().any(|line| line == expected_line)
+    }
+
+    fn example_hints() -> Hints {
+        Hints(vec![
+            Hint {
+                indent: 0,
+                text: "Uh".into(),
+            },
+            Hint {
+                indent: 1,
+                text: "Ah".into(),
+            },
+            Hint {
+                indent: 0,
+                text: "Ih".into(),
+            },
+        ])
+    }
+
+    fn example_run() -> Run {
+        Run {
+            prng: Prng::init(42),
+            limit: Limit(71),
+        }
+    }
+
+    fn example_error() -> Error {
+        Error(Box::new("Something bad happened!"))
+    }
+
+    fn example_config() -> Config {
+        Config {
+            seed: None,
+            start_limit: 0,
+            end_limit: 100,
+            passes: 1000,
+            hints_enabled: true,
+            stats_enabled: false,
+        }
+    }
+
+    #[test]
+    fn pretty_sample_passed_example() {
+        let sample = Sample {
+            run: example_run(),
+            hints: example_hints(),
+            error: None,
+        };
+
+        let expected = format!(
+            "\
+The test passed.
+
+# Run
+- run code: {:?}
+- limit: 71
+- hints:
+\t- Uh
+\t\t- Ah
+\t- Ih
+",
+            example_run().run_code(),
+        );
+
+        let actual = pretty_sample(&sample);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn pretty_sample_failed_example() {
+        let sample = Sample {
+            run: example_run(),
+            hints: example_hints(),
+            error: Some(example_error()),
+        };
+
+        let expected = format!(
+            "\
+The test failed.
+
+# Run
+- run code: {:?}
+- limit: 71
+- hints:
+\t- Uh
+\t\t- Ah
+\t- Ih
+- error: Something bad happened!
+",
+            example_run().run_code(),
+        );
+
+        let actual = pretty_sample(&sample);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn pretty_summary_passed_example() {
+        let summary = Summary {
+            config: example_config(),
+            seed: 42,
+            passes: 1000,
+            stats: None,
+            counterexample: None,
+        };
+
+        let expected = "\
+The test withstood 1000 passes.
+
+# Config
+- seed: 42
+- start limit: 0
+- end limit: 100
+- passes: 1000
+";
+
+        let actual = pretty_summary(&summary);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn pretty_summary_failed_example() {
+        let summary = Summary {
+            config: example_config(),
+            seed: 42,
+            passes: 123,
+            stats: None,
+            counterexample: Some(Counterexample {
+                run: example_run(),
+                hints: Some(example_hints()),
+                error: example_error(),
+            }),
+        };
+
+        let expected = format!(
+            "\
+The test failed after 123 passes.
+
+# Config
+- seed: 42
+- start limit: 0
+- end limit: 100
+- passes: 1000
+
+# Counterexample
+- run code: {:?}
+- limit: 71
+- hints:
+\t- Uh
+\t\t- Ah
+\t- Ih
+- error: Something bad happened!
+",
+            example_run().run_code(),
+        );
+
+        let actual = pretty_summary(&summary);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn pretty_summary_preferes_the_seed_from_summary() {
+        let summary = Summary {
+            config: example_config().with_seed(Some(71)),
+            seed: 42,
+            passes: 1000,
+            stats: None,
+            counterexample: None,
+        };
+
+        let actual = pretty_summary(&summary);
+
+        assert!(contains_line(&actual, "- seed: 42"));
+        assert!(!contains_line(&actual, "- seed: 471"));
+    }
+
+    #[test]
+    fn pretty_summary_detects_missing_hints() {
+        if cfg!(feature = "hints") {
+            let summary = Summary {
+                config: example_config(),
+                seed: 42,
+                passes: 123,
+                stats: None,
+                counterexample: Some(Counterexample {
+                    run: Run {
+                        prng: Prng::init(42),
+                        limit: Limit(71),
+                    },
+                    hints: None,
+                    error: Error(Box::new("Something bad happened!")),
+                }),
+            };
+
+            let actual = pretty_summary(&summary);
+
+            assert!(contains_line(
+                &actual,
+                "- Hints could not be collected afterwards, test is not deterministic.",
+            ));
+        }
+    }
+
+    #[test]
+    fn pretty_summary_detects_empty_hints() {
+        if cfg!(feature = "hints") {
+            let summary = Summary {
+                config: Config::default().with_hints_enabled(true),
+                seed: 42,
+                passes: 123,
+                stats: None,
+                counterexample: Some(Counterexample {
+                    run: Run {
+                        prng: Prng::init(42),
+                        limit: Limit(71),
+                    },
+                    hints: Some(Hints::new()),
+                    error: Error(Box::new("Something bad happened!")),
+                }),
+            };
+
+            let actual = pretty_summary(&summary);
+
+            assert!(contains_line(&actual, "- No hints has been collected.",));
+        }
+    }
+
+    #[test]
+    fn stats_section_example() {
+        let stats = Stats(
+            vec![
+                (
+                    "foo".into(),
+                    Stat(
+                        vec![
+                            ("a".into(), Counter::Value(10)),
+                            ("b".into(), Counter::Value(20)),
+                        ]
+                        .into_iter()
+                        .collect(),
+                    ),
+                ),
+                (
+                    "bar".into(),
+                    Stat(
+                        vec![
+                            ("x".into(), Counter::Value(10)),
+                            ("y".into(), Counter::Overflow),
+                        ]
+                        .into_iter()
+                        .collect(),
+                    ),
+                ),
+                (
+                    "foobar".into(),
+                    Stat(vec![("i".into(), Counter::Value(0))].into_iter().collect()),
+                ),
+            ]
+            .into_iter()
+            .collect(),
+        );
+
+        let expected = "\
+# Stats
+- bar:
+\t- ovf% (ovf): y
+\t- ovf% (10): x
+- foo:
+\t- 66% (20): b
+\t- 33% (10): a
+- foobar:
+\t- ovf% (0): i
+";
+
+        let actual = stats_section(&stats).collect::<String>();
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn pretty_summary_detects_empty_stats() {
+        if cfg!(feature = "hints") {
+            let summary = Summary {
+                config: Config::default().with_stats_enabled(true),
+                seed: 42,
+                passes: 123,
+                stats: Some(Stats::new()),
+                counterexample: None,
+            };
+
+            let actual = pretty_summary(&summary);
+
+            assert!(contains_line(&actual, "- No stats has been collected.",));
+        }
+    }
+}
