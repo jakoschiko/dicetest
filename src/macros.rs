@@ -6,16 +6,16 @@ macro_rules! hint {
     })
 }
 
-/// Adds a hint that contains the expression result converted with `Debug`.
+/// Adds a hint that contains the stringified argument and its result converted with `Debug`.
 #[macro_export]
 macro_rules! hint_debug {
-    ($val:expr) => {
-        $crate::hints::add(|| format!(concat!(stringify!($val), " = {:?}"), $val));
+    ($val:tt) => {
+        $crate::hints::add(|| format!(concat!("{} = {:?}"), stringify!($val), $val));
     };
 }
 
-/// Creates a stat with the first argument as key and the remaining arguments applied to the
-/// `format` macro as value.
+/// Creates a stat with the first argument as stat key and the remaining arguments applied to the
+/// `format` macro as stat value.
 #[macro_export]
 macro_rules! stat {
     ($key:tt, $($arg:tt)*) => ({
@@ -23,11 +23,11 @@ macro_rules! stat {
     })
 }
 
-/// Creates a stat with the expression as key and the expression result converted with `Debug` as
-/// value.
+/// Creates a stat with the stringified argument as stat key and its result converted with `Debug`
+/// as stat value.
 #[macro_export]
 macro_rules! stat_debug {
-    ($expr:expr) => {
+    ($expr:tt) => {
         $crate::stats::inc(stringify!($expr), || format!("{:?}", $expr));
     };
 }
@@ -45,4 +45,49 @@ macro_rules! dicetest {
     }};
 }
 
-// TODO: tests
+#[cfg(test)]
+mod tests {
+    use crate::runner::Config;
+
+    #[test]
+    fn macro_hint_produces_valid_code() {
+        if false {
+            hint!("foo");
+            hint!("bar {}", 42);
+        }
+    }
+
+    #[test]
+    fn macro_hint_debug_produces_valid_code() {
+        if false {
+            hint_debug!(42);
+            hint_debug!((0 < 20));
+            hint_debug!((if true { 1 } else { 2 }));
+        }
+    }
+
+    #[test]
+    fn macro_stat_produces_valid_code() {
+        if false {
+            stat!("A", "foo");
+            stat!("B", "bar {}", 42);
+        }
+    }
+
+    #[test]
+    fn macro_stat_debug_produces_valid_code() {
+        if false {
+            stat_debug!(42);
+            stat_debug!((0 < 20));
+            stat_debug!((if true { 1 } else { 2 }));
+        }
+    }
+
+    #[test]
+    fn macro_dicetest_produces_valid_code() {
+        if false {
+            dicetest!(|_fate| assert_eq!(1, 2));
+            dicetest!(Config::default(), |_fate| assert_eq!(1, 2));
+        }
+    }
+}
