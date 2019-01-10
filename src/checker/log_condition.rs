@@ -1,9 +1,9 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-/// Defines when the checker should log its result.
+/// Defines when the checker should log the test result.
 pub enum LogCondition {
-    /// The checker always logs its result.
+    /// The checker always logs the test result.
     Always,
-    /// The checker logs its result if and only if a test run has failed.
+    /// The checker logs the test result if and only if a test run has failed.
     OnFailure,
 }
 

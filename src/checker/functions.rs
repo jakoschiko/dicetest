@@ -17,7 +17,8 @@ use crate::runner::{run_once, run_repeatedly, Config, Run};
 /// environment variable:
 ///
 /// - `DICETEST_LOG_CONDITION=<log condition>`
-/// Whether the test result will be logged depends on `<log condition>` with the following options:
+/// Whether the test test result will be logged depends on `<log condition>` with the following
+/// options:
 ///     - `always`
 ///     The test result will be always logged.
 ///     - `on_failure`
