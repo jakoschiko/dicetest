@@ -155,8 +155,8 @@ mod tests {
             let bytes = dice::vec(dice::u8(..), 1..).roll(fate);
             let base64 = base64::encode(&bytes);
 
-            hint!(bytes);
-            hint!(base64);
+            hint_debug!(bytes);
+            hint_debug!(base64);
 
             assert!(!base64.is_empty())
         })
@@ -168,8 +168,8 @@ mod tests {
             let bytes = dice::vec(dice::u8(..), ..).roll(fate);
             let base64 = base64::encode(&bytes);
 
-            hint!(bytes);
-            hint!(base64);
+            hint_debug!(bytes);
+            hint_debug!(base64);
 
             let decoded_bytes = base64::decode(&base64).unwrap();
 
@@ -193,8 +193,8 @@ mod tests {
 
             let bytes = base64::decode(&base64);
 
-            hint!(base64);
-            hint!(bytes);
+            hint_debug!(base64);
+            hint_debug!(bytes);
 
             assert!(bytes.is_err());
         })
@@ -212,8 +212,8 @@ mod tests {
 
             let bytes = base64::decode(&invalid_base64);
 
-            hint!(invalid_base64);
-            hint!(bytes);
+            hint_debug!(invalid_base64);
+            hint_debug!(bytes);
 
             assert!(bytes.is_err());
         })

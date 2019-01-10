@@ -25,7 +25,7 @@ pub mod asserts {
     pub use crate::die::{Die, DieOnce, Fate};
     pub use crate::hints;
     pub use crate::stats;
-    pub use crate::{hint, hint_format, stat, stat_format};
+    pub use crate::{hint, hint_debug, stat, stat_debug};
 }
 
 pub mod tests {
@@ -38,5 +38,5 @@ pub mod tests {
     pub use crate::hints;
     pub use crate::runner::Config;
     pub use crate::stats;
-    pub use crate::{dicetest, hint, hint_format, stat, stat_format};
+    pub use crate::{dicetest, hint, hint_debug, stat, stat_debug};
 }

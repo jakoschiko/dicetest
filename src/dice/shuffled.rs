@@ -36,11 +36,11 @@ mod tests {
         dicetest!(|fate| {
             let orig_vec = dice::vec(dice::u8(..), ..).roll(fate);
             let orig_vec_elems = count_vec_elems(&orig_vec);
-            hint!(orig_vec);
+            hint_debug!(orig_vec);
 
             let shuffled_vec = dice::shuffled_vec(orig_vec).roll_once(fate);
             let shuffled_vec_elems = count_vec_elems(&shuffled_vec);
-            hint!(shuffled_vec);
+            hint_debug!(shuffled_vec);
 
             assert_eq!(orig_vec_elems, shuffled_vec_elems);
         })

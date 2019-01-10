@@ -145,9 +145,9 @@ mod tests {
             let _ = prng_next.next_number();
             let cycle_length_is_zero = prng_init == prng_next;
 
-            hint!(seed);
-            hint!(prng_init);
-            hint!(prng_next);
+            hint_debug!(seed);
+            hint_debug!(prng_init);
+            hint_debug!(prng_next);
 
             assert!(!cycle_length_is_zero);
         })
@@ -186,9 +186,9 @@ mod tests {
             let mut prng_reseeded = prng.clone();
             prng_reseeded.reseed(seed);
 
-            hint!(prng);
-            hint!(seed);
-            hint!(prng_reseeded);
+            hint_debug!(prng);
+            hint_debug!(seed);
+            hint_debug!(prng_reseeded);
 
             assert_ne!(prng, prng_reseeded);
         })

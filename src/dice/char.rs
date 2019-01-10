@@ -78,7 +78,7 @@ mod tests {
         dicetest!(|fate| {
             let char = dice::char_ascii_alphabetic_lowercase().roll(fate);
 
-            hint!(char);
+            hint_debug!(char);
 
             assert!(char.is_ascii_alphabetic());
             assert!(char.is_ascii_lowercase());
@@ -90,7 +90,7 @@ mod tests {
         dicetest!(|fate| {
             let char = dice::char_ascii_alphabetic_uppercase().roll(fate);
 
-            hint!(char);
+            hint_debug!(char);
 
             assert!(char.is_ascii_alphabetic());
             assert!(char.is_ascii_uppercase());
@@ -102,7 +102,7 @@ mod tests {
         dicetest!(|fate| {
             let char = dice::char_ascii_alphabetic().roll(fate);
 
-            hint!(char);
+            hint_debug!(char);
 
             assert!(char.is_ascii_alphabetic());
         })
@@ -113,7 +113,7 @@ mod tests {
         dicetest!(|fate| {
             let char = dice::char_ascii_digit().roll(fate);
 
-            hint!(char);
+            hint_debug!(char);
 
             assert!(char.is_ascii_digit());
         })
@@ -124,7 +124,7 @@ mod tests {
         dicetest!(|fate| {
             let char = dice::char_ascii_alphanumeric().roll(fate);
 
-            hint!(char);
+            hint_debug!(char);
 
             assert!(char.is_ascii_alphanumeric());
         })
@@ -135,7 +135,7 @@ mod tests {
         dicetest!(|fate| {
             let char = dice::char_ascii_printable().roll(fate);
 
-            hint!(char);
+            hint_debug!(char);
 
             assert!(char.is_ascii());
             assert!(!char.is_ascii_control());
@@ -147,7 +147,7 @@ mod tests {
         dicetest!(|fate| {
             let char = dice::char_ascii().roll(fate);
 
-            hint!(char);
+            hint_debug!(char);
 
             assert!(char.is_ascii());
         })
@@ -158,7 +158,7 @@ mod tests {
         dicetest!(|fate| {
             let char = dice::char().roll(fate);
 
-            hint!(char);
+            hint_debug!(char);
 
             assert!(std::char::from_u32(char as u32).is_some());
         })

@@ -296,13 +296,13 @@ mod tests {
         R: dice::IntRange<I> + Debug,
     {
         let range_data = range_data_die.roll_once(fate);
-        hint!(range_data);
+        hint_debug!(range_data);
 
         let range = create_range(range_data);
-        hint!(range);
+        hint_debug!(range);
 
         let int = int_die(range).roll_once(fate);
-        hint!(int);
+        hint_debug!(int);
 
         assert!(is_in_range(range_data, int));
     }

@@ -24,15 +24,14 @@ mod tests {
 
     use super::*;
 
-    #[ignore]
     #[test]
     fn result_of_bubble_sort_is_sorted() {
         dicetest!(|fate| {
             let mut v = dice::vec(dice::u8(..), ..).roll(fate);
-            hint_format!("unsorted: {:?}", v);
+            hint!("unsorted: {:?}", v);
 
             bubble_sort(&mut v);
-            hint_format!("  sorted: {:?}", v);
+            hint!("  sorted: {:?}", v);
 
             let is_sorted = v.windows(2).all(|w| w[0] <= w[1]);
             assert!(is_sorted);

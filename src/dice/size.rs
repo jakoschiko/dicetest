@@ -114,17 +114,17 @@ mod tests {
         let limit = dice::u64(..).roll(fate);
         let range_data = range_data_die.roll_once(fate);
 
-        hint!(prng);
-        hint!(limit);
-        hint!(range_data);
+        hint_debug!(prng);
+        hint_debug!(limit);
+        hint_debug!(range_data);
 
         let mut fate = Fate::new(&mut prng, Limit(limit));
 
         let range = create_range(range_data);
-        hint!(range);
+        hint_debug!(range);
 
         let size = dice::size(range).roll(&mut fate);
-        hint!(size);
+        hint_debug!(size);
 
         assert!(is_in_range(range_data, size));
     }

@@ -116,9 +116,9 @@ mod tests {
             let end = dice::u64(..).roll(fate);
             let len = dice::u64(1..).roll(fate);
 
-            hint!(start);
-            hint!(end);
-            hint!(len);
+            hint_debug!(start);
+            hint_debug!(end);
+            hint_debug!(len);
 
             let series = LimitSeries::new(start, end, len);
             let first_limit = series.nth(0).unwrap().0;
@@ -134,9 +134,9 @@ mod tests {
             let end = dice::u64(..).roll(fate);
             let len = dice::u64(2..).roll(fate);
 
-            hint!(start);
-            hint!(end);
-            hint!(len);
+            hint_debug!(start);
+            hint_debug!(end);
+            hint_debug!(len);
 
             let series = LimitSeries::new(start, end, len);
             let last_limit = series.nth(len - 1).unwrap().0;
