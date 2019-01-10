@@ -12,10 +12,10 @@ use crate::util::events;
 /// A counter for occurrences of a value.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Counter {
-    /// The counter has overflowed.
-    Overflow,
     /// Contains the current count.
     Value(u64),
+    /// The counter has overflowed.
+    Overflow,
 }
 
 impl Counter {
