@@ -180,26 +180,28 @@ mod tests {
 
     #[test]
     fn no_hints_if_enabled_but_failure_not_reproduceable() {
-        for _ in 0..10 {
-            let config = Config::default().with_hints_enabled(true).with_passes(1);
-            let (summary, has_failed) = hints::collect(|| {
-                runner::run_repeatedly(config, |_| {
-                    let should_fail = Prng::random().next_number() % 2 == 0;
+        if cfg!(feature = "hints") {
+            for _ in 0..10 {
+                let config = Config::default().with_hints_enabled(true).with_passes(1);
+                let (summary, has_failed) = hints::collect(|| {
+                    runner::run_repeatedly(config, |_| {
+                        let should_fail = Prng::random().next_number() % 2 == 0;
 
-                    hints::add(|| format!("{}", should_fail));
+                        hints::add(|| format!("{}", should_fail));
 
-                    if should_fail {
-                        panic!();
-                    }
-                })
-            });
+                        if should_fail {
+                            panic!();
+                        }
+                    })
+                });
 
-            let failure_was_not_reproduceable =
-                &has_failed.0[0].text == "true" && &has_failed.0[1].text == "false";
+                let failure_was_not_reproduceable =
+                    &has_failed.0[0].text == "true" && &has_failed.0[1].text == "false";
 
-            if failure_was_not_reproduceable {
-                let counterexample = summary.counterexample.unwrap();
-                assert!(counterexample.hints.is_none());
+                if failure_was_not_reproduceable {
+                    let counterexample = summary.counterexample.unwrap();
+                    assert!(counterexample.hints.is_none());
+                }
             }
         }
     }
