@@ -1,12 +1,12 @@
 //! Dicetest is a framework for writing tests with pseudorandom generated test data.
 //!
-//! # Status of this crate
+//! ## Status of this crate
 //!
 //! The author does not consider this crate as stable yet.
 //!
-//! # Simple example
+//! ## Simple example
 //!
-//! Here's an example of a broken sort function tested with dicetest:
+//! Here's an example of a broken sort function tested with Dicetest:
 //! ```
 //! fn bubble_sort<T: Ord>(slice: &mut [T]) {
 //!     let len = slice.len();
@@ -66,7 +66,7 @@
 //! DICETEST_DEBUG=ABIDje/+CYVkmmCVTwKJ2go6VrzZWMjO2Bqc9m3b3h0DAAAAAAAAAA== cargo test
 //! ```
 //!
-//! # Alternatives
+//! ## Alternatives
 //!
 //! * Write down your test data and use a loop.
 //! * Use the crate `quickcheck`.

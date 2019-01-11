@@ -2,6 +2,7 @@
 name = "dicetest"
 version = "0.1.0"
 authors = ["Jakob Schikowski"]
+license = "MIT/Apache-2.0"
 readme = "README.md"
 description = "Framework for writing tests with pseudorandom generated test data."
 edition = "2018"
