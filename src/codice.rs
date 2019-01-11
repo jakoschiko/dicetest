@@ -1,4 +1,4 @@
-//! The standard collection of `Codies` implementations.
+//! The standard collection of `Codie` implementations.
 
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
