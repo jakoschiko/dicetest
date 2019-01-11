@@ -47,10 +47,10 @@ impl Config {
         Config { end_limit, ..self }
     }
 
-    pub fn scale_limit(self, factor: f64) -> Self {
+    pub fn with_multiplied_limit(self, factor: f64) -> Self {
         Config {
-            start_limit: scale(self.start_limit, factor),
-            end_limit: scale(self.end_limit, factor),
+            start_limit: multiply(self.start_limit, factor),
+            end_limit: multiply(self.end_limit, factor),
             ..self
         }
     }
@@ -59,9 +59,9 @@ impl Config {
         Config { passes, ..self }
     }
 
-    pub fn scale_passes(self, factor: f64) -> Self {
+    pub fn with_multiplied_passes(self, factor: f64) -> Self {
         Config {
-            passes: scale(self.passes, factor),
+            passes: multiply(self.passes, factor),
             ..self
         }
     }
@@ -94,6 +94,6 @@ impl Default for Config {
     }
 }
 
-fn scale(value: u64, factor: f64) -> u64 {
+fn multiply(value: u64, factor: f64) -> u64 {
     (value as f64 * factor) as u64
 }

@@ -54,12 +54,12 @@ use crate::runner::{run_once, run_repeatedly, Config, Run};
 /// The initial `Limit` value. See `Config::start_limit`.
 /// - `DICETEST_END_LIMIT=<u64>`
 /// The final `Limit` value. See `Config::end_limit`.
-/// - `DICETEST_SCALE_LIMIT=<f64>`
-/// Scales the initial and the final `Limit` values with the given factor.
+/// - `DICETEST_LIMIT_MULTIPLIER=<f64>`
+/// Multiplies the initial and the final `Limit` values with the given factor.
 /// - `DICETEST_PASSES=<u64>`
 /// The number of test runs. See `Config::passes`.
-/// - `DICETEST_SCALE_PASSES=<f64>`
-/// Scales the number of test runs with the given factor.
+/// - `DICETEST_PASSES_MULTIPLIER=<f64>`
+/// Multiplies the number of test runs with the given factor.
 /// - `DICETEST_HINTS_ENABLED=<bool>`
 /// Enables the hints. See `Config::hints_enabled`.
 /// - `DICETEST_STATS_ENABLED=<bool>`
@@ -107,33 +107,9 @@ where
 
         match mode {
             Mode::Repeatedly => {
-                let seed = env::read_seed(config.seed).unwrap();
-                let start_limit = env::read_start_limit(config.start_limit).unwrap();
-                let end_limit = env::read_end_limit(config.end_limit).unwrap();
-                let passes = env::read_passes(config.passes).unwrap();
-                let hints_enabled = env::read_hints_enabled(config.hints_enabled).unwrap();
-                let stats_enabled = env::read_stats_enabled(config.stats_enabled).unwrap();
+                let overridden_config = override_config_from_env(&config).unwrap();
 
-                let overriden_config = Config {
-                    seed,
-                    start_limit,
-                    end_limit,
-                    passes,
-                    hints_enabled,
-                    stats_enabled,
-                };
-
-                let overriden_config = match env::read_scale_limit(None).unwrap() {
-                    Some(factor) => overriden_config.scale_limit(factor),
-                    None => overriden_config,
-                };
-
-                let overriden_config = match env::read_scale_passes(None).unwrap() {
-                    Some(factor) => overriden_config.scale_passes(factor),
-                    None => overriden_config,
-                };
-
-                check_repeatedly(log_condition, overriden_config, test);
+                check_repeatedly(log_condition, overridden_config, test);
             }
             Mode::Once => {
                 let code_params = env::read_run_code(None).unwrap();
@@ -215,4 +191,34 @@ where
 
 fn log(text: &str) {
     print!("{}", text);
+}
+
+fn override_config_from_env(config: &Config) -> Result<Config, String> {
+    let seed = env::read_seed(config.seed).unwrap();
+    let start_limit = env::read_start_limit(config.start_limit).unwrap();
+    let end_limit = env::read_end_limit(config.end_limit).unwrap();
+    let passes = env::read_passes(config.passes).unwrap();
+    let hints_enabled = env::read_hints_enabled(config.hints_enabled).unwrap();
+    let stats_enabled = env::read_stats_enabled(config.stats_enabled).unwrap();
+
+    let overriden_config = Config {
+        seed,
+        start_limit,
+        end_limit,
+        passes,
+        hints_enabled,
+        stats_enabled,
+    };
+
+    let overriden_config = match env::read_limit_multiplier(None)? {
+        Some(factor) => overriden_config.with_multiplied_limit(factor),
+        None => overriden_config,
+    };
+
+    let overriden_config = match env::read_passes_multiplier(None)? {
+        Some(factor) => overriden_config.with_multiplied_passes(factor),
+        None => overriden_config,
+    };
+
+    Ok(overriden_config)
 }
