@@ -9,7 +9,7 @@ use crate::seed::Seed;
 /// of `Die` must produce the same value with its methods `roll` and `roll_once` if they are called
 /// with the same `Fate`.
 pub trait Die<T>: DieOnce<T> {
-    /// Generates a preudorandom value using.
+    /// Generates a preudorandom value.
     ///
     /// The `Fate` is the only source of the randomness. Besides that, the generation is
     /// derterministic.
@@ -36,10 +36,10 @@ pub trait Die<T>: DieOnce<T> {
         FlattenDie::new(self)
     }
 
-    /// Creates a new `Die` similiar to `Die::map`, except that the mapping produces `Die`s.
+    /// Creates a new `Die` similiar to `Die::map`, except that the mapping produces `DieOnce`s.
     ///
     /// The function `f` will be applied to the generated values of `self`. These function results
-    /// are `Die`s that generates the values for the new `Die`.
+    /// are `DieOnce`s that generates the values for the new `Die`.
     ///
     /// It is semanticly equivalent to `self.map(f).flatten()`.
     fn flat_map<U, UD, F>(self, f: F) -> FlatMapDie<T, U, Self, UD, F>

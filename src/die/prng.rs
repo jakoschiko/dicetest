@@ -18,7 +18,7 @@ pub struct Prng {
 }
 
 impl Prng {
-    /// Creates a new instance whose internal state is initialized with the given seed.
+    /// Creates a `Prng` whose internal state is initialized with the given seed.
     ///
     /// The result has a satisfying cycle length.
     pub fn from_seed(seed: Seed) -> Prng {
@@ -30,7 +30,7 @@ impl Prng {
         prng
     }
 
-    /// Creates an `Prng` using the given byte array as internal state.
+    /// Creates a `Prng` using the given byte array as internal state.
     ///
     /// This function is a left and right inverse for `Prng::to_bytes`.
     ///
@@ -83,11 +83,10 @@ impl Prng {
 
     #[allow(clippy::many_single_char_names)]
     /// Reinitialze the internal state of self using the current internal state and the given seed.
-    ///
-    /// The implementation is inspired by [ScalaCheck](https://github.com/rickynils/scalacheck).
     pub fn reseed(&mut self, seed: Seed) {
         let (a, b, c, d) = self.state;
 
+        // The implementation is inspired by ScalaCheck.
         let n0 = (seed.0 >> 32) & 0xffff_ffff;
         let n1 = seed.0 & 0xffff_ffff;
 

@@ -1,10 +1,10 @@
 use std::mem::size_of;
 
-/// Recommendation for the upper size limit of generated dynamic data structures.
+/// Recommendation for the upper size limit of dynamic data structures generated with `DieOnce`
+/// and `Die`.
 ///
-/// It will be passed to `DieOnce::roll_once` or `Die::roll`. The generator implementation is
-/// allowed to freely interpret this value, but the complexity of the value generation
-/// should be in `O(limit)`.
+/// The generator implementation is allowed to freely interpret this value, but the complexity of
+/// the value generation should be in `O(limit)`.
 ///
 /// This parameter exists because the hardware of the testing machine is limited. For example
 /// a very big list could not fit in the memory or its generation could take too much time.
