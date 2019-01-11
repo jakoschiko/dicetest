@@ -1,7 +1,7 @@
 use std::panic::{resume_unwind, RefUnwindSafe, UnwindSafe};
 
 use crate::checker::{env, LogCondition, Mode};
-use crate::die::{Fate, Limit, Prng};
+use crate::die::{Fate, Limit, Prng, Seed};
 use crate::formatter;
 use crate::runner::{run_once, run_repeatedly, Config, Run};
 
@@ -115,7 +115,7 @@ where
                 let code_params = env::read_run_code(None).unwrap();
                 let run = code_params.unwrap_or_else(|| {
                     let seed = env::read_seed(None).unwrap();
-                    let prng = seed.map_or_else(Prng::random, Prng::init);
+                    let prng = Prng::from_seed(seed.unwrap_or_else(Seed::random));
                     let limit = env::read_limit(Limit::default()).unwrap();
                     Run { prng, limit }
                 });

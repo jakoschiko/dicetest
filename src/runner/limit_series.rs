@@ -12,12 +12,16 @@ pub struct LimitSeries {
 impl LimitSeries {
     /// Creates a new instance that produces `len` linearly interpolated `Limit`s between `start`
     /// and `end`.
-    pub fn new(start: u64, end: u64, len: u64) -> Self {
+    pub fn new(start: Limit, end: Limit, len: u64) -> Self {
+        let start = start.0;
+        let end = end.0;
+
         let diff = if start <= end {
             end - start
         } else {
             start - end
         };
+
         LimitSeries {
             start,
             end,
@@ -80,7 +84,7 @@ mod tests {
     use crate::runner::LimitSeries;
 
     fn assert_example(start: u64, end: u64, len: u64, expected_limits: Vec<u64>) {
-        let series = LimitSeries::new(start, end, len);
+        let series = LimitSeries::new(start.into(), end.into(), len);
         let actual_limits = series.into_iter().map(|limit| limit.0).collect::<Vec<_>>();
 
         assert_eq!(actual_limits, expected_limits);
@@ -101,7 +105,7 @@ mod tests {
             let end = dice::u64(..).roll(fate);
             let len = dice::u64(..=fate.limit().0).roll(fate);
 
-            let series = LimitSeries::new(start, end, len);
+            let series = LimitSeries::new(start.into(), end.into(), len);
             let iter = series.into_iter();
             let iter_len: u64 = iter.map(|_| 1).sum();
 
@@ -120,7 +124,7 @@ mod tests {
             hint_debug!(end);
             hint_debug!(len);
 
-            let series = LimitSeries::new(start, end, len);
+            let series = LimitSeries::new(start.into(), end.into(), len);
             let first_limit = series.nth(0).unwrap().0;
 
             assert_eq!(first_limit, start);
@@ -138,7 +142,7 @@ mod tests {
             hint_debug!(end);
             hint_debug!(len);
 
-            let series = LimitSeries::new(start, end, len);
+            let series = LimitSeries::new(start.into(), end.into(), len);
             let last_limit = series.nth(len - 1).unwrap().0;
 
             assert_eq!(last_limit, end);

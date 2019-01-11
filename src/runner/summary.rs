@@ -1,3 +1,4 @@
+use crate::die::Seed;
 use crate::hints::Hints;
 use crate::runner::{Config, Error, Run};
 use crate::stats::Stats;
@@ -18,7 +19,7 @@ pub struct Summary {
     /// The configuration used to create this result.
     pub config: Config,
     /// Initial seed used by the runner. It was either passed via `Config` or randomly generated.
-    pub seed: u64,
+    pub seed: Seed,
     /// The number of test runs that did not fail.
     pub passes: u64,
     /// The stats collected during all test runs. It's defined if and only if stats are enabled.

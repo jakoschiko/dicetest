@@ -97,17 +97,17 @@ fn config_section(config: &Config) -> impl Iterator<Item = char> {
         .chain(key_value_item(
             0,
             str("seed"),
-            display(config.seed.as_ref()),
+            display(config.seed.map(|seed| seed.0).as_ref()),
         ))
         .chain(key_value_item(
             0,
             str("start limit"),
-            display(Some(&config.start_limit)),
+            display(Some(&config.start_limit.0)),
         ))
         .chain(key_value_item(
             0,
             str("end limit"),
-            display(Some(&config.end_limit)),
+            display(Some(&config.end_limit.0)),
         ))
         .chain(key_value_item(
             0,
@@ -362,7 +362,7 @@ mod tests {
 
     fn example_run() -> Run {
         Run {
-            prng: Prng::init(42),
+            prng: Prng::from_seed(42.into()),
             limit: Limit(71),
         }
     }
@@ -374,8 +374,8 @@ mod tests {
     fn example_config() -> Config {
         Config {
             seed: None,
-            start_limit: 0,
-            end_limit: 100,
+            start_limit: 0.into(),
+            end_limit: 100.into(),
             passes: 1000,
             hints_enabled: true,
             stats_enabled: false,
@@ -443,7 +443,7 @@ The test failed.
     fn pretty_summary_passed_example() {
         let summary = Summary {
             config: example_config(),
-            seed: 42,
+            seed: 42.into(),
             passes: 1000,
             stats: None,
             counterexample: None,
@@ -468,7 +468,7 @@ The test withstood 1000 passes.
     fn pretty_summary_failed_example() {
         let summary = Summary {
             config: example_config(),
-            seed: 42,
+            seed: 42.into(),
             passes: 123,
             stats: None,
             counterexample: Some(Counterexample {
@@ -508,8 +508,8 @@ The test failed after 123 passes.
     #[test]
     fn pretty_summary_preferes_the_seed_from_summary() {
         let summary = Summary {
-            config: example_config().with_seed(Some(71)),
-            seed: 42,
+            config: example_config().with_seed(Some(71.into())),
+            seed: 42.into(),
             passes: 1000,
             stats: None,
             counterexample: None,
@@ -526,12 +526,12 @@ The test failed after 123 passes.
         if cfg!(feature = "hints") {
             let summary = Summary {
                 config: example_config(),
-                seed: 42,
+                seed: 42.into(),
                 passes: 123,
                 stats: None,
                 counterexample: Some(Counterexample {
                     run: Run {
-                        prng: Prng::init(42),
+                        prng: Prng::from_seed(42.into()),
                         limit: Limit(71),
                     },
                     hints: None,
@@ -553,12 +553,12 @@ The test failed after 123 passes.
         if cfg!(feature = "hints") {
             let summary = Summary {
                 config: Config::default().with_hints_enabled(true),
-                seed: 42,
+                seed: 42.into(),
                 passes: 123,
                 stats: None,
                 counterexample: Some(Counterexample {
                     run: Run {
-                        prng: Prng::init(42),
+                        prng: Prng::from_seed(42.into()),
                         limit: Limit(71),
                     },
                     hints: Some(Hints::new()),
@@ -629,7 +629,7 @@ The test failed after 123 passes.
         if cfg!(feature = "hints") {
             let summary = Summary {
                 config: Config::default().with_stats_enabled(true),
-                seed: 42,
+                seed: 42.into(),
                 passes: 123,
                 stats: Some(Stats::new()),
                 counterexample: None,

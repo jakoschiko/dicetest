@@ -1,8 +1,6 @@
 use std::panic::{catch_unwind, RefUnwindSafe, UnwindSafe};
 
-use rand::{self, Rng};
-
-use crate::die::{Fate, Prng};
+use crate::die::{Fate, Prng, Seed};
 use crate::hints;
 use crate::runner::{Config, Counterexample, Error, LimitSeries, Run, Sample, Summary};
 use crate::stats;
@@ -36,7 +34,7 @@ pub fn run_repeatedly<T>(config: Config, test: T) -> Summary
 where
     T: Fn(&mut Fate) + UnwindSafe + RefUnwindSafe,
 {
-    let seed = config.seed.unwrap_or_else(|| rand::thread_rng().gen());
+    let seed = config.seed.unwrap_or_else(Seed::random);
 
     let limit_series = LimitSeries::new(config.start_limit, config.end_limit, config.passes);
 
@@ -67,7 +65,7 @@ where
 }
 
 fn search_counterexample<T>(
-    seed: u64,
+    seed: Seed,
     limit_series: LimitSeries,
     test: &T,
 ) -> (u64, Option<Counterexample>)
@@ -75,7 +73,7 @@ where
     T: Fn(&mut Fate) + UnwindSafe + RefUnwindSafe,
 {
     let mut passes = 0;
-    let mut prng = Prng::init(seed);
+    let mut prng = Prng::from_seed(seed);
     let mut limits = limit_series.into_iter();
 
     let counterexample = loop {
@@ -141,7 +139,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::die::Prng;
+    use crate::die::Seed;
     use crate::hints;
     use crate::runner::{self, Config};
 
@@ -185,7 +183,7 @@ mod tests {
                 let config = Config::default().with_hints_enabled(true).with_passes(1);
                 let (summary, has_failed) = hints::collect(|| {
                     runner::run_repeatedly(config, |_| {
-                        let should_fail = Prng::random().next_number() % 2 == 0;
+                        let should_fail = Seed::random().0 % 2 == 0;
 
                         hints::add(|| format!("{}", should_fail));
 

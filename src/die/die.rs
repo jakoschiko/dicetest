@@ -1,5 +1,5 @@
 use crate::die::adapters::{ArcDie, BoxedDie, FlatMapDie, FlattenDie, MapDie, RcDie};
-use crate::die::{DieOnce, Fate, Limit, Prng};
+use crate::die::{DieOnce, Fate, Limit, Prng, Seed};
 
 /// Trait for generating preudorandom values of type `T`.
 ///
@@ -77,7 +77,7 @@ pub trait Die<T>: DieOnce<T> {
     /// Calls `Die::roll` with random seed and default parameters. Useful for debugging the
     /// generator.
     fn sample(&self) -> T {
-        let mut prng = Prng::random();
+        let mut prng = Prng::from_seed(Seed::random());
         let lim = Limit::default();
         let mut fate = Fate::new(&mut prng, lim);
 

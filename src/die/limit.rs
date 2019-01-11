@@ -29,6 +29,12 @@ impl Limit {
     }
 }
 
+impl From<u64> for Limit {
+    fn from(limit: u64) -> Self {
+        Limit(limit)
+    }
+}
+
 impl Default for Limit {
     fn default() -> Self {
         Limit(100)

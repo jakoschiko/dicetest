@@ -1,5 +1,5 @@
 use crate::die::adapters::{BoxedDieOnce, FlatMapDie, FlattenDie, MapDie};
-use crate::die::{Fate, Limit, Prng};
+use crate::die::{Fate, Limit, Prng, Seed};
 
 /// Trait for generating a single preudorandom value of type `T`.
 pub trait DieOnce<T> {
@@ -60,7 +60,7 @@ pub trait DieOnce<T> {
     where
         Self: Sized,
     {
-        let mut prng = Prng::random();
+        let mut prng = Prng::from_seed(Seed::random());
         let lim = Limit::default();
         let mut fate = Fate::new(&mut prng, lim);
 

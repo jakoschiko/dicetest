@@ -15,7 +15,7 @@ impl Run {
     pub fn to_run_code(&self) -> String {
         let mut bytes = Vec::new();
 
-        bytes.extend_from_slice(&self.prng.seed_as_bytes());
+        bytes.extend_from_slice(&self.prng.to_bytes());
         bytes.extend_from_slice(&conversion::u64_to_bytes(self.limit.0));
 
         base64::encode(&bytes)
@@ -34,7 +34,7 @@ impl Run {
         let prng = {
             let mut seed_bytes = [0; 32];
             seed_bytes.copy_from_slice(&bytes[0..32]);
-            Prng::init_with_bytes(seed_bytes)
+            Prng::from_bytes(seed_bytes)
         };
 
         let limit = {

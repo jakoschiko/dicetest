@@ -4,8 +4,7 @@ use std::hash::SipHasher;
 use std::mem;
 use std::num::Wrapping;
 
-use rand::{self, Rng};
-
+use crate::die::Seed;
 use crate::util::conversion;
 
 /// This pseudorandom number generator is the base for more complex pseudorandom value generators.
@@ -15,54 +14,46 @@ use crate::util::conversion;
 /// [this article]: http://burtleburtle.net/bob/rand/smallprng.html
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Prng {
-    seed: (u64, u64, u64, u64),
+    state: (u64, u64, u64, u64),
 }
 
 impl Prng {
-    /// Creates an `Prng` using a `u64` as seed.
+    /// Creates an `Prng` using the given seed.
     ///
     /// The result has a satisfying cycle length.
-    pub fn init(seed_u64: u64) -> Prng {
-        let seed = (0xf1ea_5eed, seed_u64, seed_u64, seed_u64);
-        let mut prng = Prng { seed };
+    pub fn from_seed(seed: Seed) -> Prng {
+        let state = (0xf1ea_5eed, seed.0, seed.0, seed.0);
+        let mut prng = Prng { state };
         for _ in 0..20 {
             prng.next_number();
         }
         prng
     }
 
-    /// Creates an `Prng` using a random seed.
+    /// Creates an `Prng` using the given byte array as internal state.
     ///
-    /// The result has a satisfying cycle length.
-    pub fn random() -> Prng {
-        let seed = rand::thread_rng().gen();
-        Prng::init(seed)
-    }
-
-    /// Creates an `Prng` using a byte array as seed.
+    /// This function is a left and right inverse for `Prng::to_bytes`.
     ///
-    /// This function is a left and right inverse for `Prng::seed_as_bytes`.
-    ///
-    /// A satisfying cycle length is only guaranteed for bytes from `Prng::seed_as_bytes` called
+    /// A satisfying cycle length is only guaranteed for bytes from `Prng::to_bytes` called
     /// with an `Prng` that has a satisfying cycle length. Other bytes should not be passed to this
     /// function. For initializing an `Prng` with an arbitrary seed, use `Prng::init` instead.
-    pub fn init_with_bytes(seed_bytes: [u8; 32]) -> Prng {
-        let arrays: [[u8; 8]; 4] = unsafe { mem::transmute(seed_bytes) };
+    pub fn from_bytes(state_bytes: [u8; 32]) -> Prng {
+        let arrays: [[u8; 8]; 4] = unsafe { mem::transmute(state_bytes) };
 
         let a = conversion::bytes_to_u64(arrays[0]);
         let b = conversion::bytes_to_u64(arrays[1]);
         let c = conversion::bytes_to_u64(arrays[2]);
         let d = conversion::bytes_to_u64(arrays[3]);
 
-        let seed = (a, b, c, d);
-        Prng { seed }
+        let state = (a, b, c, d);
+        Prng { state }
     }
 
-    /// Returns the seed as a byte array.
+    /// Returns the internal state as a byte array.
     ///
     /// This function is a left and right inverse for `Prng::init_with_bytes`.
-    pub fn seed_as_bytes(&self) -> [u8; 32] {
-        let (a, b, c, d) = self.seed;
+    pub fn to_bytes(&self) -> [u8; 32] {
+        let (a, b, c, d) = self.state;
 
         let arrays = [
             conversion::u64_to_bytes(a),
@@ -77,7 +68,7 @@ impl Prng {
     #[allow(clippy::many_single_char_names)]
     /// Returns the next pseudo random number.
     pub fn next_number(&mut self) -> u64 {
-        let (a, b, c, d) = self.seed;
+        let (a, b, c, d) = self.state;
 
         // We use `Wrapping` because overflow and underflow is intended
         let Wrapping(e) = Wrapping(a) - Wrapping(b.rotate_left(7));
@@ -86,7 +77,7 @@ impl Prng {
         let Wrapping(h) = Wrapping(d) + Wrapping(e);
         let Wrapping(i) = Wrapping(e) + Wrapping(a);
 
-        self.seed = (f, g, h, i);
+        self.state = (f, g, h, i);
         i
     }
 
@@ -96,12 +87,12 @@ impl Prng {
     ///
     /// The implementation is inspired by [ScalaCheck](https://github.com/rickynils/scalacheck).
     pub fn reseed(&mut self, n: u64) {
-        let (a, b, c, d) = self.seed;
+        let (a, b, c, d) = self.state;
 
         let n0 = (n >> 32) & 0xffff_ffff;
         let n1 = n & 0xffff_ffff;
 
-        self.seed = (a ^ n0, b ^ n1, c, d);
+        self.state = (a ^ n0, b ^ n1, c, d);
 
         for _ in 0..16 {
             self.next_number();
@@ -136,11 +127,11 @@ mod tests {
     use crate::prelude::tests::*;
 
     #[test]
-    fn init_must_not_have_cycle_length_zero() {
+    fn from_seed_must_not_have_cycle_length_zero() {
         dicetest!(|fate| {
             let seed = dice::u64(..).roll(fate);
 
-            let prng_init = Prng::init(seed);
+            let prng_init = Prng::from_seed(seed.into());
             let mut prng_next = prng_init.clone();
             let _ = prng_next.next_number();
             let cycle_length_is_zero = prng_init == prng_next;
@@ -154,25 +145,25 @@ mod tests {
     }
 
     #[test]
-    fn init_with_bytes_is_left_inverse() {
+    fn from_bytes_is_left_inverse() {
         dicetest!(|fate| {
             asserts::left_inverse(
                 fate,
                 dice::prng_fork(),
-                |prng| prng.seed_as_bytes(),
-                Prng::init_with_bytes,
+                |prng| prng.to_bytes(),
+                Prng::from_bytes,
             );
         })
     }
 
     #[test]
-    fn seed_as_bytes_is_left_inverse() {
+    fn to_bytes_is_left_inverse() {
         dicetest!(|fate| {
             asserts::left_inverse(
                 fate,
                 dice::array_32(dice::u8(..)),
-                Prng::init_with_bytes,
-                |prng| prng.seed_as_bytes(),
+                Prng::from_bytes,
+                |prng| prng.to_bytes(),
             );
         })
     }

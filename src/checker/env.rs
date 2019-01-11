@@ -2,7 +2,7 @@ use std::env;
 use std::str::FromStr;
 
 use crate::checker::{LogCondition, Mode};
-use crate::die::Limit;
+use crate::die::{Limit, Seed};
 use crate::runner::Run;
 
 const KEY_LOG_CONDITION: &str = "DICETEST_LOG_CONDITION";
@@ -62,16 +62,22 @@ fn read_option_value<T, E>(
     parsed.unwrap_or_else(|_| Ok(default))
 }
 
-pub fn read_seed(default: Option<u64>) -> Result<Option<u64>, String> {
-    read_option_value(KEY_SEED, "an integer", default, u64::from_str)
+pub fn read_seed(default: Option<Seed>) -> Result<Option<Seed>, String> {
+    read_option_value(KEY_SEED, "an u64", default, |s| {
+        u64::from_str(s).map(Seed)
+    })
 }
 
-pub fn read_start_limit(default: u64) -> Result<u64, String> {
-    read_value(KEY_START_LIMIT, "an u64", default, u64::from_str)
+pub fn read_start_limit(default: Limit) -> Result<Limit, String> {
+    read_value(KEY_START_LIMIT, "an u64", default, |s| {
+        u64::from_str(s).map(Limit)
+    })
 }
 
-pub fn read_end_limit(default: u64) -> Result<u64, String> {
-    read_value(KEY_END_LIMIT, "an u64", default, u64::from_str)
+pub fn read_end_limit(default: Limit) -> Result<Limit, String> {
+    read_value(KEY_END_LIMIT, "an u64", default, |s| {
+        u64::from_str(s).map(Limit)
+    })
 }
 
 pub fn read_limit_multiplier(default: Option<f64>) -> Result<Option<f64>, String> {

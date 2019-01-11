@@ -1,20 +1,21 @@
-use crate::die::Limit;
+use crate::die::{Limit, Seed};
 
 /// The configuration for running the test repeatedly.
 #[derive(Debug, Clone)]
 pub struct Config {
-    /// The initial seed for the random value generation. If `None` the runner uses a random seed.
-    pub seed: Option<u64>,
+    /// The initial seed for the pseudorandom value generation. If `None` the runner uses a random
+    /// seed.
+    pub seed: Option<Seed>,
     // The upper size limit of generated dynamic data structures used for the first test run.
     // The following test runs use an interpolated limit between `start_limit` and `end_limit`.
     //
     // The limit is used by the generators, see `die::Limit`.
-    pub start_limit: u64,
+    pub start_limit: Limit,
     // The upper size limit of generated dynamic data structures used for the last test run.
     // The previous test runs use an interpolated limit between `start_limit` and `end_limit`.
     //
     // The limit is used by the generators, see `die::Limit`.
-    pub end_limit: u64,
+    pub end_limit: Limit,
     /// Defines how many times the test needs to run without failing.
     ///
     /// The runner aborts early if a counterexample has been found.
@@ -32,25 +33,25 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn with_seed(self, seed: Option<u64>) -> Self {
+    pub fn with_seed(self, seed: Option<Seed>) -> Self {
         Config { seed, ..self }
     }
 
-    pub fn with_start_limit(self, start_limit: u64) -> Self {
+    pub fn with_start_limit(self, start_limit: Limit) -> Self {
         Config {
             start_limit,
             ..self
         }
     }
 
-    pub fn with_end_limit(self, end_limit: u64) -> Self {
+    pub fn with_end_limit(self, end_limit: Limit) -> Self {
         Config { end_limit, ..self }
     }
 
     pub fn with_multiplied_limit(self, factor: f64) -> Self {
         Config {
-            start_limit: multiply(self.start_limit, factor),
-            end_limit: multiply(self.end_limit, factor),
+            start_limit: multiply(self.start_limit.0, factor).into(),
+            end_limit: multiply(self.end_limit.0, factor).into(),
             ..self
         }
     }
@@ -85,8 +86,8 @@ impl Default for Config {
     fn default() -> Self {
         Config {
             seed: None,
-            start_limit: 0,
-            end_limit: Limit::default().0,
+            start_limit: 0.into(),
+            end_limit: Limit::default(),
             passes: 1000,
             hints_enabled: true,
             stats_enabled: false,
