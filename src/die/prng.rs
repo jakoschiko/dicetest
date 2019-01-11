@@ -7,7 +7,7 @@ use std::num::Wrapping;
 use crate::die::Seed;
 use crate::util::conversion;
 
-/// This pseudorandom number generator is the base for more complex pseudorandom value generators.
+/// A pseudorandom number generator. Provides the randomness for `DieOnce` and `Die`.
 ///
 /// The algorithms are based on [this article] by Bob Jenkins.
 ///
@@ -18,7 +18,7 @@ pub struct Prng {
 }
 
 impl Prng {
-    /// Creates an `Prng` using the given seed.
+    /// Creates a new instance whose internal state is initialized with the given seed.
     ///
     /// The result has a satisfying cycle length.
     pub fn from_seed(seed: Seed) -> Prng {
@@ -36,7 +36,7 @@ impl Prng {
     ///
     /// A satisfying cycle length is only guaranteed for bytes from `Prng::to_bytes` called
     /// with an `Prng` that has a satisfying cycle length. Other bytes should not be passed to this
-    /// function. For initializing an `Prng` with an arbitrary seed, use `Prng::init` instead.
+    /// function. For initializing an `Prng` with an arbitrary seed, use `Prng::from_seed` instead.
     pub fn from_bytes(state_bytes: [u8; 32]) -> Prng {
         let arrays: [[u8; 8]; 4] = unsafe { mem::transmute(state_bytes) };
 
@@ -51,7 +51,7 @@ impl Prng {
 
     /// Returns the internal state as a byte array.
     ///
-    /// This function is a left and right inverse for `Prng::init_with_bytes`.
+    /// This function is a left and right inverse for `Prng::from_bytes`.
     pub fn to_bytes(&self) -> [u8; 32] {
         let (a, b, c, d) = self.state;
 
@@ -66,7 +66,7 @@ impl Prng {
     }
 
     #[allow(clippy::many_single_char_names)]
-    /// Returns the next pseudo random number.
+    /// Returns the next pseudorandom number.
     pub fn next_number(&mut self) -> u64 {
         let (a, b, c, d) = self.state;
 
@@ -82,8 +82,7 @@ impl Prng {
     }
 
     #[allow(clippy::many_single_char_names)]
-    /// Replaces the seed of self with a new seed. The new seed is generated using the old seed
-    /// and the given `u64` value.
+    /// Reinitialze the internal state of self using the current internal state and the given seed.
     ///
     /// The implementation is inspired by [ScalaCheck](https://github.com/rickynils/scalacheck).
     pub fn reseed(&mut self, n: u64) {
@@ -99,7 +98,8 @@ impl Prng {
         }
     }
 
-    /// Splits off a new `Prng` from self. The seed of the new `Prng` is generated with self.
+    /// Splits off a new `Prng` from self. The internal state of the new `Prng` is generated with
+    /// self.
     pub fn fork(&mut self) -> Prng {
         let random_number = self.next_number();
         let mut reseeded_prng = self.clone();
