@@ -1,4 +1,5 @@
-use crate::die::{Limit, Prng};
+use crate::die::Limit;
+use crate::prand::Prng;
 use crate::util::{base64, conversion};
 
 /// The configuration for running the test once.

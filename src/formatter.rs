@@ -334,8 +334,9 @@ fn empty() -> impl Iterator<Item = char> {
 mod tests {
     use super::*;
 
-    use crate::die::{Limit, Prng};
+    use crate::die::Limit;
     use crate::hints::{Hint, Hints};
+    use crate::prand::Prng;
     use crate::runner::{Config, Counterexample, Error, Run, Summary};
     use crate::stats::{Counter, Stat, Stats};
 

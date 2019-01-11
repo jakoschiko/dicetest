@@ -1,9 +1,10 @@
 use std::panic::{catch_unwind, RefUnwindSafe, UnwindSafe};
 
-use crate::die::{Fate, Prng};
+use crate::die::Fate;
 use crate::hints;
+use crate::prand::Prng;
+use crate::prand::Seed;
 use crate::runner::{Config, Counterexample, Error, LimitSeries, Run, Sample, Summary};
-use crate::seed::Seed;
 use crate::stats;
 
 /// Runs the test once with the given configuration.
@@ -141,8 +142,8 @@ where
 #[cfg(test)]
 mod tests {
     use crate::hints;
+    use crate::prand::Seed;
     use crate::runner::{self, Config};
-    use crate::seed::Seed;
 
     #[test]
     fn zero_passes_if_test_fails() {

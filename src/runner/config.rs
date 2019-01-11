@@ -1,5 +1,5 @@
 use crate::die::Limit;
-use crate::seed::Seed;
+use crate::prand::Seed;
 
 /// The configuration for running the test repeatedly.
 #[derive(Debug, Clone)]

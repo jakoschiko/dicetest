@@ -3,8 +3,8 @@ use std::str::FromStr;
 
 use crate::checker::{LogCondition, Mode};
 use crate::die::Limit;
+use crate::prand::Seed;
 use crate::runner::Run;
-use crate::seed::Seed;
 
 const KEY_LOG_CONDITION: &str = "DICETEST_LOG_CONDITION";
 const KEY_MODE: &str = "DICETEST_MODE";

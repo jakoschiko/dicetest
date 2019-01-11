@@ -76,7 +76,7 @@ mod macros;
 
 mod util;
 
-mod seed;
+pub mod prand;
 
 pub mod hints;
 

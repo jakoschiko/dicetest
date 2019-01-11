@@ -1,4 +1,5 @@
-use crate::die::{Limit, Prng};
+use crate::die::Limit;
+use crate::prand::Prng;
 
 /// Contains all parameters needed to use `DieOnce` and `Die`.
 pub struct Fate<'a> {

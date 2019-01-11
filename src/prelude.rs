@@ -13,7 +13,8 @@ pub mod dice {
     pub use crate::codice;
     pub use crate::codie::Codie;
     pub use crate::dice;
-    pub use crate::die::{Die, DieOnce, Fate, Limit, Prng};
+    pub use crate::die::{Die, DieOnce, Fate, Limit};
+    pub use crate::prand::Prng;
 }
 
 pub mod asserts {

@@ -1,10 +1,10 @@
 use std::panic::{resume_unwind, RefUnwindSafe, UnwindSafe};
 
 use crate::checker::{env, LogCondition, Mode};
-use crate::die::{Fate, Limit, Prng};
+use crate::die::{Fate, Limit};
 use crate::formatter;
+use crate::prand::{Prng, Seed};
 use crate::runner::{run_once, run_repeatedly, Config, Run};
-use crate::seed::Seed;
 
 /// Checks the test. How the test is checked can be configured with environment variables.
 ///

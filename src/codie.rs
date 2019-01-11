@@ -1,6 +1,6 @@
 //! Provides the trait `Codie` for converting values into a seed.
 
-use crate::seed::Seed;
+use crate::prand::Seed;
 
 /// The counterpart of `DieOnce` and `Die`. Instead of generating a value of type `T` from a seed,
 /// this trait allows to convert a value of type `T` into a seed.
