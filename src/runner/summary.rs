@@ -1,6 +1,6 @@
-use crate::die::Seed;
 use crate::hints::Hints;
 use crate::runner::{Config, Error, Run};
+use crate::seed::Seed;
 use crate::stats::Stats;
 
 /// A counterexample is a failed test run. This struct contains details about such a counterexample.

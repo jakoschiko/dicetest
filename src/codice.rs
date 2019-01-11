@@ -4,14 +4,15 @@ use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
 use crate::prelude::codice::*;
+use crate::seed::Seed;
 
 struct Fun<F>(F);
 
 impl<T, F> Codie<T> for Fun<F>
 where
-    F: Fn(T) -> u64,
+    F: Fn(T) -> Seed,
 {
-    fn coroll(&self, value: T) -> u64 {
+    fn coroll(&self, value: T) -> Seed {
         self.0(value)
     }
 }
@@ -19,7 +20,7 @@ where
 /// Helper for implementing a `Codie` from a `Fn` that returns a seed.
 pub fn from_fn<T, F>(f: F) -> impl Codie<T>
 where
-    F: Fn(T) -> u64,
+    F: Fn(T) -> Seed,
 {
     Fun(f)
 }
@@ -29,7 +30,7 @@ pub fn from_default_hasher<T: Hash>() -> impl Codie<T> {
     from_fn(|value: T| {
         let mut hasher = DefaultHasher::new();
         value.hash(&mut hasher);
-        hasher.finish()
+        hasher.finish().into()
     })
 }
 

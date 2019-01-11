@@ -1,8 +1,5 @@
 //! Provides the traits `DieOnce` and `Die` for generating pseudorandom values.
 
-mod seed;
-pub use self::seed::Seed;
-
 mod prng;
 pub use self::prng::Prng;
 

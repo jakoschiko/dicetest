@@ -4,7 +4,7 @@ use std::hash::SipHasher;
 use std::mem;
 use std::num::Wrapping;
 
-use crate::die::Seed;
+use crate::seed::Seed;
 use crate::util::conversion;
 
 /// A pseudorandom number generator. Provides the randomness for `DieOnce` and `Die`.
@@ -85,11 +85,11 @@ impl Prng {
     /// Reinitialze the internal state of self using the current internal state and the given seed.
     ///
     /// The implementation is inspired by [ScalaCheck](https://github.com/rickynils/scalacheck).
-    pub fn reseed(&mut self, n: u64) {
+    pub fn reseed(&mut self, seed: Seed) {
         let (a, b, c, d) = self.state;
 
-        let n0 = (n >> 32) & 0xffff_ffff;
-        let n1 = n & 0xffff_ffff;
+        let n0 = (seed.0 >> 32) & 0xffff_ffff;
+        let n1 = seed.0 & 0xffff_ffff;
 
         self.state = (a ^ n0, b ^ n1, c, d);
 
@@ -103,7 +103,7 @@ impl Prng {
     pub fn fork(&mut self) -> Prng {
         let random_number = self.next_number();
         let mut reseeded_prng = self.clone();
-        reseeded_prng.reseed(random_number);
+        reseeded_prng.reseed(random_number.into());
         reseeded_prng
     }
 }
@@ -175,7 +175,7 @@ mod tests {
             let seed = dice::u64(..).roll(fate);
 
             let mut prng_reseeded = prng.clone();
-            prng_reseeded.reseed(seed);
+            prng_reseeded.reseed(seed.into());
 
             hint_debug!(prng);
             hint_debug!(seed);

@@ -76,6 +76,8 @@ mod macros;
 
 mod util;
 
+mod seed;
+
 pub mod hints;
 
 pub mod stats;

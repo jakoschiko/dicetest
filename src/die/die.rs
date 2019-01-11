@@ -1,5 +1,6 @@
 use crate::die::adapters::{ArcDie, BoxedDie, FlatMapDie, FlattenDie, MapDie, RcDie};
-use crate::die::{DieOnce, Fate, Limit, Prng, Seed};
+use crate::die::{DieOnce, Fate, Limit, Prng};
+use crate::seed::Seed;
 
 /// Trait for generating preudorandom values of type `T`.
 ///

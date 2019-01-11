@@ -1,6 +1,6 @@
 use rand::{self, Rng};
 
-/// The seed for initializing a `Prng`.
+/// A seed for pseudorandomness.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Seed(pub u64);
 
