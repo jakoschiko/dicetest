@@ -12,7 +12,7 @@ impl Run {
     /// Converts the `Run` to a compact string representation.
     ///
     /// This function is a right inverse for `from_run_code`.
-    pub fn run_code(&self) -> String {
+    pub fn to_run_code(&self) -> String {
         let mut bytes = Vec::new();
 
         bytes.extend_from_slice(&self.prng.seed_as_bytes());
@@ -66,7 +66,7 @@ mod tests {
                 fate,
                 run_die,
                 |run_code: String| Run::from_run_code(&run_code).unwrap(),
-                |run: Run| run.run_code(),
+                |run: Run| run.to_run_code(),
             );
         })
     }

@@ -211,7 +211,7 @@ fn section(
 }
 
 fn run_code_item(indent: usize, run: &Run) -> impl Iterator<Item = char> {
-    let run_code = run.run_code();
+    let run_code = run.to_run_code();
     key_value_item(indent, str("run code"), debug(Some(&run_code)))
 }
 
@@ -402,7 +402,7 @@ The test passed.
 \t\t- Ah
 \t- Ih
 ",
-            example_run().run_code(),
+            example_run().to_run_code(),
         );
 
         let actual = pretty_sample(&sample);
@@ -431,7 +431,7 @@ The test failed.
 \t- Ih
 - error: Something bad happened!
 ",
-            example_run().run_code(),
+            example_run().to_run_code(),
         );
 
         let actual = pretty_sample(&sample);
@@ -497,7 +497,7 @@ The test failed after 123 passes.
 \t- Ih
 - error: Something bad happened!
 ",
-            example_run().run_code(),
+            example_run().to_run_code(),
         );
 
         let actual = pretty_summary(&summary);
