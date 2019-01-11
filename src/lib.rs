@@ -1,6 +1,6 @@
 //! Dicetest is a framework for writing tests with pseudorandom generated test data.
 //!
-//! # Current state
+//! # Status of this crate
 //!
 //! The author does not consider this crate as stable yet.
 //!
