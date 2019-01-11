@@ -1,3 +1,5 @@
+//! Converts runner results to human-readable strings.
+
 use std::fmt::{Debug, Display};
 use std::iter;
 use std::mem;
@@ -8,6 +10,7 @@ use crate::hints::Hints;
 use crate::runner::{Config, Counterexample, Error, Run, Sample, Summary};
 use crate::stats::Stats;
 
+/// Converts the given `Sample` to a human-readable string.
 pub fn pretty_sample(sample: &Sample) -> String {
     let passed = sample.error.is_none();
 
@@ -46,6 +49,7 @@ fn run_section(sample: &Sample) -> impl Iterator<Item = char> {
     section(title, content)
 }
 
+/// Converts the given `Summary` to a human-readable string.
 pub fn pretty_summary(summary: &Summary) -> String {
     let config = &summary.config.clone().with_seed(Some(summary.seed));
     let counterexample = &summary.counterexample;

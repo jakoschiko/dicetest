@@ -51,7 +51,7 @@ where
     dice::collection(builder_die, elem_die, tries_range)
 }
 
-/// Generates a `HashMap` that uses a default pseudorando `BuildHasher` and contains keys of type
+/// Generates a `HashMap` that uses a default pseudorandom `BuildHasher` and contains keys of type
 /// `K` with values of type `V`.
 ///
 /// The range specifies the number of tries to generate key-value entries with distinct keys.

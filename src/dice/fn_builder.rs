@@ -55,9 +55,9 @@ where
 }
 
 /// Generator for random functions. The generator returns a builder that can be converted into a
-/// `Fn`, FnMut` or `FnOnce` implementation.
+/// `Fn`, `FnMut` or `FnOnce` implementation.
 ///
-/// This generator does not directly generate an implementation of `Fn`, FnMut` or `FnOnce` because
+/// This generator does not directly generate an implementation of `Fn`, `FnMut` or `FnOnce` because
 /// implementing these traits is not stable yet.
 pub fn fn_builder<I, O, IC, OD>(
     input_codie: IC,

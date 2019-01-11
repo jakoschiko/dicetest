@@ -1,7 +1,7 @@
 use crate::dice::SizeRange;
 use crate::prelude::dice::*;
 
-/// Builds collections for `dice::collection`.
+/// A collection builder for `dice::collection`.
 pub trait CollectionBuilder<T, C> {
     /// Build a collection from the given elements.
     fn build(self, elems: impl ExactSizeIterator<Item = T>) -> C;

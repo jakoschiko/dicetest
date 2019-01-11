@@ -42,26 +42,27 @@ pub fn char_ascii_alphanumeric() -> impl Die<char> {
     )
 }
 
-/// Generator for printable ASCII characters (see [wikipedia]).
+/// Generator for [printable ASCII] characters.
 ///
-/// [wikipedia]: https://en.wikipedia.org/wiki/ASCII#Printable_characters
+/// [printable ASCII]: https://en.wikipedia.org/wiki/ASCII#Printable_characters
 pub fn char_ascii_printable() -> impl Die<char> {
     char_in_range(0x20, 0x7E)
 }
 
-/// Generator for ASCII characters (see [wikipedia]).
+/// Generator for [ASCII] characters.
+///
 /// Note that not all characters are printable.
 ///
-/// [wikipedia]: https://en.wikipedia.org/wiki/ASCII
+/// [ASCII]: https://en.wikipedia.org/wiki/ASCII
 pub fn char_ascii() -> impl Die<char> {
     char_in_range(0x0, 0x7F)
 }
 
 /// Generator for valid [`char`]s. A [`char`] represents an
-/// unicode scalar value (see [here for definition][1]).
+/// [unicode scalar value].
 ///
 /// [`char`]: https://doc.rust-lang.org/std/primitive.char.html
-/// [1]: http://www.unicode.org/glossary/#unicode_scalar_value
+/// [unicode scalar value]: http://www.unicode.org/glossary/#unicode_scalar_value
 pub fn char() -> impl Die<char> {
     dice::one_of_die_2(
         char_in_range(0x0, 0xD7FF),

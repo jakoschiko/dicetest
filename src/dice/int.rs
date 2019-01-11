@@ -4,8 +4,9 @@ use std::ops::{Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToIncl
 
 use crate::prelude::dice::*;
 
-// Non-empty range for integer generators like `dice::u8`, `dice::i32`, etc.
-// The integer type is represented by `I`.
+/// Non-empty range for integer generators like `dice::u8`, `dice::i32`, etc.
+///
+/// The integer type is represented by `I`.
 pub trait IntRange<I>: Clone + Debug {
     /// Returns the inclusive bounds `(lower, upper)` that represent the range. They must hold
     /// `lower <= upper`.
