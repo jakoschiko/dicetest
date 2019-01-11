@@ -69,7 +69,7 @@
 //! # Alternatives
 //!
 //! * Write down your test data and use a loop.
-//! * Use the crate `quickqueck`.
+//! * Use the crate `quickcheck`.
 //! * Use the crate `proptest`.
 
 mod macros;
