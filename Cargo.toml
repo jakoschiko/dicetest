@@ -1,7 +1,8 @@
 [package]
 name = "dicetest"
 version = "0.1.0"
-authors = [""]
+authors = ["Jakob Schikowski"]
+description = "Framework for writing tests with pseudorandom generated test data."
 edition = "2018"
 
 [dependencies]
