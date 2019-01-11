@@ -6,7 +6,7 @@ description = "Framework for writing tests with pseudorandom generated test data
 edition = "2018"
 
 [dependencies]
-rand = "0.5"
+rand = "0.6"
 
 [features]
 default = ["hints", "stats"]
