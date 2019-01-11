@@ -63,9 +63,7 @@ fn read_option_value<T, E>(
 }
 
 pub fn read_seed(default: Option<Seed>) -> Result<Option<Seed>, String> {
-    read_option_value(KEY_SEED, "an u64", default, |s| {
-        u64::from_str(s).map(Seed)
-    })
+    read_option_value(KEY_SEED, "an u64", default, |s| u64::from_str(s).map(Seed))
 }
 
 pub fn read_start_limit(default: Limit) -> Result<Limit, String> {
