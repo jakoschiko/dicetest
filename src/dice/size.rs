@@ -41,14 +41,14 @@ impl SizeRange for Range<usize> {
 impl SizeRange for RangeFrom<usize> {
     fn bounds(&self, lim: Limit) -> (usize, usize) {
         let lower = self.start;
-        let upper = lower.saturating_add(lim.saturating_usize());
+        let upper = lower.saturating_add(lim.saturating_to_usize());
         (lower, upper)
     }
 }
 
 impl SizeRange for RangeFull {
     fn bounds(&self, lim: Limit) -> (usize, usize) {
-        (0, lim.saturating_usize())
+        (0, lim.saturating_to_usize())
     }
 }
 

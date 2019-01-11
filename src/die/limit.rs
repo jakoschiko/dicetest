@@ -14,7 +14,7 @@ pub struct Limit(pub u64);
 impl Limit {
     /// Returns the limit as `usize`. If the limit is greater than the largest `usize` value,
     /// the function returns the largest `usize` value.
-    pub fn saturating_usize(self) -> usize {
+    pub fn saturating_to_usize(self) -> usize {
         let limit_fits_into_usize = {
             let usize_is_big_enough = size_of::<u64>() <= size_of::<usize>();
             let limit_is_small_enough = || self.0 >= usize::max_value() as u64;
