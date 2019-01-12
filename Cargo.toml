@@ -6,6 +6,7 @@ license = "MIT/Apache-2.0"
 readme = "README.md"
 description = "Framework for writing tests with pseudorandom generated test data."
 keywords = ["testing", "fuzz", "property", "quickcheck"]
+categories = ["development-tools::testing"]
 edition = "2018"
 
 [dependencies]
