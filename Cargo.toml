@@ -14,5 +14,9 @@ rand = "0.6"
 
 [features]
 default = ["hints", "stats"]
+
+# Enables the hints.
 hints = []
+
+# Enables the stats.
 stats = []
