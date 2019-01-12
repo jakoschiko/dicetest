@@ -75,12 +75,17 @@ pub trait Die<T>: DieOnce<T> {
         ArcDie::new(self)
     }
 
-    /// Calls `Die::roll` with random seed and default parameters. Useful for debugging the
+    /// Calls `roll` with random `Seed` and default `Limit`. Useful for debugging the
     /// generator.
     fn sample(&self) -> T {
+        self.sample_with_limit(Limit::default())
+    }
+
+    /// Calls `roll` with random `Seed` and the given `Limit`. Useful for debugging the
+    /// generator.
+    fn sample_with_limit(&self, limit: Limit) -> T {
         let mut prng = Prng::from_seed(Seed::random());
-        let lim = Limit::default();
-        let mut fate = Fate::new(&mut prng, lim);
+        let mut fate = Fate::new(&mut prng, limit);
 
         self.roll(&mut fate)
     }

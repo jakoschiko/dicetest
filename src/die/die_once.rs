@@ -55,15 +55,23 @@ pub trait DieOnce<T> {
         BoxedDieOnce::new(self)
     }
 
-    /// Calls `DieOnce::roll_once` with random seed and default parameters. Useful for debugging the
+    /// Calls `roll_once` with random `Seed` and default `Limit`. Useful for debugging the
     /// generator.
     fn sample_once(self) -> T
     where
         Self: Sized,
     {
+        self.sample_with_limit_once(Limit::default())
+    }
+
+    /// Calls `roll_once` with random `Seed` and the given `Limit`. Useful for debugging
+    /// the generator.
+    fn sample_with_limit_once(self, limit: Limit) -> T
+    where
+        Self: Sized,
+    {
         let mut prng = Prng::from_seed(Seed::random());
-        let lim = Limit::default();
-        let mut fate = Fate::new(&mut prng, lim);
+        let mut fate = Fate::new(&mut prng, limit);
 
         self.roll_once(&mut fate)
     }

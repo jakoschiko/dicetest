@@ -70,11 +70,11 @@ impl Iterator for LimitSeriesIntoIter {
     type Item = Limit;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let lim = self.series.nth(self.idx);
-        if lim.is_some() {
+        let limit = self.series.nth(self.idx);
+        if limit.is_some() {
             self.idx += 1;
         }
-        lim
+        limit
     }
 }
 
