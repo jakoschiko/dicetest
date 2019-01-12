@@ -1,5 +1,4 @@
-//! A unit-test friendly interface for the `runner`. Provides configuration by environment variables
-//! and panics on test failure. Logs a human-readable summary of the test runs to stdout.
+//! A unit-test friendly interface for the `runner` that panics once the test failed.
 
 mod log_condition;
 pub use self::log_condition::LogCondition;

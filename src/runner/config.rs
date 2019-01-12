@@ -7,15 +7,11 @@ pub struct Config {
     /// The initial seed for the pseudorandom value generation. If `None` the runner uses a random
     /// seed.
     pub seed: Option<Seed>,
-    // The upper size limit of generated dynamic data structures used for the first test run.
-    // The following test runs use an interpolated limit between `start_limit` and `end_limit`.
-    //
-    // The limit is used by the generators, see `die::Limit`.
+    /// The upper size limit of generated dynamic data structures used for the first test run.
+    /// The following test runs use an interpolated limit between `start_limit` and `end_limit`.
     pub start_limit: Limit,
-    // The upper size limit of generated dynamic data structures used for the last test run.
-    // The previous test runs use an interpolated limit between `start_limit` and `end_limit`.
-    //
-    // The limit is used by the generators, see `die::Limit`.
+    /// The upper size limit of generated dynamic data structures used for the last test run.
+    /// The previous test runs use an interpolated limit between `start_limit` and `end_limit`.
     pub end_limit: Limit,
     /// Defines how many times the test needs to run without failing.
     ///
@@ -24,12 +20,12 @@ pub struct Config {
     /// Defines whether the counterexample will be rerun with enabled hints. The hints will be
     /// added to the report.
     ///
-    /// This parameter does only work if the feature "hints_enabled" is present.
+    /// This parameter does only work if the feature `hints` is present.
     pub hints_enabled: bool,
     /// Defines whether the stats will be enabled during the test runs. The stats will be added
     /// to the report.
     ///
-    /// This parameter does only work if the feature "stats_enabled" is present.
+    /// This parameter does only work if the feature `stats` is present.
     pub stats_enabled: bool,
 }
 

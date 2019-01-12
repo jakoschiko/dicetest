@@ -3,18 +3,22 @@ use crate::prand::Seed;
 use crate::runner::{Config, Error, Run};
 use crate::stats::Stats;
 
-/// A counterexample is a failed test run. This struct contains details about such a counterexample.
+/// Contains details about a failed test run.
+#[derive(Debug)]
 pub struct Counterexample {
     /// The counterexample can be rerun using this parameters.
     pub run: Run,
-    /// If hints are enabled, the runner tries to rerun the counterexample and collect these hints.
+    /// The hints collected during the counterexample run.
+    ///
+    /// If hints are enabled, the runner tries to rerun the counterexample to collect hints.
     /// Rerunning the counterexample can fail if the test is not deterministic.
     pub hints: Option<Hints>,
     /// The error occurred during the counterexample run.
     pub error: Error,
 }
 
-// The result of repeated test runs.
+/// The result of repeated test runs.
+#[derive(Debug)]
 pub struct Summary {
     /// The configuration used to create this result.
     pub config: Config,

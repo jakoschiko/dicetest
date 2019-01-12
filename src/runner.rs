@@ -1,6 +1,5 @@
 //! The runner tries to falsify the assertions of a test by running it repeatedly with different
-//! seeds and aborts once a counterexample has been found. It returns all necessary information to
-//! reproduce the result.
+//! seeds and aborts once a counterexample has been found.
 
 mod limit_series;
 use self::limit_series::LimitSeries;

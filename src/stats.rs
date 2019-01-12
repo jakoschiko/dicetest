@@ -1,4 +1,4 @@
-//! Stats helps you to analyze repeated test runs.
+//! Stats help to analyze repeated test runs.
 //!
 //! For any key you can count the occurrences of its values. Use it to reveal the
 //! distribution of generated test data or the probability of branches.
@@ -46,7 +46,7 @@ impl Counter {
         }
     }
 
-    // Returns the count as option.
+    /// Returns the count as option.
     pub fn value(self) -> Option<u64> {
         match self {
             Counter::Overflow => None,
@@ -72,7 +72,7 @@ impl Stat {
         Stat(counters)
     }
 
-    // Increases the counter for the given value by one.
+    /// Increases the counter for the given value by one.
     pub fn inc(&mut self, value: String) {
         let counter_entry = self.0.entry(value).or_insert_with(Counter::new);
         *counter_entry = counter_entry.inc();
@@ -99,7 +99,7 @@ impl Stat {
         }
     }
 
-    // Returns the total occurrence count for all keys.
+    /// Returns the total occurrence count for all values.
     pub fn total_counter(&self) -> Counter {
         self.0
             .values()
@@ -117,7 +117,7 @@ impl Stats {
         Stats(BTreeMap::new())
     }
 
-    // Increases the counter for the given key and value by one.
+    /// Increases the counter for the given key and value by one.
     pub fn inc(&mut self, key: &'static str, value: String) {
         let stat_entry = self.0.entry(key).or_insert_with(Stat::new);
         stat_entry.inc(value);
@@ -165,7 +165,7 @@ thread_local! {
     static LOCAL: events::Stack<Stats> = events::new_stack();
 }
 
-/// Returns the stats for the evaluation of `f`.
+/// Returns the stats for the evaluation of the given function.
 pub fn collect<R>(f: impl FnOnce() -> R) -> (R, Stats) {
     #[cfg(feature = "stats")]
     {
@@ -192,8 +192,8 @@ pub fn enabled() -> bool {
     }
 }
 
-/// If stats are enabled, this function evaluates the given value and increment its counter for
-/// the given key. Otherwise this funcition is a noop.
+/// If stats are enabled, this function evaluates the given value and increments its counter for
+/// the given key. Otherwise this function is a noop.
 pub fn inc(key: &'static str, value: impl FnOnce() -> String) {
     #[cfg(feature = "stats")]
     {

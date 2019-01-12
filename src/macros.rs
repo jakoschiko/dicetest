@@ -1,4 +1,4 @@
-/// Adds a hint that contains the result of the arguments applied to the `format` macro.
+/// Adds a hint that contains the arguments applied to the `format` macro.
 #[macro_export]
 macro_rules! hint {
     ($($arg:tt)*) => ({
@@ -6,11 +6,12 @@ macro_rules! hint {
     })
 }
 
-/// Adds a hint that contains the stringified argument and its result converted with `Debug`.
+/// Adds a hint that contains the stringified argument and the argument value converted with
+/// `Debug`.
 #[macro_export]
 macro_rules! hint_debug {
-    ($val:tt) => {
-        $crate::hints::add(|| format!(concat!("{} = {:?}"), stringify!($val), $val));
+    ($arg:tt) => {
+        $crate::hints::add(|| format!(concat!("{} = {:?}"), stringify!($arg), $arg));
     };
 }
 
@@ -23,17 +24,18 @@ macro_rules! stat {
     })
 }
 
-/// Creates a stat with the stringified argument as stat key and its result converted with `Debug`
-/// as stat value.
+/// Creates a stat with the stringified argument as stat key and the argument value converted with
+/// `Debug` as stat value.
 #[macro_export]
 macro_rules! stat_debug {
-    ($expr:tt) => {
-        $crate::stats::inc(stringify!($expr), || format!("{:?}", $expr));
+    ($arg:tt) => {
+        $crate::stats::inc(stringify!($arg), || format!("{:?}", $arg));
     };
 }
 
-/// Macro for checking the test with `checker::check`. If the `Config` parameter is omitted,
-/// the default `Config` will be used.
+/// Checks the test with `checker::check`. The config can be omitted.
+///
+/// If the `Config` parameter is omitted, the default `Config` will be used.
 #[macro_export]
 macro_rules! dicetest {
     ($config:expr, $test:expr) => {{

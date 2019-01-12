@@ -14,11 +14,11 @@ use crate::runner::{run_once, run_repeatedly, Config, Run};
 ///
 /// # Stdout
 ///
-/// You can configure in which cases the test result will be logged to stdout by using the following
+/// You can configure when the test result will be logged to stdout by using the following
 /// environment variable:
 ///
 /// - `DICETEST_LOG_CONDITION=<log condition>`
-/// Whether the test test result will be logged depends on `<log condition>` with the following
+/// Whether the test result will be logged depends on `<log condition>` with the following
 /// options:
 ///     - `always`
 ///     The test result will be always logged.
@@ -46,21 +46,23 @@ use crate::runner::{run_once, run_repeatedly, Config, Run};
 /// following environment variables:
 ///
 /// - `DICETEST_SEED=<seed>`
-/// The initial seed. See `Config::seed`. There are the following options for `<seed>`:
+/// The initial `Seed`. See `Config::seed`. There are the following options for `<seed>`:
 ///     - `none`
-///     The seed will be generated randomly.
+///     The `Seed` will be generated randomly.
 ///     - `<u64>`
-///     This integer will be used as seed.
+///     This integer will be used as `Seed`.
 /// - `DICETEST_START_LIMIT=<u64>`
 /// The initial `Limit` value. See `Config::start_limit`.
 /// - `DICETEST_END_LIMIT=<u64>`
 /// The final `Limit` value. See `Config::end_limit`.
 /// - `DICETEST_LIMIT_MULTIPLIER=<f64>`
 /// Multiplies the initial and the final `Limit` values with the given factor.
+/// See `Config::with_multiplied_limit`.
 /// - `DICETEST_PASSES=<u64>`
 /// The number of test runs. See `Config::passes`.
 /// - `DICETEST_PASSES_MULTIPLIER=<f64>`
 /// Multiplies the number of test runs with the given factor.
+/// See `Config::with_multiplied_passes`.
 /// - `DICETEST_HINTS_ENABLED=<bool>`
 /// Enables the hints. See `Config::hints_enabled`.
 /// - `DICETEST_STATS_ENABLED=<bool>`
@@ -72,22 +74,22 @@ use crate::runner::{run_once, run_repeatedly, Config, Run};
 /// parameters by using the following environment variables:
 ///
 /// - `DICETEST_SEED=<seed>`
-/// The initial seed. See `Prng::init`. Ignored if `DICETEST_RUN_CODE` is present. There are the
+/// The initial `Seed`. Ignored if `DICETEST_RUN_CODE` is present. There are the
 /// following options for `<seed>`:
 ///     - `none`
-///     The seed will be generated randomly.
+///     The `Seed` will be generated randomly.
 ///     - `<u64>`
-///     This integer will be used as seed.
+///     This integer will be used as `Seed`.
 /// - `DICETEST_LIMIT=<u64>`
 /// This integer will be used as `Limit`. Ignored if `DICETEST_RUN_CODE` is present.
 /// - `DICETEST_RUN_CODE=<run code>`
-/// Both seed and `Limit` will be decoded from the run code.
+/// Both `Seed` and `Limit` will be decoded from the run code.
 ///
 /// # Debug
 ///
 /// The following environment variable allows to debug a falsified property easily:
 ///
-/// - `DICETEST_DEBUG=<run code>` Both seed and `Limit` will be decoded from the
+/// - `DICETEST_DEBUG=<run code>` Both `Seed` and `Limit` will be decoded from the
 /// run code and the test will be checked a single time. This function logs always the test result.
 /// It's a shortcut for
 /// `DICETEST_LOG_CONDITION=always DICETEST_MODE=once DICETEST_RUN_CODE=<run code>`.

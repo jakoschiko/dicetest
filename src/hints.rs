@@ -1,4 +1,4 @@
-//! Hints helps you to analyze a single test run, mostly the counterexample.
+//! Hints help to analyze a single test run, mostly the counterexample.
 //!
 //! You can put context information like local variables
 //! inside of hints. Use it to reveal what test data were generated or
@@ -9,7 +9,7 @@
 use crate::util::events;
 
 /// A single hint that contains context information.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Hint {
     /// The indent level of the text.
     pub indent: usize,
@@ -18,7 +18,7 @@ pub struct Hint {
 }
 
 /// A collection of hints.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Hints(pub Vec<Hint>);
 
 impl Hints {
@@ -56,7 +56,7 @@ thread_local! {
     static LOCAL: events::Stack<InterimHints> = events::new_stack();
 }
 
-/// Returns all hints that were added during the evaluation of `f`.
+/// Returns all hints that were added during the evaluation of the given function.
 pub fn collect<R>(f: impl FnOnce() -> R) -> (R, Hints) {
     #[cfg(feature = "hints")]
     {
