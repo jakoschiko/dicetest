@@ -7,6 +7,7 @@ readme = "README.md"
 description = "Framework for writing tests with pseudorandom generated test data."
 keywords = ["testing", "fuzz", "property", "quickcheck"]
 categories = ["development-tools::testing"]
+repository = "https://github.com/jakoschiko/dicetest"
 edition = "2018"
 
 [dependencies]
