@@ -77,11 +77,12 @@ use crate::runner::{run_once, run_repeatedly, Config, Run};
 /// The initial `Seed`. Ignored if `DICETEST_RUN_CODE` is present. There are the
 /// following options for `<seed>`:
 ///     - `none`
-///     The `Seed` will be generated randomly.
+///     The default value. The `Seed` will be generated randomly.
 ///     - `<u64>`
 ///     This integer will be used as `Seed`.
 /// - `DICETEST_LIMIT=<u64>`
-/// This integer will be used as `Limit`. Ignored if `DICETEST_RUN_CODE` is present.
+/// This integer will be used as `Limit`. If not present, the default `Limit` will be used.
+/// Ignored if `DICETEST_RUN_CODE` is present.
 /// - `DICETEST_RUN_CODE=<run code>`
 /// Both `Seed` and `Limit` will be decoded from the run code.
 ///
