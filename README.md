@@ -68,6 +68,8 @@ You can rerun the counterexample by setting a environment variable:
 DICETEST_DEBUG=ABIDje/+CYVkmmCVTwKJ2go6VrzZWMjO2Bqc9m3b3h0DAAAAAAAAAA== cargo test
 ```
 
+For more information, see the [Guide](GUIDE.md).
+
 ## Alternatives
 
 * Write down your test data and use a loop.
