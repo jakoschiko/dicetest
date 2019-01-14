@@ -168,7 +168,7 @@ use dicetest::prelude::tests::*;
 
 #[test]
 fn test_foo() {
-    // Run your test with default configuration.
+    // Runs your test with default configuration.
     dicetest!(|fate| {
         // Your test.
     });
@@ -176,7 +176,7 @@ fn test_foo() {
 
 #[test]
 fn test_bar() {
-    // Run your test with custom configuration.
+    // Runs your test with custom configuration.
     dicetest!(Config::default().with_passes(10000), |fate| {
         // Your test.
     });
