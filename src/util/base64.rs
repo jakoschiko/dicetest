@@ -57,7 +57,7 @@ pub fn encode(bytes: &[u8]) -> String {
 
     let bytes_padding = iter::repeat_with(|| &0).take(pad_count);
 
-    let mut i = bytes.into_iter().chain(bytes_padding);
+    let mut i = bytes.iter().chain(bytes_padding);
 
     let mut result = String::new();
 
