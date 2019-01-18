@@ -1,19 +1,15 @@
-use std::mem;
-
 /// Converts the `u32` to bytes using little endian.
 ///
 /// This function is a left and right inverse for `bytes_to_u64`.
-pub fn u64_to_bytes(target_endian: u64) -> [u8; 8] {
-    let little_endian = target_endian.to_le();
-    unsafe { mem::transmute(little_endian) }
+pub fn u64_to_bytes(u64: u64) -> [u8; 8] {
+    u64.to_le_bytes()
 }
 
 /// Converts the bytes to an `u64` using little endian.
 ///
 /// This function is a left and right inverse for `u64_to_bytes`.
 pub fn bytes_to_u64(bytes: [u8; 8]) -> u64 {
-    let little_endian: u64 = unsafe { mem::transmute(bytes) };
-    u64::from_le(little_endian)
+    u64::from_le_bytes(bytes)
 }
 
 #[cfg(test)]
