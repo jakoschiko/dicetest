@@ -203,7 +203,7 @@ mod tests {
     #[test]
     fn decode_fails_if_string_has_invalid_length() {
         dicetest!(|fate| {
-            let base_64_char_die = dice::one_of_array(&base64::BYTE_TO_CHAR);
+            let base_64_char_die = dice::one_of_slice(&base64::BYTE_TO_CHAR);
             let invalid_len_die =
                 dice::size(1..).map(|len| if len % 4 == 0 { len + 1 } else { len });
 

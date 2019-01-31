@@ -400,13 +400,13 @@ where
 /// use dicetest::prelude::dice::*;
 ///
 /// let zeroes_and_ones = [vec![0, 0], vec![1, 1]];
-/// let cloning_die = dice::one_of_array(&zeroes_and_ones);
+/// let cloning_die = dice::one_of_slice(&zeroes_and_ones);
 /// for _ in 0..10 {
 ///     let zeroes_or_ones = cloning_die.sample();
 ///     assert!(zeroes_or_ones == vec![0, 0] || zeroes_or_ones == vec![1, 1]);
 /// }
 /// ```
-pub fn one_of_array<'a, T>(values: &'a [T]) -> impl Die<T> + 'a
+pub fn one_of_slice<'a, T>(values: &'a [T]) -> impl Die<T> + 'a
 where
     T: Clone,
 {

@@ -261,7 +261,7 @@ macro_rules! fn_int {
                 let special_die = {
                     dice::from_fn(move |fate| {
                         let special_values = $special;
-                        let special_value = dice::one_of_array(&special_values).roll(fate);
+                        let special_value = dice::one_of_slice(&special_values).roll(fate);
                         if lower <= special_value && special_value <= upper {
                             special_value
                         } else {
