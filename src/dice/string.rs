@@ -13,7 +13,7 @@ impl CollectionBuilder<char, String> for StringBuilder {
     }
 }
 
-/// Generates a `String` that contains the specified `chars`.
+/// Generates a `String` that contains the specified `char`s.
 ///
 /// The range specifies the length of the `String`.
 pub fn string(char_die: impl Die<char>, len_range: impl SizeRange) -> impl Die<String> {
