@@ -1,8 +1,9 @@
 use crate::dice::{CollectionBuilder, SizeRange};
 use crate::prelude::dice::*;
 
+/// `String` builder for `dice::collection`.
 #[derive(Clone)]
-struct StringBuilder;
+pub struct StringBuilder;
 
 impl CollectionBuilder<char, String> for StringBuilder {
     fn build(self, elems: impl ExactSizeIterator<Item = char>) -> String {
