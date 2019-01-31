@@ -8,11 +8,12 @@ use crate::prelude::dice::*;
 ///
 /// The integer type is represented by `I`.
 pub trait IntRange<I>: Clone + Debug {
-    /// Returns the inclusive bounds `(lower, upper)` that represent the range. They must hold
-    /// `lower <= upper`.
+    /// Returns the inclusive bounds `(lower, upper)` with `lower <= upper` that represent the
+    /// range.
     ///
     /// # Panics
-    /// Panics if the range cannot be represented as `(lower, upper)` with `lower <= upper`.
+    ///
+    /// Panics if the range is empty.
     fn bounds(&self) -> (I, I);
 }
 
@@ -119,7 +120,44 @@ macro_rules! fn_int {
         /// Generates an integer inside the given range. All integers are uniformly distributed.
         ///
         /// # Panics
-        /// Panics if the range is invalid, see `IntRange::bounds`.
+        ///
+        /// Panics if the range is invalid, see [`IntRange::bounds`].
+        ///
+        /// [`IntRange::bounds`]: ./trait.IntRange.html#tymethod.bounds
+        ///
+        /// # Examples
+        ///
+        /// This example generates integers without panicking:
+        ///
+        /// ```
+        /// use dicetest::prelude::dice::*;
+        ///
+        /// assert!(dice::uni_u8(42).sample() == 42);
+        ///
+        /// assert!(dice::uni_u8(42..).sample() >= 42);
+        ///
+        /// assert!(dice::uni_u8(..=71).sample() <= 71);
+        ///
+        /// assert!(dice::uni_u8(..71).sample() < 71);
+        ///
+        /// let int = dice::uni_u8(42..=71).sample();
+        /// assert!(int >= 42 && int <= 71);
+        ///
+        /// let int = dice::uni_u8(42..71).sample();
+        /// assert!(int >= 42 && int < 71);
+        ///
+        /// let int = dice::uni_u8(..).sample();
+        /// assert!(int >= 0 && int <= u8::max_value());
+        /// ```
+        ///
+        /// This example panics:
+        ///
+        /// ```should_panic
+        /// use dicetest::prelude::dice::*;
+        ///
+        /// // Oh no, panic!
+        /// let _int = dice::u8(71..42).sample();
+        /// ```
         pub fn $uni_int(range: impl IntRange<$int>) -> impl Die<$int> {
             fn to_shifted_unsigned(i: $int) -> $uint {
                 let uoffset = $int::min_value() as $uint;
@@ -173,7 +211,44 @@ macro_rules! fn_int {
         /// probability of being generated.
         ///
         /// # Panics
-        /// Panics if the range is invalid, see `IntRange::bounds`.
+        ///
+        /// Panics if the range is invalid, see [`IntRange::bounds`].
+        ///
+        /// [`IntRange::bounds`]: ./trait.IntRange.html#tymethod.bounds
+        ///
+        /// # Examples
+        ///
+        /// This example generates integers without panicking:
+        ///
+        /// ```
+        /// use dicetest::prelude::dice::*;
+        ///
+        /// assert!(dice::u8(42).sample() == 42);
+        ///
+        /// assert!(dice::u8(42..).sample() >= 42);
+        ///
+        /// assert!(dice::u8(..=71).sample() <= 71);
+        ///
+        /// assert!(dice::u8(..71).sample() < 71);
+        ///
+        /// let int = dice::u8(42..=71).sample();
+        /// assert!(int >= 42 && int <= 71);
+        ///
+        /// let int = dice::u8(42..71).sample();
+        /// assert!(int >= 42 && int < 71);
+        ///
+        /// let int = dice::u8(..).sample();
+        /// assert!(int >= 0 && int <= u8::max_value());
+        /// ```
+        ///
+        /// This example panics:
+        ///
+        /// ```should_panic
+        /// use dicetest::prelude::dice::*;
+        ///
+        /// // Oh no, panic!
+        /// let _int = dice::u8(71..42).sample();
+        /// ```
         pub fn $int(range: impl IntRange<$int>) -> impl Die<$int> {
             let (lower, upper) = range.bounds();
             // `uni_int` does not need to check the range again

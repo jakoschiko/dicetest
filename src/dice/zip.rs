@@ -4,6 +4,18 @@ macro_rules! fn_zip_n {
     ($zip_n_once:ident, $zip_n:ident: $($Ti:ident, $die_i:ident)+) => (
         #[allow(clippy::too_many_arguments)]
         /// Generates a tuple containing the generated values of several generators.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use dicetest::prelude::dice::*;
+        ///
+        /// let zero_die = dice::just_once(0);
+        /// let one_die = dice::just_once(1);
+        /// let (zero, one) = dice::zip_2_once(zero_die, one_die).sample_once();
+        /// assert_eq!(zero, 0);
+        /// assert_eq!(one, 1);
+        /// ```
         pub fn $zip_n_once<$($Ti,)*>(
             $($die_i: impl DieOnce<$Ti>,)*
         ) -> impl DieOnce<($($Ti,)*)> {
@@ -14,6 +26,18 @@ macro_rules! fn_zip_n {
 
         #[allow(clippy::too_many_arguments)]
         /// Generates a tuple containing the generated values of several generators.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use dicetest::prelude::dice::*;
+        ///
+        /// let zero_die = dice::just(0);
+        /// let one_die = dice::just(1);
+        /// let (zero, one) = dice::zip_2(zero_die, one_die).sample();
+        /// assert_eq!(zero, 0);
+        /// assert_eq!(one, 1);
+        /// ```
         pub fn $zip_n<$($Ti,)*>(
             $($die_i: impl Die<$Ti>,)*
         ) -> impl Die<($($Ti,)*)> {

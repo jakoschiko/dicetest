@@ -21,6 +21,20 @@ where
 }
 
 /// Helper for implementing a `DieOnce` from a `FnOnce` that takes a `Fate`.
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// let zero_or_one = dice::from_fn_once(|fate| fate.prng.next_number() % 2).sample_once();
+/// assert!(zero_or_one == 0 || zero_or_one == 1);
+///
+/// #[derive(Debug, PartialEq, Eq)]
+/// struct CannotBeCloned;
+/// let not_a_clone = dice::from_fn_once(|_| CannotBeCloned).sample_once();
+/// assert_eq!(not_a_clone, CannotBeCloned);
+/// ```
 pub fn from_fn_once<T, F>(f: F) -> impl DieOnce<T>
 where
     F: FnOnce(&mut Fate) -> T,
@@ -29,6 +43,21 @@ where
 }
 
 /// Helper for implementing a `Die` from a `Fn` that takes a `Fate`.
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// let zero_or_one = dice::from_fn(|fate| fate.prng.next_number() % 2).sample();
+/// assert!(zero_or_one == 0 || zero_or_one == 1);
+///
+/// let vec = vec![0, 1, 2];
+/// let cloning_die = dice::from_fn(move |_| vec.clone());
+/// for _ in 0..10 {
+///     assert_eq!(cloning_die.sample(), vec![0, 1, 2]);
+/// }
+/// ```
 pub fn from_fn<T, F>(f: F) -> impl Die<T>
 where
     F: Fn(&mut Fate) -> T,
@@ -37,6 +66,19 @@ where
 }
 
 /// Helper for implementing a `Die` from a `Fn` that returns a `DieOnce`.
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// #[derive(Debug, PartialEq, Eq)]
+/// struct CannotBeCloned;
+/// let non_cloning_die = dice::from_die_once_fn(|| dice::just_once(CannotBeCloned));
+/// for _ in 0..10 {
+///     assert_eq!(non_cloning_die.sample(), CannotBeCloned);
+/// }
+/// ```
 pub fn from_die_once_fn<T, TD, F>(f: F) -> impl Die<T>
 where
     TD: DieOnce<T>,

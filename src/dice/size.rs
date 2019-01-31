@@ -5,12 +5,15 @@ use crate::prelude::dice::*;
 
 /// Non-empty range for `dice::size`.
 pub trait SizeRange: Clone + Debug {
-    /// Returns the inclusive bounds `(lower, upper)` that represent the range. They must hold
-    /// `lower <= upper`. If the upper bound is open, it will be limited with `Limit`.
+    /// Returns the inclusive bounds `(lower, upper)` with `lower <= upper` that represent the
+    /// range.
+    ///
+    /// If the range has no upper bound, `upper` is limited by `limit`.
     ///
     /// # Panics
-    /// Panics if the range cannot be represented as `(lower, upper)` with `lower <= upper`.
-    fn bounds(&self, lim: Limit) -> (usize, usize);
+    ///
+    /// Panics if the range is empty.
+    fn bounds(&self, limit: Limit) -> (usize, usize);
 }
 
 fn empty_size_range(range: &(impl SizeRange + Debug)) -> ! {
@@ -21,13 +24,13 @@ fn empty_size_range(range: &(impl SizeRange + Debug)) -> ! {
 }
 
 impl SizeRange for usize {
-    fn bounds(&self, _lim: Limit) -> (usize, usize) {
+    fn bounds(&self, _limit: Limit) -> (usize, usize) {
         (*self, *self)
     }
 }
 
 impl SizeRange for Range<usize> {
-    fn bounds(&self, _lim: Limit) -> (usize, usize) {
+    fn bounds(&self, _limit: Limit) -> (usize, usize) {
         if self.start < self.end {
             let lower = self.start;
             let upper = self.end - 1;
@@ -39,21 +42,21 @@ impl SizeRange for Range<usize> {
 }
 
 impl SizeRange for RangeFrom<usize> {
-    fn bounds(&self, lim: Limit) -> (usize, usize) {
+    fn bounds(&self, limit: Limit) -> (usize, usize) {
         let lower = self.start;
-        let upper = lower.saturating_add(lim.saturating_to_usize());
+        let upper = lower.saturating_add(limit.saturating_to_usize());
         (lower, upper)
     }
 }
 
 impl SizeRange for RangeFull {
-    fn bounds(&self, lim: Limit) -> (usize, usize) {
-        (0, lim.saturating_to_usize())
+    fn bounds(&self, limit: Limit) -> (usize, usize) {
+        (0, limit.saturating_to_usize())
     }
 }
 
 impl SizeRange for RangeInclusive<usize> {
-    fn bounds(&self, _lim: Limit) -> (usize, usize) {
+    fn bounds(&self, _limit: Limit) -> (usize, usize) {
         let lower = *self.start();
         let upper = *self.end();
         if lower <= upper {
@@ -65,7 +68,7 @@ impl SizeRange for RangeInclusive<usize> {
 }
 
 impl SizeRange for RangeTo<usize> {
-    fn bounds(&self, _lim: Limit) -> (usize, usize) {
+    fn bounds(&self, _limit: Limit) -> (usize, usize) {
         if self.end > 0 {
             let lower = 0;
             let upper = self.end - 1;
@@ -77,7 +80,7 @@ impl SizeRange for RangeTo<usize> {
 }
 
 impl SizeRange for RangeToInclusive<usize> {
-    fn bounds(&self, _lim: Limit) -> (usize, usize) {
+    fn bounds(&self, _limit: Limit) -> (usize, usize) {
         (0, self.end)
     }
 }
@@ -86,7 +89,45 @@ impl SizeRange for RangeToInclusive<usize> {
 /// given range and the `Limit` parameter passed to `Die::roll`.
 ///
 /// # Panics
-/// Panics if the range is invalid, see `SizeRange::bounds`.
+///
+/// Panics if the range is invalid, see [`SizeRange::bounds`].
+///
+/// [`SizeRange::bounds`]: ./trait.SizeRange.html#tymethod.bounds
+///
+/// # Examples
+///
+/// This example generates sizes without panicking:
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// assert!(dice::size(42).sample() == 42);
+///
+/// let size = dice::size(42..).sample_with_limit(100.into());
+/// assert!(size >= 42 && size <= 142);
+///
+/// assert!(dice::size(..=71).sample() <= 71);
+///
+/// assert!(dice::size(..71).sample() < 71);
+///
+/// let size = dice::size(42..=71).sample();
+/// assert!(size >= 42 && size <= 71);
+///
+/// let size = dice::size(42..71).sample();
+/// assert!(size >= 42 && size < 71);
+///
+/// let size = dice::size(..).sample_with_limit(100.into());
+/// assert!(size >= 0 && size <= 100);
+/// ```
+///
+/// This example panics:
+///
+/// ```should_panic
+/// use dicetest::prelude::dice::*;
+///
+/// // Oh no, panic!
+/// let _size = dice::size(71..42).sample();
+/// ```
 pub fn size(range: impl SizeRange) -> impl Die<usize> {
     dice::from_fn(move |fate| {
         let (lower, upper) = range.bounds(fate.limit());

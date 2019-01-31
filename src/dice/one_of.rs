@@ -17,6 +17,20 @@ macro_rules! fn_one_of_n {
         #[allow(clippy::too_many_arguments)]
         /// Generates a value randomly chosen from the given values. All values have the same
         /// probability.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use dicetest::prelude::dice::*;
+        ///
+        /// #[derive(Debug, PartialEq, Eq)]
+        /// struct CannotBeCloned(u8);
+        /// let zero_or_one = dice::one_of_2_once(
+        ///     CannotBeCloned(0),
+        ///     CannotBeCloned(1),
+        /// ).sample_once();
+        /// assert!(zero_or_one == CannotBeCloned(0) || zero_or_one == CannotBeCloned(1));
+        /// ```
         pub fn $one_of_n_once<T>(
             $($value_i: T,)*
         ) -> impl DieOnce<T> {
@@ -26,6 +40,23 @@ macro_rules! fn_one_of_n {
         #[allow(clippy::too_many_arguments)]
         /// Generates a value randomly chosen from the given values. The probability of a value
         /// depends on its weight.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use dicetest::prelude::dice::*;
+        ///
+        /// let loaded_die = dice::weighted_one_of_6_once(
+        ///     (1, 1),
+        ///     (1, 2),
+        ///     (1, 3),
+        ///     (1, 4),
+        ///     (1, 5),
+        ///     (6, 6),
+        /// );
+        /// let more_often_six_than_not = loaded_die.sample_once();
+        /// assert!(more_often_six_than_not >= 0 && more_often_six_than_not <= 6);
+        /// ```
         pub fn $weighted_one_of_n_once<T>(
             $(($weight_i, $value_i): (u32, T),)*
         ) -> impl DieOnce<T> {
@@ -35,6 +66,18 @@ macro_rules! fn_one_of_n {
         #[allow(clippy::too_many_arguments)]
         /// Generates a clone of a value randomly chosen from the given values. All values have the
         /// same probability.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use dicetest::prelude::dice::*;
+        ///
+        /// let cloning_die = dice::one_of_2(vec![0, 0], vec![1, 1]);
+        /// for _ in 0..10 {
+        ///     let zeroes_or_ones = cloning_die.sample();
+        ///     assert!(zeroes_or_ones == vec![0, 0] || zeroes_or_ones == vec![1, 1]);
+        /// }
+        /// ```
         pub fn $one_of_n<T>(
             $($value_i: T,)*
         ) -> impl Die<T>
@@ -47,6 +90,25 @@ macro_rules! fn_one_of_n {
         #[allow(clippy::too_many_arguments)]
         /// Generates a clone of a value randomly chosen from the given values. The probability of
         /// a value depends on its weight.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use dicetest::prelude::dice::*;
+        ///
+        /// let loaded_die = dice::weighted_one_of_6(
+        ///     (1, 1),
+        ///     (1, 2),
+        ///     (1, 3),
+        ///     (1, 4),
+        ///     (1, 5),
+        ///     (6, 6),
+        /// );
+        /// for _ in 0..10 {
+        ///     let more_often_six_than_not = loaded_die.sample();
+        ///     assert!(more_often_six_than_not >= 0 && more_often_six_than_not <= 6);
+        /// }
+        /// ```
         pub fn $weighted_one_of_n<T>(
             $(($weight_i, $value_i): (u32, T),)*
         ) -> impl Die<T>
@@ -59,6 +121,17 @@ macro_rules! fn_one_of_n {
         #[allow(clippy::too_many_arguments)]
         /// Generates a value with a randomly chosen generator. All generators have the same
         /// probability.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use dicetest::prelude::dice::*;
+        ///
+        /// let zero_die = dice::just_once(0);
+        /// let one_die = dice::just_once(1);
+        /// let zero_or_one = dice::one_of_die_2_once(zero_die, one_die).sample_once();
+        /// assert!(zero_or_one == 0 || zero_or_one == 1);
+        /// ```
         pub fn $one_of_die_n_once<T>(
             $($die_i: impl DieOnce<T>,)*
         ) -> impl DieOnce<T> {
@@ -74,6 +147,19 @@ macro_rules! fn_one_of_n {
         #[allow(clippy::too_many_arguments)]
         /// Generates a value with a randomly chosen generator. The probability of a generator
         /// depends on its weight.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use dicetest::prelude::dice::*;
+        ///
+        /// let loaded_die = dice::weighted_one_of_die_2_once(
+        ///     (1, dice::u8(1..=5)),
+        ///     (6, dice::just_once(6)),
+        /// );
+        /// let more_often_six_than_not = loaded_die.sample_once();
+        /// assert!(more_often_six_than_not >= 0 && more_often_six_than_not <= 6);
+        /// ```
         pub fn $weighted_one_of_die_n_once<T>(
             $(($weight_i, $die_i): (u32, impl DieOnce<T>),)*
         ) -> impl DieOnce<T> {
@@ -95,6 +181,20 @@ macro_rules! fn_one_of_n {
         #[allow(clippy::too_many_arguments)]
         /// Generates a value with a randomly chosen generator. All generators have the same
         /// probability.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use dicetest::prelude::dice::*;
+        ///
+        /// let zero_die = dice::just(0);
+        /// let one_die = dice::just(1);
+        /// let zero_or_one_die = dice::one_of_die_2(zero_die, one_die);
+        /// for _ in 0..10 {
+        ///     let zero_or_one = zero_or_one_die.sample();
+        ///     assert!(zero_or_one == 0 || zero_or_one == 1);
+        /// }
+        /// ```
         pub fn $one_of_die_n<T>(
             $($die_i: impl Die<T>,)*
         ) -> impl Die<T> {
@@ -110,6 +210,21 @@ macro_rules! fn_one_of_n {
         #[allow(clippy::too_many_arguments)]
         /// Generates a value with a randomly chosen generator. The probability of a generator
         /// depends on its weight.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use dicetest::prelude::dice::*;
+        ///
+        /// let loaded_die = dice::weighted_one_of_die_2(
+        ///     (1, dice::u8(1..=5)),
+        ///     (6, dice::just(6)),
+        /// );
+        /// for _ in 0..10 {
+        ///     let more_often_six_than_not = loaded_die.sample();
+        ///     assert!(more_often_six_than_not >= 0 && more_often_six_than_not <= 6);
+        /// }
+        /// ```
         pub fn $weighted_one_of_die_n<T>(
             $(($weight_i, $die_i): (u32, impl Die<T>),)*
         ) -> impl Die<T> {
@@ -232,6 +347,18 @@ fn_one_of_n! { 9,
 
 /// Generates a element randomly chosen from the given `Vec`. All elements have the same
 /// probability.
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// #[derive(Debug, PartialEq, Eq)]
+/// struct CannotBeCloned(u8);
+/// let zero_and_one = vec![CannotBeCloned(0), CannotBeCloned(1)];
+/// let zero_or_one = dice::one_of_vec_once(zero_and_one).sample_once();
+/// assert!(zero_or_one == CannotBeCloned(0) || zero_or_one == CannotBeCloned(1));
+/// ```
 pub fn one_of_vec_once<T>(mut values: Vec<T>) -> impl DieOnce<T> {
     dice::from_fn_once(move |fate| {
         let choice = (fate.prng.next_number() as usize) % values.len();
@@ -241,6 +368,19 @@ pub fn one_of_vec_once<T>(mut values: Vec<T>) -> impl DieOnce<T> {
 
 /// Generates a clone of a element randomly chosen from the given `Vec`. All elements have the same
 /// probability.
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// let zeroes_and_ones = vec![vec![0, 0], vec![1, 1]];
+/// let cloning_die = dice::one_of_vec(zeroes_and_ones);
+/// for _ in 0..10 {
+///     let zeroes_or_ones = cloning_die.sample();
+///     assert!(zeroes_or_ones == vec![0, 0] || zeroes_or_ones == vec![1, 1]);
+/// }
+/// ```
 pub fn one_of_vec<T>(values: Vec<T>) -> impl Die<T>
 where
     T: Clone,
@@ -253,6 +393,19 @@ where
 
 /// Generates a clone of a element randomly chosen from the given slice. All elements have the same
 /// probability.
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// let zeroes_and_ones = [vec![0, 0], vec![1, 1]];
+/// let cloning_die = dice::one_of_array(&zeroes_and_ones);
+/// for _ in 0..10 {
+///     let zeroes_or_ones = cloning_die.sample();
+///     assert!(zeroes_or_ones == vec![0, 0] || zeroes_or_ones == vec![1, 1]);
+/// }
+/// ```
 pub fn one_of_array<'a, T>(values: &'a [T]) -> impl Die<T> + 'a
 where
     T: Clone,
