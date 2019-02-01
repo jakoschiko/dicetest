@@ -121,9 +121,7 @@ macro_rules! fn_int {
         ///
         /// # Panics
         ///
-        /// Panics if the range is invalid, see [`IntRange::bounds`].
-        ///
-        /// [`IntRange::bounds`]: ./trait.IntRange.html#tymethod.bounds
+        /// Panics if the range is empty.
         ///
         /// # Examples
         ///
@@ -212,9 +210,7 @@ macro_rules! fn_int {
         ///
         /// # Panics
         ///
-        /// Panics if the range is invalid, see [`IntRange::bounds`].
-        ///
-        /// [`IntRange::bounds`]: ./trait.IntRange.html#tymethod.bounds
+        /// Panics if the range is empty.
         ///
         /// # Examples
         ///

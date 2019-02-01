@@ -90,9 +90,7 @@ impl SizeRange for RangeToInclusive<usize> {
 ///
 /// # Panics
 ///
-/// Panics if the range is invalid, see [`SizeRange::bounds`].
-///
-/// [`SizeRange::bounds`]: ./trait.SizeRange.html#tymethod.bounds
+/// Panics if the range is empty.
 ///
 /// # Examples
 ///

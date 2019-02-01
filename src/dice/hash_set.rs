@@ -4,7 +4,10 @@ use std::hash::{BuildHasher, Hash};
 use crate::dice::{CollectionBuilder, SizeRange};
 use crate::prelude::dice::*;
 
-/// `HashSet` builder for `dice::collection`.
+/// [`HashSet`] builder for [`dice::collection`].
+///
+/// [`HashSet`]: https://doc.rust-lang.org/std/collections/struct.HashSet.html
+/// [`dice::collection`]: fn.collection.html
 pub struct HashSetBuilder<S>
 where
     S: BuildHasher,
@@ -34,9 +37,17 @@ where
     }
 }
 
-/// Generates a `HashSet` that uses a custom `BuildHasher` and contains elements of type `T`.
+/// Generates a [`HashSet`] that uses a custom [`BuildHasher`] and contains elements
+/// of type `T`.
 ///
 /// The range specifies the number of tries to generate distinct elements.
+///
+/// [`HashSet`]: https://doc.rust-lang.org/std/collections/struct.HashSet.html
+/// [`BuildHasher`]: https://doc.rust-lang.org/std/hash/trait.BuildHasher.html
+///
+/// # Panics
+///
+/// Panics if the range is empty.
 pub fn hash_set_with_hasher<T, S>(
     build_hasher_die: impl Die<S>,
     elem_die: impl Die<T>,
@@ -50,10 +61,17 @@ where
     dice::collection(builder_die, elem_die, tries_range)
 }
 
-/// Generates a `HashSet` that uses a default pseudorandom `BuildHasher` and contains elements of
-/// type `T`.
+/// Generates a [`HashSet`] that uses a default pseudorandom [`BuildHasher`] and contains elements
+/// of type `T`.
 ///
 /// The range specifies the number of tries to generate distinct elements.
+///
+/// [`HashSet`]: https://doc.rust-lang.org/std/collections/struct.HashSet.html
+/// [`BuildHasher`]: https://doc.rust-lang.org/std/hash/trait.BuildHasher.html
+///
+/// # Panics
+///
+/// Panics if the range is empty.
 pub fn hash_set<T>(elem_die: impl Die<T>, tries_range: impl SizeRange) -> impl Die<HashSet<T, Prng>>
 where
     T: Eq + Hash,

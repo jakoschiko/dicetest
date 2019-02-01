@@ -4,7 +4,10 @@ use std::hash::{BuildHasher, Hash};
 use crate::dice::{CollectionBuilder, SizeRange};
 use crate::prelude::dice::*;
 
-/// `HashMap` builder for `dice::collection`.
+/// [`HashMap`] builder for [`dice::collection`].
+///
+/// [`HashMap`]: https://doc.rust-lang.org/std/collections/struct.HashMap.html
+/// [`dice::collection`]: fn.collection.html
 pub struct HashMapBuilder<S>
 where
     S: BuildHasher,
@@ -34,10 +37,17 @@ where
     }
 }
 
-/// Generates a `HashMap` that uses a custom `BuildHasher` and contains keys of type `K` with
-/// values of type `V`.
+/// Generates a [`HashMap`] that uses a custom [`BuildHasher`]` and contains keys of
+/// type `K` with values of type `V`.
 ///
 /// The range specifies the number of tries to generate key-value entries with distinct keys.
+///
+/// [`HashMap`]: https://doc.rust-lang.org/std/collections/struct.HashMap.html
+/// [`BuildHasher`]: https://doc.rust-lang.org/std/hash/trait.BuildHasher.html
+///
+/// # Panics
+///
+/// Panics if the range is empty.
 pub fn hash_map_with_hasher<K, V, S>(
     build_hasher_die: impl Die<S>,
     elem_die: impl Die<(K, V)>,
@@ -51,10 +61,17 @@ where
     dice::collection(builder_die, elem_die, tries_range)
 }
 
-/// Generates a `HashMap` that uses a default pseudorandom `BuildHasher` and contains keys of type
-/// `K` with values of type `V`.
+/// Generates a [`HashMap`] that uses a default pseudorandom [`BuildHasher`] and contains keys of
+/// type `K` with values of type `V`.
 ///
 /// The range specifies the number of tries to generate key-value entries with distinct keys.
+///
+/// [`HashMap`]: https://doc.rust-lang.org/std/collections/struct.HashMap.html
+/// [`BuildHasher`]: https://doc.rust-lang.org/std/hash/trait.BuildHasher.html
+///
+/// # Panics
+///
+/// Panics if the range is empty.
 pub fn hash_map<K, V>(
     elem_die: impl Die<(K, V)>,
     tries_range: impl SizeRange,

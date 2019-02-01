@@ -3,7 +3,10 @@ use std::collections::VecDeque;
 use crate::dice::{CollectionBuilder, SizeRange};
 use crate::prelude::dice::*;
 
-/// `VecDeque` builder for `dice::collection`.
+/// [`VecDeque`] builder for [`dice::collection`].
+///
+/// [`VecDeque`]: https://doc.rust-lang.org/std/collections/struct.VecDeque.html
+/// [`dice::collection`]: fn.collection.html
 #[derive(Clone)]
 pub struct VecDequeBuilder;
 
@@ -15,9 +18,15 @@ impl<T> CollectionBuilder<T, VecDeque<T>> for VecDequeBuilder {
     }
 }
 
-/// Generates a `VecDeque` that contains elements of type `T`.
+/// Generates a [`VecDeque`] that contains elements of type `T`.
 ///
-/// The range specifies the length of the `VecDeque`.
+/// The range specifies the length of the [`VecDeque`].
+///
+/// [`VecDeque`]: https://doc.rust-lang.org/std/collections/struct.VecDeque.html
+///
+/// # Panics
+///
+/// Panics if the range is empty.
 pub fn vec_deque<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<VecDeque<T>> {
     let builder_die = dice::just(VecDequeBuilder);
     dice::collection(builder_die, elem_die, len_range)

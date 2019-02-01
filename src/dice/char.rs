@@ -58,8 +58,9 @@ pub fn char_ascii() -> impl Die<char> {
     char_in_range(0x0, 0x7F)
 }
 
-/// Generator for valid [`char`]s. A [`char`] represents an
-/// [unicode scalar value].
+/// Generator for valid [`char`]s.
+///
+/// A [`char`] represents an [unicode scalar value].
 ///
 /// [`char`]: https://doc.rust-lang.org/std/primitive.char.html
 /// [unicode scalar value]: http://www.unicode.org/glossary/#unicode_scalar_value
