@@ -3,6 +3,16 @@ use crate::prelude::dice::*;
 /// Shuffles the given `Vec` randomly using the [Fisher-Yates shuffle].
 ///
 /// [Fisher-Yates shuffle]: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// let sorted = vec![1, 2, 3, 4];
+///
+/// let probably_unsorted = dice::shuffled_vec(sorted).sample_once();
+/// ```
 pub fn shuffled_vec<T>(mut vec: Vec<T>) -> impl DieOnce<Vec<T>> {
     dice::from_fn_once(move |fate| {
         let n = vec.len();
