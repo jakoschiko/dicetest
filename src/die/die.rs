@@ -90,3 +90,15 @@ pub trait Die<T>: DieOnce<T> {
         self.roll(&mut fate)
     }
 }
+
+impl<T, TD: Die<T>> DieOnce<T> for &TD {
+    fn roll_once(self, fate: &mut Fate) -> T {
+        (*self).roll(fate)
+    }
+}
+
+impl<T, TD: Die<T>> Die<T> for &TD {
+    fn roll(&self, fate: &mut Fate) -> T {
+        (**self).roll(fate)
+    }
+}
