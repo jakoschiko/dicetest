@@ -61,7 +61,7 @@
 //! - error: assertion failed: is_sorted
 //! ```
 //!
-//! You can rerun the counterexample by setting a environment variable:
+//! You can rerun the counterexample by setting an environment variable:
 //! ```text
 //! DICETEST_DEBUG=ABIDje/+CYVkmmCVTwKJ2go6VrzZWMjO2Bqc9m3b3h0DAAAAAAAAAA== cargo test
 //! ```
