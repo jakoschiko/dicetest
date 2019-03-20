@@ -7,17 +7,15 @@ use crate::prelude::dice::*;
 /// Non-empty range for integer generators like `dice::u8`, `dice::i32`, etc.
 ///
 /// The integer type is represented by `I`.
-pub trait IntRange<I>: Clone + Debug {
-    /// Returns the inclusive bounds `(lower, upper)` with `lower <= upper` that represent the
-    /// range.
+pub trait IntRange<I> {
+    /// Returns the inclusive lower bound and the inclusive upper bound that represent the range.
     ///
     /// # Panics
     ///
     /// Panics if the range is empty.
-    fn bounds(&self) -> (I, I);
+    fn bounds(self) -> (I, I);
 }
 
-#[derive(Clone, Debug)]
 struct UncheckedRange<I> {
     lower: I,
     upper: I,
@@ -33,25 +31,25 @@ fn empty_int_range<I>(bounds: &(impl IntRange<I> + Debug)) -> ! {
 macro_rules! impl_int_range {
     ($int:ident) => {
         impl IntRange<$int> for $int {
-            fn bounds(&self) -> ($int, $int) {
-                (*self, *self)
+            fn bounds(self) -> ($int, $int) {
+                (self, self)
             }
         }
 
         impl IntRange<$int> for Range<$int> {
-            fn bounds(&self) -> ($int, $int) {
+            fn bounds(self) -> ($int, $int) {
                 if self.start < self.end {
                     let lower = self.start;
                     let upper = self.end - 1;
                     (lower, upper)
                 } else {
-                    empty_int_range(self)
+                    empty_int_range(&self)
                 }
             }
         }
 
         impl IntRange<$int> for RangeFrom<$int> {
-            fn bounds(&self) -> ($int, $int) {
+            fn bounds(self) -> ($int, $int) {
                 let lower = self.start;
                 let upper = $int::max_value();
                 (lower, upper)
@@ -59,43 +57,41 @@ macro_rules! impl_int_range {
         }
 
         impl IntRange<$int> for RangeFull {
-            fn bounds(&self) -> ($int, $int) {
+            fn bounds(self) -> ($int, $int) {
                 ($int::min_value(), $int::max_value())
             }
         }
 
         impl IntRange<$int> for RangeInclusive<$int> {
-            fn bounds(&self) -> ($int, $int) {
-                let lower = *self.start();
-                let upper = *self.end();
-                if lower <= upper {
-                    (lower, upper)
+            fn bounds(self) -> ($int, $int) {
+                if self.start() <= self.end() {
+                    self.into_inner()
                 } else {
-                    empty_int_range(self)
+                    empty_int_range(&self)
                 }
             }
         }
 
         impl IntRange<$int> for RangeTo<$int> {
-            fn bounds(&self) -> ($int, $int) {
+            fn bounds(self) -> ($int, $int) {
                 let lower = $int::min_value();
                 if self.end > lower {
                     let upper = self.end - 1;
                     (lower, upper)
                 } else {
-                    empty_int_range(self)
+                    empty_int_range(&self)
                 }
             }
         }
 
         impl IntRange<$int> for RangeToInclusive<$int> {
-            fn bounds(&self) -> ($int, $int) {
+            fn bounds(self) -> ($int, $int) {
                 ($int::min_value(), self.end)
             }
         }
 
         impl IntRange<$int> for UncheckedRange<$int> {
-            fn bounds(&self) -> ($int, $int) {
+            fn bounds(self) -> ($int, $int) {
                 (self.lower, self.upper)
             }
         }
@@ -154,7 +150,7 @@ macro_rules! fn_int {
         /// use dicetest::prelude::dice::*;
         ///
         /// // Oh no, panic!
-        /// let _int = dice::u8(71..42).sample();
+        /// let _int_die = dice::u8(71..42);
         /// ```
         pub fn $uni_int(range: impl IntRange<$int>) -> impl Die<$int> {
             fn to_shifted_unsigned(i: $int) -> $uint {

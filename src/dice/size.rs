@@ -4,16 +4,14 @@ use std::ops::{Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToIncl
 use crate::prelude::dice::*;
 
 /// Non-empty range for `dice::size`.
-pub trait SizeRange: Clone + Debug {
-    /// Returns the inclusive bounds `(lower, upper)` with `lower <= upper` that represent the
-    /// range.
-    ///
-    /// If the range has no upper bound, `upper` is limited by `limit`.
+pub trait SizeRange {
+    /// Returns the inclusive lower bound and the optional inclusive upper bound that represent
+    /// the range.
     ///
     /// # Panics
     ///
     /// Panics if the range is empty.
-    fn bounds(&self, limit: Limit) -> (usize, usize);
+    fn bounds(self) -> (usize, Option<usize>);
 }
 
 fn empty_size_range(range: &(impl SizeRange + Debug)) -> ! {
@@ -24,64 +22,61 @@ fn empty_size_range(range: &(impl SizeRange + Debug)) -> ! {
 }
 
 impl SizeRange for usize {
-    fn bounds(&self, _limit: Limit) -> (usize, usize) {
-        (*self, *self)
+    fn bounds(self) -> (usize, Option<usize>) {
+        (self, Some(self))
     }
 }
 
 impl SizeRange for Range<usize> {
-    fn bounds(&self, _limit: Limit) -> (usize, usize) {
+    fn bounds(self) -> (usize, Option<usize>) {
         if self.start < self.end {
             let lower = self.start;
             let upper = self.end - 1;
-            (lower, upper)
+            (lower, Some(upper))
         } else {
-            empty_size_range(self);
+            empty_size_range(&self);
         }
     }
 }
 
 impl SizeRange for RangeFrom<usize> {
-    fn bounds(&self, limit: Limit) -> (usize, usize) {
-        let lower = self.start;
-        let upper = lower.saturating_add(limit.saturating_to_usize());
-        (lower, upper)
+    fn bounds(self) -> (usize, Option<usize>) {
+        (self.start, None)
     }
 }
 
 impl SizeRange for RangeFull {
-    fn bounds(&self, limit: Limit) -> (usize, usize) {
-        (0, limit.saturating_to_usize())
+    fn bounds(self) -> (usize, Option<usize>) {
+        (0, None)
     }
 }
 
 impl SizeRange for RangeInclusive<usize> {
-    fn bounds(&self, _limit: Limit) -> (usize, usize) {
-        let lower = *self.start();
-        let upper = *self.end();
-        if lower <= upper {
-            (lower, upper)
+    fn bounds(self) -> (usize, Option<usize>) {
+        if self.start() <= self.end() {
+            let (lower, upper) = self.into_inner();
+            (lower, Some(upper))
         } else {
-            empty_size_range(self);
+            empty_size_range(&self);
         }
     }
 }
 
 impl SizeRange for RangeTo<usize> {
-    fn bounds(&self, _limit: Limit) -> (usize, usize) {
+    fn bounds(self) -> (usize, Option<usize>) {
         if self.end > 0 {
             let lower = 0;
             let upper = self.end - 1;
-            (lower, upper)
+            (lower, Some(upper))
         } else {
-            empty_size_range(self);
+            empty_size_range(&self);
         }
     }
 }
 
 impl SizeRange for RangeToInclusive<usize> {
-    fn bounds(&self, _limit: Limit) -> (usize, usize) {
-        (0, self.end)
+    fn bounds(self) -> (usize, Option<usize>) {
+        (0, Some(self.end))
     }
 }
 
@@ -124,11 +119,17 @@ impl SizeRange for RangeToInclusive<usize> {
 /// use dicetest::prelude::dice::*;
 ///
 /// // Oh no, panic!
-/// let _size = dice::size(71..42).sample();
+/// let _size = dice::size(71..42);
 /// ```
 pub fn size(range: impl SizeRange) -> impl Die<usize> {
+    let (lower, upper_opt) = range.bounds();
+
     dice::from_fn(move |fate| {
-        let (lower, upper) = range.bounds(fate.limit());
+        let upper = upper_opt.unwrap_or_else(|| {
+            let limit = fate.limit();
+            lower.saturating_add(limit.saturating_to_usize())
+        });
+
         dice::uni_usize(lower..=upper).roll(fate)
     })
 }
