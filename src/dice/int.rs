@@ -429,7 +429,7 @@ mod tests {
                 dicetest!(|fate| {
                     range_contains_int(
                         fate,
-                        dice::$int(1..),
+                        dice::$int($int::min_value() + 1..),
                         |upper| ..upper,
                         dice::$int,
                         |upper, size| size < upper,
