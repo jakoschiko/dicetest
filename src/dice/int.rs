@@ -248,7 +248,7 @@ macro_rules! fn_int {
             let all_die = $uni_int(unchecked_range);
 
             let special_die = {
-                let extremum_die = move || dice::one_of_2(lower, upper);
+                let extremum_die = || dice::one_of_2(lower, upper);
                 let special_fallback_die = extremum_die();
                 let special_die = {
                     dice::from_fn(move |fate| {
