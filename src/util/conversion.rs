@@ -37,5 +37,4 @@ mod tests {
             conversion::bytes_to_u64,
         ))
     }
-
 }
