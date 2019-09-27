@@ -378,12 +378,26 @@ mod tests {
     macro_rules! range_tests {
         (
             $int:ident:
+            $int_is_in_single_value_range:ident
             $int_is_in_range:ident
             $int_is_in_range_from:ident
             $int_is_in_range_inclusive:ident
             $int_is_in_range_to:ident
             $int_is_in_range_to_inclusive:ident
         ) => {
+            #[test]
+            fn $int_is_in_single_value_range() {
+                dicetest!(|fate| {
+                    range_contains_int(
+                        fate,
+                        dice::$int(..),
+                        |single| single,
+                        dice::$int,
+                        |single, int| single == int,
+                    );
+                })
+            }
+
             #[test]
             fn $int_is_in_range() {
                 dicetest!(|fate| {
@@ -406,7 +420,7 @@ mod tests {
                         dice::$int(..),
                         |lower| lower..,
                         dice::$int,
-                        |lower, size| lower <= size,
+                        |lower, int| lower <= int,
                     );
                 })
             }
@@ -419,7 +433,7 @@ mod tests {
                         dice::array_2(dice::$int(..)).map(|[a, b]| (a.min(b), a.max(b))),
                         |(lower, upper)| lower..=upper,
                         dice::$int,
-                        |(lower, upper), size| lower <= size && size <= upper,
+                        |(lower, upper), int| lower <= int && int <= upper,
                     );
                 })
             }
@@ -432,7 +446,7 @@ mod tests {
                         dice::$int($int::min_value() + 1..),
                         |upper| ..upper,
                         dice::$int,
-                        |upper, size| size < upper,
+                        |upper, int| int < upper,
                     );
                 })
             }
@@ -445,7 +459,7 @@ mod tests {
                         dice::$int(..),
                         |upper| ..=upper,
                         dice::$int,
-                        |upper, size| size <= upper,
+                        |upper, int| int <= upper,
                     );
                 })
             }
@@ -453,6 +467,7 @@ mod tests {
     }
 
     range_tests! { u8:
+        u8_is_in_single_value_range
         u8_is_in_range
         u8_is_in_range_from
         u8_is_in_range_inclusive
@@ -461,6 +476,7 @@ mod tests {
     }
 
     range_tests! { i8:
+        i8_is_in_single_value_range
         i8_is_in_range
         i8_is_in_range_from
         i8_is_in_range_inclusive
@@ -469,6 +485,7 @@ mod tests {
     }
 
     range_tests! { u16:
+        u16_is_in_single_value_range
         u16_is_in_range
         u16_is_in_range_from
         u16_is_in_range_inclusive
@@ -477,6 +494,7 @@ mod tests {
     }
 
     range_tests! { i16:
+        i16_is_in_single_value_range
         i16_is_in_range
         i16_is_in_range_from
         i16_is_in_range_inclusive
@@ -485,6 +503,7 @@ mod tests {
     }
 
     range_tests! { u32:
+        u32_is_in_single_value_range
         u32_is_in_range
         u32_is_in_range_from
         u32_is_in_range_inclusive
@@ -493,6 +512,7 @@ mod tests {
     }
 
     range_tests! { i32:
+        i32_is_in_single_value_range
         i32_is_in_range
         i32_is_in_range_from
         i32_is_in_range_inclusive
@@ -501,6 +521,7 @@ mod tests {
     }
 
     range_tests! { u64:
+        u64_is_in_single_value_range
         u64_is_in_range
         u64_is_in_range_from
         u64_is_in_range_inclusive
@@ -509,6 +530,7 @@ mod tests {
     }
 
     range_tests! { i64:
+        i64_is_in_single_value_range
         i64_is_in_range
         i64_is_in_range_from
         i64_is_in_range_inclusive
@@ -517,6 +539,7 @@ mod tests {
     }
 
     range_tests! { u128:
+        u128_is_in_single_value_range
         u128_is_in_range
         u128_is_in_range_from
         u128_is_in_range_inclusive
@@ -525,6 +548,7 @@ mod tests {
     }
 
     range_tests! { i128:
+        i128_is_in_single_value_range
         i128_is_in_range
         i128_is_in_range_from
         i128_is_in_range_inclusive
@@ -533,6 +557,7 @@ mod tests {
     }
 
     range_tests! { usize:
+        usize_is_in_single_value_range
         usize_is_in_range
         usize_is_in_range_from
         usize_is_in_range_inclusive
@@ -541,6 +566,7 @@ mod tests {
     }
 
     range_tests! { isize:
+        isize_is_in_single_value_range
         isize_is_in_range
         isize_is_in_range_from
         isize_is_in_range_inclusive
