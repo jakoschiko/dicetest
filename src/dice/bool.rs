@@ -27,3 +27,31 @@ pub fn bool() -> impl Die<bool> {
 pub fn weighted_bool(false_weight: u32, true_weight: u32) -> impl Die<bool> {
     dice::weighted_one_of_2((false_weight, false), (true_weight, true))
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::prelude::tests::*;
+
+    #[test]
+    fn bool_calc_stats() {
+        dicetest!(|fate| {
+            stat!("bool()", "{}", dice::bool().roll(fate));
+        })
+    }
+
+    #[test]
+    fn weighted_bool_calc_stats() {
+        dicetest!(|fate| {
+            stat!(
+                "weighted_bool(1, 2)",
+                "{}",
+                dice::weighted_bool(1, 2).roll(fate)
+            );
+            stat!(
+                "weighted_bool(10, 1)",
+                "{}",
+                dice::weighted_bool(9, 1).roll(fate)
+            );
+        })
+    }
+}
