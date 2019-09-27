@@ -2,7 +2,7 @@ use std::panic::{resume_unwind, RefUnwindSafe, UnwindSafe};
 
 use crate::checker::{env, LogCondition, Mode};
 use crate::die::{Fate, Limit};
-use crate::formatter;
+use crate::formatter::{self, Formatting};
 use crate::prand::{Prng, Seed};
 use crate::runner::{run_once, run_repeatedly, Config, Run};
 
@@ -24,6 +24,20 @@ use crate::runner::{run_once, run_repeatedly, Config, Run};
 ///     The test result will be always logged.
 ///     - `on_failure`
 ///     The default value. The test result will be logged if and only if a test run has failed.
+///
+/// There are some environment variables that configures the output format:
+///
+/// - `DICETEST_STATS_MAX_VALUE_COUNT=<max_value_count>`
+/// The maximum number of values per key used when formatting stats.
+/// See `Formatting::stats_max_value_count`.
+/// There are the following options for `<max_value_count>`:
+///     - `none`
+///     There is no maximum number.
+///     - `<u64>`
+///     This integer will be used as maximum number.
+/// - `DICETEST_STATS_PERCENT_PRECISION=<usize>`
+/// The number of decimal places for percent values used when formatting stats.
+/// See `Formatting::stats_percent_precision`.
 ///
 /// # Modes
 ///
@@ -92,7 +106,7 @@ use crate::runner::{run_once, run_repeatedly, Config, Run};
 ///
 /// - `DICETEST_DEBUG=<run code>` Both `Seed` and `Limit` will be decoded from the
 /// run code and the test will be checked a single time. This function logs always the test result.
-/// It's a shortcut for
+/// It's an alias for
 /// `DICETEST_LOG_CONDITION=always DICETEST_MODE=once DICETEST_RUN_CODE=<run code>`.
 /// All other environment variables will be ignored.
 #[allow(clippy::needless_pass_by_value)]
@@ -111,9 +125,10 @@ where
 
         match mode {
             Mode::Repeatedly => {
+                let formatting = read_formatting_from_env().unwrap();
                 let overridden_config = override_config_from_env(&config).unwrap();
 
-                check_repeatedly(log_condition, overridden_config, test);
+                check_repeatedly(log_condition, formatting, overridden_config, test);
             }
             Mode::Once => {
                 let code_params = env::read_run_code(None).unwrap();
@@ -138,7 +153,7 @@ where
 ///
 /// # Stdout
 ///
-/// Depending on `log_condition` the test result will be logged to stdout.
+/// Depending on the `LogCondition` the test result will be logged to stdout.
 pub fn check_once<T>(log_condition: LogCondition, run: Run, test: T)
 where
     T: FnOnce(&mut Fate) + UnwindSafe + RefUnwindSafe,
@@ -171,9 +186,14 @@ where
 ///
 /// # Stdout
 ///
-/// Depending on `log_condition` the test result will be logged to stdout.
-pub fn check_repeatedly<T>(log_condition: LogCondition, config: Config, test: T)
-where
+/// Depending on the `LogCondition` the test result will be logged to stdout. The output format can
+/// be configured with the `Formatting`.
+pub fn check_repeatedly<T>(
+    log_condition: LogCondition,
+    formatting: Formatting,
+    config: Config,
+    test: T,
+) where
     T: Fn(&mut Fate) + UnwindSafe + RefUnwindSafe,
 {
     let summary = run_repeatedly(config, test);
@@ -184,7 +204,7 @@ where
     };
 
     if should_log {
-        let message = formatter::pretty_summary(&summary);
+        let message = formatter::pretty_summary(&summary, formatting);
         log(&message);
     }
 
@@ -225,4 +245,18 @@ fn override_config_from_env(config: &Config) -> Result<Config, String> {
     };
 
     Ok(overriden_config)
+}
+
+fn read_formatting_from_env() -> Result<Formatting, String> {
+    let default_formatting = Formatting::default();
+
+    let stats_max_value_count =
+        env::read_stats_max_value_count(default_formatting.stats_max_value_count)?;
+    let stats_percent_precision =
+        env::read_stats_percent_precision(default_formatting.stats_percent_precision)?;
+
+    Ok(Formatting {
+        stats_max_value_count,
+        stats_percent_precision,
+    })
 }

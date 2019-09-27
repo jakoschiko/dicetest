@@ -7,6 +7,8 @@ use crate::prand::Seed;
 use crate::runner::Run;
 
 const KEY_LOG_CONDITION: &str = "DICETEST_LOG_CONDITION";
+const KEY_STATS_MAX_VALUE_COUNT: &str = "DICETEST_STATS_MAX_VALUE_COUNT";
+const KEY_STATS_PERCENT_PRECISION: &str = "DICETEST_STATS_PERCENT_PRECISION";
 const KEY_MODE: &str = "DICETEST_MODE";
 const KEY_SEED: &str = "DICETEST_SEED";
 const KEY_START_LIMIT: &str = "DICETEST_START_LIMIT";
@@ -121,6 +123,24 @@ pub fn read_log_condition(default: LogCondition) -> Result<LogCondition, String>
             }
         }
     }
+}
+
+pub fn read_stats_max_value_count(default: Option<usize>) -> Result<Option<usize>, String> {
+    read_option_value(
+        KEY_STATS_MAX_VALUE_COUNT,
+        "an usize",
+        default,
+        usize::from_str,
+    )
+}
+
+pub fn read_stats_percent_precision(default: usize) -> Result<usize, String> {
+    read_value(
+        KEY_STATS_PERCENT_PRECISION,
+        "an usize",
+        default,
+        usize::from_str,
+    )
 }
 
 pub fn read_mode(default: Mode) -> Result<Mode, String> {

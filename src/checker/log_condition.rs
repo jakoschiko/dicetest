@@ -1,5 +1,5 @@
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 /// Defines when the checker should log the test result.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum LogCondition {
     /// The checker always logs the test result.
     Always,

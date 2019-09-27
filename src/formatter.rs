@@ -10,6 +10,9 @@ use crate::hints::Hints;
 use crate::runner::{Config, Counterexample, Error, Run, Sample, Summary};
 use crate::stats::Stats;
 
+mod formatting;
+pub use formatting::Formatting;
+
 /// Converts the given `Sample` to a human-readable string.
 pub fn pretty_sample(sample: &Sample) -> String {
     let passed = sample.error.is_none();
@@ -50,7 +53,8 @@ fn run_section(sample: &Sample) -> impl Iterator<Item = char> {
 }
 
 /// Converts the given `Summary` to a human-readable string.
-pub fn pretty_summary(summary: &Summary) -> String {
+/// The output format can be configured with the `Formatting`.
+pub fn pretty_summary(summary: &Summary, formatting: Formatting) -> String {
     let config = &summary.config.clone().with_seed(Some(summary.seed));
     let counterexample = &summary.counterexample;
     let passed = summary.counterexample.is_none();
@@ -64,7 +68,14 @@ pub fn pretty_summary(summary: &Summary) -> String {
 
     let acc = match summary.stats {
         None => acc,
-        Some(ref stats) => boxed(acc.chain(line_feed(1)).chain(stats_section(&stats))),
+        Some(ref stats) => {
+            let stats_section = stats_section(
+                &stats,
+                formatting.stats_max_value_count,
+                formatting.stats_percent_precision,
+            );
+            boxed(acc.chain(line_feed(1)).chain(stats_section))
+        }
     };
 
     let acc = match counterexample {
@@ -91,7 +102,7 @@ fn summary_headline(passed: bool, passes: u64) -> impl Iterator<Item = char> {
 
     empty()
         .chain(str(suffix))
-        .chain(display(Some(&passes)))
+        .chain(display(&passes))
         .chain(str(" passes."))
 }
 
@@ -101,62 +112,61 @@ fn config_section(config: &Config) -> impl Iterator<Item = char> {
         .chain(key_value_item(
             0,
             str("seed"),
-            display(config.seed.map(|seed| seed.0).as_ref()),
+            display_or(config.seed.map(|seed| seed.0).as_ref(), "none"),
         ))
         .chain(key_value_item(
             0,
             str("start limit"),
-            display(Some(&config.start_limit.0)),
+            display(&config.start_limit.0),
         ))
         .chain(key_value_item(
             0,
             str("end limit"),
-            display(Some(&config.end_limit.0)),
+            display(&config.end_limit.0),
         ))
-        .chain(key_value_item(
-            0,
-            str("passes"),
-            display(Some(&config.passes)),
-        ));
+        .chain(key_value_item(0, str("passes"), display(&config.passes)));
 
     section(title, content)
 }
 
-fn stats_section(stats: &Stats) -> impl Iterator<Item = char> {
+fn stats_section(
+    stats: &Stats,
+    max_value_count: Option<usize>,
+    percent_precision: usize,
+) -> impl Iterator<Item = char> {
     let title = str("Stats");
     let content = if stats.0.is_empty() {
         boxed(item(0, str("No stats has been collected.")))
     } else {
         let stats_iter = stats.0.clone().into_iter();
 
-        let pretty_stats = stats_iter.flat_map(|(key, stat)| {
+        let pretty_stats = stats_iter.flat_map(move |(key, stat)| {
             let total = stat.total_counter().value().filter(|&n| n != 0);
 
-            let stat_iter = {
-                let mut sorted = stat.0.into_iter().collect::<Vec<_>>();
+            let mut values = stat.0.into_iter().collect::<Vec<_>>();
+            values.sort_by(|&(_, c1), &(_, c2)| c1.cmp(&c2).reverse());
 
-                sorted.sort_by_key(|&(_, counter)| counter);
-
-                sorted.into_iter().rev()
+            let omitted_value_count = match max_value_count {
+                None => 0,
+                Some(max_value_count) => {
+                    let omitted_value_count = values.len().saturating_sub(max_value_count);
+                    values.truncate(max_value_count);
+                    omitted_value_count
+                }
             };
 
-            let values = stat_iter.flat_map(move |(value, counter)| {
-                let overflow = || boxed(str("ovf"));
+            let pretty_values = values.into_iter().flat_map(move |(value, counter)| {
                 let count = counter.value();
+                let numerator = count.and_then(|count| count.checked_mul(100));
+                let percent = numerator.and_then(move |numerator| {
+                    total.map(move |total| numerator as f64 / total as f64)
+                });
 
-                let pretty_percent = {
-                    let numerator = count.and_then(|count| count.checked_mul(100));
-
-                    match (numerator, total) {
-                        (Some(numerator), Some(total)) => {
-                            let percent = numerator / total;
-                            boxed(display(Some(&percent)))
-                        }
-                        _ => overflow(),
-                    }
-                };
-                let pretty_count =
-                    count.map_or_else(overflow, |count| boxed(display(Some(&count))));
+                let pretty_percent = percent.map_or_else(
+                    || boxed(str("ovf")),
+                    |percent| boxed(string(format!("{:.n$}", percent, n = percent_precision))),
+                );
+                let pretty_count = display_or(count.as_ref(), "ovf");
 
                 let pretty_occurrence = empty()
                     .chain(pretty_percent)
@@ -167,7 +177,16 @@ fn stats_section(stats: &Stats) -> impl Iterator<Item = char> {
                 key_value_item(1, pretty_occurrence, string(value))
             });
 
-            empty().chain(key_item(0, str(key))).chain(values)
+            let pretty_values = if omitted_value_count == 0 {
+                boxed(pretty_values)
+            } else {
+                let omitted_value_count =
+                    string(format!("{} values were omitted", omitted_value_count));
+
+                boxed(pretty_values.chain(item(1, omitted_value_count)))
+            };
+
+            empty().chain(key_item(0, str(key))).chain(pretty_values)
         });
 
         boxed(pretty_stats)
@@ -216,11 +235,11 @@ fn section(
 
 fn run_code_item(indent: usize, run: &Run) -> impl Iterator<Item = char> {
     let run_code = run.to_run_code();
-    key_value_item(indent, str("run code"), debug(Some(&run_code)))
+    key_value_item(indent, str("run code"), debug(&run_code))
 }
 
 fn limit_item(indent: usize, limit: Limit) -> impl Iterator<Item = char> {
-    key_value_item(indent, str("limit"), display(Some(&limit.0)))
+    key_value_item(indent, str("limit"), display(&limit.0))
 }
 
 fn hints_item(indent: usize, hints: &Hints) -> impl Iterator<Item = char> {
@@ -288,42 +307,52 @@ fn boxed(iter: impl Iterator<Item = char> + 'static) -> Box<dyn Iterator<Item = 
     Box::new(iter)
 }
 
-fn debug(content: Option<&impl Debug>) -> impl Iterator<Item = char> {
+fn debug(content: &impl Debug) -> CharsFromString {
+    string(format!("{:?}", content))
+}
+
+fn display(content: &impl Display) -> CharsFromString {
+    string(format!("{}", content))
+}
+
+fn display_or(
+    content: Option<&impl Display>,
+    none: &'static str,
+) -> impl Iterator<Item = char> + 'static {
     match content {
-        None => boxed(str("none")),
-        Some(content) => boxed(string(format!("{:?}", content))),
+        None => boxed(str(none)),
+        Some(content) => boxed(display(content)),
     }
 }
 
-fn display(content: Option<&impl Display>) -> impl Iterator<Item = char> {
-    match content {
-        None => boxed(str("none")),
-        Some(content) => boxed(string(format!("{}", content))),
-    }
-}
-
-fn str(str: &'static str) -> impl Iterator<Item = char> {
+fn str(str: &'static str) -> impl Iterator<Item = char> + 'static {
     str.chars()
 }
 
-fn string(string: String) -> impl Iterator<Item = char> {
-    struct OwningChars {
-        _chars_owner: String,
-        chars: Chars<'static>,
-    }
+struct CharsFromString {
+    _chars_owner: String,
+    chars: Chars<'static>,
+}
 
-    impl Iterator for OwningChars {
-        type Item = char;
-        fn next(&mut self) -> Option<Self::Item> {
-            self.chars.next()
+impl CharsFromString {
+    fn new(string: String) -> Self {
+        let chars = unsafe { mem::transmute(string.chars()) };
+        CharsFromString {
+            _chars_owner: string,
+            chars,
         }
     }
+}
 
-    let chars = unsafe { mem::transmute(string.chars()) };
-    OwningChars {
-        _chars_owner: string,
-        chars,
+impl Iterator for CharsFromString {
+    type Item = char;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.chars.next()
     }
+}
+
+fn string(string: String) -> CharsFromString {
+    CharsFromString::new(string)
 }
 
 fn line_feed(n: usize) -> impl Iterator<Item = char> {
@@ -464,7 +493,7 @@ The test withstood 1000 passes.
 - passes: 1000
 ";
 
-        let actual = pretty_summary(&summary);
+        let actual = pretty_summary(&summary, Formatting::default());
 
         assert_eq!(expected, actual);
     }
@@ -505,7 +534,7 @@ The test failed after 123 passes.
             example_run().to_run_code(),
         );
 
-        let actual = pretty_summary(&summary);
+        let actual = pretty_summary(&summary, Formatting::default());
 
         assert_eq!(expected, actual);
     }
@@ -520,7 +549,7 @@ The test failed after 123 passes.
             counterexample: None,
         };
 
-        let actual = pretty_summary(&summary);
+        let actual = pretty_summary(&summary, Formatting::default());
 
         assert!(contains_line(&actual, "- seed: 42"));
         assert!(!contains_line(&actual, "- seed: 471"));
@@ -544,7 +573,7 @@ The test failed after 123 passes.
                 }),
             };
 
-            let actual = pretty_summary(&summary);
+            let actual = pretty_summary(&summary, Formatting::default());
 
             assert!(contains_line(
                 &actual,
@@ -571,7 +600,7 @@ The test failed after 123 passes.
                 }),
             };
 
-            let actual = pretty_summary(&summary);
+            let actual = pretty_summary(&summary, Formatting::default());
 
             assert!(contains_line(&actual, "- No hints has been collected.",));
         }
@@ -607,6 +636,20 @@ The test failed after 123 passes.
                     "foobar".into(),
                     Stat(vec![("i".into(), Counter::Value(0))].into_iter().collect()),
                 ),
+                (
+                    "foofoo".into(),
+                    Stat(
+                        vec![
+                            ("x1".into(), Counter::Value(25)),
+                            ("x2".into(), Counter::Value(10)),
+                            ("x3".into(), Counter::Value(5)),
+                            ("x4".into(), Counter::Value(50)),
+                            ("x5".into(), Counter::Value(10)),
+                        ]
+                        .into_iter()
+                        .collect(),
+                    ),
+                ),
             ]
             .into_iter()
             .collect(),
@@ -618,13 +661,18 @@ The test failed after 123 passes.
 \t- ovf% (ovf): y
 \t- ovf% (10): x
 - foo:
-\t- 66% (20): b
-\t- 33% (10): a
+\t- 66.67% (20): b
+\t- 33.33% (10): a
 - foobar:
 \t- ovf% (0): i
+- foofoo:
+\t- 50.00% (50): x4
+\t- 25.00% (25): x1
+\t- 10.00% (10): x2
+\t- 2 values were omitted
 ";
 
-        let actual = stats_section(&stats).collect::<String>();
+        let actual = stats_section(&stats, Some(3), 2).collect::<String>();
 
         assert_eq!(expected, actual);
     }
@@ -640,7 +688,7 @@ The test failed after 123 passes.
                 counterexample: None,
             };
 
-            let actual = pretty_summary(&summary);
+            let actual = pretty_summary(&summary, Formatting::default());
 
             assert!(contains_line(&actual, "- No stats has been collected.",));
         }
