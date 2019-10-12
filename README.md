@@ -8,7 +8,7 @@ The author does not consider this crate as stable yet.
 
 ## Simple example
 
-Here's an example of a broken sort function tested with Dicetest:
+Here's an example of an incorrect sort function tested with Dicetest:
 ```rust
 fn bubble_sort<T: Ord>(slice: &mut [T]) {
     let len = slice.len();
