@@ -21,3 +21,9 @@ hints = []
 
 # Enables the stats.
 stats = []
+
+[workspace]
+members = [
+    "examples_readme",
+    "examples_guide",
+]
