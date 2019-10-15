@@ -18,8 +18,8 @@ pub use self::one_of::*;
 mod bool;
 pub use self::bool::*;
 
-mod int;
-pub use self::int::*;
+mod integer;
+pub use self::integer::*;
 
 mod char;
 pub use self::char::*;
