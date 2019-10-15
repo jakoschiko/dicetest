@@ -7,7 +7,7 @@ use crate::prelude::dice::*;
 /// Non-empty range for integer generators like `dice::u8`, `dice::i32`, etc.
 ///
 /// The integer type is represented by `I`.
-pub trait IntRange<I> {
+pub trait IntegerRange<I> {
     /// Returns the inclusive lower bound and the inclusive upper bound that represent the range.
     ///
     /// # Panics
@@ -21,98 +21,98 @@ struct UncheckedRange<I> {
     upper: I,
 }
 
-fn empty_int_range<I>(bounds: &(impl IntRange<I> + Debug)) -> ! {
+fn empty_integer_range<I>(bounds: &(impl IntegerRange<I> + Debug)) -> ! {
     panic!(
-        "IntRange is invalid because it contains no values: {:?}",
+        "IntegerRange is invalid because it contains no values: {:?}",
         bounds
     )
 }
 
-macro_rules! impl_int_range {
-    ($int:ident) => {
-        impl IntRange<$int> for $int {
-            fn bounds(self) -> ($int, $int) {
+macro_rules! impl_integer_range {
+    ($integer:ident) => {
+        impl IntegerRange<$integer> for $integer {
+            fn bounds(self) -> ($integer, $integer) {
                 (self, self)
             }
         }
 
-        impl IntRange<$int> for Range<$int> {
-            fn bounds(self) -> ($int, $int) {
+        impl IntegerRange<$integer> for Range<$integer> {
+            fn bounds(self) -> ($integer, $integer) {
                 if self.start < self.end {
                     let lower = self.start;
                     let upper = self.end - 1;
                     (lower, upper)
                 } else {
-                    empty_int_range(&self)
+                    empty_integer_range(&self)
                 }
             }
         }
 
-        impl IntRange<$int> for RangeFrom<$int> {
-            fn bounds(self) -> ($int, $int) {
+        impl IntegerRange<$integer> for RangeFrom<$integer> {
+            fn bounds(self) -> ($integer, $integer) {
                 let lower = self.start;
-                let upper = $int::max_value();
+                let upper = $integer::max_value();
                 (lower, upper)
             }
         }
 
-        impl IntRange<$int> for RangeFull {
-            fn bounds(self) -> ($int, $int) {
-                ($int::min_value(), $int::max_value())
+        impl IntegerRange<$integer> for RangeFull {
+            fn bounds(self) -> ($integer, $integer) {
+                ($integer::min_value(), $integer::max_value())
             }
         }
 
-        impl IntRange<$int> for RangeInclusive<$int> {
-            fn bounds(self) -> ($int, $int) {
+        impl IntegerRange<$integer> for RangeInclusive<$integer> {
+            fn bounds(self) -> ($integer, $integer) {
                 if self.start() <= self.end() {
                     self.into_inner()
                 } else {
-                    empty_int_range(&self)
+                    empty_integer_range(&self)
                 }
             }
         }
 
-        impl IntRange<$int> for RangeTo<$int> {
-            fn bounds(self) -> ($int, $int) {
-                let lower = $int::min_value();
+        impl IntegerRange<$integer> for RangeTo<$integer> {
+            fn bounds(self) -> ($integer, $integer) {
+                let lower = $integer::min_value();
                 if self.end > lower {
                     let upper = self.end - 1;
                     (lower, upper)
                 } else {
-                    empty_int_range(&self)
+                    empty_integer_range(&self)
                 }
             }
         }
 
-        impl IntRange<$int> for RangeToInclusive<$int> {
-            fn bounds(self) -> ($int, $int) {
-                ($int::min_value(), self.end)
+        impl IntegerRange<$integer> for RangeToInclusive<$integer> {
+            fn bounds(self) -> ($integer, $integer) {
+                ($integer::min_value(), self.end)
             }
         }
 
-        impl IntRange<$int> for UncheckedRange<$int> {
-            fn bounds(self) -> ($int, $int) {
+        impl IntegerRange<$integer> for UncheckedRange<$integer> {
+            fn bounds(self) -> ($integer, $integer) {
                 (self.lower, self.upper)
             }
         }
     };
 }
 
-impl_int_range! { u8 }
-impl_int_range! { i8 }
-impl_int_range! { u16 }
-impl_int_range! { i16 }
-impl_int_range! { u32 }
-impl_int_range! { i32 }
-impl_int_range! { u64 }
-impl_int_range! { i64 }
-impl_int_range! { u128 }
-impl_int_range! { i128 }
-impl_int_range! { usize }
-impl_int_range! { isize }
+impl_integer_range! { u8 }
+impl_integer_range! { i8 }
+impl_integer_range! { u16 }
+impl_integer_range! { i16 }
+impl_integer_range! { u32 }
+impl_integer_range! { i32 }
+impl_integer_range! { u64 }
+impl_integer_range! { i64 }
+impl_integer_range! { u128 }
+impl_integer_range! { i128 }
+impl_integer_range! { usize }
+impl_integer_range! { isize }
 
-macro_rules! fn_int {
-    ($int:ident, $uni_int:ident, $uint:ident, $random_int:ident, $special:expr) => {
+macro_rules! fn_integer {
+    ($integer:ident, $uni_integer:ident, $uinteger:ident, $random_integer:ident, $special:expr) => {
         /// Generates an integer inside the given range. All integers are uniformly distributed.
         ///
         /// # Panics
@@ -134,14 +134,14 @@ macro_rules! fn_int {
         ///
         /// assert!(dice::uni_u8(..71).sample() < 71);
         ///
-        /// let int = dice::uni_u8(42..=71).sample();
-        /// assert!(int >= 42 && int <= 71);
+        /// let integer = dice::uni_u8(42..=71).sample();
+        /// assert!(integer >= 42 && integer <= 71);
         ///
-        /// let int = dice::uni_u8(42..71).sample();
-        /// assert!(int >= 42 && int < 71);
+        /// let integer = dice::uni_u8(42..71).sample();
+        /// assert!(integer >= 42 && integer < 71);
         ///
-        /// let int = dice::uni_u8(..).sample();
-        /// assert!(int >= 0 && int <= u8::max_value());
+        /// let integer = dice::uni_u8(..).sample();
+        /// assert!(integer >= 0 && integer <= u8::max_value());
         /// ```
         ///
         /// This example panics:
@@ -150,22 +150,22 @@ macro_rules! fn_int {
         /// use dicetest::prelude::dice::*;
         ///
         /// // Oh no, panic!
-        /// let _int_die = dice::u8(71..42);
+        /// let _integer_die = dice::u8(71..42);
         /// ```
-        pub fn $uni_int(range: impl IntRange<$int>) -> impl Die<$int> {
-            fn to_shifted_unsigned(i: $int) -> $uint {
-                let uoffset = $int::min_value() as $uint;
-                let x = i as $uint;
+        pub fn $uni_integer(range: impl IntegerRange<$integer>) -> impl Die<$integer> {
+            fn to_shifted_unsigned(i: $integer) -> $uinteger {
+                let uoffset = $integer::min_value() as $uinteger;
+                let x = i as $uinteger;
                 x.wrapping_add(uoffset)
             }
 
-            fn from_shifted_unsigned(u: $uint) -> $int {
-                let uoffset = $int::min_value() as $uint;
+            fn from_shifted_unsigned(u: $uinteger) -> $integer {
+                let uoffset = $integer::min_value() as $uinteger;
                 let x = u.wrapping_add(uoffset);
-                x as $int
+                x as $integer
             }
 
-            // `IntRange::bounds` guarantees that `lower <= upper`
+            // `IntegerRange::bounds` guarantees that `lower <= upper`
             let (lower, upper) = range.bounds();
 
             dice::from_fn(move |fate| {
@@ -173,16 +173,16 @@ macro_rules! fn_int {
                     // The range contains exactly one value
                     lower
                 } else {
-                    let random_int = $random_int(fate.prng);
+                    let random_integer = $random_integer(fate.prng);
 
-                    if lower == $int::min_value() && upper == $int::max_value() {
+                    if lower == $integer::min_value() && upper == $integer::max_value() {
                         // Full integer range, hence the randomly chosen integer is already inside
                         // the range
-                        random_int
+                        random_integer
                     } else {
                         let random_unsigned_inside_range = {
                             // We shift the integer into the unsigned integer range
-                            let random_unsigned = to_shifted_unsigned(random_int);
+                            let random_unsigned = to_shifted_unsigned(random_integer);
                             let lower_unsigned = to_shifted_unsigned(lower);
                             let upper_unsigned = to_shifted_unsigned(upper);
 
@@ -223,14 +223,14 @@ macro_rules! fn_int {
         ///
         /// assert!(dice::u8(..71).sample() < 71);
         ///
-        /// let int = dice::u8(42..=71).sample();
-        /// assert!(int >= 42 && int <= 71);
+        /// let integer = dice::u8(42..=71).sample();
+        /// assert!(integer >= 42 && integer <= 71);
         ///
-        /// let int = dice::u8(42..71).sample();
-        /// assert!(int >= 42 && int < 71);
+        /// let integer = dice::u8(42..71).sample();
+        /// assert!(integer >= 42 && integer < 71);
         ///
-        /// let int = dice::u8(..).sample();
-        /// assert!(int >= 0 && int <= u8::max_value());
+        /// let integer = dice::u8(..).sample();
+        /// assert!(integer >= 0 && integer <= u8::max_value());
         /// ```
         ///
         /// This example panics:
@@ -239,13 +239,13 @@ macro_rules! fn_int {
         /// use dicetest::prelude::dice::*;
         ///
         /// // Oh no, panic!
-        /// let _int = dice::u8(71..42).sample();
+        /// let _integer = dice::u8(71..42).sample();
         /// ```
-        pub fn $int(range: impl IntRange<$int>) -> impl Die<$int> {
+        pub fn $integer(range: impl IntegerRange<$integer>) -> impl Die<$integer> {
             let (lower, upper) = range.bounds();
-            // `uni_int` does not need to check the range again
+            // `uni_integer` does not need to check the range again
             let unchecked_range = UncheckedRange { lower, upper };
-            let all_die = $uni_int(unchecked_range);
+            let all_die = $uni_integer(unchecked_range);
 
             let special_die = {
                 let extremum_die = || dice::one_of_2(lower, upper);
@@ -331,18 +331,18 @@ fn random_isize(prng: &mut Prng) -> isize {
     }
 }
 
-fn_int! { u8, uni_u8, u8, random_u8, [1, 2] }
-fn_int! { i8, uni_i8, u8, random_i8, [-2, -1, 0, 1, 2] }
-fn_int! { u16, uni_u16, u16, random_u16, [1, 2] }
-fn_int! { i16, uni_i16, u16, random_i16, [-2, -1, 0, 1, 2] }
-fn_int! { u32, uni_u32, u32, random_u32, [1, 2] }
-fn_int! { i32, uni_i32, u32, random_i32, [-2, -1, 0, 1, 2] }
-fn_int! { u64, uni_u64, u64, random_u64, [1, 2] }
-fn_int! { i64, uni_i64, u64, random_i64, [-2, -1, 0, 1, 2] }
-fn_int! { u128, uni_u128, u128, random_u128, [1, 2] }
-fn_int! { i128, uni_i128, u128, random_i128, [-2, -1, 0, 1, 2] }
-fn_int! { usize, uni_usize, usize, random_usize, [1, 2] }
-fn_int! { isize, uni_isize, usize, random_isize, [-2, -1, 0, 1, 2] }
+fn_integer! { u8, uni_u8, u8, random_u8, [1, 2] }
+fn_integer! { i8, uni_i8, u8, random_i8, [-2, -1, 0, 1, 2] }
+fn_integer! { u16, uni_u16, u16, random_u16, [1, 2] }
+fn_integer! { i16, uni_i16, u16, random_i16, [-2, -1, 0, 1, 2] }
+fn_integer! { u32, uni_u32, u32, random_u32, [1, 2] }
+fn_integer! { i32, uni_i32, u32, random_i32, [-2, -1, 0, 1, 2] }
+fn_integer! { u64, uni_u64, u64, random_u64, [1, 2] }
+fn_integer! { i64, uni_i64, u64, random_i64, [-2, -1, 0, 1, 2] }
+fn_integer! { u128, uni_u128, u128, random_u128, [1, 2] }
+fn_integer! { i128, uni_i128, u128, random_i128, [-2, -1, 0, 1, 2] }
+fn_integer! { usize, uni_usize, usize, random_usize, [1, 2] }
+fn_integer! { isize, uni_isize, usize, random_isize, [-2, -1, 0, 1, 2] }
 
 #[cfg(test)]
 mod tests {
@@ -350,18 +350,18 @@ mod tests {
 
     use crate::prelude::tests::*;
 
-    fn range_contains_int<I, ID, B, BD, R>(
+    fn range_contains_integer<I, ID, B, BD, R>(
         fate: &mut Fate,
         range_data_die: BD,
         create_range: fn(B) -> R,
-        int_die: fn(R) -> ID,
+        integer_die: fn(R) -> ID,
         is_in_range: fn(B, I) -> bool,
     ) where
         I: Debug,
         ID: DieOnce<I>,
         B: Copy + Debug,
         BD: DieOnce<B>,
-        R: dice::IntRange<I> + Debug,
+        R: dice::IntegerRange<I> + Debug,
     {
         let range_data = range_data_die.roll_once(fate);
         hint_debug!(range_data);
@@ -369,97 +369,97 @@ mod tests {
         let range = create_range(range_data);
         hint_debug!(range);
 
-        let int = int_die(range).roll_once(fate);
-        hint_debug!(int);
+        let integer = integer_die(range).roll_once(fate);
+        hint_debug!(integer);
 
-        assert!(is_in_range(range_data, int));
+        assert!(is_in_range(range_data, integer));
     }
 
     macro_rules! range_tests {
         (
-            $int:ident:
-            $int_is_in_single_value_range:ident
-            $int_is_in_range:ident
-            $int_is_in_range_from:ident
-            $int_is_in_range_inclusive:ident
-            $int_is_in_range_to:ident
-            $int_is_in_range_to_inclusive:ident
+            $integer:ident:
+            $integer_is_in_single_value_range:ident
+            $integer_is_in_range:ident
+            $integer_is_in_range_from:ident
+            $integer_is_in_range_inclusive:ident
+            $integer_is_in_range_to:ident
+            $integer_is_in_range_to_inclusive:ident
         ) => {
             #[test]
-            fn $int_is_in_single_value_range() {
+            fn $integer_is_in_single_value_range() {
                 dicetest!(|fate| {
-                    range_contains_int(
+                    range_contains_integer(
                         fate,
-                        dice::$int(..),
+                        dice::$integer(..),
                         |single| single,
-                        dice::$int,
-                        |single, int| single == int,
+                        dice::$integer,
+                        |single, integer| single == integer,
                     );
                 })
             }
 
             #[test]
-            fn $int_is_in_range() {
+            fn $integer_is_in_range() {
                 dicetest!(|fate| {
-                    range_contains_int(
+                    range_contains_integer(
                         fate,
-                        dice::array_2(dice::$int(..$int::max_value() - 1))
+                        dice::array_2(dice::$integer(..$integer::max_value() - 1))
                             .map(|[a, b]| (a.min(b), a.max(b) + 1)),
                         |(lower, upper)| lower..upper,
-                        dice::$int,
-                        |(lower, upper), int| lower <= int && int < upper,
+                        dice::$integer,
+                        |(lower, upper), integer| lower <= integer && integer < upper,
                     );
                 })
             }
 
             #[test]
-            fn $int_is_in_range_from() {
+            fn $integer_is_in_range_from() {
                 dicetest!(|fate| {
-                    range_contains_int(
+                    range_contains_integer(
                         fate,
-                        dice::$int(..),
+                        dice::$integer(..),
                         |lower| lower..,
-                        dice::$int,
-                        |lower, int| lower <= int,
+                        dice::$integer,
+                        |lower, integer| lower <= integer,
                     );
                 })
             }
 
             #[test]
-            fn $int_is_in_range_inclusive() {
+            fn $integer_is_in_range_inclusive() {
                 dicetest!(|fate| {
-                    range_contains_int(
+                    range_contains_integer(
                         fate,
-                        dice::array_2(dice::$int(..)).map(|[a, b]| (a.min(b), a.max(b))),
+                        dice::array_2(dice::$integer(..)).map(|[a, b]| (a.min(b), a.max(b))),
                         |(lower, upper)| lower..=upper,
-                        dice::$int,
-                        |(lower, upper), int| lower <= int && int <= upper,
+                        dice::$integer,
+                        |(lower, upper), integer| lower <= integer && integer <= upper,
                     );
                 })
             }
 
             #[test]
-            fn $int_is_in_range_to() {
+            fn $integer_is_in_range_to() {
                 dicetest!(|fate| {
-                    range_contains_int(
+                    range_contains_integer(
                         fate,
-                        dice::$int($int::min_value() + 1..),
+                        dice::$integer($integer::min_value() + 1..),
                         |upper| ..upper,
-                        dice::$int,
-                        |upper, int| int < upper,
+                        dice::$integer,
+                        |upper, integer| integer < upper,
                     );
                 })
             }
 
             #[test]
-            fn $int_is_in_range_to_inclusive() {
+            fn $integer_is_in_range_to_inclusive() {
                 dicetest!(|fate| {
-                    range_contains_int(
+                    range_contains_integer(
                         fate,
-                        dice::$int(..),
+                        dice::$integer(..),
                         |upper| ..=upper,
-                        dice::$int,
-                        |upper, int| int <= upper,
+                        dice::$integer,
+                        |upper, integer| integer <= upper,
                     );
                 })
             }
