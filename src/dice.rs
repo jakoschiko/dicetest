@@ -21,6 +21,9 @@ pub use self::bool::*;
 mod integer;
 pub use self::integer::*;
 
+mod float;
+pub use self::float::*;
+
 mod char;
 pub use self::char::*;
 
