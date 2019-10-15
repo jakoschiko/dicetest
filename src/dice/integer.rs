@@ -50,9 +50,7 @@ macro_rules! impl_integer_range {
 
         impl IntegerRange<$integer> for RangeFrom<$integer> {
             fn bounds(self) -> ($integer, $integer) {
-                let lower = self.start;
-                let upper = $integer::max_value();
-                (lower, upper)
+                (self.start, $integer::max_value())
             }
         }
 
@@ -112,7 +110,13 @@ impl_integer_range! { usize }
 impl_integer_range! { isize }
 
 macro_rules! fn_integer {
-    ($integer:ident, $uni_integer:ident, $uinteger:ident, $random_integer:ident, $special:expr) => {
+    (
+        $integer:ident,
+        $uni_integer:ident,
+        $uinteger:ident,
+        $random_integer:ident,
+        $special_values:expr
+    ) => {
         /// Generates an integer inside the given range. All integers are uniformly distributed.
         ///
         /// # Panics
@@ -243,30 +247,36 @@ macro_rules! fn_integer {
         /// ```
         pub fn $integer(range: impl IntegerRange<$integer>) -> impl Die<$integer> {
             let (lower, upper) = range.bounds();
+
             // `uni_integer` does not need to check the range again
             let unchecked_range = UncheckedRange { lower, upper };
-            let all_die = $uni_integer(unchecked_range);
+            let regular_value_die = $uni_integer(unchecked_range);
 
-            let special_die = {
-                let extremum_die = || dice::one_of_2(lower, upper);
-                let special_fallback_die = extremum_die();
-                let special_die = {
-                    dice::from_fn(move |fate| {
-                        let special_values = $special;
-                        let special_value = dice::one_of_slice(&special_values).roll(fate);
+            // Generates once in a while a special value that is inside the range
+            let maybe_special_value_die = {
+                let border_value_die = dice::one_of_2(Some(lower), Some(upper));
+                let const_value_die = {
+                    let special_values = &$special_values;
+                    dice::one_of_slice(special_values).map(move |special_value| {
                         if lower <= special_value && special_value <= upper {
-                            special_value
+                            Some(special_value)
                         } else {
-                            // `special_value` is outside the range, fallback to other generator
-                            special_fallback_die.roll(fate)
+                            None
                         }
                     })
                 };
 
-                dice::one_of_die_2(extremum_die(), special_die)
+                dice::weighted_one_of_die_3(
+                    (6, dice::just(None)),
+                    (1, border_value_die),
+                    (1, const_value_die),
+                )
             };
 
-            dice::one_of_die_2(all_die, special_die)
+            dice::from_fn(move |fate| match maybe_special_value_die.roll(fate) {
+                Some(special_value) => special_value,
+                None => regular_value_die.roll(fate),
+            })
         }
     };
 }
