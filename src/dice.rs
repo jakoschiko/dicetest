@@ -69,8 +69,5 @@ pub use self::binary_heap::*;
 mod string;
 pub use self::string::*;
 
-mod shuffled;
-pub use self::shuffled::*;
-
 mod fn_builder;
 pub use self::fn_builder::*;
