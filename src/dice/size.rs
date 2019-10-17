@@ -119,7 +119,7 @@ impl SizeRange for RangeToInclusive<usize> {
 /// use dicetest::prelude::dice::*;
 ///
 /// // Oh no, panic!
-/// let _size = dice::size(71..42);
+/// let _size_die = dice::size(71..42);
 /// ```
 pub fn size(range: impl SizeRange) -> impl Die<usize> {
     let (lower, upper_opt) = range.bounds();
