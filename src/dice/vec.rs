@@ -88,6 +88,17 @@ mod tests {
 
     use crate::prelude::tests::*;
 
+    #[test]
+    fn vec_calc_stats() {
+        dicetest!(|fate| {
+            stat!(
+                "vec(dice::bool(), ..=3)",
+                "{:?}",
+                dice::vec(dice::bool(), ..=3).roll(fate),
+            );
+        })
+    }
+
     fn count_vec_elems(vec: &Vec<u8>) -> HashMap<u8, usize> {
         let mut elems = HashMap::new();
         for &elem in vec.iter() {
@@ -113,6 +124,17 @@ mod tests {
     }
 
     #[test]
+    fn shuffled_vec_calc_stats() {
+        dicetest!(|fate| {
+            stat!(
+                "shuffled_vec(vec![1, 2, 3])",
+                "{:?}",
+                dice::shuffled_vec(vec![1, 2, 3]).roll_once(fate),
+            );
+        })
+    }
+
+    #[test]
     fn split_vec_result_can_be_merged_to_orig_vec() {
         dicetest!(|fate| {
             let orig_vec = dice::vec(dice::u8(..), ..).roll(fate);
@@ -122,6 +144,17 @@ mod tests {
             merged.append(&mut suffix);
 
             assert_eq!(merged, orig_vec);
+        })
+    }
+
+    #[test]
+    fn split_vec_calc_stats() {
+        dicetest!(|fate| {
+            stat!(
+                "split_vec(vec![1, 2, 3, 4, 5])",
+                "{:?}",
+                dice::split_vec(vec![1, 2, 3, 4, 5]).roll_once(fate),
+            );
         })
     }
 }

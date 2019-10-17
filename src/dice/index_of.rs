@@ -44,4 +44,15 @@ mod tests {
             assert!(index < vec.len());
         })
     }
+
+    #[test]
+    fn index_of_calc_stats() {
+        dicetest!(|fate| {
+            stat!(
+                "index_of(&[1, 2, 3, 4, 5])",
+                "{}",
+                dice::index_of(&[1, 2, 3, 4, 5]).roll(fate),
+            );
+        })
+    }
 }
