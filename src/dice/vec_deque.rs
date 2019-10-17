@@ -7,7 +7,6 @@ use crate::prelude::dice::*;
 ///
 /// [`VecDeque`]: https://doc.rust-lang.org/std/collections/struct.VecDeque.html
 /// [`dice::collection`]: fn.collection.html
-#[derive(Clone)]
 pub struct VecDequeBuilder;
 
 impl<T> CollectionBuilder<T, VecDeque<T>> for VecDequeBuilder {
@@ -28,6 +27,6 @@ impl<T> CollectionBuilder<T, VecDeque<T>> for VecDequeBuilder {
 ///
 /// Panics if the range is empty.
 pub fn vec_deque<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<VecDeque<T>> {
-    let builder_die = dice::just(VecDequeBuilder);
+    let builder_die = dice::from_fn(|_fate| VecDequeBuilder);
     dice::collection(builder_die, elem_die, len_range)
 }

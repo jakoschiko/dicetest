@@ -7,7 +7,6 @@ use crate::prelude::dice::*;
 ///
 /// [`BinaryHeap`]: https://doc.rust-lang.org/std/collections/struct.BinaryHeap.html
 /// [`dice::collection`]: fn.collection.html
-#[derive(Clone)]
 pub struct BinaryHeapBuilder;
 
 impl<T: Ord> CollectionBuilder<T, BinaryHeap<T>> for BinaryHeapBuilder {
@@ -31,6 +30,6 @@ pub fn binary_heap<T: Ord>(
     elem_die: impl Die<T>,
     len_range: impl SizeRange,
 ) -> impl Die<BinaryHeap<T>> {
-    let builder_die = dice::just(BinaryHeapBuilder);
+    let builder_die = dice::from_fn(|_fate| BinaryHeapBuilder);
     dice::collection(builder_die, elem_die, len_range)
 }

@@ -7,7 +7,6 @@ use crate::prelude::dice::*;
 ///
 /// [`BTreeSet`]: https://doc.rust-lang.org/std/collections/struct.BTreeSet.html
 /// [`dice::collection`]: fn.collection.html
-#[derive(Clone)]
 pub struct BTreeSetBuilder;
 
 impl<T: Ord> CollectionBuilder<T, BTreeSet<T>> for BTreeSetBuilder {
@@ -31,6 +30,6 @@ pub fn b_tree_set<T: Ord>(
     elem_die: impl Die<T>,
     tries_range: impl SizeRange,
 ) -> impl Die<BTreeSet<T>> {
-    let builder_die = dice::just(BTreeSetBuilder);
+    let builder_die = dice::from_fn(|_fate| BTreeSetBuilder);
     dice::collection(builder_die, elem_die, tries_range)
 }

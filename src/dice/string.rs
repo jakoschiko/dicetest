@@ -5,7 +5,6 @@ use crate::prelude::dice::*;
 ///
 /// [`String`]: https://doc.rust-lang.org/std/string/struct.String.html
 /// [`dice::collection`]: fn.collection.html
-#[derive(Clone)]
 pub struct StringBuilder;
 
 impl CollectionBuilder<char, String> for StringBuilder {
@@ -27,6 +26,6 @@ impl CollectionBuilder<char, String> for StringBuilder {
 ///
 /// Panics if the range is empty.
 pub fn string(char_die: impl Die<char>, len_range: impl SizeRange) -> impl Die<String> {
-    let builder_die = dice::just(StringBuilder);
+    let builder_die = dice::from_fn(|_fate| StringBuilder);
     dice::collection(builder_die, char_die, len_range)
 }
