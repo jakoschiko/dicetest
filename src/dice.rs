@@ -71,3 +71,6 @@ pub use self::string::*;
 
 mod fn_builder;
 pub use self::fn_builder::*;
+
+mod index_of;
+pub use index_of::*;
