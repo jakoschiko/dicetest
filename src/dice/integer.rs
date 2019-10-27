@@ -1,5 +1,4 @@
 use std::fmt::Debug;
-use std::mem::size_of;
 use std::ops::{Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive};
 
 use crate::prelude::dice::*;
@@ -321,24 +320,24 @@ fn random_i128(prng: &mut Prng) -> i128 {
     random_u128(prng) as i128
 }
 
+#[cfg(target_pointer_width = "32")]
 fn random_usize(prng: &mut Prng) -> usize {
-    if size_of::<usize>() <= size_of::<u64>() {
-        random_u64(prng) as usize
-    } else if size_of::<usize>() == size_of::<u128>() {
-        random_u128(prng) as usize
-    } else {
-        panic!("Can't generate `usize` because it has an unsupported size");
-    }
+    random_u32(prng) as usize
 }
 
+#[cfg(target_pointer_width = "64")]
+fn random_usize(prng: &mut Prng) -> usize {
+    random_u64(prng) as usize
+}
+
+#[cfg(target_pointer_width = "32")]
 fn random_isize(prng: &mut Prng) -> isize {
-    if size_of::<isize>() <= size_of::<i64>() {
-        random_i64(prng) as isize
-    } else if size_of::<isize>() == size_of::<i128>() {
-        random_i128(prng) as isize
-    } else {
-        panic!("Can't generate `isize` because it has an unsupported size");
-    }
+    random_i32(prng) as isize
+}
+
+#[cfg(target_pointer_width = "64")]
+fn random_isize(prng: &mut Prng) -> isize {
+    random_i64(prng) as isize
 }
 
 fn_integer! { u8, uni_u8, u8, random_u8, [1, 2] }
