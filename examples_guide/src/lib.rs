@@ -18,11 +18,22 @@ mod section_pseudorandomness {
     fn prng() {
         use dicetest::prand::*;
 
-        let mut prng = Prng::from_seed(Seed(42));
-
-        for _ in 0..4 {
-            println!("{:?}", prng.next_number());
+        fn print_random_values(mut prng: Prng) {
+            for _ in 0..3 {
+                print!("{:?}, ", prng.next_number());
+            }
+            println!("...");
         }
+
+
+        print_random_values(Prng::from_seed(Seed(42)));
+        // Output: 16628028624323922065, 3476588890713931039, 59688652182557721, ...
+        print_random_values(Prng::from_seed(Seed(42)));
+        // Output: 16628028624323922065, 3476588890713931039, 59688652182557721, ...
+        print_random_values(Prng::from_seed(Seed::random()));
+        // Output: 4221507577048064061, 15374206214556255352, 4977687432463843847, ...
+        print_random_values(Prng::from_seed(Seed::random()));
+        // Output: 11086225885938422405, 9312304973013875005, 1036200222843160301, ...
     }
 }
 
@@ -78,24 +89,24 @@ mod section_dice {
         // Generates always the same `String` by cloning it.
         let foo_die = dice::just("foo".to_string());
 
-        // Generates arbitrary bytes.
+        // Generates an arbitrary byte.
         let byte_die = dice::u8(..);
 
-        // Generates non-zero bytes.
+        // Generates a non-zero byte.
         let non_zero_byte_die = dice::u8(1..);
 
-        // Generates an arbitrary number of arbitrary bytes.
+        // Generates a `Vec` that contains an arbitrary number of arbitrary bytes.
         let bytes_die = dice::vec(dice::u8(..), ..);
 
-        // Generates up to 10 arbitrary bytes.
+        // Generates a `Vec` that contains up to 10 arbitrary bytes.
         let up_to_ten_bytes_die = dice::vec(dice::u8(..), ..=10);
 
-        // Generates arbitrary wrapped bytes.
+        // Generates an arbitrary wrapped byte.
         struct WrappedByte(u8);
         let wrapped_byte_die = dice::u8(..).map(WrappedByte);
 
-        // Generates permutations of `(0..=n)` for arbitrary `n`.
-        let permutations_die = dice::size(0..).flat_map(|n| {
+        // Generates a permutation of `(0..=n)` for an arbitrary `n`.
+        let permutation_die = dice::size(0..).flat_map(|n| {
             let vec = (0..=n).collect::<Vec<_>>();
             dice::shuffled_vec(vec)
         });
@@ -112,16 +123,15 @@ mod section_dice {
 
         let fate: &mut Fate = &mut Fate::new(&mut prng, limit);
 
-        // Generator for an arbitrary number of bytes.
-        let bytes_die = dice::vec(dice::u8(..), ..);
+        // Generates a `Vec` with an arbitrary length.
+        let vec_die = dice::vec(dice::u8(..), ..);
 
-        // Although `bytes_die` can generate an arbitrary number of bytes,
-        // the `Limit` is used as an upper limit. How the upper limit is
-        // interpreted varies from generator to generator. In this case,
-        // up to 5 bytes are generated.
-        let bytes = bytes_die.roll(fate);
+        // Although `vec_die` can generate a `Vec` with arbitrary length,
+        // the `Limit` is used as an upper limit.
+        let vec = vec_die.roll(fate);
 
-        println!("{:?}", bytes);
+        println!("{:?}", vec);
+        // Output: [2, 255, 176, 0]
     }
 }
 
@@ -133,7 +143,7 @@ mod section_tests {
     fn test_foo() {
         // Runs your test with default configuration.
         dicetest!(|fate| {
-            // Your test.
+            // Write your test here.
         });
     }
 
@@ -141,7 +151,7 @@ mod section_tests {
     fn test_bar() {
         // Runs your test with custom configuration.
         dicetest!(Config::default().with_passes(10000), |fate| {
-            // Your test.
+            // Write your test here.
         });
     }
 }

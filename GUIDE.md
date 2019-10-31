@@ -40,7 +40,7 @@ Dicetest provides several preludes for different use cases:
 
 ## Pseudorandomness
 
-The type `Seed` allows to initialize the pseudorandomness:
+The type `Seed` allows to determine the [pseudorandomness]. You can either use a fixed `Seed` or a random `Seed`:
 ```rust
 use dicetest::prand::Seed;
 
@@ -51,21 +51,30 @@ println!("{:?}", Seed::random());
 // Output: Seed(8019292413750407764)
 ```
 
-The `Seed` can be used to initialize a `Prng`. For each `Seed` the `Prng` provides a different infinite pseudorandom sequence of `u64`s:
+The `Seed` can be used to initialize the [pseudorandom number generator] `Prng`. For each `Seed` the `Prng` provides a different infinite pseudorandom sequence of `u64`s
 ```rust
 use dicetest::prand::*;
 
-let mut prng = Prng::from_seed(Seed(42));
-
-for _ in 0..4 {
-    println!("{:?}", prng.next_number());
+fn print_numbers(mut prng: Prng) {
+    for _ in 0..3 {
+        print!("{:?}, ", prng.next_number());
+    }
+    println!("...");
 }
-// Output:
-// 16628028624323922065
-// 3476588890713931039
-// 59688652182557721
-// 8649295813736445329
+
+
+print_numbers(Prng::from_seed(Seed(42)));
+// Output: 16628028624323922065, 3476588890713931039, 59688652182557721, ...
+print_numbers(Prng::from_seed(Seed(42)));
+// Output: 16628028624323922065, 3476588890713931039, 59688652182557721, ...
+print_numbers(Prng::from_seed(Seed::random()));
+// Output: 4221507577048064061, 15374206214556255352, 4977687432463843847, ...
+print_numbers(Prng::from_seed(Seed::random()));
+// Output: 11086225885938422405, 9312304973013875005, 1036200222843160301, ...
 ```
+
+[pseudorandomness]: https://en.wikipedia.org/wiki/Pseudorandomness
+[pseudorandom number generator]: https://en.wikipedia.org/wiki/Pseudorandom_number_generator
 
 ## Dice
 
@@ -126,35 +135,35 @@ let die_from_fn = dice::from_fn(|_fate| 42);
 // Generates always the same `String` by cloning it.
 let foo_die = dice::just("foo".to_string());
 
-// Generates arbitrary bytes.
+// Generates an arbitrary byte.
 let byte_die = dice::u8(..);
 
-// Generates non-zero bytes.
+// Generates a non-zero byte.
 let non_zero_byte_die = dice::u8(1..);
 
-// Generates an arbitrary number of arbitrary bytes.
+// Generates a `Vec` that contains an arbitrary number of arbitrary bytes.
 let bytes_die = dice::vec(dice::u8(..), ..);
 
-// Generates up to 10 arbitrary bytes.
+// Generates a `Vec` that contains up to 10 arbitrary bytes.
 let up_to_ten_bytes_die = dice::vec(dice::u8(..), ..=10);
 
-// Generates arbitrary wrapped bytes.
+// Generates an arbitrary wrapped byte.
 struct WrappedByte(u8);
 let wrapped_byte_die = dice::u8(..).map(WrappedByte);
 
-// Generates permutations of `(0..=n)` for arbitrary `n`.
-let permutations_die = dice::size(0..).flat_map(|n| {
+// Generates an arbitrary permutation of `(0..=n)` for an arbitrary `n`.
+let permutation_die = dice::size(0..).flat_map(|n| {
     let vec = (0..=n).collect::<Vec<_>>();
     dice::shuffled_vec(vec)
 });
 ```
 
-Internally the generators use two parameters:
+Internally a generator uses two parameters:
 
 * `Prng` provides the pseudorandomness. An implementor of `DieOnce` or `Die` should only use this as its source of randomness.
 * `Limit` controls the maximum size of dynamic data structures. An implementor of `DieOnce` or `Die` is allowed to freely interpret this value.
 
-The struct `Fate` contains both parameters and forbids the mutation of `Limit`. The methods `DieOnce::roll_once` and `Die::roll` generate pseudorandom values using `&mut Fate`:
+The type `Fate` contains both parameters and forbids the mutation of `Limit`. The methods `DieOnce::roll_once` and `Die::roll` generate pseudorandom values using `&mut Fate`:
 ```rust
 use dicetest::prelude::dice::*;
 
@@ -165,23 +174,21 @@ let limit: Limit = 5.into();
 
 let fate: &mut Fate = &mut Fate::new(&mut prng, limit);
 
-// Generator for an arbitrary number of bytes.
-let bytes_die = dice::vec(dice::u8(..), ..);
+// Generates a `Vec` with an arbitrary length.
+let vec_die = dice::vec(dice::u8(..), ..);
 
-// Although `bytes_die` can generate an arbitrary number of bytes,
-// the `Limit` is used as an upper limit. How the upper limit is
-// interpreted varies from generator to generator. In this case,
-// up to 5 bytes are generated.
-let bytes = bytes_die.roll(fate);
+// Although `vec_die` can generate a `Vec` with arbitrary length,
+// the `Limit` is used as an upper limit.
+let vec = vec_die.roll(fate);
 
-println!("{:?}", bytes);
-// Output: [2, 255, 176, 0, 92]
+println!("{:?}", vec);
+// Output: [2, 255, 176, 0]
 ```
 
 ## Tests
 
 For writing tests Dicetest provides a checker with the following features:
-* It runs your test with different seeds.
+* It runs your test with different `Seed`s.
 * It logs useful information that helps when debugging your test.
 * It allows configuration via source code or environment variables.
 
@@ -193,7 +200,7 @@ use dicetest::prelude::tests::*;
 fn test_foo() {
     // Runs your test with default configuration.
     dicetest!(|fate| {
-        // Your test.
+        // Write your test here.
     });
 }
 
@@ -201,12 +208,12 @@ fn test_foo() {
 fn test_bar() {
     // Runs your test with custom configuration.
     dicetest!(Config::default().with_passes(10000), |fate| {
-        // Your test.
+        // Write your test here.
     });
 }
 ```
 
-The closure contains your test. With the passed `fate` you can generate pseudorandom test data and make assertions. If the closure panics, the checker catches it, logs the test result to stdout and resumes the panic.
+The closure contains your test. With the passed `fate` you can generate test data and make assertions. If the closure panics, the checker catches it, logs the test result to stdout and resumes the panic.
 
 You can use environment variables to configure how the test is run and when the test result will be logged. The documentation of [`checker::check`] lists all environment variables.
 

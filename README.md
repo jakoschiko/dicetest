@@ -1,6 +1,6 @@
 # Dicetest
 
-Dicetest is a framework for writing tests with pseudorandom generated test data.
+Dicetest is a framework for writing tests with randomly generated test data.
 
 ## Status of this crate
 
