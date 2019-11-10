@@ -25,7 +25,6 @@ mod section_pseudorandomness {
             println!("...");
         }
 
-
         print_random_values(Prng::from_seed(Seed(42)));
         // Output: 16628028624323922065, 3476588890713931039, 59688652182557721, ...
         print_random_values(Prng::from_seed(Seed(42)));
