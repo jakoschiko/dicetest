@@ -73,8 +73,11 @@ For more information, see the [GUIDE](GUIDE.md).
 ## Alternatives
 
 * Write down your test data and use a loop.
-* Use the crate `quickcheck`.
-* Use the crate `proptest`.
+* Use the [crate `quickcheck`].
+* Use the [crate `proptest`].
+
+[crate `quickcheck`]: https://crates.io/crates/quickcheck
+[crate `proptest`]: https://crates.io/crates/proptest
 
 ## License
 
