@@ -322,7 +322,7 @@ DICETEST_SEED=795359663177100823 cargo test mytest
 ```
 * I want to see the stats of `mytest`:
 ```text
-DICETEST_LOG_CONDITION=always DICETEST_STATS_ENABLED=true cargo test -- --nocapture mytest
+DICETEST_LOG_CONDITION=always DICETEST_STATS_ENABLED=true cargo test -- --show-output mytest
 ```
 * I want to run `mytest` with more passes and bigger test data:
 ```text
@@ -330,5 +330,5 @@ DICETEST_PASSES_MULTIPLIER=10 DICETEST_LIMIT_MULTIPLIER=2 cargo test mytest
 ```
 * I want to run `mytest` with a single test run and see the test result:
 ```text
-DICETEST_MODE=once DICETEST_LOG_CONDITION=always cargo test -- --nocapture mytest
+DICETEST_MODE=once DICETEST_LOG_CONDITION=always cargo test -- --show-output mytest
 ```
