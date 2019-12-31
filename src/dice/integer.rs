@@ -585,7 +585,7 @@ mod tests {
 
     #[test]
     fn u8_calc_stats() {
-        dicetest!(|fate| {
+        dicetest!(Config::default().with_passes(0), |fate| {
             stat!("u8(..)", "{}", dice::u8(..).roll(fate));
             stat!("u8(..=9)", "{}", dice::u8(..=9).roll(fate));
             stat!("u8(100..=199)", "{}", dice::u8(100..=199).roll(fate));
@@ -594,7 +594,7 @@ mod tests {
 
     #[test]
     fn uni_u8_calc_stats() {
-        dicetest!(|fate| {
+        dicetest!(Config::default().with_passes(0), |fate| {
             stat!("uni_u8(..)", "{}", dice::uni_u8(..).roll(fate));
             stat!("uni_u8(..=9)", "{}", dice::uni_u8(..=9).roll(fate));
             stat!(
@@ -607,7 +607,7 @@ mod tests {
 
     #[test]
     fn i8_calc_stats() {
-        dicetest!(|fate| {
+        dicetest!(Config::default().with_passes(0), |fate| {
             stat!("i8(..)", "{}", dice::i8(..).roll(fate));
             stat!("i8(-4..=5)", "{}", dice::i8(-4..=5).roll(fate));
         })
@@ -615,7 +615,7 @@ mod tests {
 
     #[test]
     fn uni_i8_calc_stats() {
-        dicetest!(|fate| {
+        dicetest!(Config::default().with_passes(0), |fate| {
             stat!("uni_i8(..)", "{}", dice::uni_i8(..).roll(fate));
             stat!("uni_i8(-4..=5)", "{}", dice::uni_i8(-4..=5).roll(fate));
         })

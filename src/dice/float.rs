@@ -494,7 +494,7 @@ mod tests {
 
             #[test]
             fn $unit_float_calc_stats() {
-                dicetest!(|fate| {
+                dicetest!(Config::default().with_passes(0), |fate| {
                     let float = $unit_float().roll(fate);
 
                     if float >= 0.5 {
@@ -508,14 +508,14 @@ mod tests {
                     } else if float >= 0.03125 {
                         stat!("float", "[0.03125, 0.0625)");
                     } else {
-                        stat!("float", "[0, 0.031255)");
+                        stat!("float", "[0, 0.03125)");
                     }
                 })
             }
 
             #[test]
             fn $open_unit_float_calc_stats() {
-                dicetest!(|fate| {
+                dicetest!(Config::default().with_passes(0), |fate| {
                     let float = $open_unit_float().roll(fate);
 
                     if float >= 0.5 {
@@ -529,7 +529,7 @@ mod tests {
                     } else if float >= 0.03125 {
                         stat!("float", "[0.03125, 0.0625)");
                     } else {
-                        stat!("float", "[0, 0.031255)");
+                        stat!("float", "[0, 0.03125)");
                     }
                 })
             }

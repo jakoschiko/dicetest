@@ -47,7 +47,7 @@ mod tests {
 
     #[test]
     fn index_of_calc_stats() {
-        dicetest!(|fate| {
+        dicetest!(Config::default().with_passes(0), |fate| {
             stat!(
                 "index_of(&[1, 2, 3, 4, 5])",
                 "{}",

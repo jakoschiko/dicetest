@@ -34,14 +34,14 @@ mod tests {
 
     #[test]
     fn bool_calc_stats() {
-        dicetest!(|fate| {
+        dicetest!(Config::default().with_passes(0), |fate| {
             stat!("bool()", "{}", dice::bool().roll(fate));
         })
     }
 
     #[test]
     fn weighted_bool_calc_stats() {
-        dicetest!(|fate| {
+        dicetest!(Config::default().with_passes(0), |fate| {
             stat!(
                 "weighted_bool(1, 2)",
                 "{}",

@@ -89,7 +89,7 @@ mod tests {
 
     #[test]
     fn vec_calc_stats() {
-        dicetest!(|fate| {
+        dicetest!(Config::default().with_passes(0), |fate| {
             stat!(
                 "vec(dice::bool(), ..=3)",
                 "{:?}",
@@ -124,7 +124,7 @@ mod tests {
 
     #[test]
     fn shuffled_vec_calc_stats() {
-        dicetest!(|fate| {
+        dicetest!(Config::default().with_passes(0), |fate| {
             stat!(
                 "shuffled_vec(vec![1, 2, 3])",
                 "{:?}",
@@ -148,7 +148,7 @@ mod tests {
 
     #[test]
     fn split_vec_calc_stats() {
-        dicetest!(|fate| {
+        dicetest!(Config::default().with_passes(0), |fate| {
             stat!(
                 "split_vec(vec![1, 2, 3, 4, 5])",
                 "{:?}",
