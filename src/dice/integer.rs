@@ -113,7 +113,7 @@ macro_rules! fn_integer {
         $integer:ident,
         $uni_integer:ident,
         $uinteger:ident,
-        $random_integer:ident,
+        $random_uinteger:ident,
         $special_values:expr
     ) => {
         /// Generates an integer inside the given range. All integers are uniformly distributed.
@@ -176,16 +176,15 @@ macro_rules! fn_integer {
                     // The range contains exactly one value
                     lower
                 } else {
-                    let random_integer = $random_integer(fate.prng);
+                    let random_unsigned = $random_uinteger(fate.prng);
 
                     if lower == $integer::min_value() && upper == $integer::max_value() {
                         // Full integer range, hence the randomly chosen integer is already inside
                         // the range
-                        random_integer
+                        random_unsigned as $integer
                     } else {
                         let random_unsigned_inside_range = {
                             // We shift the integer into the unsigned integer range
-                            let random_unsigned = to_shifted_unsigned(random_integer);
                             let lower_unsigned = to_shifted_unsigned(lower);
                             let upper_unsigned = to_shifted_unsigned(upper);
 
@@ -280,78 +279,30 @@ macro_rules! fn_integer {
     };
 }
 
-fn random_u8(prng: &mut Prng) -> u8 {
-    prng.next_number() as u8
-}
-
-fn random_i8(prng: &mut Prng) -> i8 {
-    prng.next_number() as i8
-}
-
-fn random_u16(prng: &mut Prng) -> u16 {
-    prng.next_number() as u16
-}
-
-fn random_i16(prng: &mut Prng) -> i16 {
-    prng.next_number() as i16
-}
-
-fn random_u32(prng: &mut Prng) -> u32 {
-    prng.next_number() as u32
-}
-
-fn random_i32(prng: &mut Prng) -> i32 {
-    prng.next_number() as i32
-}
-
 fn random_u64(prng: &mut Prng) -> u64 {
-    prng.next_number() as u64
-}
-
-fn random_i64(prng: &mut Prng) -> i64 {
-    prng.next_number() as i64
+    prng.next_number()
 }
 
 fn random_u128(prng: &mut Prng) -> u128 {
     (u128::from(prng.next_number()) << 64) | u128::from(prng.next_number())
 }
 
-fn random_i128(prng: &mut Prng) -> i128 {
-    random_u128(prng) as i128
-}
-
-#[cfg(target_pointer_width = "32")]
-fn random_usize(prng: &mut Prng) -> usize {
-    random_u32(prng) as usize
-}
-
-#[cfg(target_pointer_width = "64")]
-fn random_usize(prng: &mut Prng) -> usize {
-    random_u64(prng) as usize
-}
-
-#[cfg(target_pointer_width = "32")]
-fn random_isize(prng: &mut Prng) -> isize {
-    random_i32(prng) as isize
-}
-
-#[cfg(target_pointer_width = "64")]
-fn random_isize(prng: &mut Prng) -> isize {
-    random_i64(prng) as isize
-}
-
-fn_integer! { u8, uni_u8, u8, random_u8, [1, 2] }
-fn_integer! { i8, uni_i8, u8, random_i8, [-2, -1, 0, 1, 2] }
-fn_integer! { u16, uni_u16, u16, random_u16, [1, 2] }
-fn_integer! { i16, uni_i16, u16, random_i16, [-2, -1, 0, 1, 2] }
-fn_integer! { u32, uni_u32, u32, random_u32, [1, 2] }
-fn_integer! { i32, uni_i32, u32, random_i32, [-2, -1, 0, 1, 2] }
+// Some of the integer types use random generators for bigger integer types.
+// This improves the uniform destribution.
+fn_integer! { u8, uni_u8, u64, random_u64, [1, 2] }
+fn_integer! { i8, uni_i8, u64, random_u64, [-2, -1, 0, 1, 2] }
+fn_integer! { u16, uni_u16, u64, random_u64, [1, 2] }
+fn_integer! { i16, uni_i16, u64, random_u64, [-2, -1, 0, 1, 2] }
+fn_integer! { u32, uni_u32, u64, random_u64, [1, 2] }
+fn_integer! { i32, uni_i32, u64, random_u64, [-2, -1, 0, 1, 2] }
 fn_integer! { u64, uni_u64, u64, random_u64, [1, 2] }
-fn_integer! { i64, uni_i64, u64, random_i64, [-2, -1, 0, 1, 2] }
+fn_integer! { i64, uni_i64, u64, random_u64, [-2, -1, 0, 1, 2] }
 fn_integer! { u128, uni_u128, u128, random_u128, [1, 2] }
-fn_integer! { i128, uni_i128, u128, random_i128, [-2, -1, 0, 1, 2] }
-fn_integer! { usize, uni_usize, usize, random_usize, [1, 2] }
-fn_integer! { isize, uni_isize, usize, random_isize, [-2, -1, 0, 1, 2] }
+fn_integer! { i128, uni_i128, u128, random_u128, [-2, -1, 0, 1, 2] }
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
+fn_integer! { usize, uni_usize, u64, random_u64, [1, 2] }
+#[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
+fn_integer! { isize, uni_isize, u64, random_u64, [-2, -1, 0, 1, 2] }
 
 #[cfg(test)]
 mod tests {
