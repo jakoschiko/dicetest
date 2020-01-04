@@ -1,16 +1,16 @@
 //! Provides the traits `DieOnce` and `Die` for generating pseudorandom values.
 
 mod limit;
-pub use self::limit::Limit;
+pub use limit::Limit;
 
 mod fate;
-pub use self::fate::Fate;
+pub use fate::Fate;
 
 mod die_once;
-pub use self::die_once::DieOnce;
+pub use die_once::DieOnce;
 
 #[allow(clippy::module_inception)]
 mod die;
-pub use self::die::Die;
+pub use die::Die;
 
 pub mod adapters;

@@ -2,22 +2,22 @@
 //! seeds and aborts once a counterexample has been found.
 
 mod limit_series;
-use self::limit_series::LimitSeries;
+use limit_series::LimitSeries;
 
 mod config;
-pub use self::config::Config;
+pub use config::Config;
 
 mod run;
-pub use self::run::Run;
+pub use run::Run;
 
 mod error;
-pub use self::error::Error;
+pub use error::Error;
 
 mod sample;
-pub use self::sample::Sample;
+pub use sample::Sample;
 
 mod summary;
-pub use self::summary::{Counterexample, Summary};
+pub use summary::{Counterexample, Summary};
 
 mod functions;
-pub use self::functions::{run_once, run_repeatedly};
+pub use functions::{run_once, run_repeatedly};
