@@ -72,6 +72,12 @@ pub use binary_heap::*;
 mod string;
 pub use string::*;
 
+mod shuffled;
+pub use shuffled::*;
+
+mod split;
+pub use split::*;
+
 mod fn_builder;
 pub use fn_builder::*;
 
