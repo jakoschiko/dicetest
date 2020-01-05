@@ -19,7 +19,11 @@ impl<S> HashMapBuilder<S>
 where
     S: BuildHasher,
 {
-    pub fn new(build_hasher: S) -> Self {
+    /// Creates a builder that uses the given [`BuildHasher`] for constructing a [`HashMap`].
+    ///
+    /// [`BuildHasher`]: https://doc.rust-lang.org/std/hash/trait.BuildHasher.html
+    /// [`HashMap`]: https://doc.rust-lang.org/std/collections/struct.HashMap.html
+    pub fn with_hasher(build_hasher: S) -> Self {
         HashMapBuilder { build_hasher }
     }
 }
@@ -55,6 +59,6 @@ pub fn hash_map<K, V>(
 where
     K: Eq + Hash,
 {
-    let builder_die = dice::prng_fork().map(HashMapBuilder::new);
+    let builder_die = dice::prng_fork().map(HashMapBuilder::with_hasher);
     dice::collection(builder_die, elem_die, tries_range)
 }

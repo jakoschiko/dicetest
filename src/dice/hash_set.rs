@@ -19,8 +19,12 @@ impl<S> HashSetBuilder<S>
 where
     S: BuildHasher,
 {
-    pub fn new(build_hasher: S) -> Self {
-        HashSetBuilder { build_hasher }
+    /// Creates a builder that uses the given [`BuildHasher`] for constructing a [`HashSet`].
+    ///
+    /// [`BuildHasher`]: https://doc.rust-lang.org/std/hash/trait.BuildHasher.html
+    /// [`HashSet`]: https://doc.rust-lang.org/std/collections/struct.HashSet.html
+    pub fn with_hasher(build_hasher: S) -> Self {
+        Self { build_hasher }
     }
 }
 
@@ -52,6 +56,6 @@ pub fn hash_set<T>(elem_die: impl Die<T>, tries_range: impl SizeRange) -> impl D
 where
     T: Eq + Hash,
 {
-    let builder_die = dice::prng_fork().map(HashSetBuilder::new);
+    let builder_die = dice::prng_fork().map(HashSetBuilder::with_hasher);
     dice::collection(builder_die, elem_die, tries_range)
 }
