@@ -86,3 +86,38 @@ where
 {
     dice::collection(HashSetBuilder::die(), elem_die, tries_range)
 }
+
+/// Similar to `dice::hash_set` but each element is generated using only a random part of
+/// `Limit`.
+///
+/// If you want to generate a `HashSet` that contains other collections, then you should
+/// consider using this generator for the outer `HashSet`. That way the overall size is
+/// bounded by `Limit` (and not the square of `Limit`).
+///
+/// # Panics
+///
+/// Panics if the range is empty.
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// let mut prng = Prng::from_seed(1337.into());
+/// let fate = &mut Fate::new(&mut prng, 100.into());
+/// let elem_die = dice::u8(..);
+/// let vec_die = dice::vec(elem_die, ..);
+/// let set_of_vecs_die = dice::outer_hash_set(vec_die, ..);
+///
+/// let set_of_vecs = set_of_vecs_die.roll(fate);
+/// assert!(set_of_vecs.iter().flatten().count() <= 100);
+/// ```
+pub fn outer_hash_set<T>(
+    elem_die: impl Die<T>,
+    tries_range: impl SizeRange,
+) -> impl Die<HashSet<T, Prng>>
+where
+    T: Eq + Hash,
+{
+    dice::outer_collection(HashSetBuilder::die(), elem_die, tries_range)
+}

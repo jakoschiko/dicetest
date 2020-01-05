@@ -89,3 +89,38 @@ where
 {
     dice::collection(HashMapBuilder::die(), elem_die, tries_range)
 }
+
+/// Similar to `dice::hash_map` but each element is generated using only a random part of
+/// `Limit`.
+///
+/// If you want to generate a `HashMap` that contains other collections, then you should
+/// consider using this generator for the outer `HashMap`. That way the overall size is
+/// bounded by `Limit` (and not the square of `Limit`).
+///
+/// # Panics
+///
+/// Panics if the range is empty.
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// let mut prng = Prng::from_seed(1337.into());
+/// let fate = &mut Fate::new(&mut prng, 100.into());
+/// let elem_die = dice::char();
+/// let vec_die = dice::zip_2(dice::u8(..), dice::vec(elem_die, ..));
+/// let map_of_vecs_die = dice::outer_hash_map(vec_die, ..);
+///
+/// let map_of_vecs = map_of_vecs_die.roll(fate);
+/// assert!(map_of_vecs.values().flatten().count() <= 100);
+/// ```
+pub fn outer_hash_map<K, V>(
+    elem_die: impl Die<(K, V)>,
+    tries_range: impl SizeRange,
+) -> impl Die<HashMap<K, V, Prng>>
+where
+    K: Eq + Hash,
+{
+    dice::outer_collection(HashMapBuilder::die(), elem_die, tries_range)
+}

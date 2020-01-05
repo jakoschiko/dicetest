@@ -61,3 +61,38 @@ where
 {
     dice::collection(BTreeSetBuilder::die(), elem_die, tries_range)
 }
+
+/// Similar to `dice::b_tree_set` but each element is generated using only a random part of
+/// `Limit`.
+///
+/// If you want to generate a `BTreeSet` that contains other collections, then you should
+/// consider using this generator for the outer `BTreeSet`. That way the overall size is
+/// bounded by `Limit` (and not the square of `Limit`).
+///
+/// # Panics
+///
+/// Panics if the range is empty.
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// let mut prng = Prng::from_seed(1337.into());
+/// let fate = &mut Fate::new(&mut prng, 100.into());
+/// let elem_die = dice::u8(..);
+/// let vec_die = dice::vec(elem_die, ..);
+/// let set_of_vecs_die = dice::outer_b_tree_set(vec_die, ..);
+///
+/// let set_of_vecs = set_of_vecs_die.roll(fate);
+/// assert!(set_of_vecs.iter().flatten().count() <= 100);
+/// ```
+pub fn outer_b_tree_set<T>(
+    elem_die: impl Die<T>,
+    tries_range: impl SizeRange,
+) -> impl Die<BTreeSet<T>>
+where
+    T: Ord,
+{
+    dice::outer_collection(BTreeSetBuilder::die(), elem_die, tries_range)
+}

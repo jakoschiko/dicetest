@@ -56,6 +56,35 @@ pub fn vec<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<Vec<
     dice::collection(VecBuilder::die(), elem_die, len_range)
 }
 
+/// Similar to `dice::vec` but each element is generated using only a random part of
+/// `Limit`.
+///
+/// If you want to generate a `Vec` that contains other collections, then you should
+/// consider using this generator for the outer `Vec`. That way the overall size is
+/// bounded by `Limit` (and not the square of `Limit`).
+///
+/// # Panics
+///
+/// Panics if the range is empty.
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// let mut prng = Prng::from_seed(1337.into());
+/// let fate = &mut Fate::new(&mut prng, 100.into());
+/// let elem_die = dice::u8(..);
+/// let vec_die = dice::vec(elem_die, ..);
+/// let vec_of_vecs_die = dice::outer_vec(vec_die, ..);
+///
+/// let vec_of_vecs = vec_of_vecs_die.roll(fate);
+/// assert!(vec_of_vecs.iter().flatten().count() <= 100);
+/// ```
+pub fn outer_vec<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<Vec<T>> {
+    dice::outer_collection(VecBuilder::die(), elem_die, len_range)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::prelude::tests::*;

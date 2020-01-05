@@ -55,3 +55,35 @@ impl<T> CollectionBuilder<T, LinkedList<T>> for LinkedListBuilder {
 pub fn linked_list<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<LinkedList<T>> {
     dice::collection(LinkedListBuilder::die(), elem_die, len_range)
 }
+
+/// Similar to `dice::linked_list` but each element is generated using only a random part of
+/// `Limit`.
+///
+/// If you want to generate a `LinkedList` that contains other collections, then you should
+/// consider using this generator for the outer `LinkedList`. That way the overall size is
+/// bounded by `Limit` (and not the square of `Limit`).
+///
+/// # Panics
+///
+/// Panics if the range is empty.
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// let mut prng = Prng::from_seed(1337.into());
+/// let fate = &mut Fate::new(&mut prng, 100.into());
+/// let elem_die = dice::u8(..);
+/// let list_die = dice::linked_list(elem_die, ..);
+/// let list_of_lists_die = dice::outer_linked_list(list_die, ..);
+///
+/// let list_of_lists = list_of_lists_die.roll(fate);
+/// assert!(list_of_lists.iter().flatten().count() <= 100);
+/// ```
+pub fn outer_linked_list<T>(
+    elem_die: impl Die<T>,
+    len_range: impl SizeRange,
+) -> impl Die<LinkedList<T>> {
+    dice::outer_collection(LinkedListBuilder::die(), elem_die, len_range)
+}
