@@ -267,7 +267,7 @@ fn error_item(indent: usize, error: &Error) -> impl Iterator<Item = char> {
     let string_repr = if let Some(string) = err.downcast_ref::<String>() {
         Some(string.clone())
     } else if let Some(str) = err.downcast_ref::<&str>() {
-        Some(str.to_string())
+        Some((*str).to_string())
     } else {
         None
     };
