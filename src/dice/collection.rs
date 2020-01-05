@@ -41,3 +41,71 @@ where
         builder.build(elems)
     })
 }
+
+/// Similar to `dice::collection` but each element is generated using only a random part of
+/// `Limit`.
+///
+/// If you want to generate a collection that contains other collections, then you should
+/// consider using this generator for the outer collection. That way the overall size is
+/// bounded by `Limit` (and not the square of `Limit`).
+///
+/// # Panics
+///
+/// Panics if the range is empty.
+pub fn outer_collection<T, C, B>(
+    builder_die: impl Die<B>,
+    elem_die: impl Die<T>,
+    elem_count_range: impl SizeRange,
+) -> impl Die<C>
+where
+    B: CollectionBuilder<T, C>,
+{
+    let elem_count_die = dice::size(elem_count_range);
+    dice::from_fn(move |fate| {
+        let builder = builder_die.roll(fate);
+        let elem_count = elem_count_die.roll(fate);
+        let elem_limits = if elem_count == 0 {
+            Vec::new()
+        } else {
+            dice::terms_of_u64(fate.limit().0, elem_count).roll(fate)
+        };
+        let elems = elem_limits.into_iter().map(|limit| {
+            let fate = &mut Fate::new(fate.prng, limit.into());
+            elem_die.roll(fate)
+        });
+        builder.build(elems)
+    })
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::die::Limit;
+    use crate::prelude::tests::*;
+
+    #[test]
+    fn outer_collection_overall_size_is_bounded_by_limit() {
+        dicetest!(|fate| {
+            let size = dice::size(..).roll(fate);
+
+            let limit = Limit::saturating_from_usize(size);
+            let fate_with_size = &mut Fate::new(fate.prng, limit);
+
+            pub struct TestBuilder;
+
+            impl<T> dice::CollectionBuilder<T, Vec<T>> for TestBuilder {
+                fn build(self, elems: impl ExactSizeIterator<Item = T>) -> Vec<T> {
+                    elems.collect()
+                }
+            }
+
+            let builder_die = dice::from_fn(|_| TestBuilder);
+            let elem_die = dice::u8(..);
+            let vec_die = dice::collection(&builder_die, elem_die, ..);
+            let vec_of_vecs_die = dice::outer_collection(&builder_die, vec_die, ..);
+            let vec_of_vecs = vec_of_vecs_die.roll(fate_with_size);
+
+            let overall_size = vec_of_vecs.iter().flatten().count();
+            assert!(overall_size <= size);
+        })
+    }
+}
