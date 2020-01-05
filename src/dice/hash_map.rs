@@ -28,6 +28,12 @@ where
     }
 }
 
+impl HashMapBuilder<Prng> {
+    fn die() -> impl Die<Self> {
+        dice::prng_fork().map(Self::with_hasher)
+    }
+}
+
 impl<K, V, S> CollectionBuilder<(K, V), HashMap<K, V, S>> for HashMapBuilder<S>
 where
     K: Eq + Hash,
@@ -52,6 +58,28 @@ where
 /// # Panics
 ///
 /// Panics if the range is empty.
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// let mut prng = Prng::from_seed(1337.into());
+/// let fate = &mut Fate::new(&mut prng, 100.into());
+/// let elem_die = dice::zip_2(dice::u8(..), dice::char());
+///
+/// let map = dice::hash_map(&elem_die, ..).roll(fate);
+/// assert!(map.len() <= 100);
+///
+/// let map = dice::hash_map(&elem_die, ..=73).roll(fate);
+/// assert!(map.len() <= 73);
+///
+/// let map = dice::hash_map(&elem_die, 17..).roll(fate);
+/// assert!(map.len() >= 17);
+///
+/// let map = dice::hash_map(&elem_die, 42).roll(fate);
+/// assert!(map.len() <= 42);
+/// ```
 pub fn hash_map<K, V>(
     elem_die: impl Die<(K, V)>,
     tries_range: impl SizeRange,
@@ -59,6 +87,5 @@ pub fn hash_map<K, V>(
 where
     K: Eq + Hash,
 {
-    let builder_die = dice::prng_fork().map(HashMapBuilder::with_hasher);
-    dice::collection(builder_die, elem_die, tries_range)
+    dice::collection(HashMapBuilder::die(), elem_die, tries_range)
 }

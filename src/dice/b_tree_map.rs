@@ -9,7 +9,16 @@ use crate::prelude::dice::*;
 /// [`dice::collection`]: fn.collection.html
 pub struct BTreeMapBuilder;
 
-impl<K: Ord, V> CollectionBuilder<(K, V), BTreeMap<K, V>> for BTreeMapBuilder {
+impl BTreeMapBuilder {
+    fn die() -> impl Die<Self> {
+        dice::from_fn(|_fate| Self)
+    }
+}
+
+impl<K, V> CollectionBuilder<(K, V), BTreeMap<K, V>> for BTreeMapBuilder
+where
+    K: Ord,
+{
     fn build(self, elems: impl ExactSizeIterator<Item = (K, V)>) -> BTreeMap<K, V> {
         let mut map = BTreeMap::new();
         map.extend(elems);
@@ -26,10 +35,32 @@ impl<K: Ord, V> CollectionBuilder<(K, V), BTreeMap<K, V>> for BTreeMapBuilder {
 /// # Panics
 ///
 /// Panics if the range is empty.
-pub fn b_tree_map<K: Ord, V>(
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// let mut prng = Prng::from_seed(1337.into());
+/// let fate = &mut Fate::new(&mut prng, 100.into());
+/// let elem_die = dice::zip_2(dice::u8(..), dice::char());
+///
+/// let map = dice::b_tree_map(&elem_die, ..).roll(fate);
+/// assert!(map.len() <= 100);
+///
+/// let map = dice::b_tree_map(&elem_die, ..=73).roll(fate);
+/// assert!(map.len() <= 73);
+///
+/// let map = dice::b_tree_map(&elem_die, 17..).roll(fate);
+/// assert!(map.len() >= 17);
+///
+/// let map = dice::b_tree_map(&elem_die, 42).roll(fate);
+/// assert!(map.len() <= 42);
+/// ```
+pub fn b_tree_map<K, V>(
     elem_die: impl Die<(K, V)>,
     tries_range: impl SizeRange,
-) -> impl Die<BTreeMap<K, V>> {
-    let builder_die = dice::from_fn(|_fate| BTreeMapBuilder);
-    dice::collection(builder_die, elem_die, tries_range)
+) -> impl Die<BTreeMap<K, V>>
+where
+    K: Ord,
+{
+    dice::collection(BTreeMapBuilder::die(), elem_die, tries_range)
 }

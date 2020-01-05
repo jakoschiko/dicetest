@@ -28,6 +28,12 @@ where
     }
 }
 
+impl HashSetBuilder<Prng> {
+    fn die() -> impl Die<Self> {
+        dice::prng_fork().map(Self::with_hasher)
+    }
+}
+
 impl<T, S> CollectionBuilder<T, HashSet<T, S>> for HashSetBuilder<S>
 where
     T: Eq + Hash,
@@ -52,10 +58,31 @@ where
 /// # Panics
 ///
 /// Panics if the range is empty.
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// let mut prng = Prng::from_seed(1337.into());
+/// let fate = &mut Fate::new(&mut prng, 100.into());
+/// let elem_die = dice::u8(..);
+///
+/// let set = dice::hash_set(&elem_die, ..).roll(fate);
+/// assert!(set.len() <= 100);
+///
+/// let set = dice::hash_set(&elem_die, ..=73).roll(fate);
+/// assert!(set.len() <= 73);
+///
+/// let set = dice::hash_set(&elem_die, 17..).roll(fate);
+/// assert!(set.len() >= 17);
+///
+/// let set = dice::hash_set(&elem_die, 42).roll(fate);
+/// assert!(set.len() <= 42);
+/// ```
 pub fn hash_set<T>(elem_die: impl Die<T>, tries_range: impl SizeRange) -> impl Die<HashSet<T, Prng>>
 where
     T: Eq + Hash,
 {
-    let builder_die = dice::prng_fork().map(HashSetBuilder::with_hasher);
-    dice::collection(builder_die, elem_die, tries_range)
+    dice::collection(HashSetBuilder::die(), elem_die, tries_range)
 }

@@ -7,6 +7,12 @@ use crate::prelude::dice::*;
 /// [`dice::collection`]: fn.collection.html
 pub struct VecBuilder;
 
+impl VecBuilder {
+    fn die() -> impl Die<Self> {
+        dice::from_fn(|_fate| Self)
+    }
+}
+
 impl<T> CollectionBuilder<T, Vec<T>> for VecBuilder {
     fn build(self, elems: impl ExactSizeIterator<Item = T>) -> Vec<T> {
         let mut vec = Vec::with_capacity(elems.len());
@@ -24,9 +30,30 @@ impl<T> CollectionBuilder<T, Vec<T>> for VecBuilder {
 /// # Panics
 ///
 /// Panics if the range is empty.
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// let mut prng = Prng::from_seed(1337.into());
+/// let fate = &mut Fate::new(&mut prng, 100.into());
+/// let elem_die = dice::u8(..);
+///
+/// let vec = dice::vec(&elem_die, ..).roll(fate);
+/// assert!(vec.len() <= 100);
+///
+/// let vec = dice::vec(&elem_die, ..=73).roll(fate);
+/// assert!(vec.len() <= 73);
+///
+/// let vec = dice::vec(&elem_die, 17..).roll(fate);
+/// assert!(vec.len() >= 17);
+///
+/// let vec = dice::vec(&elem_die, 42).roll(fate);
+/// assert!(vec.len() == 42);
+/// ```
 pub fn vec<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<Vec<T>> {
-    let builder_die = dice::from_fn(|_fate| VecBuilder);
-    dice::collection(builder_die, elem_die, len_range)
+    dice::collection(VecBuilder::die(), elem_die, len_range)
 }
 
 #[cfg(test)]

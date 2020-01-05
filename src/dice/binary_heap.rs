@@ -9,7 +9,16 @@ use crate::prelude::dice::*;
 /// [`dice::collection`]: fn.collection.html
 pub struct BinaryHeapBuilder;
 
-impl<T: Ord> CollectionBuilder<T, BinaryHeap<T>> for BinaryHeapBuilder {
+impl BinaryHeapBuilder {
+    fn die() -> impl Die<Self> {
+        dice::from_fn(|_fate| Self)
+    }
+}
+
+impl<T> CollectionBuilder<T, BinaryHeap<T>> for BinaryHeapBuilder
+where
+    T: Ord,
+{
     fn build(self, elems: impl ExactSizeIterator<Item = T>) -> BinaryHeap<T> {
         let mut heap = BinaryHeap::with_capacity(elems.len());
         heap.extend(elems);
@@ -26,10 +35,31 @@ impl<T: Ord> CollectionBuilder<T, BinaryHeap<T>> for BinaryHeapBuilder {
 /// # Panics
 ///
 /// Panics if the range is empty.
-pub fn binary_heap<T: Ord>(
-    elem_die: impl Die<T>,
-    len_range: impl SizeRange,
-) -> impl Die<BinaryHeap<T>> {
-    let builder_die = dice::from_fn(|_fate| BinaryHeapBuilder);
-    dice::collection(builder_die, elem_die, len_range)
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// let mut prng = Prng::from_seed(1337.into());
+/// let fate = &mut Fate::new(&mut prng, 100.into());
+/// let elem_die = dice::u8(..);
+///
+/// let heap = dice::binary_heap(&elem_die, ..).roll(fate);
+/// assert!(heap.len() <= 100);
+///
+/// let heap = dice::binary_heap(&elem_die, ..=73).roll(fate);
+/// assert!(heap.len() <= 73);
+///
+/// let heap = dice::binary_heap(&elem_die, 17..).roll(fate);
+/// assert!(heap.len() >= 17);
+///
+/// let heap = dice::binary_heap(&elem_die, 42).roll(fate);
+/// assert!(heap.len() == 42);
+/// ```
+pub fn binary_heap<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<BinaryHeap<T>>
+where
+    T: Ord,
+{
+    dice::collection(BinaryHeapBuilder::die(), elem_die, len_range)
 }

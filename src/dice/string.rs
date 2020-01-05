@@ -7,6 +7,12 @@ use crate::prelude::dice::*;
 /// [`dice::collection`]: fn.collection.html
 pub struct StringBuilder;
 
+impl StringBuilder {
+    fn die() -> impl Die<Self> {
+        dice::from_fn(|_fate| Self)
+    }
+}
+
 impl CollectionBuilder<char, String> for StringBuilder {
     fn build(self, elems: impl ExactSizeIterator<Item = char>) -> String {
         let mut string = String::with_capacity(elems.len());
@@ -17,7 +23,7 @@ impl CollectionBuilder<char, String> for StringBuilder {
 
 /// Generates a [`String`] that contains the specified [`char`]s.
 ///
-/// The range specifies the length of the [`String`].
+/// The range specifies the number of [`char`]s in the [`String`].
 ///
 /// [`String`]: https://doc.rust-lang.org/std/string/struct.String.html
 /// [`char`]: https://doc.rust-lang.org/std/primitive.char.html
@@ -25,7 +31,28 @@ impl CollectionBuilder<char, String> for StringBuilder {
 /// # Panics
 ///
 /// Panics if the range is empty.
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::prelude::dice::*;
+///
+/// let mut prng = Prng::from_seed(1337.into());
+/// let fate = &mut Fate::new(&mut prng, 100.into());
+/// let char_die = dice::char();
+///
+/// let string = dice::string(&char_die, ..).roll(fate);
+/// assert!(string.chars().count() <= 100);
+///
+/// let string = dice::string(&char_die, ..=73).roll(fate);
+/// assert!(string.chars().count() <= 73);
+///
+/// let string = dice::string(&char_die, 17..).roll(fate);
+/// assert!(string.chars().count() >= 17);
+///
+/// let string = dice::string(&char_die, 42).roll(fate);
+/// assert!(string.chars().count() == 42);
+/// ```
 pub fn string(char_die: impl Die<char>, len_range: impl SizeRange) -> impl Die<String> {
-    let builder_die = dice::from_fn(|_fate| StringBuilder);
-    dice::collection(builder_die, char_die, len_range)
+    dice::collection(StringBuilder::die(), char_die, len_range)
 }
