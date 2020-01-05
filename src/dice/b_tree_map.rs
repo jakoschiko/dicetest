@@ -20,9 +20,7 @@ where
     K: Ord,
 {
     fn build(self, elems: impl ExactSizeIterator<Item = (K, V)>) -> BTreeMap<K, V> {
-        let mut map = BTreeMap::new();
-        map.extend(elems);
-        map
+        elems.collect()
     }
 }
 

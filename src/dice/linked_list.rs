@@ -17,9 +17,7 @@ impl LinkedListBuilder {
 
 impl<T> CollectionBuilder<T, LinkedList<T>> for LinkedListBuilder {
     fn build(self, elems: impl ExactSizeIterator<Item = T>) -> LinkedList<T> {
-        let mut vec = LinkedList::new();
-        vec.extend(elems);
-        vec
+        elems.collect()
     }
 }
 

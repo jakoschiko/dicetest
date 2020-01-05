@@ -20,9 +20,7 @@ where
     T: Ord,
 {
     fn build(self, elems: impl ExactSizeIterator<Item = T>) -> BTreeSet<T> {
-        let mut set = BTreeSet::new();
-        set.extend(elems);
-        set
+        elems.collect()
     }
 }
 
