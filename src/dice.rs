@@ -39,6 +39,9 @@ pub use result::*;
 mod size;
 pub use size::*;
 
+mod terms_of;
+pub use terms_of::*;
+
 mod collection;
 pub use collection::*;
 
