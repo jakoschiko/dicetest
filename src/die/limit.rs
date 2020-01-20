@@ -8,6 +8,8 @@ use std::convert::TryFrom;
 ///
 /// This parameter exists because the hardware of the testing machine is limited. For example
 /// a very big list could not fit in the memory or its generation could take too much time.
+/// With this parameter you can implement a generator for lists of arbitrary size and its
+/// user can choose an upper limit depending on his hardware.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Limit(pub u64);
 
