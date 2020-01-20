@@ -1,6 +1,7 @@
 use std::marker::PhantomData;
 
-use crate::die::{Die, DieOnce, Fate};
+use crate::die::{Die, DieOnce, Limit};
+use crate::prand::Prng;
 
 /// Adapter for `DieOnce::flat_map_once` and `Die::flat_map`.
 pub struct FlatMapDie<T, U, TD, UD, F> {
@@ -29,13 +30,13 @@ where
     UD: DieOnce<U>,
     F: FnOnce(T) -> UD,
 {
-    fn roll_once(self, fate: &mut Fate) -> U {
+    fn roll_once(self, prng: &mut Prng, limit: Limit) -> U {
         let t_die = self.t_die;
         let f = self.f;
 
-        let t = t_die.roll_once(fate);
+        let t = t_die.roll_once(prng, limit);
         let gu = f(t);
-        gu.roll_once(fate)
+        gu.roll_once(prng, limit)
     }
 }
 
@@ -45,12 +46,12 @@ where
     UD: DieOnce<U>,
     F: Fn(T) -> UD,
 {
-    fn roll(&self, fate: &mut Fate) -> U {
+    fn roll(&self, prng: &mut Prng, limit: Limit) -> U {
         let t_die = &self.t_die;
         let f = &self.f;
 
-        let t = t_die.roll(fate);
+        let t = t_die.roll(prng, limit);
         let gu = f(t);
-        gu.roll_once(fate)
+        gu.roll_once(prng, limit)
     }
 }

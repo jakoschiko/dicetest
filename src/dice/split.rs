@@ -19,8 +19,8 @@ use crate::prelude::dice::*;
 /// ```
 pub fn split_vec<T>(mut vec: Vec<T>) -> impl DieOnce<(Vec<T>, Vec<T>)> {
     let index_die = dice::uni_usize(0..=vec.len());
-    dice::from_fn_once(move |fate| {
-        let at = index_die.roll(fate);
+    dice::from_fn_once(move |mut fate| {
+        let at = fate.roll(index_die);
         let other_vec = vec.split_off(at);
         (vec, other_vec)
     })
@@ -32,9 +32,9 @@ mod tests {
 
     #[test]
     fn split_vec_result_can_be_merged_to_orig_vec() {
-        dicetest!(|fate| {
-            let orig_vec = dice::vec(dice::u8(..), ..).roll(fate);
-            let (prefix, mut suffix) = dice::split_vec(orig_vec.clone()).roll_once(fate);
+        dicetest!(|mut fate| {
+            let orig_vec = fate.roll(dice::vec(dice::u8(..), ..));
+            let (prefix, mut suffix) = fate.roll(dice::split_vec(orig_vec.clone()));
 
             let mut merged = prefix;
             merged.append(&mut suffix);
@@ -45,11 +45,11 @@ mod tests {
 
     #[test]
     fn split_vec_calc_stats() {
-        dicetest!(Config::default().with_passes(0), |fate| {
+        dicetest!(Config::default().with_passes(0), |mut fate| {
             stat!(
                 "split_vec(vec![1, 2, 3, 4, 5])",
                 "{:?}",
-                dice::split_vec(vec![1, 2, 3, 4, 5]).roll_once(fate),
+                fate.roll(dice::split_vec(vec![1, 2, 3, 4, 5])),
             );
         })
     }

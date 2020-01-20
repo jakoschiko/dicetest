@@ -4,18 +4,20 @@ struct Fun<F>(F);
 
 impl<T, F> DieOnce<T> for Fun<F>
 where
-    F: FnOnce(&mut Fate) -> T,
+    F: FnOnce(Fate) -> T,
 {
-    fn roll_once(self, fate: &mut Fate) -> T {
+    fn roll_once(self, prng: &mut Prng, limit: Limit) -> T {
+        let fate = Fate { prng, limit };
         self.0(fate)
     }
 }
 
 impl<T, F> Die<T> for Fun<F>
 where
-    F: Fn(&mut Fate) -> T,
+    F: Fn(Fate) -> T,
 {
-    fn roll(&self, fate: &mut Fate) -> T {
+    fn roll(&self, prng: &mut Prng, limit: Limit) -> T {
+        let fate = Fate { prng, limit };
         self.0(fate)
     }
 }
@@ -37,7 +39,7 @@ where
 /// ```
 pub fn from_fn_once<T, F>(f: F) -> impl DieOnce<T>
 where
-    F: FnOnce(&mut Fate) -> T,
+    F: FnOnce(Fate) -> T,
 {
     Fun(f)
 }
@@ -60,7 +62,7 @@ where
 /// ```
 pub fn from_fn<T, F>(f: F) -> impl Die<T>
 where
-    F: Fn(&mut Fate) -> T,
+    F: Fn(Fate) -> T,
 {
     Fun(f)
 }
@@ -84,5 +86,5 @@ where
     TD: DieOnce<T>,
     F: Fn() -> TD,
 {
-    from_fn(move |fate| f().roll_once(fate))
+    from_fn(move |mut fate| fate.roll(f()))
 }

@@ -1,4 +1,5 @@
-use crate::die::{Die, DieOnce, Fate};
+use crate::die::{Die, DieOnce, Limit};
+use crate::prand::Prng;
 
 /// Adapter for `Die::boxed`.
 pub struct BoxedDie<'a, T> {
@@ -16,13 +17,13 @@ impl<'a, T> BoxedDie<'a, T> {
 }
 
 impl<'a, T> Die<T> for BoxedDie<'a, T> {
-    fn roll(&self, fate: &mut Fate) -> T {
-        self.die.roll(fate)
+    fn roll(&self, prng: &mut Prng, limit: Limit) -> T {
+        self.die.roll(prng, limit)
     }
 }
 
 impl<'a, T> DieOnce<T> for BoxedDie<'a, T> {
-    fn roll_once(self, fate: &mut Fate) -> T {
-        self.roll(fate)
+    fn roll_once(self, prng: &mut Prng, limit: Limit) -> T {
+        self.roll(prng, limit)
     }
 }

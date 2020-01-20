@@ -1,6 +1,7 @@
 use std::marker::PhantomData;
 
-use crate::die::{Die, DieOnce, Fate};
+use crate::die::{Die, DieOnce, Limit};
+use crate::prand::Prng;
 
 /// Adapter for `DieOnce::map_once` and `Die::map`.
 pub struct MapDie<T, U, D, F> {
@@ -26,11 +27,11 @@ where
     D: DieOnce<T>,
     F: FnOnce(T) -> U,
 {
-    fn roll_once(self, fate: &mut Fate) -> U {
+    fn roll_once(self, prng: &mut Prng, limit: Limit) -> U {
         let d = self.d;
         let f = self.f;
 
-        let t = d.roll_once(fate);
+        let t = d.roll_once(prng, limit);
         f(t)
     }
 }
@@ -40,11 +41,11 @@ where
     D: Die<T>,
     F: Fn(T) -> U,
 {
-    fn roll(&self, fate: &mut Fate) -> U {
+    fn roll(&self, prng: &mut Prng, limit: Limit) -> U {
         let d = &self.d;
         let f = &self.f;
 
-        let t = d.roll(fate);
+        let t = d.roll(prng, limit);
         f(t)
     }
 }

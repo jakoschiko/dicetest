@@ -36,20 +36,22 @@ impl<T> CollectionBuilder<T, LinkedList<T>> for LinkedListBuilder {
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let mut prng = Prng::from_seed(1337.into());
-/// let fate = &mut Fate::new(&mut prng, 100.into());
+/// let mut fate = Fate {
+///     prng: &mut Prng::from_seed(1337.into()),
+///     limit: 100.into(),
+/// };
 /// let elem_die = dice::u8(..);
 ///
-/// let list = dice::linked_list(&elem_die, ..).roll(fate);
+/// let list = fate.roll(dice::linked_list(&elem_die, ..));
 /// assert!(list.len() <= 100);
 ///
-/// let list = dice::linked_list(&elem_die, ..=73).roll(fate);
+/// let list = fate.roll(dice::linked_list(&elem_die, ..=73));
 /// assert!(list.len() <= 73);
 ///
-/// let list = dice::linked_list(&elem_die, 17..).roll(fate);
+/// let list = fate.roll(dice::linked_list(&elem_die, 17..));
 /// assert!(list.len() >= 17);
 ///
-/// let list = dice::linked_list(&elem_die, 42).roll(fate);
+/// let list = fate.roll(dice::linked_list(&elem_die, 42));
 /// assert!(list.len() == 42);
 /// ```
 pub fn linked_list<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<LinkedList<T>> {
@@ -72,13 +74,15 @@ pub fn linked_list<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl 
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let mut prng = Prng::from_seed(1337.into());
-/// let fate = &mut Fate::new(&mut prng, 100.into());
+/// let mut fate = Fate {
+///     prng: &mut Prng::from_seed(1337.into()),
+///     limit: 100.into(),
+/// };
 /// let elem_die = dice::u8(..);
 /// let list_die = dice::linked_list(elem_die, ..);
 /// let list_of_lists_die = dice::outer_linked_list(list_die, ..);
 ///
-/// let list_of_lists = list_of_lists_die.roll(fate);
+/// let list_of_lists = fate.roll(list_of_lists_die);
 /// assert!(list_of_lists.iter().flatten().count() <= 100);
 /// ```
 pub fn outer_linked_list<T>(

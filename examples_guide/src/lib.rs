@@ -16,7 +16,7 @@ mod section_pseudorandomness {
 
     #[test]
     fn prng() {
-        use dicetest::prand::*;
+        use dicetest::prand::{Prng, Seed};
 
         fn print_random_values(mut prng: Prng) {
             for _ in 0..3 {
@@ -40,7 +40,11 @@ mod section_pseudorandomness {
 mod section_dice {
     #[test]
     fn die_once() {
+        use dicetest::die::Limit;
         use dicetest::prelude::dice::*;
+
+        let mut prng = Prng::from_seed(0x5EED.into());
+        let limit = Limit::default();
 
         let xx = "xx".to_string();
         let yy = "yy".to_string();
@@ -49,12 +53,17 @@ mod section_dice {
         // It chooses one of the `String`s without cloning them.
         let xx_or_yy_die = dice::one_of_2_once(xx, yy);
 
-        println!("{:?}", xx_or_yy_die.sample_once());
+        println!("{:?}", xx_or_yy_die.roll_once(&mut prng, limit));
+        // Output: "yy"
     }
 
     #[test]
     fn die() {
+        use dicetest::die::Limit;
         use dicetest::prelude::dice::*;
+
+        let mut prng = Prng::from_seed(0x5EED.into());
+        let limit = Limit::default();
 
         let xx = "xx".to_string();
         let yy = "yy".to_string();
@@ -67,8 +76,13 @@ mod section_dice {
         let three_xx_or_yy_die = dice::array_3(xx_or_yy_die);
 
         for _ in 0..4 {
-            println!("{:?}", three_xx_or_yy_die.sample());
+            println!("{:?}", three_xx_or_yy_die.roll(&mut prng, limit));
         }
+        // Output:
+        // ["xx", "yy", "xx"]
+        // ["yy", "yy", "xx"]
+        // ["yy", "xx", "xx"]
+        // ["yy", "yy", "xx"]
     }
 
     #[test]
@@ -83,7 +97,7 @@ mod section_dice {
             dice::weighted_one_of_6::<u8>((1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (2, 6));
 
         // Generates the result of the function.
-        let die_from_fn = dice::from_fn(|_fate| 42);
+        let die_from_fn = dice::from_fn(|_| 42);
 
         // Generates always the same `String` by cloning it.
         let foo_die = dice::just("foo".to_string());
@@ -112,25 +126,36 @@ mod section_dice {
     }
 
     #[test]
-    fn fate() {
+    fn limit() {
+        use dicetest::die::Limit;
         use dicetest::prelude::dice::*;
 
-        // The generator is allowed to mutate this `Prng`.
-        let mut prng: Prng = Prng::from_seed(42.into());
-        // But the generator cannot mutate this `Limit`.
-        let limit: Limit = 5.into();
-
-        let fate: &mut Fate = &mut Fate::new(&mut prng, limit);
+        let mut prng = Prng::from_seed(0x5EED.into());
+        let limit = Limit(5);
 
         // Generates a `Vec` with an arbitrary length.
         let vec_die = dice::vec(dice::u8(..), ..);
 
         // Although `vec_die` can generate a `Vec` with arbitrary length,
-        // the `Limit` is used as an upper limit.
-        let vec = vec_die.roll(fate);
+        // the actual length is bounded by `Limit`.
+        let vec = vec_die.roll(&mut prng, limit);
 
         println!("{:?}", vec);
-        // Output: [2, 255, 176, 0]
+        // Output: [252, 231, 153, 0]
+    }
+
+    #[test]
+    fn fate() {
+        use dicetest::prelude::dice::*;
+
+        let mut fate = Fate {
+            prng: &mut Prng::from_seed(0x5EED.into()),
+            limit: Default::default(),
+        };
+
+        let x = fate.roll(dice::u8(..));
+        let y = fate.roll(dice::f32(..));
+        let z = fate.roll(dice::char());
     }
 }
 
@@ -161,11 +186,11 @@ mod section_hints {
 
     #[test]
     fn test_foo() {
-        dicetest!(|fate| {
-            let x = dice::u8(1..=5).roll(fate);
+        dicetest!(|mut fate| {
+            let x = fate.roll(dice::u8(1..=5));
             hint_debug!(x);
 
-            let y = dice::u8(1..=3).roll(fate);
+            let y = fate.roll(dice::u8(1..=3));
             if y != x {
                 hint!("took branch if with y = {}", y);
 
@@ -183,11 +208,11 @@ mod section_stats {
 
     #[test]
     fn test_foo() {
-        dicetest!(|fate| {
-            let x = dice::u8(1..=5).roll(fate);
+        dicetest!(|mut fate| {
+            let x = fate.roll(dice::u8(1..=5));
             stat_debug!(x);
 
-            let y = dice::u8(1..=3).roll(fate);
+            let y = fate.roll(dice::u8(1..=3));
             if y != x {
                 stat!("branch", "if with y = {}", y)
             } else {

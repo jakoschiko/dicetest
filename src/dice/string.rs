@@ -37,20 +37,22 @@ impl CollectionBuilder<char, String> for StringBuilder {
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let mut prng = Prng::from_seed(1337.into());
-/// let fate = &mut Fate::new(&mut prng, 100.into());
+/// let mut fate = Fate {
+///     prng: &mut Prng::from_seed(1337.into()),
+///     limit: 100.into(),
+/// };
 /// let char_die = dice::char();
 ///
-/// let string = dice::string(&char_die, ..).roll(fate);
+/// let string = fate.roll(dice::string(&char_die, ..));
 /// assert!(string.chars().count() <= 100);
 ///
-/// let string = dice::string(&char_die, ..=73).roll(fate);
+/// let string = fate.roll(dice::string(&char_die, ..=73));
 /// assert!(string.chars().count() <= 73);
 ///
-/// let string = dice::string(&char_die, 17..).roll(fate);
+/// let string = fate.roll(dice::string(&char_die, 17..));
 /// assert!(string.chars().count() >= 17);
 ///
-/// let string = dice::string(&char_die, 42).roll(fate);
+/// let string = fate.roll(dice::string(&char_die, 42));
 /// assert!(string.chars().count() == 42);
 /// ```
 pub fn string(char_die: impl Die<char>, len_range: impl SizeRange) -> impl Die<String> {

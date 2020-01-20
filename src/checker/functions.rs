@@ -112,7 +112,7 @@ use crate::runner::{run_once, run_repeatedly, Config, Run};
 #[allow(clippy::needless_pass_by_value)]
 pub fn check<T>(config: Config, test: T)
 where
-    T: Fn(&mut Fate) + UnwindSafe + RefUnwindSafe,
+    T: Fn(Fate) + UnwindSafe + RefUnwindSafe,
 {
     let debug_params = env::read_debug(None).unwrap();
 
@@ -156,7 +156,7 @@ where
 /// Depending on the `LogCondition` the test result will be logged to stdout.
 pub fn check_once<T>(log_condition: LogCondition, run: Run, test: T)
 where
-    T: FnOnce(&mut Fate) + UnwindSafe + RefUnwindSafe,
+    T: FnOnce(Fate) + UnwindSafe + RefUnwindSafe,
 {
     let sample = run_once(run, test);
 
@@ -194,7 +194,7 @@ pub fn check_repeatedly<T>(
     config: Config,
     test: T,
 ) where
-    T: Fn(&mut Fate) + UnwindSafe + RefUnwindSafe,
+    T: Fn(Fate) + UnwindSafe + RefUnwindSafe,
 {
     let summary = run_repeatedly(config, test);
 

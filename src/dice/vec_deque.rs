@@ -37,20 +37,22 @@ impl<T> CollectionBuilder<T, VecDeque<T>> for VecDequeBuilder {
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let mut prng = Prng::from_seed(1337.into());
-/// let fate = &mut Fate::new(&mut prng, 100.into());
+/// let mut fate = Fate {
+///     prng: &mut Prng::from_seed(1337.into()),
+///     limit: 100.into(),
+/// };
 /// let elem_die = dice::u8(..);
 ///
-/// let vec = dice::vec_deque(&elem_die, ..).roll(fate);
+/// let vec = fate.roll(dice::vec_deque(&elem_die, ..));
 /// assert!(vec.len() <= 100);
 ///
-/// let vec = dice::vec_deque(&elem_die, ..=73).roll(fate);
+/// let vec = fate.roll(dice::vec_deque(&elem_die, ..=73));
 /// assert!(vec.len() <= 73);
 ///
-/// let vec = dice::vec_deque(&elem_die, 17..).roll(fate);
+/// let vec = fate.roll(dice::vec_deque(&elem_die, 17..));
 /// assert!(vec.len() >= 17);
 ///
-/// let vec = dice::vec_deque(&elem_die, 42).roll(fate);
+/// let vec = fate.roll(dice::vec_deque(&elem_die, 42));
 /// assert!(vec.len() == 42);
 /// ```
 pub fn vec_deque<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<VecDeque<T>> {
@@ -73,13 +75,15 @@ pub fn vec_deque<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Di
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let mut prng = Prng::from_seed(1337.into());
-/// let fate = &mut Fate::new(&mut prng, 100.into());
+/// let mut fate = Fate {
+///     prng: &mut Prng::from_seed(1337.into()),
+///     limit: 100.into(),
+/// };
 /// let elem_die = dice::u8(..);
 /// let vec_die = dice::vec_deque(elem_die, ..);
 /// let vec_of_vecs_die = dice::outer_vec_deque(vec_die, ..);
 ///
-/// let vec_of_vecs = vec_of_vecs_die.roll(fate);
+/// let vec_of_vecs = fate.roll(vec_of_vecs_die);
 /// assert!(vec_of_vecs.iter().flatten().count() <= 100);
 /// ```
 pub fn outer_vec_deque<T>(

@@ -53,23 +53,22 @@ println!("{:?}", Seed::random());
 
 The `Seed` can be used to initialize the [pseudorandom number generator] `Prng`. For each `Seed` the `Prng` provides a different infinite pseudorandom sequence of `u64`s
 ```rust
-use dicetest::prand::*;
+use dicetest::prand::{Prng, Seed};
 
-fn print_numbers(mut prng: Prng) {
+fn print_random_values(mut prng: Prng) {
     for _ in 0..3 {
         print!("{:?}, ", prng.next_number());
     }
     println!("...");
 }
 
-
-print_numbers(Prng::from_seed(Seed(42)));
+print_random_values(Prng::from_seed(Seed(42)));
 // Output: 16628028624323922065, 3476588890713931039, 59688652182557721, ...
-print_numbers(Prng::from_seed(Seed(42)));
+print_random_values(Prng::from_seed(Seed(42)));
 // Output: 16628028624323922065, 3476588890713931039, 59688652182557721, ...
-print_numbers(Prng::from_seed(Seed::random()));
+print_random_values(Prng::from_seed(Seed::random()));
 // Output: 4221507577048064061, 15374206214556255352, 4977687432463843847, ...
-print_numbers(Prng::from_seed(Seed::random()));
+print_random_values(Prng::from_seed(Seed::random()));
 // Output: 11086225885938422405, 9312304973013875005, 1036200222843160301, ...
 ```
 
@@ -78,11 +77,18 @@ print_numbers(Prng::from_seed(Seed::random()));
 
 ## Dice
 
-With `Prng` you can only generate pseudorandom `u64`s. The traits `DieOnce` and `Die` allows to implement generators for any type.
+With `Prng` you can only generate pseudorandom `u64`s. The traits `DieOnce` and `Die` allows to implement generators for any type. You need two parameters for using them:
 
-An implementor of `DieOnce` is a generator that can be used a single time. You can generate a random value with `DieOnce::sample_once` in a quick-and-dirty way:
+* `Prng` provides the pseudorandom `u64`s that the implementor of `DieOnce` or `Die` can use for constructing more complex values. The implementor should only use this as its source of randomness.
+* `Limit` controls the upper size of dynamic data structures. An implementor of `DieOnce` or `Die` is allowed to freely interpret this value.
+
+An implementor of `DieOnce` is a generator that can be used a single time (similar to `FnOnce`).
 ```rust
+use dicetest::die::Limit;
 use dicetest::prelude::dice::*;
+
+let mut prng = Prng::from_seed(0x5EED.into());
+let limit = Limit::default();
 
 let xx = "xx".to_string();
 let yy = "yy".to_string();
@@ -91,32 +97,36 @@ let yy = "yy".to_string();
 // It chooses one of the `String`s without cloning them.
 let xx_or_yy_die = dice::one_of_2_once(xx, yy);
 
-println!("{:?}", xx_or_yy_die.sample_once());
+println!("{:?}", xx_or_yy_die.sample_once(prng, limit));
 // Output: "yy"
 ```
 
-An implementor of `Die` is a generator that can be used infinite times. you can generate a random value with `Die::sample` in a quick-and-dirty way:
+An implementor of `Die` is a generator that can be used infinite times (similar to `Fn`).
 ```rust
+use dicetest::die::Limit;
 use dicetest::prelude::dice::*;
+
+let mut prng = Prng::from_seed(0x5EED.into());
+let limit = Limit::default();
 
 let xx = "xx".to_string();
 let yy = "yy".to_string();
 
 // This generator implements `Die`.
-// It chooses one of the `String`s and clones it.
+// It chooses one of the `String`s by cloning them.
 let xx_or_yy_die = dice::one_of_2(xx, yy);
 
 // This generator uses `xx_or_yy_die` to generate three `String`s at once.
 let three_xx_or_yy_die = dice::array_3(xx_or_yy_die);
 
 for _ in 0..4 {
-    println!("{:?}", three_xx_or_yy_die.sample());
+    println!("{:?}", three_xx_or_yy_die.roll(&mut prng, limit));
 }
 // Output:
+// ["xx", "yy", "xx"]
 // ["yy", "yy", "xx"]
-// ["xx", "xx", "yy"]
-// ["xx", "yy", "yy"]
 // ["yy", "xx", "xx"]
+// ["yy", "yy", "xx"]
 ```
 
 Generators can be easily implemented and composed:
@@ -127,10 +137,11 @@ use dicetest::prelude::dice::*;
 let classic_die = dice::one_of_6::<u8>(1, 2, 3, 4, 5, 6);
 
 // A loaded die. Generates the number 6 more frequently.
-let loaded_die = dice::weighted_one_of_6::<u8>((1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (2, 6));
+let loaded_die =
+    dice::weighted_one_of_6::<u8>((1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (2, 6));
 
 // Generates the result of the function.
-let die_from_fn = dice::from_fn(|_fate| 42);
+let die_from_fn = dice::from_fn(|_| 42);
 
 // Generates always the same `String` by cloning it.
 let foo_die = dice::just("foo".to_string());
@@ -151,44 +162,50 @@ let up_to_ten_bytes_die = dice::vec(dice::u8(..), ..=10);
 struct WrappedByte(u8);
 let wrapped_byte_die = dice::u8(..).map(WrappedByte);
 
-// Generates an arbitrary permutation of `(0..=n)` for an arbitrary `n`.
+// Generates a permutation of `(0..=n)` for an arbitrary `n`.
 let permutation_die = dice::size(0..).flat_map(|n| {
     let vec = (0..=n).collect::<Vec<_>>();
     dice::shuffled_vec(vec)
 });
 ```
 
-Internally a generator uses two parameters:
-
-* `Prng` provides the pseudorandomness. An implementor of `DieOnce` or `Die` should only use this as its source of randomness.
-* `Limit` controls the maximum size of dynamic data structures. An implementor of `DieOnce` or `Die` is allowed to freely interpret this value.
-
-The type `Fate` contains both parameters and forbids the mutation of `Limit`. The methods `DieOnce::roll_once` and `Die::roll` generate pseudorandom values using `&mut Fate`:
+Some generators can produce values of arbitrary size. But because it would be unfeasible to randomly generate a value that does not fit into the memory, the user can control the upper bound with the `Limit` parameter.
 ```rust
+use dicetest::die::Limit;
 use dicetest::prelude::dice::*;
 
-// The generator is allowed to mutate this `Prng`.
-let mut prng: Prng = Prng::from_seed(42.into());
-// But the generator cannot mutate this `Limit`.
-let limit: Limit = 5.into();
-
-let fate: &mut Fate = &mut Fate::new(&mut prng, limit);
+let mut prng = Prng::from_seed(0x5EED.into());
+let limit = Limit(5);
 
 // Generates a `Vec` with an arbitrary length.
 let vec_die = dice::vec(dice::u8(..), ..);
 
 // Although `vec_die` can generate a `Vec` with arbitrary length,
-// the `Limit` is used as an upper limit.
-let vec = vec_die.roll(fate);
+// the actual length is bounded by `Limit`.
+let vec = vec_die.roll(&mut prng, limit);
 
 println!("{:?}", vec);
-// Output: [2, 255, 176, 0]
+// Output: [252, 231, 153, 0]
+```
+
+Because calling `DieOnce::roll_once` and `Die::roll` with two parameters is a little bit clunky, the struct `Fate` exists to allow a more convinient usage.
+```rust
+use dicetest::prelude::dice::*;
+
+let mut fate = Fate {
+    prng: &mut Prng::from_seed(0x5EED.into()),
+    limit: Default::default(),
+};
+
+let x = fate.roll(dice::u8(..));
+let y = fate.roll(dice::f32(..));
+let z = fate.roll(dice::char());
 ```
 
 ## Tests
 
 For writing tests Dicetest provides a checker with the following features:
-* It runs your test with different `Seed`s.
+* It runs your test with different seeds.
 * It logs useful information that helps when debugging your test.
 * It allows configuration via source code or environment variables.
 
@@ -227,11 +244,11 @@ use dicetest::prelude::tests::*;
 
 #[test]
 fn test_foo() {
-    dicetest!(|fate| {
-        let x = dice::u8(1..=5).roll(fate);
+    dicetest!(|mut fate| {
+        let x = fate.roll(dice::u8(1..=5));
         hint_debug!(x);
 
-        let y = dice::u8(1..=3).roll(fate);
+        let y = fate.roll(dice::u8(1..=3));
         if y != x {
             hint!("took branch if with y = {}", y);
 
@@ -272,11 +289,11 @@ use dicetest::prelude::tests::*;
 
 #[test]
 fn test_foo() {
-    dicetest!(|fate| {
-        let x = dice::u8(1..=5).roll(fate);
+    dicetest!(|mut fate| {
+        let x = fate.roll(dice::u8(1..=5));
         stat_debug!(x);
 
-        let y = dice::u8(1..=3).roll(fate);
+        let y = fate.roll(dice::u8(1..=3));
         if y != x {
             stat!("branch", "if with y = {}", y)
         } else {
@@ -291,23 +308,23 @@ Running the test with the environment variables `DICETEST_LOG_CONDITION=always D
 The test withstood 1000 passes.
 
 # Config
-- seed: 12768350974136337758
+- seed: 9664794707732402215
 - start limit: 0
 - end limit: 100
 - passes: 1000
 
 # Stats
 - branch:
-    - 26.90% (269): if with y = 3
-    - 25.40% (254): else
-    - 24.00% (240): if with y = 1
-    - 23.70% (237): if with y = 2
+    - 27.00% (270): if with y = 2
+    - 26.50% (265): if with y = 3
+    - 26.10% (261): if with y = 1
+    - 20.40% (204): else
 - x:
-    - 37.90% (379): 1
-    - 22.30% (223): 2
-    - 20.60% (206): 5
-    - 10.50% (105): 4
-    - 8.70% (87): 3
+    - 28.60% (286): 1
+    - 21.00% (210): 5
+    - 19.70% (197): 2
+    - 15.60% (156): 4
+    - 15.10% (151): 3
 ```
 
 ## Terminal cheat sheet

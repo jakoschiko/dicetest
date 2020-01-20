@@ -24,8 +24,7 @@ where
             let randomness = self.input_codie.coroll(input);
             let mut prng = self.prng;
             prng.reseed(randomness);
-            let mut fate = Fate::new(&mut prng, self.limit);
-            self.output_die.roll_once(&mut fate)
+            self.output_die.roll_once(&mut prng, self.limit)
         }
     }
 }
@@ -40,8 +39,7 @@ where
             let randomness = self.input_codie.coroll(input);
             let mut prng = self.prng.clone();
             prng.reseed(randomness);
-            let mut fate = Fate::new(&mut prng, self.limit);
-            self.output_die.roll(&mut fate)
+            self.output_die.roll(&mut prng, self.limit)
         }
     }
 
@@ -50,8 +48,7 @@ where
             let randomness = self.input_codie.coroll(input);
             let prng = &mut self.prng;
             prng.reseed(randomness);
-            let mut fate = Fate::new(prng, self.limit);
-            self.output_die.roll(&mut fate)
+            self.output_die.roll(prng, self.limit)
         }
     }
 }
@@ -113,7 +110,7 @@ where
         input_codie,
         output_die,
         prng: fate.prng.fork(),
-        limit: fate.limit(),
+        limit: fate.limit,
         _i: PhantomData,
         _o: PhantomData,
     })

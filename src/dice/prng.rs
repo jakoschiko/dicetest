@@ -10,9 +10,12 @@ use crate::prelude::dice::*;
 ///
 /// let mut orig_prng = Prng::from_seed(Seed::random());
 /// let mut prng = orig_prng.clone();
-/// let fate = &mut Fate::new(&mut prng, Limit::default());
+/// let mut fate = Fate {
+///     prng: &mut prng,
+///     limit: Limit::default(),
+/// };
 ///
-/// let next_number = dice::prng_next_number().roll(fate);
+/// let next_number = fate.roll(dice::prng_next_number());
 ///
 /// assert_eq!(next_number, orig_prng.next_number());
 /// ```
@@ -30,9 +33,12 @@ pub fn prng_next_number() -> impl Die<u64> {
 ///
 /// let mut orig_prng = Prng::from_seed(Seed::random());
 /// let mut prng = orig_prng.clone();
-/// let fate = &mut Fate::new(&mut prng, Limit::default());
+/// let mut fate = Fate {
+///     prng: &mut prng,
+///     limit: Limit::default(),
+/// };
 ///
-/// let forked_prng = dice::prng_fork().roll(fate);
+/// let forked_prng = fate.roll(dice::prng_fork());
 ///
 /// assert_eq!(forked_prng, orig_prng.fork());
 /// ```

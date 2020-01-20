@@ -124,13 +124,11 @@ impl SizeRange for RangeToInclusive<usize> {
 pub fn size(range: impl SizeRange) -> impl Die<usize> {
     let (lower, upper_opt) = range.bounds();
 
-    dice::from_fn(move |fate| {
-        let upper = upper_opt.unwrap_or_else(|| {
-            let limit = fate.limit();
-            lower.saturating_add(limit.saturating_to_usize())
-        });
+    dice::from_fn(move |mut fate| {
+        let upper =
+            upper_opt.unwrap_or_else(|| lower.saturating_add(fate.limit.saturating_to_usize()));
 
-        dice::uni_usize(lower..=upper).roll(fate)
+        fate.roll(dice::uni_usize(lower..=upper))
     })
 }
 
@@ -138,11 +136,11 @@ pub fn size(range: impl SizeRange) -> impl Die<usize> {
 mod tests {
     use std::fmt::Debug;
 
-    use crate::die::{Fate, Limit};
+    use crate::die::Fate;
     use crate::prelude::tests::*;
 
     fn range_contains_size<B, R>(
-        fate: &mut Fate,
+        mut fate: Fate,
         range_data_die: impl DieOnce<B>,
         create_range: impl FnOnce(B) -> R,
         is_in_range: impl FnOnce(B, usize) -> bool,
@@ -150,20 +148,18 @@ mod tests {
         B: Copy + Debug,
         R: dice::SizeRange + Debug,
     {
-        let mut prng = dice::prng_fork().roll(fate);
-        let limit = dice::u64(..).roll(fate);
-        let range_data = range_data_die.roll_once(fate);
+        let mut prng = fate.roll(dice::prng_fork());
+        let limit = fate.roll(dice::u64(..)).into();
+        let range_data = fate.roll(range_data_die);
 
         hint_debug!(prng);
         hint_debug!(limit);
         hint_debug!(range_data);
 
-        let mut fate = Fate::new(&mut prng, Limit(limit));
-
         let range = create_range(range_data);
         hint_debug!(range);
 
-        let size = dice::size(range).roll(&mut fate);
+        let size = dice::size(range).roll(&mut prng, limit);
         hint_debug!(size);
 
         assert!(is_in_range(range_data, size));
