@@ -84,11 +84,10 @@ With `Prng` you can only generate pseudorandom `u64`s. The traits `DieOnce` and 
 
 An implementor of `DieOnce` is a generator that can be used a single time (similar to `FnOnce`).
 ```rust
-use dicetest::die::Limit;
 use dicetest::prelude::dice::*;
 
 let mut prng = Prng::from_seed(0x5EED.into());
-let limit = Limit::default();
+let limit = Default::default();
 
 let xx = "xx".to_string();
 let yy = "yy".to_string();
@@ -97,17 +96,16 @@ let yy = "yy".to_string();
 // It chooses one of the `String`s without cloning them.
 let xx_or_yy_die = dice::one_of_2_once(xx, yy);
 
-println!("{:?}", xx_or_yy_die.sample_once(prng, limit));
+println!("{:?}", xx_or_yy_die.roll_once(prng, limit));
 // Output: "yy"
 ```
 
 An implementor of `Die` is a generator that can be used infinite times (similar to `Fn`).
 ```rust
-use dicetest::die::Limit;
 use dicetest::prelude::dice::*;
 
 let mut prng = Prng::from_seed(0x5EED.into());
-let limit = Limit::default();
+let limit = Default::default();
 
 let xx = "xx".to_string();
 let yy = "yy".to_string();
@@ -171,11 +169,10 @@ let permutation_die = dice::size(0..).flat_map(|n| {
 
 Some generators can produce values of arbitrary size. But because it would be unfeasible to randomly generate a value that does not fit into the memory, the user can control the upper bound with the `Limit` parameter.
 ```rust
-use dicetest::die::Limit;
 use dicetest::prelude::dice::*;
 
 let mut prng = Prng::from_seed(0x5EED.into());
-let limit = Limit(5);
+let limit = 5.into();
 
 // Generates a `Vec` with an arbitrary length.
 let vec_die = dice::vec(dice::u8(..), ..);

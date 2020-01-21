@@ -40,11 +40,10 @@ mod section_pseudorandomness {
 mod section_dice {
     #[test]
     fn die_once() {
-        use dicetest::die::Limit;
         use dicetest::prelude::dice::*;
 
         let mut prng = Prng::from_seed(0x5EED.into());
-        let limit = Limit::default();
+        let limit = Default::default();
 
         let xx = "xx".to_string();
         let yy = "yy".to_string();
@@ -59,11 +58,10 @@ mod section_dice {
 
     #[test]
     fn die() {
-        use dicetest::die::Limit;
         use dicetest::prelude::dice::*;
 
         let mut prng = Prng::from_seed(0x5EED.into());
-        let limit = Limit::default();
+        let limit = Default::default();
 
         let xx = "xx".to_string();
         let yy = "yy".to_string();
@@ -127,11 +125,10 @@ mod section_dice {
 
     #[test]
     fn limit() {
-        use dicetest::die::Limit;
         use dicetest::prelude::dice::*;
 
         let mut prng = Prng::from_seed(0x5EED.into());
-        let limit = Limit(5);
+        let limit = 5.into();
 
         // Generates a `Vec` with an arbitrary length.
         let vec_die = dice::vec(dice::u8(..), ..);
