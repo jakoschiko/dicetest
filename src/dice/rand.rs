@@ -7,7 +7,7 @@ use crate::prelude::dice::*;
 /// Only available if the feature `rand` is enabled.
 pub fn from_distribution<T, D>(distribution: D) -> impl Die<T>
 where
-    D: rand_ext::distributions::Distribution<T>,
+    D: rand::distributions::Distribution<T>,
 {
     dice::from_fn(move |fate| distribution.sample(fate.prng))
 }

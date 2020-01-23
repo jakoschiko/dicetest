@@ -13,7 +13,7 @@ edition = "2018"
 [dependencies]
 getrandom = "0.1"
 rand_core = { version = "0.5", optional = true }
-rand_ext = { package = "rand", version = "0.7", optional = true }
+rand = { package = "rand", version = "0.7", optional = true }
 
 [features]
 default = ["hints", "stats"]
@@ -24,8 +24,8 @@ hints = []
 # Enables the stats.
 stats = []
 
-# Enables the support of the `rand` crate.
-rand = ["rand_core", "rand_ext"]
+# Enables the support for the `rand` crate.
+rand_full = ["rand_core", "rand"]
 
 [workspace]
 members = [
