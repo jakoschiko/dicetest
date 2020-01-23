@@ -66,25 +66,3 @@ where
 {
     Fun(f)
 }
-
-/// Helper for implementing a `Die` from a `Fn` that returns a `DieOnce`.
-///
-/// # Examples
-///
-/// ```
-/// use dicetest::prelude::dice::*;
-///
-/// #[derive(Debug, PartialEq, Eq)]
-/// struct CannotBeCloned;
-/// let non_cloning_die = dice::from_die_once_fn(|| dice::just_once(CannotBeCloned));
-/// for _ in 0..10 {
-///     assert_eq!(non_cloning_die.sample(), CannotBeCloned);
-/// }
-/// ```
-pub fn from_die_once_fn<T, TD, F>(f: F) -> impl Die<T>
-where
-    TD: DieOnce<T>,
-    F: Fn() -> TD,
-{
-    from_fn(move |mut fate| fate.roll(f()))
-}
