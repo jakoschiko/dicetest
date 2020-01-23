@@ -148,7 +148,7 @@ mod tests {
         B: Copy + Debug,
         R: dice::SizeRange + Debug,
     {
-        let mut prng = fate.roll(dice::prng_fork());
+        let mut prng = fate.prng.fork();
         let limit = fate.roll(dice::u64(..)).into();
         let range_data = fate.roll(range_data_die);
 

@@ -175,11 +175,9 @@ macro_rules! fn_float {
         /// Generates a uniformly distributed float that lies inside the closed unit interval
         /// `[0, 1]`.
         pub fn $unit_float() -> impl Die<$float> {
-            let numerator_die = dice::prng_next_number().map(|bits| bits as $int);
-
-            dice::from_fn(move |mut fate| {
+            dice::from_fn(move |fate| {
                 const FACTOR: $float = 1.0 / std::$int::MAX as $float;
-                let numerator = fate.roll(&numerator_die);
+                let numerator = fate.prng.next_number() as $int;
                 numerator as $float * FACTOR
             })
         }
@@ -187,11 +185,8 @@ macro_rules! fn_float {
         /// Generates a uniformly distributed float that lies inside the open unit interval
         /// `[0, 1)`.
         pub fn $open_unit_float() -> impl Die<$float> {
-            let numerator_die =
-                dice::prng_next_number().map(|bits| (bits as $int) & $float_util::MAX_ONES);
-
-            dice::from_fn(move |mut fate| {
-                let numerator = fate.roll(&numerator_die);
+            dice::from_fn(move |fate| {
+                let numerator = (fate.prng.next_number() as $int) & $float_util::MAX_ONES;
                 $float_util::open_unit_float(numerator)
             })
         }

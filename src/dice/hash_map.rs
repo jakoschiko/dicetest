@@ -30,7 +30,7 @@ where
 
 impl HashMapBuilder<Prng> {
     fn die() -> impl Die<Self> {
-        dice::prng_fork().map(Self::with_hasher)
+        dice::from_fn(|fate| Self::with_hasher(fate.prng.fork()))
     }
 }
 

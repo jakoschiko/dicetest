@@ -60,8 +60,9 @@ mod tests {
     #[test]
     fn run_code_is_right_inverse_for_from_run_code() {
         dicetest!(|fate| {
-            let run_die = dice::zip_2(dice::prng_fork(), dice::u64(..).map(Limit))
-                .map(|(prng, limit)| Run { prng, limit });
+            let prng_die = dice::from_fn(|fate| fate.prng.fork());
+            let limit_die = dice::u64(..).map(Limit);
+            let run_die = dice::zip_2(prng_die, limit_die).map(|(prng, limit)| Run { prng, limit });
 
             asserts::right_inverse(
                 fate,

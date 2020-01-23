@@ -167,7 +167,7 @@ mod tests {
         dicetest!(|fate| {
             asserts::left_inverse(
                 fate,
-                dice::prng_fork(),
+                dice::from_fn(|fate| fate.prng.fork()),
                 |prng| prng.to_bytes(),
                 Prng::from_bytes,
             );
@@ -189,7 +189,7 @@ mod tests {
     #[test]
     fn reseed_changes_prng() {
         dicetest!(|mut fate| {
-            let prng = fate.roll(dice::prng_fork());
+            let prng = fate.prng.fork();
             let seed = fate.roll(dice::u64(..)).into();
 
             let mut prng_reseeded = prng.clone();

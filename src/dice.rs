@@ -6,9 +6,6 @@ pub use from::*;
 mod just;
 pub use just::*;
 
-mod prng;
-pub use prng::*;
-
 mod zip;
 pub use zip::*;
 
