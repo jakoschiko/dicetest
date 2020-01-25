@@ -4,21 +4,19 @@ struct Fun<F>(F);
 
 impl<T, F> DieOnce<T> for Fun<F>
 where
-    F: FnOnce(Fate) -> T,
+    F: FnOnce(&mut Fate) -> T,
 {
-    fn roll_once(self, prng: &mut Prng, limit: Limit) -> T {
-        let fate = Fate { prng, limit };
-        self.0(fate)
+    fn roll_once(self, fate: &mut Fate) -> T {
+        (self.0)(fate)
     }
 }
 
 impl<T, F> Die<T> for Fun<F>
 where
-    F: Fn(Fate) -> T,
+    F: Fn(&mut Fate) -> T,
 {
-    fn roll(&self, prng: &mut Prng, limit: Limit) -> T {
-        let fate = Fate { prng, limit };
-        self.0(fate)
+    fn roll(&self, fate: &mut Fate) -> T {
+        (self.0)(fate)
     }
 }
 
@@ -29,7 +27,7 @@ where
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let zero_or_one = dice::from_fn_once(|fate| fate.prng.next_number() % 2).sample_once();
+/// let zero_or_one = dice::from_fn_once(|fate| fate.next_number() % 2).sample_once();
 /// assert!(zero_or_one == 0 || zero_or_one == 1);
 ///
 /// #[derive(Debug, PartialEq, Eq)]
@@ -39,7 +37,7 @@ where
 /// ```
 pub fn from_fn_once<T, F>(f: F) -> impl DieOnce<T>
 where
-    F: FnOnce(Fate) -> T,
+    F: FnOnce(&mut Fate) -> T,
 {
     Fun(f)
 }
@@ -51,7 +49,7 @@ where
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let zero_or_one = dice::from_fn(|fate| fate.prng.next_number() % 2).sample();
+/// let zero_or_one = dice::from_fn(|fate| fate.next_number() % 2).sample();
 /// assert!(zero_or_one == 0 || zero_or_one == 1);
 ///
 /// let vec = vec![0, 1, 2];
@@ -62,7 +60,7 @@ where
 /// ```
 pub fn from_fn<T, F>(f: F) -> impl Die<T>
 where
-    F: Fn(Fate) -> T,
+    F: Fn(&mut Fate) -> T,
 {
     Fun(f)
 }

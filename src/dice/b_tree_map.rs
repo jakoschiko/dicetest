@@ -39,23 +39,25 @@ where
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let mut fate = Fate {
-///     prng: &mut Prng::from_seed(1337.into()),
-///     limit: 100.into(),
-/// };
-/// let elem_die = dice::zip_2(dice::u8(..), dice::char());
+/// Fate::run(
+///     &mut Prng::from_seed(0x5EED.into()),
+///     Default::default(),
+///     |fate| {
+///         let elem_die = dice::zip_2(dice::u8(..), dice::char());
 ///
-/// let map = fate.roll(dice::b_tree_map(&elem_die, ..));
-/// assert!(map.len() <= 100);
+///         let map = dice::b_tree_map(&elem_die, ..).roll(fate);
+///         assert!(map.len() <= 100);
 ///
-/// let map = fate.roll(dice::b_tree_map(&elem_die, ..=73));
-/// assert!(map.len() <= 73);
+///         let map = dice::b_tree_map(&elem_die, ..=73).roll(fate);
+///         assert!(map.len() <= 73);
 ///
-/// let map = fate.roll(dice::b_tree_map(&elem_die, 17..));
-/// assert!(map.len() >= 17);
+///         let map = dice::b_tree_map(&elem_die, 17..).roll(fate);
+///         assert!(map.len() >= 17);
 ///
-/// let map = fate.roll(dice::b_tree_map(&elem_die, 42));
-/// assert!(map.len() <= 42);
+///         let map = dice::b_tree_map(&elem_die, 42).roll(fate);
+///         assert!(map.len() <= 42);
+///     }
+/// );
 /// ```
 pub fn b_tree_map<K, V>(
     elem_die: impl Die<(K, V)>,
@@ -83,16 +85,18 @@ where
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let mut fate = Fate {
-///     prng: &mut Prng::from_seed(1337.into()),
-///     limit: 100.into(),
-/// };
-/// let elem_die = dice::char();
-/// let vec_die = dice::zip_2(dice::u8(..), dice::vec(elem_die, ..));
-/// let map_of_vecs_die = dice::outer_b_tree_map(vec_die, ..);
+/// Fate::run(
+///     &mut Prng::from_seed(0x5EED.into()),
+///     Default::default(),
+///     |fate| {
+///         let elem_die = dice::char();
+///         let vec_die = dice::zip_2(dice::u8(..), dice::vec(elem_die, ..));
+///         let map_of_vecs_die = dice::outer_b_tree_map(vec_die, ..);
 ///
-/// let map_of_vecs = fate.roll(map_of_vecs_die);
-/// assert!(map_of_vecs.values().flatten().count() <= 100);
+///         let map_of_vecs = map_of_vecs_die.roll(fate);
+///         assert!(map_of_vecs.values().flatten().count() <= 100);
+///     }
+/// );
 /// ```
 pub fn outer_b_tree_map<K, V>(
     elem_die: impl Die<(K, V)>,

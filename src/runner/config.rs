@@ -7,10 +7,10 @@ pub struct Config {
     /// The initial seed for the pseudorandom value generation. If `None` the runner uses a random
     /// seed.
     pub seed: Option<Seed>,
-    /// The upper size limit of generated dynamic data structures used for the first test run.
+    /// The upper limit for the size of dynamic data structures used for the first test run.
     /// The following test runs use an interpolated limit between `start_limit` and `end_limit`.
     pub start_limit: Limit,
-    /// The upper size limit of generated dynamic data structures used for the last test run.
+    /// The upper limit for the size of dynamic data structures used for the last test run.
     /// The previous test runs use an interpolated limit between `start_limit` and `end_limit`.
     pub end_limit: Limit,
     /// Defines how many times the test needs to run without failing.

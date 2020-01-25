@@ -37,9 +37,9 @@ mod tests {
 
     #[test]
     fn index_of_generates_valid_index() {
-        dicetest!(|mut fate| {
-            let vec = fate.roll(dice::vec(dice::u8(..), 1..));
-            let index = fate.roll(dice::index_of(&vec));
+        dicetest!(|fate| {
+            let vec = dice::vec(dice::u8(..), 1..).roll(fate);
+            let index = dice::index_of(&vec).roll(fate);
 
             assert!(index < vec.len());
         })
@@ -47,11 +47,11 @@ mod tests {
 
     #[test]
     fn index_of_calc_stats() {
-        dicetest!(Config::default().with_passes(0), |mut fate| {
+        dicetest!(Config::default().with_passes(0), |fate| {
             stat!(
                 "index_of(&[1, 2, 3, 4, 5])",
                 "{}",
-                fate.roll(dice::index_of(&[1, 2, 3, 4, 5])),
+                dice::index_of(&[1, 2, 3, 4, 5]).roll(fate),
             );
         })
     }

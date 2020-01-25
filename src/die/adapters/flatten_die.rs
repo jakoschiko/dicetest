@@ -1,7 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::die::{Die, DieOnce, Limit};
-use crate::prand::Prng;
+use crate::die::{Die, DieOnce, Fate};
 
 /// Adapter for `DieOnce::flatten_once` and `Die::flatten`.
 pub struct FlattenDie<T, TD, TDD> {
@@ -25,11 +24,11 @@ where
     TD: DieOnce<T>,
     TDD: DieOnce<TD>,
 {
-    fn roll_once(self, prng: &mut Prng, limit: Limit) -> T {
+    fn roll_once(self, fate: &mut Fate) -> T {
         let td_die = self.td_die;
 
-        let t_die = td_die.roll_once(prng, limit);
-        t_die.roll_once(prng, limit)
+        let t_die = td_die.roll_once(fate);
+        t_die.roll_once(fate)
     }
 }
 
@@ -38,10 +37,10 @@ where
     TD: DieOnce<T>,
     TDD: Die<TD>,
 {
-    fn roll(&self, prng: &mut Prng, limit: Limit) -> T {
+    fn roll(&self, fate: &mut Fate) -> T {
         let td_die = &self.td_die;
 
-        let t_die = td_die.roll(prng, limit);
-        t_die.roll_once(prng, limit)
+        let t_die = td_die.roll(fate);
+        t_die.roll_once(fate)
     }
 }

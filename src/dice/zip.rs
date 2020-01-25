@@ -19,8 +19,8 @@ macro_rules! fn_zip_n {
         pub fn $zip_n_once<$($Ti,)*>(
             $($die_i: impl DieOnce<$Ti>,)*
         ) -> impl DieOnce<($($Ti,)*)> {
-            dice::from_fn_once(move |mut fate| {
-                ($(fate.roll($die_i),)*)
+            dice::from_fn_once(move |fate| {
+                ($($die_i.roll_once(fate),)*)
             })
         }
 
@@ -41,8 +41,8 @@ macro_rules! fn_zip_n {
         pub fn $zip_n<$($Ti,)*>(
             $($die_i: impl Die<$Ti>,)*
         ) -> impl Die<($($Ti,)*)> {
-            dice::from_fn(move |mut fate| {
-                ($(fate.roll(&$die_i),)*)
+            dice::from_fn(move |fate| {
+                ($($die_i.roll(fate),)*)
             })
         }
     )

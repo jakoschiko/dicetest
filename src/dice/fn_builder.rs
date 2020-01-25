@@ -21,10 +21,13 @@ where
 {
     pub fn build_fn_once(self) -> impl FnOnce(I) -> O {
         move |input| {
+            let output_die = self.output_die;
             let randomness = self.input_codie.coroll(input);
             let mut prng = self.prng;
             prng.reseed(randomness);
-            self.output_die.roll_once(&mut prng, self.limit)
+            Fate::run(&mut prng, self.limit, move |fate| {
+                output_die.roll_once(fate)
+            })
         }
     }
 }
@@ -36,19 +39,21 @@ where
 {
     pub fn build_fn(self) -> impl Fn(I) -> O {
         move |input| {
+            let output_die = &self.output_die;
             let randomness = self.input_codie.coroll(input);
             let mut prng = self.prng.clone();
             prng.reseed(randomness);
-            self.output_die.roll(&mut prng, self.limit)
+            Fate::run(&mut prng, self.limit, |fate| output_die.roll(fate))
         }
     }
 
     pub fn build_fn_mut(mut self) -> impl FnMut(I) -> O {
         move |input| {
+            let output_die = &self.output_die;
             let randomness = self.input_codie.coroll(input);
             let prng = &mut self.prng;
             prng.reseed(randomness);
-            self.output_die.roll(prng, self.limit)
+            Fate::run(prng, self.limit, |fate| output_die.roll(fate))
         }
     }
 }
@@ -91,8 +96,8 @@ where
 ///     dice::u8(..),
 /// ).sample_once().build_fn();
 /// let x = f(42);
-/// assert_eq!(x, f(42));
-/// let y = f(71);
+/// let y = f(42);
+/// assert_eq!(x, y);
 /// ```
 ///
 /// [`FnOnce`]: https://doc.rust-lang.org/std/ops/trait.FnOnce.html
@@ -109,8 +114,8 @@ where
     dice::from_fn_once(|fate| FnBuilder {
         input_codie,
         output_die,
-        prng: fate.prng.fork(),
-        limit: fate.limit,
+        prng: fate.fork_prng(),
+        limit: fate.limit(),
         _i: PhantomData,
         _o: PhantomData,
     })

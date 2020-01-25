@@ -1,7 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::die::{DieOnce, Limit};
-use crate::prand::Prng;
+use crate::die::{DieOnce, Fate};
 
 /// Adapter for `DieOnce::boxed_once`.
 pub struct BoxedDieOnce<'a, T>
@@ -32,13 +31,13 @@ impl<'a, T> DieOnce<T> for BoxedDieOnce<'a, T>
 where
     T: 'a,
 {
-    fn roll_once(mut self, prng: &mut Prng, limit: Limit) -> T {
-        self.die.roll_once(prng, limit)
+    fn roll_once(mut self, fate: &mut Fate) -> T {
+        self.die.roll_once(fate)
     }
 }
 
 trait Wrapper<T> {
-    fn roll_once(&mut self, prng: &mut Prng, limit: Limit) -> T;
+    fn roll_once(&mut self, fate: &mut Fate) -> T;
 }
 
 struct DieOnceWrapper<T, D>
@@ -53,8 +52,8 @@ impl<T, D> Wrapper<T> for DieOnceWrapper<T, D>
 where
     D: DieOnce<T>,
 {
-    fn roll_once(&mut self, prng: &mut Prng, limit: Limit) -> T {
+    fn roll_once(&mut self, fate: &mut Fate) -> T {
         let die = self.die.take().unwrap();
-        die.roll_once(prng, limit)
+        die.roll_once(fate)
     }
 }

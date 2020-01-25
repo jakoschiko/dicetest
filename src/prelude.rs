@@ -35,11 +35,11 @@
 //!     use dicetest::prelude::asserts::*;
 //!
 //!     pub fn commutative<T: PartialEq + Clone + std::fmt::Debug>(
-//!         mut fate: Fate,
+//!         fate: &mut Fate,
 //!         elem_die: impl Die<T>,
 //!         binop: impl Fn(T, T) -> T,
 //!     ) {
-//!         let [a, b] = fate.roll(dice::array_2(elem_die));
+//!         let [a, b] = dice::array_2(elem_die).roll(fate);
 //!         hint_debug!(a);
 //!         hint_debug!(b);
 //!         let ab = binop(a.clone(), b.clone());

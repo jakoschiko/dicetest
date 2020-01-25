@@ -49,10 +49,10 @@ macro_rules! fn_terms_of_integer {
                     if terms.len() == 1 {
                         terms[0] = sum;
                     } else {
-                        let left_sum = fate.roll(dice::$uni_integer(0..=sum));
+                        let left_sum = dice::$uni_integer(0..=sum).roll(fate);
                         let right_sum = sum - left_sum;
 
-                        let middle_index = if terms.len() % 2 == 0 || fate.roll(dice::bool()) {
+                        let middle_index = if terms.len() % 2 == 0 || dice::bool().roll(fate) {
                             terms.len() / 2
                         } else {
                             terms.len() / 2 + 1
@@ -96,15 +96,15 @@ mod tests {
         ) => {
             #[test]
             fn $terms_of_integer_returns_the_expected_sum_and_count() {
-                dicetest!(|mut fate| {
-                    let expected_count = fate.roll(dice::size(..));
+                dicetest!(|fate| {
+                    let expected_count = dice::size(..).roll(fate);
                     let exptected_sum = if expected_count == 0 {
                         0
                     } else {
-                        fate.roll(dice::$integer(..))
+                        dice::$integer(..).roll(fate)
                     };
 
-                    let terms = fate.roll(dice::$terms_of_integer(exptected_sum, expected_count));
+                    let terms = dice::$terms_of_integer(exptected_sum, expected_count).roll(fate);
 
                     let actual_sum = terms.iter().sum();
                     let actual_count = terms.len();
@@ -142,10 +142,10 @@ mod tests {
 
     #[test]
     fn terms_of_u64_calc_stats() {
-        dicetest!(Config::default().with_passes(0), |mut fate| {
+        dicetest!(Config::default().with_passes(0), |fate| {
             let sum = 8;
             let count = 4;
-            let terms = fate.roll(dice::terms_of_u64(sum, count));
+            let terms = dice::terms_of_u64(sum, count).roll(fate);
             stat_debug!(terms);
             stat!(
                 "for all term t: t > 0",

@@ -10,20 +10,12 @@ use crate::stats;
 /// Runs the test once with the given configuration.
 pub fn run_once<T>(run: Run, test: T) -> Sample
 where
-    T: FnOnce(Fate) + UnwindSafe,
+    T: FnOnce(&mut Fate) + UnwindSafe,
 {
     let (test_result, hints) = {
         let mut prng = run.prng.clone();
         let limit = run.limit;
-        hints::collect(|| {
-            catch_unwind(move || {
-                let fate = Fate {
-                    prng: &mut prng,
-                    limit,
-                };
-                test(fate)
-            })
-        })
+        hints::collect(|| catch_unwind(move || Fate::run(&mut prng, limit, test)))
     };
 
     let error = test_result.err().map(Error);
@@ -37,7 +29,7 @@ where
 /// has failed.
 pub fn run_repeatedly<T>(config: Config, test: T) -> Summary
 where
-    T: Fn(Fate) + UnwindSafe + RefUnwindSafe,
+    T: Fn(&mut Fate) + UnwindSafe + RefUnwindSafe,
 {
     let seed = config.seed.unwrap_or_else(Seed::random);
 
@@ -75,7 +67,7 @@ fn search_counterexample<T>(
     test: &T,
 ) -> (u64, Option<Counterexample>)
 where
-    T: Fn(Fate) + UnwindSafe + RefUnwindSafe,
+    T: Fn(&mut Fate) + UnwindSafe + RefUnwindSafe,
 {
     let mut passes = 0;
     let mut prng = Prng::from_seed(seed);
@@ -90,13 +82,7 @@ where
         let prng_before_run = prng.clone();
 
         let test_result = catch_unwind(|| {
-            {
-                let fate = Fate {
-                    prng: &mut prng,
-                    limit,
-                };
-                test(fate);
-            }
+            Fate::run(&mut prng, limit, test);
             prng
         });
 
@@ -122,20 +108,12 @@ where
 
 fn rerun_counterexample<T>(counterexample: Counterexample, test: &T) -> Counterexample
 where
-    T: Fn(Fate) + UnwindSafe + RefUnwindSafe,
+    T: Fn(&mut Fate) + UnwindSafe + RefUnwindSafe,
 {
     let (test_result, hints) = {
         let mut prng = counterexample.run.prng.clone();
         let limit = counterexample.run.limit;
-        hints::collect(|| {
-            catch_unwind(move || {
-                let fate = Fate {
-                    prng: &mut prng,
-                    limit,
-                };
-                test(fate)
-            })
-        })
+        hints::collect(|| catch_unwind(move || Fate::run(&mut prng, limit, test)))
     };
 
     match test_result {

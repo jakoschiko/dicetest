@@ -135,10 +135,10 @@ macro_rules! fn_one_of_n {
         pub fn $one_of_die_n_once<T>(
             $($die_i: impl DieOnce<T>,)*
         ) -> impl DieOnce<T> {
-            dice::from_fn_once(move |mut fate| {
-                let choice = fate.prng.next_number() % $n;
+            dice::from_fn_once(move |fate| {
+                let choice = fate.next_number() % $n;
                     match choice {
-                    $($i => fate.roll($die_i),)*
+                    $($i => $die_i.roll_once(fate),)*
                     _ => panic!(),
                 }
             })
@@ -165,11 +165,11 @@ macro_rules! fn_one_of_n {
         ) -> impl DieOnce<T> {
             $(let $weight_i = u64::from($weight_i);)*
             let total_weight = sum!($($weight_i,)*);
-            dice::from_fn_once(move |mut fate| {
-                let choice = fate.prng.next_number() % total_weight;
+            dice::from_fn_once(move |fate| {
+                let choice = fate.next_number() % total_weight;
                 $(
                     if choice < $weight_i {
-                        return fate.roll($die_i);
+                        return $die_i.roll_once(fate);
                     }
                     #[allow(unused_variables)]
                     let choice = choice - $weight_i;
@@ -198,10 +198,10 @@ macro_rules! fn_one_of_n {
         pub fn $one_of_die_n<T>(
             $($die_i: impl Die<T>,)*
         ) -> impl Die<T> {
-            dice::from_fn(move |mut fate| {
-                let choice = fate.prng.next_number() % $n;
+            dice::from_fn(move |fate| {
+                let choice = fate.next_number() % $n;
                 match choice {
-                    $($i => fate.roll(&$die_i),)*
+                    $($i => $die_i.roll(fate),)*
                     _ => panic!(),
                 }
             })
@@ -230,11 +230,11 @@ macro_rules! fn_one_of_n {
         ) -> impl Die<T> {
             $(let $weight_i = u64::from($weight_i);)*
             let total_weight = sum!($($weight_i,)*);
-            dice::from_fn(move |mut fate| {
-                let choice = fate.prng.next_number() % total_weight;
+            dice::from_fn(move |fate| {
+                let choice = fate.next_number() % total_weight;
                 $(
                     if choice < $weight_i {
-                        return fate.roll(&$die_i);
+                        return $die_i.roll(fate);
                     }
                     #[allow(unused_variables)]
                     let choice = choice - $weight_i;
@@ -361,7 +361,7 @@ fn_one_of_n! { 9,
 /// ```
 pub fn one_of_vec_once<T>(mut values: Vec<T>) -> impl DieOnce<T> {
     dice::from_fn_once(move |fate| {
-        let choice = (fate.prng.next_number() as usize) % values.len();
+        let choice = (fate.next_number() as usize) % values.len();
         values.swap_remove(choice)
     })
 }
@@ -386,7 +386,7 @@ where
     T: Clone,
 {
     dice::from_fn(move |fate| {
-        let choice = (fate.prng.next_number() as usize) % values.len();
+        let choice = (fate.next_number() as usize) % values.len();
         values[choice].clone()
     })
 }
@@ -411,7 +411,7 @@ where
     T: Clone,
 {
     dice::from_fn(move |fate| {
-        let choice = (fate.prng.next_number() as usize) % values.len();
+        let choice = (fate.next_number() as usize) % values.len();
         values[choice].clone()
     })
 }

@@ -42,26 +42,17 @@ mod section_dice {
     fn die_once() {
         use dicetest::prelude::dice::*;
 
-        let mut prng = Prng::from_seed(0x5EED.into());
-        let limit = Default::default();
-
         let xx = "xx".to_string();
         let yy = "yy".to_string();
 
         // This generator implements `DieOnce`.
         // It chooses one of the `String`s without cloning them.
         let xx_or_yy_die = dice::one_of_2_once(xx, yy);
-
-        println!("{:?}", xx_or_yy_die.roll_once(&mut prng, limit));
-        // Output: "yy"
     }
 
     #[test]
     fn die() {
         use dicetest::prelude::dice::*;
-
-        let mut prng = Prng::from_seed(0x5EED.into());
-        let limit = Default::default();
 
         let xx = "xx".to_string();
         let yy = "yy".to_string();
@@ -72,15 +63,6 @@ mod section_dice {
 
         // This generator uses `xx_or_yy_die` to generate three `String`s at once.
         let three_xx_or_yy_die = dice::array_3(xx_or_yy_die);
-
-        for _ in 0..4 {
-            println!("{:?}", three_xx_or_yy_die.roll(&mut prng, limit));
-        }
-        // Output:
-        // ["xx", "yy", "xx"]
-        // ["yy", "yy", "xx"]
-        // ["yy", "xx", "xx"]
-        // ["yy", "yy", "xx"]
     }
 
     #[test]
@@ -124,35 +106,26 @@ mod section_dice {
     }
 
     #[test]
-    fn limit() {
-        use dicetest::prelude::dice::*;
-
-        let mut prng = Prng::from_seed(0x5EED.into());
-        let limit = 5.into();
-
-        // Generates a `Vec` with an arbitrary length.
-        let vec_die = dice::vec(dice::u8(..), ..);
-
-        // Although `vec_die` can generate a `Vec` with arbitrary length,
-        // the actual length is bounded by `Limit`.
-        let vec = vec_die.roll(&mut prng, limit);
-
-        println!("{:?}", vec);
-        // Output: [252, 231, 153, 0]
-    }
-
-    #[test]
     fn fate() {
         use dicetest::prelude::dice::*;
 
-        let mut fate = Fate {
-            prng: &mut Prng::from_seed(0x5EED.into()),
-            limit: Default::default(),
-        };
+        // Provides the randomness for the generator and will be mutated when used.
+        let mut prng = Prng::from_seed(0x5EED.into());
+        // Limits the size of dynamic data structures. The generator has only read access.
+        let limit = 5.into();
 
-        let x = fate.roll(dice::u8(..));
-        let y = fate.roll(dice::f32(..));
-        let z = fate.roll(dice::char());
+        // Constructs a `Fate` that is only available inside the closure.
+        Fate::run(&mut prng, limit, |fate| {
+            // Generates a `Vec` with an arbitrary length.
+            let vec_die = dice::vec(dice::u8(..), ..);
+
+            // Although `vec_die` can generate a `Vec` with arbitrary length,
+            // the actual length is limited by `limit`.
+            let vec = vec_die.roll(fate);
+
+            println!("{:?}", vec);
+            // Output: [252, 231, 153, 0]
+        })
     }
 }
 
@@ -183,11 +156,11 @@ mod section_hints {
 
     #[test]
     fn test_foo() {
-        dicetest!(|mut fate| {
-            let x = fate.roll(dice::u8(1..=5));
+        dicetest!(|fate| {
+            let x = dice::u8(1..=5).roll(fate);
             hint_debug!(x);
 
-            let y = fate.roll(dice::u8(1..=3));
+            let y = dice::u8(1..=3).roll(fate);
             if y != x {
                 hint!("took branch if with y = {}", y);
 
@@ -205,11 +178,11 @@ mod section_stats {
 
     #[test]
     fn test_foo() {
-        dicetest!(|mut fate| {
-            let x = fate.roll(dice::u8(1..=5));
+        dicetest!(|fate| {
+            let x = dice::u8(1..=5).roll(fate);
             stat_debug!(x);
 
-            let y = fate.roll(dice::u8(1..=3));
+            let y = dice::u8(1..=3).roll(fate);
             if y != x {
                 stat!("branch", "if with y = {}", y)
             } else {

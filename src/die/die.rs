@@ -1,5 +1,5 @@
 use crate::die::adapters::{ArcDie, BoxedDie, FlatMapDie, FlattenDie, MapDie, RcDie};
-use crate::die::{DieOnce, Limit};
+use crate::die::{DieOnce, Fate, Limit};
 use crate::prand::{Prng, Seed};
 
 /// Trait for generating preudorandom values of type `T`.
@@ -7,14 +7,13 @@ use crate::prand::{Prng, Seed};
 /// The `Die` trait represents a subset of `DieOnce`. It mirrors all methods of `DieOnce` without
 /// the suffix `_once`. These methods must behave in the same way. For example an implementation
 /// of `Die` must produce the same value with its methods `roll` and `roll_once` if they are called
-/// with the same `Prng` and `Limit`.
+/// with the same `Fate`.
 pub trait Die<T>: DieOnce<T> {
     /// Generates a preudorandom value.
     ///
-    /// The `Prng` is the only source of the randomness. Besides that, the generation is
-    /// derterministic. The `Limit` is meant as an upper size of the generated value, though
-    /// it's depends on the implementation how `Limit` is interpreted.
-    fn roll(&self, prng: &mut Prng, limit: Limit) -> T;
+    /// The `Fate` is the only source of the randomness. Besides that, the generation is
+    /// derterministic.
+    fn roll(&self, fate: &mut Fate) -> T;
 
     /// Creates a new `Die` by mapping the generated values of `self`.
     ///
@@ -86,19 +85,18 @@ pub trait Die<T>: DieOnce<T> {
     /// generator.
     fn sample_with_limit(&self, limit: Limit) -> T {
         let mut prng = Prng::from_seed(Seed::random());
-
-        self.roll(&mut prng, limit)
+        Fate::run(&mut prng, limit, |fate| self.roll(fate))
     }
 }
 
 impl<T, TD: Die<T>> DieOnce<T> for &TD {
-    fn roll_once(self, prng: &mut Prng, limit: Limit) -> T {
-        (*self).roll(prng, limit)
+    fn roll_once(self, fate: &mut Fate) -> T {
+        (*self).roll(fate)
     }
 }
 
 impl<T, TD: Die<T>> Die<T> for &TD {
-    fn roll(&self, prng: &mut Prng, limit: Limit) -> T {
-        (**self).roll(prng, limit)
+    fn roll(&self, fate: &mut Fate) -> T {
+        (**self).roll(fate)
     }
 }

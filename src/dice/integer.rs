@@ -176,7 +176,7 @@ macro_rules! fn_integer {
                     // The range contains exactly one value
                     lower
                 } else {
-                    let random_unsigned = $random_uinteger(fate.prng);
+                    let random_unsigned = $random_uinteger(fate);
 
                     if lower == $integer::min_value() && upper == $integer::max_value() {
                         // Full integer range, hence the randomly chosen integer is already inside
@@ -271,19 +271,19 @@ macro_rules! fn_integer {
                 )
             };
 
-            dice::from_fn(move |mut fate| match fate.roll(&maybe_special_value_die) {
+            dice::from_fn(move |fate| match maybe_special_value_die.roll(fate) {
                 Some(special_value) => special_value,
-                None => fate.roll(&regular_value_die),
+                None => regular_value_die.roll(fate),
             })
         }
     };
 }
 
-fn random_u64(prng: &mut Prng) -> u64 {
+fn random_u64(prng: &mut Fate) -> u64 {
     prng.next_number()
 }
 
-fn random_u128(prng: &mut Prng) -> u128 {
+fn random_u128(prng: &mut Fate) -> u128 {
     (u128::from(prng.next_number()) << 64) | u128::from(prng.next_number())
 }
 
@@ -311,7 +311,7 @@ mod tests {
     use crate::prelude::tests::*;
 
     fn range_contains_integer<I, ID, B, BD, R>(
-        mut fate: Fate,
+        fate: &mut Fate,
         range_data_die: BD,
         create_range: fn(B) -> R,
         integer_die: fn(R) -> ID,
@@ -323,13 +323,13 @@ mod tests {
         BD: DieOnce<B>,
         R: dice::IntegerRange<I> + Debug,
     {
-        let range_data = fate.roll(range_data_die);
+        let range_data = range_data_die.roll_once(fate);
         hint_debug!(range_data);
 
         let range = create_range(range_data);
         hint_debug!(range);
 
-        let integer = fate.roll(integer_die(range));
+        let integer = integer_die(range).roll_once(fate);
         hint_debug!(integer);
 
         assert!(is_in_range(range_data, integer));
@@ -536,39 +536,39 @@ mod tests {
 
     #[test]
     fn u8_calc_stats() {
-        dicetest!(Config::default().with_passes(0), |mut fate| {
-            stat!("u8(..)", "{}", fate.roll(dice::u8(..)));
-            stat!("u8(..=9)", "{}", fate.roll(dice::u8(..=9)));
-            stat!("u8(100..=199)", "{}", fate.roll(dice::u8(100..=199)));
+        dicetest!(Config::default().with_passes(0), |fate| {
+            stat!("u8(..)", "{}", dice::u8(..).roll(fate));
+            stat!("u8(..=9)", "{}", dice::u8(..=9).roll(fate));
+            stat!("u8(100..=199)", "{}", dice::u8(100..=199).roll(fate));
         })
     }
 
     #[test]
     fn uni_u8_calc_stats() {
-        dicetest!(Config::default().with_passes(0), |mut fate| {
-            stat!("uni_u8(..)", "{}", fate.roll(dice::uni_u8(..)));
-            stat!("uni_u8(..=9)", "{}", fate.roll(dice::uni_u8(..=9)));
+        dicetest!(Config::default().with_passes(0), |fate| {
+            stat!("uni_u8(..)", "{}", dice::uni_u8(..).roll(fate));
+            stat!("uni_u8(..=9)", "{}", dice::uni_u8(..=9).roll(fate));
             stat!(
                 "uni_u8(100..=199)",
                 "{}",
-                fate.roll(dice::uni_u8(100..=199))
+                dice::uni_u8(100..=199).roll(fate),
             );
         })
     }
 
     #[test]
     fn i8_calc_stats() {
-        dicetest!(Config::default().with_passes(0), |mut fate| {
-            stat!("i8(..)", "{}", fate.roll(dice::i8(..)));
-            stat!("i8(-4..=5)", "{}", fate.roll(dice::i8(-4..=5)));
+        dicetest!(Config::default().with_passes(0), |fate| {
+            stat!("i8(..)", "{}", dice::i8(..).roll(fate));
+            stat!("i8(-4..=5)", "{}", dice::i8(-4..=5).roll(fate));
         })
     }
 
     #[test]
     fn uni_i8_calc_stats() {
-        dicetest!(Config::default().with_passes(0), |mut fate| {
-            stat!("uni_i8(..)", "{}", fate.roll(dice::uni_i8(..)));
-            stat!("uni_i8(-4..=5)", "{}", fate.roll(dice::uni_i8(-4..=5)));
+        dicetest!(Config::default().with_passes(0), |fate| {
+            stat!("uni_i8(..)", "{}", dice::uni_i8(..).roll(fate));
+            stat!("uni_i8(-4..=5)", "{}", dice::uni_i8(-4..=5).roll(fate));
         })
     }
 }
