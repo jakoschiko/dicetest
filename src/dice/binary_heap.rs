@@ -41,25 +41,26 @@ where
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// Fate::run(
-///     &mut Prng::from_seed(0x5EED.into()),
-///     Default::default(),
-///     |fate| {
-///         let elem_die = dice::u8(..);
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
 ///
+/// Fate::run(&mut prng, limit, |fate| {
+///     let elem_die = dice::u8(..);
+///
+///     fate.with_limit(100.into(), |fate| {
 ///         let heap = dice::binary_heap(&elem_die, ..).roll(fate);
 ///         assert!(heap.len() <= 100);
+///     });
 ///
-///         let heap = dice::binary_heap(&elem_die, ..=73).roll(fate);
-///         assert!(heap.len() <= 73);
+///     let heap = dice::binary_heap(&elem_die, ..=73).roll(fate);
+///     assert!(heap.len() <= 73);
 ///
-///         let heap = dice::binary_heap(&elem_die, 17..).roll(fate);
-///         assert!(heap.len() >= 17);
+///     let heap = dice::binary_heap(&elem_die, 17..).roll(fate);
+///     assert!(heap.len() >= 17);
 ///
-///         let heap = dice::binary_heap(&elem_die, 42).roll(fate);
-///         assert!(heap.len() == 42);
-///     }
-/// );
+///     let heap = dice::binary_heap(&elem_die, 42).roll(fate);
+///     assert!(heap.len() == 42);
+/// });
 /// ```
 pub fn binary_heap<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<BinaryHeap<T>>
 where
@@ -84,18 +85,17 @@ where
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// Fate::run(
-///     &mut Prng::from_seed(0x5EED.into()),
-///     Default::default(),
-///     |fate| {
-///         let elem_die = dice::u8(..);
-///         let vec_die = dice::vec(elem_die, ..);
-///         let heap_of_vecs_die = dice::outer_binary_heap(vec_die, ..);
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
 ///
-///         let heap_of_vecs = heap_of_vecs_die.roll(fate);
-///         assert!(heap_of_vecs.iter().flatten().count() <= 100);
-///     }
-/// );
+/// Fate::run(&mut prng, limit, |fate| {
+///     let elem_die = dice::u8(..);
+///     let vec_die = dice::vec(elem_die, ..);
+///     let heap_of_vecs_die = dice::outer_binary_heap(vec_die, ..);
+///
+///     let heap_of_vecs = heap_of_vecs_die.roll(fate);
+///     assert!(heap_of_vecs.iter().flatten().count() <= 100);
+/// });
 /// ```
 pub fn outer_binary_heap<T>(
     elem_die: impl Die<T>,

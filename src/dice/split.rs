@@ -7,15 +7,20 @@ use crate::prelude::dice::*;
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let vec = vec![1, 2, 3, 4];
-/// let (prefix, suffix) = dice::split_vec(vec.clone()).sample_once();
-/// assert!(vec.starts_with(&prefix));
-/// assert!(vec.ends_with(&suffix));
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
 ///
-/// let empty_vec: Vec<u64> = vec![];
-/// let (empty_prefix, empty_suffix) = dice::split_vec(empty_vec).sample_once();
-/// assert!(empty_prefix.is_empty());
-/// assert!(empty_suffix.is_empty());
+/// Fate::run(&mut prng, limit, |fate| {
+///     let vec = vec![1, 2, 3, 4];
+///     let (prefix, suffix) = dice::split_vec(vec.clone()).roll_once(fate);
+///     assert!(vec.starts_with(&prefix));
+///     assert!(vec.ends_with(&suffix));
+///
+///     let empty_vec: Vec<u64> = vec![];
+///     let (empty_prefix, empty_suffix) = dice::split_vec(empty_vec).roll_once(fate);
+///     assert!(empty_prefix.is_empty());
+///     assert!(empty_suffix.is_empty());
+/// });
 /// ```
 pub fn split_vec<T>(mut vec: Vec<T>) -> impl DieOnce<(Vec<T>, Vec<T>)> {
     let index_die = dice::uni_usize(0..=vec.len());

@@ -13,9 +13,14 @@ use crate::prelude::dice::*;
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let array = ['a', 'b', 'c'];
-/// let index = dice::index_of(&array).sample();
-/// assert!(0 <= index && index < array.len());
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
+///
+/// Fate::run(&mut prng, limit, |fate| {
+///     let array = ['a', 'b', 'c'];
+///     let index = dice::index_of(&array).roll(fate);
+///     assert!(0 <= index && index < array.len());
+/// });
 /// ```
 ///
 /// This example panics:

@@ -10,11 +10,16 @@ macro_rules! fn_zip_n {
         /// ```
         /// use dicetest::prelude::dice::*;
         ///
-        /// let zero_die = dice::just_once(0);
-        /// let one_die = dice::just_once(1);
-        /// let (zero, one) = dice::zip_2_once(zero_die, one_die).sample_once();
-        /// assert_eq!(zero, 0);
-        /// assert_eq!(one, 1);
+        /// let mut prng = Prng::from_seed(0x5EED.into());
+        /// let limit = Limit::default();
+        ///
+        /// Fate::run(&mut prng, limit, |fate| {
+        ///     let zero_die = dice::just_once(0);
+        ///     let one_die = dice::just_once(1);
+        ///     let (zero, one) = dice::zip_2_once(zero_die, one_die).roll_once(fate);
+        ///     assert_eq!(zero, 0);
+        ///     assert_eq!(one, 1);
+        /// });
         /// ```
         pub fn $zip_n_once<$($Ti,)*>(
             $($die_i: impl DieOnce<$Ti>,)*
@@ -32,11 +37,16 @@ macro_rules! fn_zip_n {
         /// ```
         /// use dicetest::prelude::dice::*;
         ///
-        /// let zero_die = dice::just(0);
-        /// let one_die = dice::just(1);
-        /// let (zero, one) = dice::zip_2(zero_die, one_die).sample();
-        /// assert_eq!(zero, 0);
-        /// assert_eq!(one, 1);
+        /// let mut prng = Prng::from_seed(0x5EED.into());
+        /// let limit = Limit::default();
+        ///
+        /// Fate::run(&mut prng, limit, |fate| {
+        ///     let zero_die = dice::just(0);
+        ///     let one_die = dice::just(1);
+        ///     let (zero, one) = dice::zip_2(zero_die, one_die).roll(fate);
+        ///     assert_eq!(zero, 0);
+        ///     assert_eq!(one, 1);
+        /// });
         /// ```
         pub fn $zip_n<$($Ti,)*>(
             $($die_i: impl Die<$Ti>,)*

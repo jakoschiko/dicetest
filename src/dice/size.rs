@@ -94,23 +94,32 @@ impl SizeRange for RangeToInclusive<usize> {
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// assert!(dice::size(42).sample() == 42);
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
 ///
-/// let size = dice::size(42..).sample_with_limit(100.into());
-/// assert!(size >= 42 && size <= 142);
+/// Fate::run(&mut prng, limit, |fate| {
+///     assert!(dice::size(42).roll(fate) == 42);
 ///
-/// assert!(dice::size(..=71).sample() <= 71);
+///     fate.with_limit(100.into(), |fate| {
+///         let size = dice::size(42..).roll(fate);
+///         assert!(size >= 42 && size <= 142);
+///     });
 ///
-/// assert!(dice::size(..71).sample() < 71);
+///     assert!(dice::size(..=71).roll(fate) <= 71);
 ///
-/// let size = dice::size(42..=71).sample();
-/// assert!(size >= 42 && size <= 71);
+///     assert!(dice::size(..71).roll(fate) < 71);
 ///
-/// let size = dice::size(42..71).sample();
-/// assert!(size >= 42 && size < 71);
+///     let size = dice::size(42..=71).roll(fate);
+///     assert!(size >= 42 && size <= 71);
 ///
-/// let size = dice::size(..).sample_with_limit(100.into());
-/// assert!(size >= 0 && size <= 100);
+///     let size = dice::size(42..71).roll(fate);
+///     assert!(size >= 42 && size < 71);
+///
+///     fate.with_limit(100.into(), |fate| {
+///         let size = dice::size(..).roll(fate);
+///         assert!(size >= 0 && size <= 100);
+///     });
+/// });
 /// ```
 ///
 /// This example panics:

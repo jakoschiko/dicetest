@@ -129,22 +129,27 @@ macro_rules! fn_integer {
         /// ```
         /// use dicetest::prelude::dice::*;
         ///
-        /// assert!(dice::uni_u8(42).sample() == 42);
+        /// let mut prng = Prng::from_seed(0x5EED.into());
+        /// let limit = Limit::default();
         ///
-        /// assert!(dice::uni_u8(42..).sample() >= 42);
+        /// Fate::run(&mut prng, limit, |fate| {
+        ///     assert!(dice::uni_u8(42).roll(fate) == 42);
         ///
-        /// assert!(dice::uni_u8(..=71).sample() <= 71);
+        ///     assert!(dice::uni_u8(42..).roll(fate) >= 42);
         ///
-        /// assert!(dice::uni_u8(..71).sample() < 71);
+        ///     assert!(dice::uni_u8(..=71).roll(fate) <= 71);
         ///
-        /// let integer = dice::uni_u8(42..=71).sample();
-        /// assert!(integer >= 42 && integer <= 71);
+        ///     assert!(dice::uni_u8(..71).roll(fate) < 71);
         ///
-        /// let integer = dice::uni_u8(42..71).sample();
-        /// assert!(integer >= 42 && integer < 71);
+        ///     let integer = dice::uni_u8(42..=71).roll(fate);
+        ///     assert!(integer >= 42 && integer <= 71);
         ///
-        /// let integer = dice::uni_u8(..).sample();
-        /// assert!(integer >= 0 && integer <= u8::max_value());
+        ///     let integer = dice::uni_u8(42..71).roll(fate);
+        ///     assert!(integer >= 42 && integer < 71);
+        ///
+        ///     let integer = dice::uni_u8(..).roll(fate);
+        ///     assert!(integer >= 0 && integer <= u8::max_value());
+        /// });
         /// ```
         ///
         /// This example panics:
@@ -217,22 +222,27 @@ macro_rules! fn_integer {
         /// ```
         /// use dicetest::prelude::dice::*;
         ///
-        /// assert!(dice::u8(42).sample() == 42);
+        /// let mut prng = Prng::from_seed(0x5EED.into());
+        /// let limit = Limit::default();
         ///
-        /// assert!(dice::u8(42..).sample() >= 42);
+        /// Fate::run(&mut prng, limit, |fate| {
+        ///     assert!(dice::u8(42).roll(fate) == 42);
         ///
-        /// assert!(dice::u8(..=71).sample() <= 71);
+        ///     assert!(dice::u8(42..).roll(fate) >= 42);
         ///
-        /// assert!(dice::u8(..71).sample() < 71);
+        ///     assert!(dice::u8(..=71).roll(fate) <= 71);
         ///
-        /// let integer = dice::u8(42..=71).sample();
-        /// assert!(integer >= 42 && integer <= 71);
+        ///     assert!(dice::u8(..71).roll(fate) < 71);
         ///
-        /// let integer = dice::u8(42..71).sample();
-        /// assert!(integer >= 42 && integer < 71);
+        ///     let integer = dice::u8(42..=71).roll(fate);
+        ///     assert!(integer >= 42 && integer <= 71);
         ///
-        /// let integer = dice::u8(..).sample();
-        /// assert!(integer >= 0 && integer <= u8::max_value());
+        ///     let integer = dice::u8(42..71).roll(fate);
+        ///     assert!(integer >= 42 && integer < 71);
+        ///
+        ///     let integer = dice::u8(..).roll(fate);
+        ///     assert!(integer >= 0 && integer <= u8::max_value());
+        /// });
         /// ```
         ///
         /// This example panics:
@@ -241,7 +251,7 @@ macro_rules! fn_integer {
         /// use dicetest::prelude::dice::*;
         ///
         /// // Oh no, panic!
-        /// let _integer = dice::u8(71..42).sample();
+        /// let _integer = dice::u8(71..42);
         /// ```
         pub fn $integer(range: impl IntegerRange<$integer>) -> impl Die<$integer> {
             let (lower, upper) = range.bounds();

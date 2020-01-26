@@ -36,25 +36,26 @@ impl<T> CollectionBuilder<T, Vec<T>> for VecBuilder {
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// Fate::run(
-///     &mut Prng::from_seed(0x5EED.into()),
-///     Default::default(),
-///     |fate| {
-///         let elem_die = dice::u8(..);
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
 ///
+/// Fate::run(&mut prng, limit, |fate| {
+///     let elem_die = dice::u8(..);
+///
+///     fate.with_limit(100.into(), |fate| {
 ///         let vec = dice::vec(&elem_die, ..).roll(fate);
 ///         assert!(vec.len() <= 100);
+///     });
 ///
-///         let vec = dice::vec(&elem_die, ..=73).roll(fate);
-///         assert!(vec.len() <= 73);
+///     let vec = dice::vec(&elem_die, ..=73).roll(fate);
+///     assert!(vec.len() <= 73);
 ///
-///         let vec = dice::vec(&elem_die, 17..).roll(fate);
-///         assert!(vec.len() >= 17);
+///     let vec = dice::vec(&elem_die, 17..).roll(fate);
+///     assert!(vec.len() >= 17);
 ///
-///         let vec = dice::vec(&elem_die, 42).roll(fate);
-///         assert!(vec.len() == 42);
-///     }
-/// );
+///     let vec = dice::vec(&elem_die, 42).roll(fate);
+///     assert!(vec.len() == 42);
+/// });
 /// ```
 pub fn vec<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<Vec<T>> {
     dice::collection(VecBuilder::die(), elem_die, len_range)
@@ -76,18 +77,17 @@ pub fn vec<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<Vec<
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// Fate::run(
-///     &mut Prng::from_seed(0x5EED.into()),
-///     Default::default(),
-///     |fate| {
-///         let elem_die = dice::u8(..);
-///         let vec_die = dice::vec(elem_die, ..);
-///         let vec_of_vecs_die = dice::outer_vec(vec_die, ..);
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
 ///
-///         let vec_of_vecs = vec_of_vecs_die.roll(fate);
-///         assert!(vec_of_vecs.iter().flatten().count() <= 100);
-///     }
-/// );
+/// Fate::run(&mut prng, limit, |fate| {
+///     let elem_die = dice::u8(..);
+///     let vec_die = dice::vec(elem_die, ..);
+///     let vec_of_vecs_die = dice::outer_vec(vec_die, ..);
+///
+///     let vec_of_vecs = vec_of_vecs_die.roll(fate);
+///     assert!(vec_of_vecs.iter().flatten().count() <= 100);
+/// });
 /// ```
 pub fn outer_vec<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<Vec<T>> {
     dice::outer_collection(VecBuilder::die(), elem_die, len_range)

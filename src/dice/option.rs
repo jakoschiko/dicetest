@@ -8,10 +8,15 @@ use crate::prelude::dice::*;
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let foo_or_bar_die = dice::one_of_2_once("foo", "bar");
-/// let optional_foo_or_bar_die = dice::option_once(foo_or_bar_die);
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
 ///
-/// let foo_or_bar_or_none = optional_foo_or_bar_die.sample_once();
+/// Fate::run(&mut prng, limit, |fate| {
+///     let foo_or_bar_die = dice::one_of_2_once("foo", "bar");
+///     let optional_foo_or_bar_die = dice::option_once(foo_or_bar_die);
+///
+///     let foo_or_bar_or_none = optional_foo_or_bar_die.roll_once(fate);
+/// });
 /// ```
 pub fn option_once<T>(some_die: impl DieOnce<T>) -> impl DieOnce<Option<T>> {
     dice::one_of_die_2_once(dice::just_once(None), some_die.map_once(Some))
@@ -25,10 +30,15 @@ pub fn option_once<T>(some_die: impl DieOnce<T>) -> impl DieOnce<Option<T>> {
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let byte_die = dice::u8(..);
-/// let optional_byte_die = dice::option(byte_die);
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
 ///
-/// let byte_or_none = optional_byte_die.sample();
+/// Fate::run(&mut prng, limit, |fate| {
+///     let byte_die = dice::u8(..);
+///     let optional_byte_die = dice::option(byte_die);
+///
+///     let byte_or_none = optional_byte_die.roll(fate);
+/// });
 /// ```
 pub fn option<T>(some_die: impl Die<T>) -> impl Die<Option<T>> {
     dice::one_of_die_2(dice::from_fn(|_| None), some_die.map(Some))
@@ -42,10 +52,15 @@ pub fn option<T>(some_die: impl Die<T>) -> impl Die<Option<T>> {
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let foo_or_bar_die = dice::one_of_2_once("foo", "bar");
-/// let optional_foo_or_bar_die = dice::weighted_option_once(10, (1, foo_or_bar_die));
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
 ///
-/// let probably_none = optional_foo_or_bar_die.sample_once();
+/// Fate::run(&mut prng, limit, |fate| {
+///     let foo_or_bar_die = dice::one_of_2_once("foo", "bar");
+///     let optional_foo_or_bar_die = dice::weighted_option_once(10, (1, foo_or_bar_die));
+///
+///     let probably_none = optional_foo_or_bar_die.roll_once(fate);
+/// });
 /// ```
 pub fn weighted_option_once<T>(
     none_weight: u32,
@@ -65,10 +80,15 @@ pub fn weighted_option_once<T>(
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let byte_die = dice::u8(..);
-/// let optional_byte_die = dice::weighted_option(10, (1, byte_die));
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
 ///
-/// let probably_none = optional_byte_die.sample();
+/// Fate::run(&mut prng, limit, |fate| {
+///     let byte_die = dice::u8(..);
+///     let optional_byte_die = dice::weighted_option(10, (1, byte_die));
+///
+///     let probably_none = optional_byte_die.roll(fate);
+/// });
 /// ```
 pub fn weighted_option<T>(
     none_weight: u32,

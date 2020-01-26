@@ -1,6 +1,5 @@
 use crate::die::adapters::{ArcDie, BoxedDie, FlatMapDie, FlattenDie, MapDie, RcDie};
-use crate::die::{DieOnce, Fate, Limit};
-use crate::prand::{Prng, Seed};
+use crate::die::{DieOnce, Fate};
 
 /// Trait for generating preudorandom values of type `T`.
 ///
@@ -73,19 +72,6 @@ pub trait Die<T>: DieOnce<T> {
         Self: Sized + 'static,
     {
         ArcDie::new(self)
-    }
-
-    /// Calls `roll` with random `Seed` and default `Limit`. Useful for debugging the
-    /// generator.
-    fn sample(&self) -> T {
-        self.sample_with_limit(Limit::default())
-    }
-
-    /// Calls `roll` with random `Seed` and the given `Limit`. Useful for debugging the
-    /// generator.
-    fn sample_with_limit(&self, limit: Limit) -> T {
-        let mut prng = Prng::from_seed(Seed::random());
-        Fate::run(&mut prng, limit, |fate| self.roll(fate))
     }
 }
 

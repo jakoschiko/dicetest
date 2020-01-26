@@ -68,36 +68,54 @@ where
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let f = dice::fn_builder(
-///     codice::from_default_hasher(),
-///     dice::u8(..),
-/// ).sample_once().build_fn_once();
-/// let x = f(42);
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
+///
+/// Fate::run(&mut prng, limit, |fate| {
+///     let f = dice::fn_builder(
+///         codice::from_default_hasher(),
+///         dice::u8(..),
+///     ).roll_once(fate).build_fn_once();
+///
+///     let x = f(42);
+/// });
 /// ```
 ///
 /// This example generates a [`FnMut`]:
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let mut f = dice::fn_builder(
-///     codice::from_default_hasher(),
-///     dice::u8(..),
-/// ).sample_once().build_fn_mut();
-/// let x = f(42);
-/// let y = f(42);
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
+///
+/// Fate::run(&mut prng, limit, |fate| {
+///     let mut f = dice::fn_builder(
+///         codice::from_default_hasher(),
+///         dice::u8(..),
+///     ).roll_once(fate).build_fn_mut();
+///
+///     let x = f(42);
+///     let y = f(42);
+/// });
 /// ```
 ///
 /// This example generates a [`Fn`]:
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let f = dice::fn_builder(
-///     codice::from_default_hasher(),
-///     dice::u8(..),
-/// ).sample_once().build_fn();
-/// let x = f(42);
-/// let y = f(42);
-/// assert_eq!(x, y);
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
+///
+/// Fate::run(&mut prng, limit, |fate| {
+///     let f = dice::fn_builder(
+///         codice::from_default_hasher(),
+///         dice::u8(..),
+///     ).roll_once(fate).build_fn();
+///
+///     let x = f(42);
+///     let y = f(42);
+///     assert_eq!(x, y);
+/// });
 /// ```
 ///
 /// [`FnOnce`]: https://doc.rust-lang.org/std/ops/trait.FnOnce.html

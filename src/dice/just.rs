@@ -7,11 +7,16 @@ use crate::prelude::dice::*;
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// assert_eq!(dice::just_once(42).sample_once(), 42);
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
 ///
-/// #[derive(Debug, PartialEq, Eq)]
-/// struct CannotBeCloned;
-/// assert_eq!(dice::just_once(CannotBeCloned).sample_once(), CannotBeCloned);
+/// Fate::run(&mut prng, limit, |fate| {
+///     assert_eq!(dice::just_once(42).roll_once(fate), 42);
+///
+///     #[derive(Debug, PartialEq, Eq)]
+///     struct CannotBeCloned;
+///     assert_eq!(dice::just_once(CannotBeCloned).roll_once(fate), CannotBeCloned);
+/// });
 /// ```
 pub fn just_once<T>(value: T) -> impl DieOnce<T> {
     dice::from_fn_once(|_| value)
@@ -22,12 +27,17 @@ pub fn just_once<T>(value: T) -> impl DieOnce<T> {
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// assert_eq!(dice::just(42).sample(), 42);
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
 ///
-/// let cloning_die = dice::just(vec![0, 1, 2]);
-/// for _ in 0..10 {
-///     assert_eq!(cloning_die.sample(), vec![0, 1, 2]);
-/// }
+/// Fate::run(&mut prng, limit, |fate| {
+///     assert_eq!(dice::just(42).roll(fate), 42);
+///
+///     let cloning_die = dice::just(vec![0, 1, 2]);
+///     for _ in 0..10 {
+///         assert_eq!(cloning_die.roll(fate), vec![0, 1, 2]);
+///     }
+/// });
 /// ```
 pub fn just<T>(value: T) -> impl Die<T>
 where

@@ -1,6 +1,5 @@
 use crate::die::adapters::{BoxedDieOnce, FlatMapDie, FlattenDie, MapDie};
-use crate::die::{Fate, Limit};
-use crate::prand::{Prng, Seed};
+use crate::die::Fate;
 
 /// Trait for generating a single preudorandom value of type `T`.
 pub trait DieOnce<T> {
@@ -53,24 +52,5 @@ pub trait DieOnce<T> {
         Self: Sized + 'a,
     {
         BoxedDieOnce::new(self)
-    }
-
-    /// Calls `roll_once` with random `Seed` and default `Limit`. Useful for debugging the
-    /// generator.
-    fn sample_once(self) -> T
-    where
-        Self: Sized,
-    {
-        self.sample_with_limit_once(Limit::default())
-    }
-
-    /// Calls `roll_once` with random `Seed` and the given `Limit`. Useful for debugging
-    /// the generator.
-    fn sample_with_limit_once(self, limit: Limit) -> T
-    where
-        Self: Sized,
-    {
-        let mut prng = Prng::from_seed(Seed::random());
-        Fate::run(&mut prng, limit, |fate| self.roll_once(fate))
     }
 }

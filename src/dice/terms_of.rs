@@ -19,12 +19,17 @@ macro_rules! fn_terms_of_integer {
         /// ```
         /// use dicetest::prelude::dice::*;
         ///
-        /// let sum = 20;
-        /// let count = 10;
-        /// let terms = dice::terms_of_u8(sum, count).sample();
+        /// let mut prng = Prng::from_seed(0x5EED.into());
+        /// let limit = Limit::default();
         ///
-        /// assert_eq!(count, terms.len());
-        /// assert_eq!(sum, terms.into_iter().sum());
+        /// Fate::run(&mut prng, limit, |fate| {
+        ///     let sum = 20;
+        ///     let count = 10;
+        ///     let terms = dice::terms_of_u8(sum, count).roll(fate);
+        ///
+        ///     assert_eq!(count, terms.len());
+        ///     assert_eq!(sum, terms.into_iter().sum());
+        /// });
         /// ```
         ///
         /// This example panics:

@@ -9,9 +9,14 @@ use crate::prelude::dice::*;
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let sorted = vec![1, 2, 3, 4];
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
 ///
-/// let probably_unsorted = dice::shuffled_vec(sorted).sample_once();
+/// Fate::run(&mut prng, limit, |fate| {
+///     let sorted = vec![1, 2, 3, 4];
+///
+///     let probably_unsorted = dice::shuffled_vec(sorted).roll_once(fate);
+/// });
 /// ```
 pub fn shuffled_vec<T>(mut vec: Vec<T>) -> impl DieOnce<Vec<T>> {
     dice::from_fn_once(move |fate| {

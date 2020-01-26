@@ -7,8 +7,13 @@ use crate::prelude::dice::*;
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let true_or_false = dice::bool().sample();
-/// assert!(true_or_false == true || true_or_false == false);
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
+///
+/// Fate::run(&mut prng, limit, |fate| {
+///     let true_or_false = dice::bool().roll(fate);
+///     assert!(true_or_false == true || true_or_false == false);
+/// });
 /// ```
 pub fn bool() -> impl Die<bool> {
     dice::one_of_2(false, true)
@@ -21,8 +26,13 @@ pub fn bool() -> impl Die<bool> {
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// let more_often_true_than_false = dice::weighted_bool(10, 1).sample();
-/// assert!(more_often_true_than_false == true || more_often_true_than_false == false);
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
+///
+/// Fate::run(&mut prng, limit, |fate| {
+///     let more_often_true_than_false = dice::weighted_bool(10, 1).roll(fate);
+///     assert!(more_often_true_than_false == true || more_often_true_than_false == false);
+/// });
 /// ```
 pub fn weighted_bool(false_weight: u32, true_weight: u32) -> impl Die<bool> {
     dice::weighted_one_of_2((false_weight, false), (true_weight, true))

@@ -64,25 +64,26 @@ where
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// Fate::run(
-///     &mut Prng::from_seed(0x5EED.into()),
-///     Default::default(),
-///     |fate| {
-///         let elem_die = dice::u8(..);
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
 ///
+/// Fate::run(&mut prng, limit, |fate| {
+///     let elem_die = dice::u8(..);
+///
+///     fate.with_limit(100.into(), |fate| {
 ///         let set = dice::hash_set(&elem_die, ..).roll(fate);
 ///         assert!(set.len() <= 100);
+///     });
 ///
-///         let set = dice::hash_set(&elem_die, ..=73).roll(fate);
-///         assert!(set.len() <= 73);
+///     let set = dice::hash_set(&elem_die, ..=73).roll(fate);
+///     assert!(set.len() <= 73);
 ///
-///         let set = dice::hash_set(&elem_die, 17..).roll(fate);
-///         assert!(set.len() >= 17);
+///     let set = dice::hash_set(&elem_die, 17..).roll(fate);
+///     assert!(set.len() >= 17);
 ///
-///         let set = dice::hash_set(&elem_die, 42).roll(fate);
-///         assert!(set.len() <= 42);
-///     }
-/// );
+///     let set = dice::hash_set(&elem_die, 42).roll(fate);
+///     assert!(set.len() <= 42);
+/// });
 /// ```
 pub fn hash_set<T>(elem_die: impl Die<T>, tries_range: impl SizeRange) -> impl Die<HashSet<T, Prng>>
 where
@@ -107,18 +108,17 @@ where
 /// ```
 /// use dicetest::prelude::dice::*;
 ///
-/// Fate::run(
-///     &mut Prng::from_seed(0x5EED.into()),
-///     Default::default(),
-///     |fate| {
-///         let elem_die = dice::u8(..);
-///         let vec_die = dice::vec(elem_die, ..);
-///         let set_of_vecs_die = dice::outer_hash_set(vec_die, ..);
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
 ///
-///         let set_of_vecs = set_of_vecs_die.roll(fate);
-///         assert!(set_of_vecs.iter().flatten().count() <= 100);
-///     }
-/// );
+/// Fate::run(&mut prng, limit, |fate| {
+///     let elem_die = dice::u8(..);
+///     let vec_die = dice::vec(elem_die, ..);
+///     let set_of_vecs_die = dice::outer_hash_set(vec_die, ..);
+///
+///     let set_of_vecs = set_of_vecs_die.roll(fate);
+///     assert!(set_of_vecs.iter().flatten().count() <= 100);
+/// });
 /// ```
 pub fn outer_hash_set<T>(
     elem_die: impl Die<T>,
