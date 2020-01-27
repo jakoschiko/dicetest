@@ -101,6 +101,48 @@ macro_rules! fn_float {
         /// # Panics
         ///
         /// Panics if the range or it contains NaN.
+        ///
+        /// # Examples
+        ///
+        /// This example generates floats without panicking:
+        ///
+        /// ```
+        /// use dicetest::prelude::dice::*;
+        /// use std::f32::{INFINITY, NEG_INFINITY};
+        ///
+        /// let mut prng = Prng::from_seed(0x5EED.into());
+        /// let limit = Limit::default();
+        ///
+        /// Fate::run(&mut prng, limit, |fate| {
+        ///     assert!(dice::f32(-273.15).roll(fate) == -273.15);
+        ///
+        ///     assert!(dice::f32(-273.15..).roll(fate) >= -273.15);
+        ///
+        ///     assert!(dice::f32(..=100.0).roll(fate) <= 100.0);
+        ///
+        ///     let float = dice::f32(-273.15..=100.0).roll(fate);
+        ///     assert!(float >= -273.15 && float <= 100.0);
+        ///
+        ///     let float = dice::f32(..).roll(fate);
+        ///     assert!(float.is_infinite() || (float > NEG_INFINITY && float < INFINITY));
+        /// });
+        /// ```
+        ///
+        /// These examples panic:
+        ///
+        /// ```should_panic
+        /// use dicetest::prelude::dice::*;
+        ///
+        /// // Oh no, panic!
+        /// let _float_die = dice::f32(100.0..=-273.15);
+        /// ```
+        ///
+        /// ```should_panic
+        /// use dicetest::prelude::dice::*;
+        ///
+        /// // Oh no, panic!
+        /// let _float_die = dice::f32(std::f32::NAN);
+        /// ```
         pub fn $float(range: impl FloatRange<$float>) -> impl Die<$float> {
             // `FloatRange::bounds` guarantees that `lower <= upper` and both bounds are not NaN.
             let (lower, upper) = range.bounds();
@@ -174,6 +216,20 @@ macro_rules! fn_float {
 
         /// Generates a uniformly distributed float that lies inside the closed unit interval
         /// `[0, 1]`.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use dicetest::prelude::dice::*;
+        ///
+        /// let mut prng = Prng::from_seed(0x5EED.into());
+        /// let limit = Limit::default();
+        ///
+        /// Fate::run(&mut prng, limit, |fate| {
+        ///     let float = dice::unit_f32().roll(fate);
+        ///     assert!(float >= 0.0 && float <= 1.0);
+        /// });
+        /// ```
         pub fn $unit_float() -> impl Die<$float> {
             dice::from_fn(move |fate| {
                 const FACTOR: $float = 1.0 / std::$int::MAX as $float;
@@ -184,6 +240,19 @@ macro_rules! fn_float {
 
         /// Generates a uniformly distributed float that lies inside the open unit interval
         /// `[0, 1)`.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use dicetest::prelude::dice::*;
+        ///
+        /// let mut prng = Prng::from_seed(0x5EED.into());
+        /// let limit = Limit::default();
+        ///
+        /// Fate::run(&mut prng, limit, |fate| {
+        ///     let float = dice::open_unit_f32().roll(fate);
+        ///     assert!(float >= 0.0 && float < 1.0);
+        /// });
         pub fn $open_unit_float() -> impl Die<$float> {
             dice::from_fn(move |fate| {
                 let numerator = (fate.next_number() as $int) & $float_util::MAX_ONES;

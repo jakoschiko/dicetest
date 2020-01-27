@@ -251,7 +251,7 @@ macro_rules! fn_integer {
         /// use dicetest::prelude::dice::*;
         ///
         /// // Oh no, panic!
-        /// let _integer = dice::u8(71..42);
+        /// let _integer_die = dice::u8(71..42);
         /// ```
         pub fn $integer(range: impl IntegerRange<$integer>) -> impl Die<$integer> {
             let (lower, upper) = range.bounds();
