@@ -1,6 +1,6 @@
 use crate::die::Limit;
 
-/// Generates a series of interpolated `Limit`s.
+/// Generates a series of linearly interpolated `Limit`s.
 #[derive(Debug, Clone)]
 pub struct LimitSeries {
     start: u64,
