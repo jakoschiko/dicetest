@@ -78,6 +78,7 @@
 pub mod codice {
     pub use crate::codice;
     pub use crate::codie::Codie;
+    pub use crate::prand::Seed;
 }
 
 /// Contains the most useful import for writing `DieOnce`s and `Die`s.
