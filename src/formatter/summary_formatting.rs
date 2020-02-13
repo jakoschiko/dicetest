@@ -1,13 +1,13 @@
-/// The configuration for the formatter.
+/// The configuration for formatting the `Summary`.
 #[derive(Debug, Clone)]
-pub struct Formatting {
+pub struct SummaryFormatting {
     /// The maximum numbers of values per key that will be used when formatting the stats.
     pub stats_max_value_count: Option<usize>,
     /// The number of decimal places for percent values that will be used when formatting the stats.
     pub stats_percent_precision: usize,
 }
 
-impl Formatting {
+impl SummaryFormatting {
     pub fn with_stats_max_value_count(self, stats_max_value_count: Option<usize>) -> Self {
         Self {
             stats_max_value_count,
@@ -23,7 +23,7 @@ impl Formatting {
     }
 }
 
-impl Default for Formatting {
+impl Default for SummaryFormatting {
     fn default() -> Self {
         Self {
             stats_max_value_count: Some(20),

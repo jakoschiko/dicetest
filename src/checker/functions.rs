@@ -2,7 +2,7 @@ use std::panic::{resume_unwind, RefUnwindSafe, UnwindSafe};
 
 use crate::checker::{env, LogCondition, Mode};
 use crate::die::{Fate, Limit};
-use crate::formatter::{self, Formatting};
+use crate::formatter::{self, SummaryFormatting};
 use crate::prand::{Prng, Seed};
 use crate::runner::{run_once, run_repeatedly, Config, Run};
 
@@ -29,7 +29,7 @@ use crate::runner::{run_once, run_repeatedly, Config, Run};
 ///
 /// - `DICETEST_STATS_MAX_VALUE_COUNT=<max_value_count>`
 /// The maximum number of values per key used when formatting stats.
-/// See `Formatting::stats_max_value_count`.
+/// See `SummaryFormatting::stats_max_value_count`.
 /// There are the following options for `<max_value_count>`:
 ///     - `none`
 ///     There is no maximum number.
@@ -37,7 +37,7 @@ use crate::runner::{run_once, run_repeatedly, Config, Run};
 ///     This integer will be used as maximum number.
 /// - `DICETEST_STATS_PERCENT_PRECISION=<usize>`
 /// The number of decimal places for percent values used when formatting stats.
-/// See `Formatting::stats_percent_precision`.
+/// See `SummaryFormatting::stats_percent_precision`.
 ///
 /// # Modes
 ///
@@ -125,7 +125,7 @@ where
 
         match mode {
             Mode::Repeatedly => {
-                let formatting = read_formatting_from_env().unwrap();
+                let formatting = read_stats_formatting_from_env().unwrap();
                 let overridden_config = override_config_from_env(&config).unwrap();
 
                 check_repeatedly(log_condition, formatting, overridden_config, test);
@@ -166,8 +166,8 @@ where
     };
 
     if should_print {
-        let message = formatter::pretty_sample(&sample);
-        log(&message);
+        let message = formatter::display_sample(&sample);
+        log(message);
     }
 
     if let Some(err) = sample.error.map(|e| e.0) {
@@ -187,10 +187,10 @@ where
 /// # Stdout
 ///
 /// Depending on the `LogCondition` the test result will be logged to stdout. The output format can
-/// be configured with the `Formatting`.
+/// be configured with the `SummaryFormatting`.
 pub fn check_repeatedly<T>(
     log_condition: LogCondition,
-    formatting: Formatting,
+    summary_formatting: SummaryFormatting,
     config: Config,
     test: T,
 ) where
@@ -204,8 +204,8 @@ pub fn check_repeatedly<T>(
     };
 
     if should_log {
-        let message = formatter::pretty_summary(&summary, formatting);
-        log(&message);
+        let message = formatter::display_summary(&summary, &summary_formatting);
+        log(message);
     }
 
     if let Some(err) = summary.counterexample.map(|c| c.error.0) {
@@ -213,8 +213,8 @@ pub fn check_repeatedly<T>(
     }
 }
 
-fn log(text: &str) {
-    print!("{}", text);
+fn log(content: impl std::fmt::Display) {
+    print!("{}", content);
 }
 
 fn override_config_from_env(config: &Config) -> Result<Config, String> {
@@ -247,15 +247,15 @@ fn override_config_from_env(config: &Config) -> Result<Config, String> {
     Ok(overriden_config)
 }
 
-fn read_formatting_from_env() -> Result<Formatting, String> {
-    let default_formatting = Formatting::default();
+fn read_stats_formatting_from_env() -> Result<SummaryFormatting, String> {
+    let default_formatting = SummaryFormatting::default();
 
     let stats_max_value_count =
         env::read_stats_max_value_count(default_formatting.stats_max_value_count)?;
     let stats_percent_precision =
         env::read_stats_percent_precision(default_formatting.stats_percent_precision)?;
 
-    Ok(Formatting {
+    Ok(SummaryFormatting {
         stats_max_value_count,
         stats_percent_precision,
     })
