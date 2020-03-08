@@ -1,6 +1,6 @@
 use std::panic::{resume_unwind, RefUnwindSafe, UnwindSafe};
 
-use crate::checker::{env, LogCondition, Mode};
+use crate::checker::{env, Mode};
 use crate::die::{Fate, Limit};
 use crate::formatter::{self, SummaryFormatting};
 use crate::prand::{Prng, Seed};
@@ -14,18 +14,8 @@ use crate::runner::{run_once, run_repeatedly, Config, Run};
 ///
 /// # Stdout
 ///
-/// You can configure when the test result will be logged to stdout by using the following
-/// environment variable:
-///
-/// - `DICETEST_LOG_CONDITION=<log condition>`
-/// Whether the test result will be logged depends on `<log condition>` with the following
-/// options:
-///     - `always`
-///     The test result will be always logged.
-///     - `on_failure`
-///     The default value. The test result will be logged if and only if a test run has failed.
-///
-/// There are some environment variables that configures the output format:
+/// The test result will be logged to stdout. There are some environment variables that
+/// configures the output format:
 ///
 /// - `DICETEST_STATS_MAX_VALUE_COUNT=<max_value_count>`
 /// The maximum number of values per key used when formatting stats.
@@ -106,8 +96,7 @@ use crate::runner::{run_once, run_repeatedly, Config, Run};
 ///
 /// - `DICETEST_DEBUG=<run code>` Both `Seed` and `Limit` will be decoded from the
 /// run code and the test will be checked a single time. This function logs always the test result.
-/// It's an alias for
-/// `DICETEST_LOG_CONDITION=always DICETEST_MODE=once DICETEST_RUN_CODE=<run code>`.
+/// It's an alias for `DICETEST_MODE=once DICETEST_RUN_CODE=<run code>`.
 /// All other environment variables will be ignored.
 #[allow(clippy::needless_pass_by_value)]
 pub fn check<T>(config: Config, test: T)
@@ -117,18 +106,16 @@ where
     let debug_params = env::read_debug(None).unwrap();
 
     if let Some(params) = debug_params {
-        let log_condition = LogCondition::Always;
-        check_once(log_condition, params, |fate| test(fate));
+        check_once(params, |fate| test(fate));
     } else {
         let mode = env::read_mode(Mode::Repeatedly).unwrap();
-        let log_condition = env::read_log_condition(LogCondition::default()).unwrap();
 
         match mode {
             Mode::Repeatedly => {
                 let formatting = read_stats_formatting_from_env().unwrap();
                 let overridden_config = override_config_from_env(&config).unwrap();
 
-                check_repeatedly(log_condition, formatting, overridden_config, test);
+                check_repeatedly(formatting, overridden_config, test);
             }
             Mode::Once => {
                 let code_params = env::read_run_code(None).unwrap();
@@ -139,7 +126,7 @@ where
                     Run { prng, limit }
                 });
 
-                check_once(log_condition, run, |fate| test(fate))
+                check_once(run, |fate| test(fate))
             }
         }
     }
@@ -153,22 +140,15 @@ where
 ///
 /// # Stdout
 ///
-/// Depending on the `LogCondition` the test result will be logged to stdout.
-pub fn check_once<T>(log_condition: LogCondition, run: Run, test: T)
+/// The test result will be logged to stdout.
+pub fn check_once<T>(run: Run, test: T)
 where
     T: FnOnce(&mut Fate) + UnwindSafe + RefUnwindSafe,
 {
     let sample = run_once(run, test);
 
-    let should_print = match log_condition {
-        LogCondition::Always => true,
-        LogCondition::OnFailure => sample.error.is_some(),
-    };
-
-    if should_print {
-        let message = formatter::display_sample(&sample);
-        log(message);
-    }
+    let message = formatter::display_sample(&sample);
+    log(message);
 
     if let Some(err) = sample.error.map(|e| e.0) {
         resume_unwind(err);
@@ -186,27 +166,16 @@ where
 ///
 /// # Stdout
 ///
-/// Depending on the `LogCondition` the test result will be logged to stdout. The output format can
+/// The test result will be logged to stdout. The output format can
 /// be configured with the `SummaryFormatting`.
-pub fn check_repeatedly<T>(
-    log_condition: LogCondition,
-    summary_formatting: SummaryFormatting,
-    config: Config,
-    test: T,
-) where
+pub fn check_repeatedly<T>(summary_formatting: SummaryFormatting, config: Config, test: T)
+where
     T: Fn(&mut Fate) + UnwindSafe + RefUnwindSafe,
 {
     let summary = run_repeatedly(config, test);
 
-    let should_log = match log_condition {
-        LogCondition::Always => true,
-        LogCondition::OnFailure => summary.counterexample.is_some(),
-    };
-
-    if should_log {
-        let message = formatter::display_summary(&summary, &summary_formatting);
-        log(message);
-    }
+    let message = formatter::display_summary(&summary, &summary_formatting);
+    log(message);
 
     if let Some(err) = summary.counterexample.map(|c| c.error.0) {
         resume_unwind(err);

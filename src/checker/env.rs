@@ -1,12 +1,11 @@
 use std::env;
 use std::str::FromStr;
 
-use crate::checker::{LogCondition, Mode};
+use crate::checker::Mode;
 use crate::die::Limit;
 use crate::prand::Seed;
 use crate::runner::Run;
 
-const KEY_LOG_CONDITION: &str = "DICETEST_LOG_CONDITION";
 const KEY_STATS_MAX_VALUE_COUNT: &str = "DICETEST_STATS_MAX_VALUE_COUNT";
 const KEY_STATS_PERCENT_PRECISION: &str = "DICETEST_STATS_PERCENT_PRECISION";
 const KEY_MODE: &str = "DICETEST_MODE";
@@ -23,8 +22,6 @@ const KEY_RUN_CODE: &str = "DICETEST_RUN_CODE";
 const KEY_DEBUG: &str = "DICETEST_DEBUG";
 
 const VALUE_NONE: &str = "none";
-const VALUE_ALWAYS: &str = "always";
-const VALUE_ON_FAILURE: &str = "on_failure";
 const VALUE_REPEATEDLY: &str = "repeatedly";
 const VALUE_ONCE: &str = "once";
 
@@ -103,26 +100,6 @@ pub fn read_hints_enabled(default: bool) -> Result<bool, String> {
 
 pub fn read_stats_enabled(default: bool) -> Result<bool, String> {
     read_value(KEY_STATS_ENABLED, "a bool", default, bool::from_str)
-}
-
-pub fn read_log_condition(default: LogCondition) -> Result<LogCondition, String> {
-    match env::var(KEY_LOG_CONDITION) {
-        Err(_) => Ok(default),
-        Ok(var) => {
-            let str = var.as_str();
-            if str == VALUE_ALWAYS {
-                Ok(LogCondition::Always)
-            } else if str == VALUE_ON_FAILURE {
-                Ok(LogCondition::OnFailure)
-            } else {
-                let error = format!(
-                    "Value for '{}' must be either '{}' or '{}'",
-                    KEY_LOG_CONDITION, VALUE_ALWAYS, VALUE_ON_FAILURE
-                );
-                Err(error)
-            }
-        }
-    }
 }
 
 pub fn read_stats_max_value_count(default: Option<usize>) -> Result<Option<usize>, String> {
