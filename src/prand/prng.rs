@@ -1,7 +1,6 @@
 use std::hash::BuildHasher;
 #[allow(deprecated)]
 use std::hash::SipHasher;
-use std::mem;
 use std::num::Wrapping;
 
 use crate::prand::Seed;
@@ -38,12 +37,18 @@ impl Prng {
     /// with an `Prng` that has a satisfying cycle length. Other bytes should not be passed to this
     /// function. For initializing an `Prng` with an arbitrary seed, use `Prng::from_seed` instead.
     pub fn from_bytes(state_bytes: [u8; 32]) -> Prng {
-        let arrays: [[u8; 8]; 4] = unsafe { mem::transmute(state_bytes) };
+        #[rustfmt::skip]
+        let [
+            a0, a1, a2, a3, a4, a5, a6, a7,
+            b0, b1, b2, b3, b4, b5, b6, b7,
+            c0, c1, c2, c3, c4, c5, c6, c7,
+            d0, d1, d2, d3, d4, d5, d6, d7,
+        ] = state_bytes;
 
-        let a = conversion::bytes_to_u64(arrays[0]);
-        let b = conversion::bytes_to_u64(arrays[1]);
-        let c = conversion::bytes_to_u64(arrays[2]);
-        let d = conversion::bytes_to_u64(arrays[3]);
+        let a = conversion::bytes_to_u64([a0, a1, a2, a3, a4, a5, a6, a7]);
+        let b = conversion::bytes_to_u64([b0, b1, b2, b3, b4, b5, b6, b7]);
+        let c = conversion::bytes_to_u64([c0, c1, c2, c3, c4, c5, c6, c7]);
+        let d = conversion::bytes_to_u64([d0, d1, d2, d3, d4, d5, d6, d7]);
 
         let state = (a, b, c, d);
         Prng { state }
@@ -55,14 +60,20 @@ impl Prng {
     pub fn to_bytes(&self) -> [u8; 32] {
         let (a, b, c, d) = self.state;
 
-        let arrays = [
-            conversion::u64_to_bytes(a),
-            conversion::u64_to_bytes(b),
-            conversion::u64_to_bytes(c),
-            conversion::u64_to_bytes(d),
+        let [a0, a1, a2, a3, a4, a5, a6, a7] = conversion::u64_to_bytes(a);
+        let [b0, b1, b2, b3, b4, b5, b6, b7] = conversion::u64_to_bytes(b);
+        let [c0, c1, c2, c3, c4, c5, c6, c7] = conversion::u64_to_bytes(c);
+        let [d0, d1, d2, d3, d4, d5, d6, d7] = conversion::u64_to_bytes(d);
+
+        #[rustfmt::skip]
+        let state_bytes = [
+            a0, a1, a2, a3, a4, a5, a6, a7,
+            b0, b1, b2, b3, b4, b5, b6, b7,
+            c0, c1, c2, c3, c4, c5, c6, c7,
+            d0, d1, d2, d3, d4, d5, d6, d7,
         ];
 
-        unsafe { mem::transmute(arrays) }
+        state_bytes
     }
 
     #[allow(clippy::many_single_char_names)]
