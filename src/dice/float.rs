@@ -433,7 +433,7 @@ mod tests {
         ) => {
             #[test]
             fn $unit_float_rolls_values_in_expected_range() {
-                dicetest!(|fate| {
+                Dicetest::repeatedly().run(|fate| {
                     let float = $unit_float().roll(fate);
                     hint_debug!(float);
 
@@ -444,7 +444,7 @@ mod tests {
 
             #[test]
             fn $open_unit_float_rolls_values_in_expected_range() {
-                dicetest!(|fate| {
+                Dicetest::repeatedly().run(|fate| {
                     let float = $open_unit_float().roll(fate);
                     hint_debug!(float);
 
@@ -455,7 +455,7 @@ mod tests {
 
             #[test]
             fn $float_util_linear_ipol_float_with_same_min_and_max() {
-                dicetest!(|fate| {
+                Dicetest::repeatedly().run(|fate| {
                     let float = $float(std::$float::MIN..=std::$float::MAX).roll(fate);
                     let factor = $unit_float().roll(fate);
 
@@ -465,7 +465,7 @@ mod tests {
 
             #[test]
             fn $float_util_linear_ipol_float_with_factor_limits() {
-                dicetest!(|fate| {
+                Dicetest::repeatedly().run(|fate| {
                     let float1 = $float(std::$float::MIN..=std::$float::MAX).roll(fate);
                     let float2 = $float(std::$float::MIN..=std::$float::MAX).roll(fate);
                     let (min, max) = if float1 <= float2 {
@@ -497,7 +497,7 @@ mod tests {
 
             #[test]
             fn $float_is_in_single_value_range() {
-                dicetest!(|fate| {
+                Dicetest::repeatedly().run(|fate| {
                     range_contains_float(
                         fate,
                         $float(..),
@@ -510,7 +510,7 @@ mod tests {
 
             #[test]
             fn $float_is_in_range_from() {
-                dicetest!(|fate| {
+                Dicetest::repeatedly().run(|fate| {
                     range_contains_float(
                         fate,
                         $float(..),
@@ -523,7 +523,7 @@ mod tests {
 
             #[test]
             fn $float_is_in_range_inclusive() {
-                dicetest!(|fate| {
+                Dicetest::repeatedly().run(|fate| {
                     range_contains_float(
                         fate,
                         dice::array_2($float(..)).map(|[a, b]| (a.min(b), a.max(b))),
@@ -536,7 +536,7 @@ mod tests {
 
             #[test]
             fn $float_is_in_range_to_inclusive() {
-                dicetest!(|fate| {
+                Dicetest::repeatedly().run(|fate| {
                     range_contains_float(
                         fate,
                         $float(..),
@@ -549,44 +549,50 @@ mod tests {
 
             #[test]
             fn $unit_float_calc_stats() {
-                dicetest!(Config::default().with_passes(0), |fate| {
-                    let float = $unit_float().roll(fate);
+                Dicetest::repeatedly()
+                    .passes(0)
+                    .stats_enabled(true)
+                    .run(|fate| {
+                        let float = $unit_float().roll(fate);
 
-                    if float >= 0.5 {
-                        stat!("float", "[0.5, 1]")
-                    } else if float >= 0.25 {
-                        stat!("float", "[0.25, 0.5)");
-                    } else if float >= 0.125 {
-                        stat!("float", "[0.125, 0.25)");
-                    } else if float >= 0.0625 {
-                        stat!("float", "[0.0625, 0.125)");
-                    } else if float >= 0.03125 {
-                        stat!("float", "[0.03125, 0.0625)");
-                    } else {
-                        stat!("float", "[0, 0.03125)");
-                    }
-                })
+                        if float >= 0.5 {
+                            stat!("float", "[0.5, 1]")
+                        } else if float >= 0.25 {
+                            stat!("float", "[0.25, 0.5)");
+                        } else if float >= 0.125 {
+                            stat!("float", "[0.125, 0.25)");
+                        } else if float >= 0.0625 {
+                            stat!("float", "[0.0625, 0.125)");
+                        } else if float >= 0.03125 {
+                            stat!("float", "[0.03125, 0.0625)");
+                        } else {
+                            stat!("float", "[0, 0.03125)");
+                        }
+                    })
             }
 
             #[test]
             fn $open_unit_float_calc_stats() {
-                dicetest!(Config::default().with_passes(0), |fate| {
-                    let float = $open_unit_float().roll(fate);
+                Dicetest::repeatedly()
+                    .passes(0)
+                    .stats_enabled(true)
+                    .run(|fate| {
+                        let float = $open_unit_float().roll(fate);
 
-                    if float >= 0.5 {
-                        stat!("float", "[0.5, 1)")
-                    } else if float >= 0.25 {
-                        stat!("float", "[0.25, 0.5)");
-                    } else if float >= 0.125 {
-                        stat!("float", "[0.125, 0.25)");
-                    } else if float >= 0.0625 {
-                        stat!("float", "[0.0625, 0.125)");
-                    } else if float >= 0.03125 {
-                        stat!("float", "[0.03125, 0.0625)");
-                    } else {
-                        stat!("float", "[0, 0.03125)");
-                    }
-                })
+                        if float >= 0.5 {
+                            stat!("float", "[0.5, 1)")
+                        } else if float >= 0.25 {
+                            stat!("float", "[0.25, 0.5)");
+                        } else if float >= 0.125 {
+                            stat!("float", "[0.125, 0.25)");
+                        } else if float >= 0.0625 {
+                            stat!("float", "[0.0625, 0.125)");
+                        } else if float >= 0.03125 {
+                            stat!("float", "[0.03125, 0.0625)");
+                        } else {
+                            stat!("float", "[0, 0.03125)");
+                        }
+                    })
             }
         };
     }

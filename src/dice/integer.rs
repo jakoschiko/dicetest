@@ -357,7 +357,7 @@ mod tests {
         ) => {
             #[test]
             fn $integer_is_in_single_value_range() {
-                dicetest!(|fate| {
+                Dicetest::repeatedly().run(|fate| {
                     range_contains_integer(
                         fate,
                         dice::$integer(..),
@@ -370,7 +370,7 @@ mod tests {
 
             #[test]
             fn $integer_is_in_range() {
-                dicetest!(|fate| {
+                Dicetest::repeatedly().run(|fate| {
                     range_contains_integer(
                         fate,
                         dice::array_2(dice::$integer(..$integer::max_value() - 1))
@@ -384,7 +384,7 @@ mod tests {
 
             #[test]
             fn $integer_is_in_range_from() {
-                dicetest!(|fate| {
+                Dicetest::repeatedly().run(|fate| {
                     range_contains_integer(
                         fate,
                         dice::$integer(..),
@@ -397,7 +397,7 @@ mod tests {
 
             #[test]
             fn $integer_is_in_range_inclusive() {
-                dicetest!(|fate| {
+                Dicetest::repeatedly().run(|fate| {
                     range_contains_integer(
                         fate,
                         dice::array_2(dice::$integer(..)).map(|[a, b]| (a.min(b), a.max(b))),
@@ -410,7 +410,7 @@ mod tests {
 
             #[test]
             fn $integer_is_in_range_to() {
-                dicetest!(|fate| {
+                Dicetest::repeatedly().run(|fate| {
                     range_contains_integer(
                         fate,
                         dice::$integer($integer::min_value() + 1..),
@@ -423,7 +423,7 @@ mod tests {
 
             #[test]
             fn $integer_is_in_range_to_inclusive() {
-                dicetest!(|fate| {
+                Dicetest::repeatedly().run(|fate| {
                     range_contains_integer(
                         fate,
                         dice::$integer(..),
@@ -546,39 +546,51 @@ mod tests {
 
     #[test]
     fn u8_calc_stats() {
-        dicetest!(Config::default().with_passes(0), |fate| {
-            stat!("u8(..)", "{}", dice::u8(..).roll(fate));
-            stat!("u8(..=9)", "{}", dice::u8(..=9).roll(fate));
-            stat!("u8(100..=199)", "{}", dice::u8(100..=199).roll(fate));
-        })
+        Dicetest::repeatedly()
+            .passes(0)
+            .stats_enabled(true)
+            .run(|fate| {
+                stat!("u8(..)", "{}", dice::u8(..).roll(fate));
+                stat!("u8(..=9)", "{}", dice::u8(..=9).roll(fate));
+                stat!("u8(100..=199)", "{}", dice::u8(100..=199).roll(fate));
+            })
     }
 
     #[test]
     fn uni_u8_calc_stats() {
-        dicetest!(Config::default().with_passes(0), |fate| {
-            stat!("uni_u8(..)", "{}", dice::uni_u8(..).roll(fate));
-            stat!("uni_u8(..=9)", "{}", dice::uni_u8(..=9).roll(fate));
-            stat!(
-                "uni_u8(100..=199)",
-                "{}",
-                dice::uni_u8(100..=199).roll(fate),
-            );
-        })
+        Dicetest::repeatedly()
+            .passes(0)
+            .stats_enabled(true)
+            .run(|fate| {
+                stat!("uni_u8(..)", "{}", dice::uni_u8(..).roll(fate));
+                stat!("uni_u8(..=9)", "{}", dice::uni_u8(..=9).roll(fate));
+                stat!(
+                    "uni_u8(100..=199)",
+                    "{}",
+                    dice::uni_u8(100..=199).roll(fate),
+                );
+            })
     }
 
     #[test]
     fn i8_calc_stats() {
-        dicetest!(Config::default().with_passes(0), |fate| {
-            stat!("i8(..)", "{}", dice::i8(..).roll(fate));
-            stat!("i8(-4..=5)", "{}", dice::i8(-4..=5).roll(fate));
-        })
+        Dicetest::repeatedly()
+            .passes(0)
+            .stats_enabled(true)
+            .run(|fate| {
+                stat!("i8(..)", "{}", dice::i8(..).roll(fate));
+                stat!("i8(-4..=5)", "{}", dice::i8(-4..=5).roll(fate));
+            })
     }
 
     #[test]
     fn uni_i8_calc_stats() {
-        dicetest!(Config::default().with_passes(0), |fate| {
-            stat!("uni_i8(..)", "{}", dice::uni_i8(..).roll(fate));
-            stat!("uni_i8(-4..=5)", "{}", dice::uni_i8(-4..=5).roll(fate));
-        })
+        Dicetest::repeatedly()
+            .passes(0)
+            .stats_enabled(true)
+            .run(|fate| {
+                stat!("uni_i8(..)", "{}", dice::uni_i8(..).roll(fate));
+                stat!("uni_i8(-4..=5)", "{}", dice::uni_i8(-4..=5).roll(fate));
+            })
     }
 }

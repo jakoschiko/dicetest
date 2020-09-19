@@ -20,7 +20,7 @@ mod tests {
 
     #[test]
     fn result_of_bubble_sort_is_sorted() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             let mut v = dice::vec(dice::u8(..), ..).roll(fate);
             hint!("unsorted: {:?}", v);
 

@@ -157,7 +157,7 @@ mod tests {
 
     #[test]
     fn from_seed_must_not_have_cycle_length_zero() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             let seed = dice::u64(..).roll(fate);
 
             let prng_init = Prng::from_seed(seed.into());
@@ -175,7 +175,7 @@ mod tests {
 
     #[test]
     fn from_bytes_is_left_inverse() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             asserts::left_inverse(
                 fate,
                 dice::from_fn(|fate| fate.fork_prng()),
@@ -187,7 +187,7 @@ mod tests {
 
     #[test]
     fn to_bytes_is_left_inverse() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             asserts::left_inverse(
                 fate,
                 dice::array_32(dice::u8(..)),
@@ -199,7 +199,7 @@ mod tests {
 
     #[test]
     fn reseed_changes_prng() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             let prng = fate.fork_prng();
             let seed = dice::u64(..).roll(fate).into();
 

@@ -1,4 +1,4 @@
-//! Dicetest is a framework for writing tests with pseudorandom generated test data.
+//! Dicetest is a framework for writing tests with pseudorandomly generated test data.
 //!
 //! The [README] shows how to write a test with Dicetest. For more information, see the [GUIDE].
 //!
@@ -32,9 +32,8 @@ pub mod dice;
 
 pub mod runner;
 
-pub mod formatter;
-
-pub mod checker;
+mod frontend;
+pub use frontend::Dicetest;
 
 pub mod prelude;
 

@@ -47,7 +47,7 @@ mod tests {
 
     #[test]
     fn shuffled_vec_contains_same_elems() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             let orig_vec = dice::vec(dice::u8(..), ..).roll(fate);
             let orig_vec_elems = count_vec_elems(&orig_vec);
             hint_debug!(orig_vec);
@@ -62,12 +62,15 @@ mod tests {
 
     #[test]
     fn shuffled_vec_calc_stats() {
-        dicetest!(Config::default().with_passes(0), |fate| {
-            stat!(
-                "shuffled_vec(vec![1, 2, 3])",
-                "{:?}",
-                dice::shuffled_vec(vec![1, 2, 3]).roll_once(fate),
-            );
-        })
+        Dicetest::repeatedly()
+            .passes(0)
+            .stats_enabled(true)
+            .run(|fate| {
+                stat!(
+                    "shuffled_vec(vec![1, 2, 3])",
+                    "{:?}",
+                    dice::shuffled_vec(vec![1, 2, 3]).roll_once(fate),
+                );
+            })
     }
 }

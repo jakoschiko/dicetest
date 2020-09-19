@@ -101,7 +101,7 @@ mod tests {
         ) => {
             #[test]
             fn $terms_of_integer_returns_the_expected_sum_and_count() {
-                dicetest!(|fate| {
+                Dicetest::repeatedly().run(|fate| {
                     let expected_count = dice::size(..).roll(fate);
                     let exptected_sum = if expected_count == 0 {
                         0
@@ -147,84 +147,87 @@ mod tests {
 
     #[test]
     fn terms_of_u64_calc_stats() {
-        dicetest!(Config::default().with_passes(0), |fate| {
-            let sum = 8;
-            let count = 4;
-            let terms = dice::terms_of_u64(sum, count).roll(fate);
-            stat_debug!(terms);
-            stat!(
-                "for all term t: t > 0",
-                "{}",
-                terms.iter().all(|&term| term > 0),
-            );
-            stat!(
-                "for all term t: t >= 0.10 * sum / termcount",
-                "{}",
-                terms.iter().all(|&term| term * 10 * count as u64 >= sum),
-            );
-            stat!(
-                "for all term t: t >= 0.33 * sum / termcount",
-                "{}",
-                terms.iter().all(|&term| term * 3 * count as u64 >= sum),
-            );
-            stat!(
-                "for all term t: t >= 0.50 * sum / termcount",
-                "{}",
-                terms.iter().all(|&term| term * 2 * count as u64 >= sum),
-            );
-            stat!(
-                "for all term t: t >= 0.66 * sum / termcount",
-                "{}",
-                terms.iter().all(|&term| term * 3 * count as u64 >= sum * 2),
-            );
-            stat!(
-                "for all term t: t >= 0.90 * sum / termcount",
-                "{}",
-                terms
-                    .iter()
-                    .all(|&term| term * 10 * count as u64 >= sum * 9),
-            );
-            stat!(
-                "for any term t: t >= 0.10 * sum",
-                "{}",
-                terms.iter().any(|&term| term * 10 as u64 >= sum),
-            );
-            stat!(
-                "for any term t: t >= 0.33 * sum",
-                "{}",
-                terms.iter().any(|&term| term * 3 as u64 >= sum),
-            );
-            stat!(
-                "for any term t: t >= 0.50 * sum",
-                "{}",
-                terms.iter().any(|&term| term * 2 as u64 >= sum),
-            );
-            stat!(
-                "for any term t: t >= 0.66 * sum",
-                "{}",
-                terms.iter().any(|&term| term * 3 as u64 >= sum * 2),
-            );
-            stat!(
-                "for any term t: t >= 0.90 * sum",
-                "{}",
-                terms.iter().any(|&term| term * 10 as u64 >= sum * 9),
-            );
-            stat!("greatest terms", "{:?}", {
-                let max = terms.iter().max();
-                terms
-                    .iter()
-                    .enumerate()
-                    .filter_map(
-                        |(index, term)| {
-                            if Some(term) == max {
-                                Some(index)
-                            } else {
-                                None
-                            }
-                        },
-                    )
-                    .collect::<Vec<_>>()
+        Dicetest::repeatedly()
+            .passes(0)
+            .stats_enabled(true)
+            .run(|fate| {
+                let sum = 8;
+                let count = 4;
+                let terms = dice::terms_of_u64(sum, count).roll(fate);
+                stat_debug!(terms);
+                stat!(
+                    "for all term t: t > 0",
+                    "{}",
+                    terms.iter().all(|&term| term > 0),
+                );
+                stat!(
+                    "for all term t: t >= 0.10 * sum / termcount",
+                    "{}",
+                    terms.iter().all(|&term| term * 10 * count as u64 >= sum),
+                );
+                stat!(
+                    "for all term t: t >= 0.33 * sum / termcount",
+                    "{}",
+                    terms.iter().all(|&term| term * 3 * count as u64 >= sum),
+                );
+                stat!(
+                    "for all term t: t >= 0.50 * sum / termcount",
+                    "{}",
+                    terms.iter().all(|&term| term * 2 * count as u64 >= sum),
+                );
+                stat!(
+                    "for all term t: t >= 0.66 * sum / termcount",
+                    "{}",
+                    terms.iter().all(|&term| term * 3 * count as u64 >= sum * 2),
+                );
+                stat!(
+                    "for all term t: t >= 0.90 * sum / termcount",
+                    "{}",
+                    terms
+                        .iter()
+                        .all(|&term| term * 10 * count as u64 >= sum * 9),
+                );
+                stat!(
+                    "for any term t: t >= 0.10 * sum",
+                    "{}",
+                    terms.iter().any(|&term| term * 10 as u64 >= sum),
+                );
+                stat!(
+                    "for any term t: t >= 0.33 * sum",
+                    "{}",
+                    terms.iter().any(|&term| term * 3 as u64 >= sum),
+                );
+                stat!(
+                    "for any term t: t >= 0.50 * sum",
+                    "{}",
+                    terms.iter().any(|&term| term * 2 as u64 >= sum),
+                );
+                stat!(
+                    "for any term t: t >= 0.66 * sum",
+                    "{}",
+                    terms.iter().any(|&term| term * 3 as u64 >= sum * 2),
+                );
+                stat!(
+                    "for any term t: t >= 0.90 * sum",
+                    "{}",
+                    terms.iter().any(|&term| term * 10 as u64 >= sum * 9),
+                );
+                stat!("greatest terms", "{:?}", {
+                    let max = terms.iter().max();
+                    terms
+                        .iter()
+                        .enumerate()
+                        .filter_map(
+                            |(index, term)| {
+                                if Some(term) == max {
+                                    Some(index)
+                                } else {
+                                    None
+                                }
+                            },
+                        )
+                        .collect::<Vec<_>>()
+                })
             })
-        })
     }
 }

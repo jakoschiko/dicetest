@@ -136,7 +136,7 @@ mod section_tests {
     #[test]
     fn test_foo() {
         // Runs your test with default configuration.
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             // Write your test here.
         });
     }
@@ -144,7 +144,7 @@ mod section_tests {
     #[test]
     fn test_bar() {
         // Runs your test with custom configuration.
-        dicetest!(Config::default().with_passes(10000), |fate| {
+        Dicetest::repeatedly().passes(10000).run(|fate| {
             // Write your test here.
         });
     }
@@ -156,7 +156,7 @@ mod section_hints {
 
     #[test]
     fn test_foo() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             let x = dice::u8(1..=5).roll(fate);
             hint_debug!(x);
 
@@ -178,7 +178,7 @@ mod section_stats {
 
     #[test]
     fn test_foo() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             let x = dice::u8(1..=5).roll(fate);
             stat_debug!(x);
 

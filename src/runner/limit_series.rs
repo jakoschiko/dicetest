@@ -100,7 +100,7 @@ mod tests {
 
     #[test]
     fn iterator_produces_exact_len_limits() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             let start = dice::u64(..).roll(fate);
             let end = dice::u64(..).roll(fate);
             let len = dice::u64(..=fate.limit().0).roll(fate);
@@ -115,7 +115,7 @@ mod tests {
 
     #[test]
     fn if_len_gt_1_then_start_is_first_limit() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             let start = dice::u64(..).roll(fate);
             let end = dice::u64(..).roll(fate);
             let len = dice::u64(1..).roll(fate);
@@ -133,7 +133,7 @@ mod tests {
 
     #[test]
     fn if_len_is_gt_2_then_end_is_last_limit() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             let start = dice::u64(..).roll(fate);
             let end = dice::u64(..).roll(fate);
             let len = dice::u64(2..).roll(fate);

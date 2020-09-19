@@ -44,24 +44,30 @@ mod tests {
 
     #[test]
     fn bool_calc_stats() {
-        dicetest!(Config::default().with_passes(0), |fate| {
-            stat!("bool()", "{}", dice::bool().roll(fate));
-        })
+        Dicetest::repeatedly()
+            .passes(0)
+            .stats_enabled(true)
+            .run(|fate| {
+                stat!("bool()", "{}", dice::bool().roll(fate));
+            })
     }
 
     #[test]
     fn weighted_bool_calc_stats() {
-        dicetest!(Config::default().with_passes(0), |fate| {
-            stat!(
-                "weighted_bool(1, 2)",
-                "{}",
-                dice::weighted_bool(1, 2).roll(fate),
-            );
-            stat!(
-                "weighted_bool(10, 1)",
-                "{}",
-                dice::weighted_bool(9, 1).roll(fate),
-            );
-        })
+        Dicetest::repeatedly()
+            .passes(0)
+            .stats_enabled(true)
+            .run(|fate| {
+                stat!(
+                    "weighted_bool(1, 2)",
+                    "{}",
+                    dice::weighted_bool(1, 2).roll(fate),
+                );
+                stat!(
+                    "weighted_bool(10, 1)",
+                    "{}",
+                    dice::weighted_bool(9, 1).roll(fate),
+                );
+            })
     }
 }

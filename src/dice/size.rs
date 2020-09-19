@@ -176,7 +176,7 @@ mod tests {
 
     #[test]
     fn size_is_equal_to_target() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             range_contains_size(
                 fate,
                 dice::usize(..),
@@ -188,7 +188,7 @@ mod tests {
 
     #[test]
     fn size_is_in_range() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             range_contains_size(
                 fate,
                 dice::array_2(dice::usize(..usize::max_value() - 1))
@@ -201,7 +201,7 @@ mod tests {
 
     #[test]
     fn size_is_in_range_from() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             range_contains_size(
                 fate,
                 dice::usize(..),
@@ -213,7 +213,7 @@ mod tests {
 
     #[test]
     fn size_is_in_range_inclusive() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             range_contains_size(
                 fate,
                 dice::array_2(dice::usize(..)).map(|[a, b]| (a.min(b), a.max(b))),
@@ -225,7 +225,7 @@ mod tests {
 
     #[test]
     fn size_is_in_range_to() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             range_contains_size(
                 fate,
                 dice::usize(1..),
@@ -237,7 +237,7 @@ mod tests {
 
     #[test]
     fn size_is_in_range_to_inclusive() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             range_contains_size(
                 fate,
                 dice::usize(..),

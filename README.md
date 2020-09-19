@@ -6,7 +6,7 @@ Dicetest is a framework for writing tests with randomly generated test data.
 
 The author does not consider this crate as stable yet.
 
-## Simple example
+## Example
 
 Here's an example of an incorrect sort function tested with Dicetest:
 ```rust
@@ -30,7 +30,7 @@ mod tests {
 
     #[test]
     fn result_of_bubble_sort_is_sorted() {
-        dicetest!(|mut fate| {
+        Dicetest::repeatedly().run(|fate| {
             let mut v = dice::vec(dice::u8(..), ..).roll(fate);
             hint!("unsorted: {:?}", v);
 
@@ -46,26 +46,33 @@ mod tests {
 
 Running `cargo test` produces the following output:
 ```text
-The test failed after 36 passes.
+The test failed after 31 passes.
 
 # Config
-- seed: 795359663177100823
+- seed: 3713861809241954222
 - start limit: 0
 - end limit: 100
 - passes: 1000
 
 # Counterexample
-- run code: "ABIDje/+CYVkmmCVTwKJ2go6VrzZWMjO2Bqc9m3b3h0DAAAAAAAAAA=="
+- run code: "/yiA1sab3S4UnCf4ozyMpxMxzg1NtFybCuYLHy0/oscDAAAAAAAAAA=="
 - limit: 3
 - hints:
-    - unsorted: [255, 252, 131]
-    -   sorted: [255, 131, 252]
+    - unsorted: [201, 209, 2]
+    -   sorted: [201, 2, 209]
 - error: assertion failed: is_sorted
 ```
 
 You can rerun the counterexample by setting an environment variable:
 ```text
-DICETEST_DEBUG=ABIDje/+CYVkmmCVTwKJ2go6VrzZWMjO2Bqc9m3b3h0DAAAAAAAAAA== cargo test
+DICETEST_DEBUG=/yiA1sab3S4UnCf4ozyMpxMxzg1NtFybCuYLHy0/oscDAAAAAAAAAA== cargo test
+```
+
+Or you can modify the test:
+```rust
+Dicetest::debug("/yiA1sab3S4UnCf4ozyMpxMxzg1NtFybCuYLHy0/oscDAAAAAAAAAA==").run(|fate| {
+    // ...
+})
 ```
 
 For more information, see the [GUIDE](GUIDE.md).

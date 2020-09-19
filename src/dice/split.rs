@@ -37,7 +37,7 @@ mod tests {
 
     #[test]
     fn split_vec_result_can_be_merged_to_orig_vec() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             let orig_vec = dice::vec(dice::u8(..), ..).roll(fate);
             let (prefix, mut suffix) = dice::split_vec(orig_vec.clone()).roll_once(fate);
 
@@ -50,12 +50,15 @@ mod tests {
 
     #[test]
     fn split_vec_calc_stats() {
-        dicetest!(Config::default().with_passes(0), |fate| {
-            stat!(
-                "split_vec(vec![1, 2, 3, 4, 5])",
-                "{:?}",
-                dice::split_vec(vec![1, 2, 3, 4, 5]).roll_once(fate),
-            );
-        })
+        Dicetest::repeatedly()
+            .passes(0)
+            .stats_enabled(true)
+            .run(|fate| {
+                stat!(
+                    "split_vec(vec![1, 2, 3, 4, 5])",
+                    "{:?}",
+                    dice::split_vec(vec![1, 2, 3, 4, 5]).roll_once(fate),
+                );
+            })
     }
 }

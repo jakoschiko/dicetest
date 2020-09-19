@@ -99,12 +99,15 @@ mod tests {
 
     #[test]
     fn vec_calc_stats() {
-        dicetest!(Config::default().with_passes(0), |fate| {
-            stat!(
-                "vec(dice::bool(), ..=3)",
-                "{:?}",
-                dice::vec(dice::bool(), ..=3).roll(fate),
-            );
-        })
+        Dicetest::repeatedly()
+            .passes(0)
+            .stats_enabled(true)
+            .run(|fate| {
+                stat!(
+                    "vec(dice::bool(), ..=3)",
+                    "{:?}",
+                    dice::vec(dice::bool(), ..=3).roll(fate),
+                );
+            })
     }
 }

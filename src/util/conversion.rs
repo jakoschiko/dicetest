@@ -20,21 +20,25 @@ mod tests {
 
     #[test]
     fn bytes_to_u64_is_left_inverse() {
-        dicetest!(|fate| asserts::left_inverse(
-            fate,
-            dice::array_8(dice::u8(..)),
-            conversion::bytes_to_u64,
-            conversion::u64_to_bytes,
-        ))
+        Dicetest::repeatedly().run(|fate| {
+            asserts::left_inverse(
+                fate,
+                dice::array_8(dice::u8(..)),
+                conversion::bytes_to_u64,
+                conversion::u64_to_bytes,
+            )
+        })
     }
 
     #[test]
     fn u64_to_bytes_is_left_inverse() {
-        dicetest!(|fate| asserts::left_inverse(
-            fate,
-            dice::u64(..),
-            conversion::u64_to_bytes,
-            conversion::bytes_to_u64,
-        ))
+        Dicetest::repeatedly().run(|fate| {
+            asserts::left_inverse(
+                fate,
+                dice::u64(..),
+                conversion::u64_to_bytes,
+                conversion::bytes_to_u64,
+            )
+        })
     }
 }

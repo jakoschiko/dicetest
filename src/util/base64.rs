@@ -151,7 +151,7 @@ mod tests {
 
     #[test]
     fn encode_produces_non_empty_string_if_bytes_is_non_empty() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             let bytes = dice::vec(dice::u8(..), 1..).roll(fate);
             let base64 = base64::encode(&bytes);
 
@@ -164,7 +164,7 @@ mod tests {
 
     #[test]
     fn decode_is_left_inverse() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             let bytes = dice::vec(dice::u8(..), ..).roll(fate);
             let base64 = base64::encode(&bytes);
 
@@ -179,7 +179,7 @@ mod tests {
 
     #[test]
     fn decode_fails_if_string_contains_invalid_char() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             let valid_len_die = dice::size(4..).map(|len| len - (len % 4));
 
             let len = valid_len_die.roll(fate);
@@ -202,7 +202,7 @@ mod tests {
 
     #[test]
     fn decode_fails_if_string_has_invalid_length() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             let base_64_char_die = dice::one_of_slice(&base64::BYTE_TO_CHAR);
             let invalid_len_die =
                 dice::size(1..).map(|len| if len % 4 == 0 { len + 1 } else { len });

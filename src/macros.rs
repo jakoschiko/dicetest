@@ -69,42 +69,8 @@ macro_rules! stat_debug {
     };
 }
 
-/// Facade for `checker::check` with overloading style.
-///
-/// Takes an optional `Config` as the first parameter. If it is omitted, the default
-/// `Config` will be used.
-///
-/// # Examples
-///
-/// ```
-/// use dicetest::dicetest;
-/// use dicetest::runner::Config;
-///
-/// // Calls `checker::check` with default config.
-/// dicetest!(|_fate| {
-///     // Put your test here.
-/// });
-///
-/// // Calls `checker::check` with custom config.
-/// dicetest!(Config::default().with_passes(42), |_fate| {
-///     // Put your test here.
-/// });
-/// ```
-#[macro_export]
-macro_rules! dicetest {
-    ($config:expr, $test:expr) => {{
-        $crate::checker::check($config, $test);
-    }};
-    ($test:expr) => {{
-        let config = $crate::runner::Config::default();
-        $crate::checker::check(config, $test);
-    }};
-}
-
 #[cfg(test)]
 mod tests {
-    use crate::runner::Config;
-
     #[test]
     fn macro_hint_produces_valid_code() {
         if false {
@@ -136,14 +102,6 @@ mod tests {
             stat_debug!(42);
             stat_debug!((0 < 20));
             stat_debug!((if true { 1 } else { 2 }));
-        }
-    }
-
-    #[test]
-    fn macro_dicetest_produces_valid_code() {
-        if false {
-            dicetest!(|_fate| assert_eq!(1, 2));
-            dicetest!(Config::default(), |_fate| assert_eq!(1, 2));
         }
     }
 }

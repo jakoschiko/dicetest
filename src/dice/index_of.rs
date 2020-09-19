@@ -42,7 +42,7 @@ mod tests {
 
     #[test]
     fn index_of_generates_valid_index() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             let vec = dice::vec(dice::u8(..), 1..).roll(fate);
             let index = dice::index_of(&vec).roll(fate);
 
@@ -52,12 +52,15 @@ mod tests {
 
     #[test]
     fn index_of_calc_stats() {
-        dicetest!(Config::default().with_passes(0), |fate| {
-            stat!(
-                "index_of(&[1, 2, 3, 4, 5])",
-                "{}",
-                dice::index_of(&[1, 2, 3, 4, 5]).roll(fate),
-            );
-        })
+        Dicetest::repeatedly()
+            .passes(0)
+            .stats_enabled(true)
+            .run(|fate| {
+                stat!(
+                    "index_of(&[1, 2, 3, 4, 5])",
+                    "{}",
+                    dice::index_of(&[1, 2, 3, 4, 5]).roll(fate),
+                );
+            })
     }
 }

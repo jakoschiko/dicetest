@@ -83,7 +83,7 @@ mod tests {
 
     #[test]
     fn outer_collection_overall_size_is_bounded_by_limit() {
-        dicetest!(|fate| {
+        Dicetest::repeatedly().run(|fate| {
             let size = dice::size(..).roll(fate);
 
             let limit = Limit::saturating_from_usize(size);
