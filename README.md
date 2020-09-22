@@ -79,6 +79,23 @@ Dicetest::debug("/yiA1sab3S4UnCf4ozyMpxMxzg1NtFybCuYLHy0/oscDAAAAAAAAAA==").run(
 })
 ```
 
+## Features
+
+These features are **available**:
+
+- Generators for many stdlib types (`u8`, `String`, `Vec`, etc.).
+- Generators for functions (`FnMut`, `FnOnce`, `Fn`).
+- Generator combinators (`map`, `flat_map`, `zip_2`, etc.).
+- Integration of `rand::distributions::Distribution`.
+- Configurable test runner.
+- Utilities for debugging tests (`hints` and `stats`).
+
+These features are **missing**:
+
+- Shrinking of counterexamples.
+- Custom pseudorandom number generators.
+- Type class for arbitrary types.
+
 ## Alternatives
 
 * Write down your test data and use a loop.
