@@ -1,4 +1,4 @@
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 /// Generates a `Ok` or a `Err` that contain a value from one of the given generators. `Ok` and
 /// `Err` have the same probalility.

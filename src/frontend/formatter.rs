@@ -1,12 +1,11 @@
 use std::fmt::{self, Display};
 use std::iter::FromIterator;
 
-use crate::die::Limit;
 use crate::frontend::RunCode;
 use crate::hints::Hints;
-use crate::prand::Seed;
 use crate::runner::{self, repeatedly::Counterexample, Error};
 use crate::stats::Stats;
+use crate::{Limit, Seed};
 
 #[derive(Debug, Clone)]
 pub struct Formatting {
@@ -353,12 +352,11 @@ fn write_some_or(
 
 #[cfg(test)]
 mod tests {
-    use crate::die::Limit;
     use crate::frontend::RunCode;
     use crate::hints::{Hint, Hints};
-    use crate::prand::Prng;
     use crate::runner::{self, repeatedly::Counterexample, Error};
     use crate::stats::{Counter, Stat, Stats};
+    use crate::{Limit, Prng};
 
     use super::*;
 

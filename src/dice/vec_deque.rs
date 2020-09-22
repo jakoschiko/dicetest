@@ -1,5 +1,5 @@
 use crate::dice::{CollectionBuilder, SizeRange};
-use crate::prelude::dice::*;
+use crate::prelude::*;
 use std::collections::VecDeque;
 
 /// [`VecDeque`] builder for [`dice::collection`].
@@ -35,7 +35,8 @@ impl<T> CollectionBuilder<T, VecDeque<T>> for VecDequeBuilder {
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
@@ -76,7 +77,8 @@ pub fn vec_deque<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Di
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();

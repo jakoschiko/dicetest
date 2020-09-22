@@ -16,19 +16,36 @@ mod macros;
 
 mod util;
 
-pub mod prand;
+mod seed;
+pub use seed::Seed;
+
+mod prng;
+pub use prng::Prng;
+
+pub mod codie;
+pub use codie::Codie;
+
+mod limit;
+pub use limit::Limit;
+
+mod fate;
+pub use fate::Fate;
+
+mod die_once;
+pub use die_once::DieOnce;
+
+mod die;
+pub use die::Die;
+
+pub mod adapters;
+
+pub mod codice;
+
+pub mod dice;
 
 pub mod hints;
 
 pub mod stats;
-
-pub mod codie;
-
-pub mod codice;
-
-pub mod die;
-
-pub mod dice;
 
 pub mod runner;
 

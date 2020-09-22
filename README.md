@@ -27,7 +27,7 @@ fn bubble_sort<T: Ord>(slice: &mut [T]) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use dicetest::prelude::tests::*;
+    use dicetest::prelude::*;
 
     #[test]
     fn result_of_bubble_sort_is_sorted() {
@@ -114,7 +114,7 @@ This section will guide you through the most important concepts and features of 
 The type `Seed` allows to determine the [pseudorandomness]. You can either use a fixed `Seed` or a random `Seed`:
 
 ```rust
-use dicetest::prand::Seed;
+use dicetest::Seed;
 
 println!("{:?}", Seed(42));
 // Output: Seed(42)
@@ -126,7 +126,7 @@ println!("{:?}", Seed::random());
 The `Seed` can be used to initialize the [pseudorandom number generator] `Prng`. For each `Seed` the `Prng` provides a different infinite pseudorandom sequence of `u64`s
 
 ```rust
-use dicetest::prand::{Prng, Seed};
+use dicetest::{Prng, Seed};
 
 fn print_random_values(mut prng: Prng) {
     for _ in 0..3 {
@@ -154,7 +154,7 @@ Although `Prng` can only generate pseudorandom `u64`s, the `u64`s can be used fo
 
 An implementor of `DieOnce` is a generator that can be used a single time (similar to [`FnOnce`]).
 ```rust
-use dicetest::prelude::dice::*;
+use dicetest::prelude::*;
 
 let xx = "xx".to_string();
 let yy = "yy".to_string();
@@ -166,7 +166,7 @@ let xx_or_yy_die = dice::one_of_2_once(xx, yy);
 
 An implementor of `Die` is a generator that can be used infinite times (similar to [`Fn`]).
 ```rust
-use dicetest::prelude::dice::*;
+use dicetest::prelude::*;
 
 let xx = "xx".to_string();
 let yy = "yy".to_string();
@@ -181,7 +181,7 @@ let three_xx_or_yy_die = dice::array_3(xx_or_yy_die);
 
 Generators can be easily implemented and composed:
 ```rust
-use dicetest::prelude::dice::*;
+use dicetest::prelude::*;
 
 // A classic die. Generates a number between 1 and 6 with uniform distribution.
 let classic_die = dice::one_of_6::<u8>(1, 2, 3, 4, 5, 6);
@@ -227,7 +227,8 @@ The struct `Fate` is necessary for using `DieOnce` or `Die`. It contains two par
 A `Fate` can only be constructed via `Fate::run`.
 
 ```rust
-use dicetest::prelude::dice::*;
+use dicetest::prelude::*;
+use dicetest::Prng;
 
 // Provides the randomness for the generator and will be mutated when used.
 let mut prng = Prng::from_seed(0x5EED.into());
@@ -261,7 +262,7 @@ You can write tests with the test builder `Dicetest`:
 `Dicetest` is using the builder pattern:
 
 ```rust
-use dicetest::prelude::tests::*;
+use dicetest::prelude::*;
 
 #[test]
 fn test_foo() {
@@ -287,7 +288,7 @@ The closure contains your test. With the passed `fate` you can generate test dat
 Hints can be used to analyze a single test run. In most cases you want to analyze the counterexample. Use it to reveal what test data were generated or which branches were taken:
 
 ```rust
-use dicetest::prelude::tests::*;
+use dicetest::prelude::*;
 
 #[test]
 fn test_foo() {
@@ -334,7 +335,7 @@ The test failed after 0 passes.
 Stats can be used to analyze multiple test runs. Use it to reveal the distribution of generated test data or the probability of branches:
 
 ```rust
-use dicetest::prelude::tests::*;
+use dicetest::prelude::*;
 
 #[test]
 fn test_foo() {

@@ -139,7 +139,7 @@ pub fn decode(base64: &str) -> Result<Vec<u8>, String> {
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::tests::*;
+    use crate::prelude::*;
     use crate::util::base64;
 
     #[test]

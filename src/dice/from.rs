@@ -1,4 +1,4 @@
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 struct Fun<F>(F);
 
@@ -25,7 +25,8 @@ where
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Default::default();
@@ -52,7 +53,8 @@ where
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();

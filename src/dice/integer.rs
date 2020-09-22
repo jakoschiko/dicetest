@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 use std::ops::{Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive};
 
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 /// Non-empty range for integer generators like `dice::u8`, `dice::i32`, etc.
 ///
@@ -127,7 +127,8 @@ macro_rules! fn_integer {
         /// This example generates integers without panicking:
         ///
         /// ```
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
+        /// use dicetest::{Prng, Limit};
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
@@ -155,7 +156,7 @@ macro_rules! fn_integer {
         /// This example panics:
         ///
         /// ```should_panic
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
         ///
         /// // Oh no, panic!
         /// let _integer_die = dice::u8(71..42);
@@ -220,7 +221,8 @@ macro_rules! fn_integer {
         /// This example generates integers without panicking:
         ///
         /// ```
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
+        /// use dicetest::{Prng, Limit};
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
@@ -248,7 +250,7 @@ macro_rules! fn_integer {
         /// This example panics:
         ///
         /// ```should_panic
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
         ///
         /// // Oh no, panic!
         /// let _integer_die = dice::u8(71..42);
@@ -318,7 +320,7 @@ fn_integer! { isize, uni_isize, u64, random_u64, [-2, -1, 0, 1, 2] }
 mod tests {
     use std::fmt::Debug;
 
-    use crate::prelude::tests::*;
+    use crate::prelude::*;
 
     fn range_contains_integer<I, ID, B, BD, R>(
         fate: &mut Fate,

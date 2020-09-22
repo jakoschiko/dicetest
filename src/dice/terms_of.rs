@@ -1,4 +1,4 @@
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 macro_rules! fn_terms_of_integer {
     (
@@ -17,7 +17,8 @@ macro_rules! fn_terms_of_integer {
         /// This example generates terms without panicking:
         ///
         /// ```
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
+        /// use dicetest::{Prng, Limit};
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
@@ -35,7 +36,7 @@ macro_rules! fn_terms_of_integer {
         /// This example panics:
         ///
         /// ```should_panic
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
         ///
         /// // Oh no, panic!
         /// let _terms_die = dice::terms_of_u8(1, 0);
@@ -91,7 +92,7 @@ fn_terms_of_integer! { usize, terms_of_usize, uni_usize }
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::tests::*;
+    use crate::prelude::*;
 
     macro_rules! terms_of_integer_tests {
         (

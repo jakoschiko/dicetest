@@ -1,4 +1,4 @@
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 macro_rules! sum {
     ($h:ident,) => ($h);
@@ -21,7 +21,8 @@ macro_rules! fn_one_of_n {
         /// # Examples
         ///
         /// ```
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
+        /// use dicetest::{Prng, Limit};
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
@@ -49,7 +50,8 @@ macro_rules! fn_one_of_n {
         /// # Examples
         ///
         /// ```
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
+        /// use dicetest::{Prng, Limit};
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
@@ -80,7 +82,8 @@ macro_rules! fn_one_of_n {
         /// # Examples
         ///
         /// ```
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
+        /// use dicetest::{Prng, Limit};
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
@@ -109,7 +112,8 @@ macro_rules! fn_one_of_n {
         /// # Examples
         ///
         /// ```
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
+        /// use dicetest::{Prng, Limit};
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
@@ -145,7 +149,8 @@ macro_rules! fn_one_of_n {
         /// # Examples
         ///
         /// ```
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
+        /// use dicetest::{Prng, Limit};
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
@@ -176,7 +181,8 @@ macro_rules! fn_one_of_n {
         /// # Examples
         ///
         /// ```
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
+        /// use dicetest::{Prng, Limit};
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
@@ -215,7 +221,8 @@ macro_rules! fn_one_of_n {
         /// # Examples
         ///
         /// ```
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
+        /// use dicetest::{Prng, Limit};
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
@@ -249,7 +256,8 @@ macro_rules! fn_one_of_n {
         /// # Examples
         ///
         /// ```
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
+        /// use dicetest::{Prng, Limit};
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
@@ -391,7 +399,8 @@ fn_one_of_n! { 9,
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
@@ -417,7 +426,8 @@ pub fn one_of_vec_once<T>(mut values: Vec<T>) -> impl DieOnce<T> {
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
@@ -447,7 +457,8 @@ where
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();

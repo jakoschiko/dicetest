@@ -3,8 +3,8 @@ use std::hash::BuildHasher;
 use std::hash::SipHasher;
 use std::num::Wrapping;
 
-use crate::prand::Seed;
 use crate::util::conversion;
+use crate::Seed;
 
 /// A pseudorandom number generator.
 ///
@@ -151,9 +151,8 @@ impl rand_core::RngCore for Prng {
 
 #[cfg(test)]
 mod tests {
-    use crate::asserts;
-    use crate::prand::Prng;
-    use crate::prelude::tests::*;
+    use crate::prelude::*;
+    use crate::{asserts, Prng};
 
     #[test]
     fn from_seed_must_not_have_cycle_length_zero() {

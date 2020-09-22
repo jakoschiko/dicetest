@@ -1,4 +1,4 @@
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 /// Generates an valid index for the given slice.
 ///
@@ -11,7 +11,8 @@ use crate::prelude::dice::*;
 /// This example generates an index without panicking:
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
@@ -26,7 +27,7 @@ use crate::prelude::dice::*;
 /// This example panics:
 ///
 /// ```should_panic
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
 ///
 /// // Oh no, panic!
 /// let _index_die = dice::index_of::<char>(&[]);
@@ -38,7 +39,7 @@ pub fn index_of<'a, 'b, T>(slice: &'a [T]) -> impl Die<usize> + 'b {
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::tests::*;
+    use crate::prelude::*;
 
     #[test]
     fn index_of_generates_valid_index() {

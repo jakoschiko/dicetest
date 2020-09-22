@@ -1,4 +1,4 @@
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 /// Generates a `None` or a `Some` that contains a value from the given generator. `None` and `Some`
 /// have the same probalility.
@@ -6,7 +6,8 @@ use crate::prelude::dice::*;
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
@@ -28,7 +29,8 @@ pub fn option_once<T>(some_die: impl DieOnce<T>) -> impl DieOnce<Option<T>> {
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
@@ -50,7 +52,8 @@ pub fn option<T>(some_die: impl Die<T>) -> impl Die<Option<T>> {
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
@@ -78,7 +81,8 @@ pub fn weighted_option_once<T>(
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();

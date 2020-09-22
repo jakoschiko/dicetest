@@ -1,7 +1,7 @@
 use std::collections::LinkedList;
 
 use crate::dice::{CollectionBuilder, SizeRange};
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 /// [`LinkedList`] builder for [`dice::collection`].
 ///
@@ -34,7 +34,8 @@ impl<T> CollectionBuilder<T, LinkedList<T>> for LinkedListBuilder {
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
@@ -75,7 +76,8 @@ pub fn linked_list<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl 
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();

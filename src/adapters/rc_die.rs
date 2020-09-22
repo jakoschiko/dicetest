@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::die::{Die, DieOnce, Fate};
+use crate::{Die, DieOnce, Fate};
 
 /// Adapter for `DieOnce::rc`.
 #[derive(Clone)]

@@ -1,5 +1,5 @@
 use crate::dice::{CollectionBuilder, SizeRange};
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 /// [`Vec`] builder for [`dice::collection`].
 ///
@@ -34,7 +34,8 @@ impl<T> CollectionBuilder<T, Vec<T>> for VecBuilder {
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
@@ -75,7 +76,8 @@ pub fn vec<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<Vec<
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
@@ -95,7 +97,7 @@ pub fn outer_vec<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Di
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::tests::*;
+    use crate::prelude::*;
 
     #[test]
     fn vec_calc_stats() {

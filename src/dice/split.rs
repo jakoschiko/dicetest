@@ -1,11 +1,12 @@
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 /// Generates two `Vecs` by splitting the given `Vec` at a random index.
 ///
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
@@ -33,7 +34,7 @@ pub fn split_vec<T>(mut vec: Vec<T>) -> impl DieOnce<(Vec<T>, Vec<T>)> {
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::tests::*;
+    use crate::prelude::*;
 
     #[test]
     fn split_vec_result_can_be_merged_to_orig_vec() {

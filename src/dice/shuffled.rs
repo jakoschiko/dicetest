@@ -1,4 +1,4 @@
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 /// Shuffles the given `Vec` randomly using the [Fisher-Yates shuffle].
 ///
@@ -7,7 +7,8 @@ use crate::prelude::dice::*;
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
@@ -33,7 +34,7 @@ pub fn shuffled_vec<T>(mut vec: Vec<T>) -> impl DieOnce<Vec<T>> {
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::tests::*;
+    use crate::prelude::*;
     use std::collections::HashMap;
 
     fn count_vec_elems(vec: &Vec<u8>) -> HashMap<u8, usize> {

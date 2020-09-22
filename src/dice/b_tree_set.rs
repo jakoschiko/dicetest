@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 
 use crate::dice::{CollectionBuilder, SizeRange};
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 /// [`BTreeSet`] builder for [`dice::collection`].
 ///
@@ -37,7 +37,8 @@ where
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
@@ -81,7 +82,8 @@ where
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();

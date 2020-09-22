@@ -1,5 +1,5 @@
-use crate::die::adapters::{BoxedDieOnce, FlatMapDie, FlattenDie, MapDie};
-use crate::die::Fate;
+use crate::adapters::{BoxedDieOnce, FlatMapDie, FlattenDie, MapDie};
+use crate::Fate;
 
 /// Trait for generating a single preudorandom value of type `T`.
 pub trait DieOnce<T> {

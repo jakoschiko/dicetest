@@ -1,4 +1,4 @@
-use crate::die::Limit;
+use crate::Limit;
 
 /// Generates a series of linearly interpolated `Limit`s.
 #[derive(Debug, Clone)]
@@ -80,7 +80,7 @@ impl Iterator for LimitSeriesIntoIter {
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::tests::*;
+    use crate::prelude::*;
     use crate::runner::LimitSeries;
 
     fn assert_example(start: u64, end: u64, len: u64, expected_limits: Vec<u64>) {

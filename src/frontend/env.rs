@@ -1,9 +1,8 @@
 use std::env::{self, VarError};
 use std::str::FromStr;
 
-use crate::die::Limit;
 use crate::frontend::{Mode, RunCode};
-use crate::prand::Seed;
+use crate::{Limit, Seed};
 
 const KEY_MODE: &str = "DICETEST_MODE";
 const KEY_DEBUG: &str = "DICETEST_DEBUG";

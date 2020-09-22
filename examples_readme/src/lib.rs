@@ -18,7 +18,7 @@ mod section_example {
     #[cfg(test)]
     mod tests {
         use super::*;
-        use dicetest::prelude::tests::*;
+        use dicetest::prelude::*;
 
         #[test]
         fn result_of_bubble_sort_is_sorted() {
@@ -40,7 +40,7 @@ mod section_example {
 mod section_pseudorandomness {
     #[test]
     fn seed() {
-        use dicetest::prand::Seed;
+        use dicetest::Seed;
 
         println!("{:?}", Seed(42));
         // Output: Seed(42)
@@ -51,7 +51,7 @@ mod section_pseudorandomness {
 
     #[test]
     fn prng() {
-        use dicetest::prand::{Prng, Seed};
+        use dicetest::{Prng, Seed};
 
         fn print_random_values(mut prng: Prng) {
             for _ in 0..3 {
@@ -75,7 +75,7 @@ mod section_pseudorandomness {
 mod section_dice {
     #[test]
     fn die_once() {
-        use dicetest::prelude::dice::*;
+        use dicetest::prelude::*;
 
         let xx = "xx".to_string();
         let yy = "yy".to_string();
@@ -87,7 +87,7 @@ mod section_dice {
 
     #[test]
     fn die() {
-        use dicetest::prelude::dice::*;
+        use dicetest::prelude::*;
 
         let xx = "xx".to_string();
         let yy = "yy".to_string();
@@ -102,7 +102,7 @@ mod section_dice {
 
     #[test]
     fn implement_and_compose() {
-        use dicetest::prelude::dice::*;
+        use dicetest::prelude::*;
 
         // A classic die. Generates a number between 1 and 6 with uniform distribution.
         let classic_die = dice::one_of_6::<u8>(1, 2, 3, 4, 5, 6);
@@ -142,7 +142,8 @@ mod section_dice {
 
     #[test]
     fn fate() {
-        use dicetest::prelude::dice::*;
+        use dicetest::prelude::*;
+        use dicetest::Prng;
 
         // Provides the randomness for the generator and will be mutated when used.
         let mut prng = Prng::from_seed(0x5EED.into());
@@ -166,7 +167,7 @@ mod section_dice {
 
 #[cfg(test)]
 mod section_tests {
-    use dicetest::prelude::tests::*;
+    use dicetest::prelude::*;
 
     #[test]
     fn test_foo() {
@@ -187,7 +188,7 @@ mod section_tests {
 
 #[cfg(test)]
 mod section_hints {
-    use dicetest::prelude::tests::*;
+    use dicetest::prelude::*;
 
     #[test]
     fn test_foo() {
@@ -209,7 +210,7 @@ mod section_hints {
 
 #[cfg(test)]
 mod section_stats {
-    use dicetest::prelude::tests::*;
+    use dicetest::prelude::*;
 
     #[test]
     fn test_foo() {

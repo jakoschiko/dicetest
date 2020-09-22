@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 use std::ops::{Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive};
 
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 /// Non-empty range for `dice::size`.
 pub trait SizeRange {
@@ -92,7 +92,8 @@ impl SizeRange for RangeToInclusive<usize> {
 /// This example generates sizes without panicking:
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
@@ -125,7 +126,7 @@ impl SizeRange for RangeToInclusive<usize> {
 /// This example panics:
 ///
 /// ```should_panic
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
 ///
 /// // Oh no, panic!
 /// let _size_die = dice::size(71..42);
@@ -145,8 +146,7 @@ pub fn size(range: impl SizeRange) -> impl Die<usize> {
 mod tests {
     use std::fmt::Debug;
 
-    use crate::die::Fate;
-    use crate::prelude::tests::*;
+    use crate::prelude::*;
 
     fn range_contains_size<B, R>(
         fate: &mut Fate,

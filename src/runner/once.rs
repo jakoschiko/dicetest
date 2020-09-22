@@ -5,13 +5,11 @@
 
 use std::panic::{catch_unwind, UnwindSafe};
 
-use crate::die::Fate;
-use crate::die::Limit;
 use crate::hints::Hints;
-use crate::prand::Prng;
 use crate::runner;
 use crate::runner::Error;
 use crate::stats::Stats;
+use crate::{Fate, Limit, Prng};
 
 /// The configuration for a single test run.
 #[derive(Debug, Clone)]
@@ -68,8 +66,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::prand::{Prng, Seed};
     use crate::runner::once::{run, Config};
+    use crate::{Prng, Seed};
 
     fn default_prng() -> Prng {
         Prng::from_seed(Seed::from(42))

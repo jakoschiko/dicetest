@@ -1,5 +1,5 @@
 use crate::dice::SizeRange;
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 /// A collection builder for [`dice::collection`].
 ///
@@ -78,8 +78,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::die::Limit;
-    use crate::prelude::tests::*;
+    use crate::prelude::*;
+    use crate::Limit;
 
     #[test]
     fn outer_collection_overall_size_is_bounded_by_limit() {

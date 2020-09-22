@@ -2,7 +2,7 @@
 
 use std::fmt::Debug;
 
-use crate::prelude::asserts::*;
+use crate::prelude::*;
 
 /// Asserts that `g` is a left inverse for `f`.
 pub fn left_inverse<X, Y>(

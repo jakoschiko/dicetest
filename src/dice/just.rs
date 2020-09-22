@@ -1,11 +1,12 @@
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 /// Generates the given value.
 ///
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
@@ -25,7 +26,8 @@ pub fn just_once<T>(value: T) -> impl DieOnce<T> {
 /// Generates a clone of the given value.
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();

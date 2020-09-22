@@ -3,7 +3,7 @@
 use std::fmt::Debug;
 use std::ops::{RangeFrom, RangeFull, RangeInclusive, RangeToInclusive};
 
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 /// Non-empty range for float generators `dice::f32` and `dice::f64`.
 ///
@@ -107,7 +107,8 @@ macro_rules! fn_float {
         /// This example generates floats without panicking:
         ///
         /// ```
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
+        /// use dicetest::{Prng, Limit};
         /// use std::f32::{INFINITY, NEG_INFINITY};
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
@@ -131,14 +132,14 @@ macro_rules! fn_float {
         /// These examples panic:
         ///
         /// ```should_panic
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
         ///
         /// // Oh no, panic!
         /// let _float_die = dice::f32(100.0..=-273.15);
         /// ```
         ///
         /// ```should_panic
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
         ///
         /// // Oh no, panic!
         /// let _float_die = dice::f32(std::f32::NAN);
@@ -220,7 +221,8 @@ macro_rules! fn_float {
         /// # Examples
         ///
         /// ```
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
+        /// use dicetest::{Prng, Limit};
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
@@ -244,7 +246,8 @@ macro_rules! fn_float {
         /// # Examples
         ///
         /// ```
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
+        /// use dicetest::{Prng, Limit};
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
@@ -320,10 +323,10 @@ macro_rules! fn_float {
                     // (but mathematically equivalent) expressions
                     // depending on where we want to interpolate.
                     if factor <= 0.5 {
-                        // Hurray, we can use the orignal formula!
+                        // Hurray, we can use the original formula!
                         min + factor * (max - min)
                     } else {
-                        // Similar to the orignal formula, but flipped.
+                        // Similar to the original formula, but flipped.
                         max + (1.0 - factor) * (min - max)
                     }
                 } else {
@@ -344,7 +347,6 @@ fn_float! { f64, u64, f64_util, any_f64, unit_f64, open_unit_f64 }
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::prelude::tests::*;
 
     #[test]
     fn f32_util_open_unit_float_examples() {
@@ -355,10 +357,10 @@ mod tests {
             // Represents the exponent 2^-1.
             // That's the `0.1` of the binary number.
             let exponent_bits = 126 << 23;
-            // All 23 bits of the mantisse are `1`.
+            // All 23 bits of the mantissa are `1`.
             // These are the remaining 23 `1`s after the `0.1`.
-            let max_mantisse = std::u32::MAX >> (32 - 23);
-            f32::from_bits(exponent_bits | max_mantisse)
+            let max_mantissa = std::u32::MAX >> (32 - 23);
+            f32::from_bits(exponent_bits | max_mantissa)
         };
 
         assert_eq!(
@@ -376,10 +378,10 @@ mod tests {
             // Represents the exponent 2^-1.
             // That's the `0.1` of the binary number.
             let exponent_bits = 1022 << 52;
-            // All 52 bits of the mantisse are `1`.
+            // All 52 bits of the mantissa are `1`.
             // These are the remaining 52 `1`s after the `0.1`.
-            let max_mantisse = std::u64::MAX >> (64 - 52);
-            f64::from_bits(exponent_bits | max_mantisse)
+            let max_mantissa = std::u64::MAX >> (64 - 52);
+            f64::from_bits(exponent_bits | max_mantissa)
         };
 
         assert_eq!(

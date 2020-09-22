@@ -1,11 +1,12 @@
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 /// Generates `true` or `false` with the same probability.
 ///
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
@@ -24,7 +25,8 @@ pub fn bool() -> impl Die<bool> {
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
@@ -40,7 +42,7 @@ pub fn weighted_bool(false_weight: u32, true_weight: u32) -> impl Die<bool> {
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::tests::*;
+    use crate::prelude::*;
 
     #[test]
     fn bool_calc_stats() {

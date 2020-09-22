@@ -1,11 +1,9 @@
 use std::panic::{self, RefUnwindSafe, UnwindSafe};
 
-use crate::die::{Fate, Limit};
 use crate::frontend::env::{self, EnvValue};
 use crate::frontend::formatter::*;
 use crate::frontend::{Mode, RunCode};
-use crate::prand::{Prng, Seed};
-use crate::runner;
+use crate::{runner, Fate, Limit, Prng, Seed};
 
 #[derive(Debug, Clone)]
 struct Params {

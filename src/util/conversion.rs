@@ -15,7 +15,7 @@ pub fn bytes_to_u64(bytes: [u8; 8]) -> u64 {
 #[cfg(test)]
 mod tests {
     use crate::asserts;
-    use crate::prelude::tests::*;
+    use crate::prelude::*;
     use crate::util::conversion;
 
     #[test]

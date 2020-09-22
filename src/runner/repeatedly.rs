@@ -6,14 +6,11 @@
 
 use std::panic::{catch_unwind, RefUnwindSafe, UnwindSafe};
 
-use crate::die::Fate;
-use crate::die::Limit;
-use crate::hints;
 use crate::hints::Hints;
-use crate::prand::Prng;
 use crate::runner::Error;
 use crate::runner::{self, LimitSeries};
 use crate::stats::Stats;
+use crate::{hints, Fate, Limit, Prng};
 
 /// The configuration for repeated test runs.
 #[derive(Debug, Clone)]
@@ -167,9 +164,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::hints;
-    use crate::prand::{Prng, Seed};
     use crate::runner::repeatedly::{run, Config};
+    use crate::{hints, Prng, Seed};
 
     fn default_prng() -> Prng {
         Prng::from_seed(Seed::from(42))

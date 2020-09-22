@@ -1,6 +1,5 @@
-use crate::die::Limit;
-use crate::prand::Prng;
 use crate::util::{base64, conversion};
+use crate::{Limit, Prng};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RunCode {
@@ -45,10 +44,9 @@ impl RunCode {
 
 #[cfg(test)]
 mod tests {
-    use crate::asserts;
-    use crate::die::Limit;
     use crate::frontend::RunCode;
-    use crate::prelude::tests::*;
+    use crate::prelude::*;
+    use crate::{asserts, Limit};
 
     #[test]
     fn display_is_right_inverse_for_parse() {

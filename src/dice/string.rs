@@ -1,5 +1,5 @@
 use crate::dice::{CollectionBuilder, SizeRange};
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 /// [`String`] builder for [`dice::collection`].
 ///
@@ -35,7 +35,8 @@ impl CollectionBuilder<char, String> for StringBuilder {
 /// # Examples
 ///
 /// ```
-/// use dicetest::prelude::dice::*;
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();

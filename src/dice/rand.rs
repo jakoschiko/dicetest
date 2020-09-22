@@ -1,4 +1,4 @@
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 /// Generates a value using the given `Distribution` from the [crate `rand`].
 ///

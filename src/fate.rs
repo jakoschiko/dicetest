@@ -1,5 +1,4 @@
-use crate::die::Limit;
-use crate::prand::Prng;
+use crate::{Limit, Prng};
 
 /// Contains parameters for controlling the value generation with `DieOnce` and `Die`.
 ///

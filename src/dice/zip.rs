@@ -1,4 +1,4 @@
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 macro_rules! fn_zip_n {
     ($zip_n_once:ident, $zip_n:ident: $($Ti:ident, $die_i:ident)+) => (
@@ -8,7 +8,8 @@ macro_rules! fn_zip_n {
         /// # Examples
         ///
         /// ```
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
+        /// use dicetest::{Prng, Limit};
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
@@ -35,7 +36,8 @@ macro_rules! fn_zip_n {
         /// # Examples
         ///
         /// ```
-        /// use dicetest::prelude::dice::*;
+        /// use dicetest::prelude::*;
+        /// use dicetest::{Prng, Limit};
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();

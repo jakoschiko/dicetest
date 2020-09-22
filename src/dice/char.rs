@@ -1,4 +1,4 @@
-use crate::prelude::dice::*;
+use crate::prelude::*;
 
 fn char_in_range(lower: u32, upper: u32) -> impl Die<char> {
     dice::uni_u32(lower..=upper)
@@ -73,7 +73,7 @@ pub fn char() -> impl Die<char> {
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::tests::*;
+    use crate::prelude::*;
 
     #[test]
     fn char_ascii_alphabetic_lowercase_generates_only_valid_values() {
