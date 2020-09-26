@@ -377,7 +377,7 @@ The test withstood 200 passes.
 
 ### Environment variables
 
-You can use environment variables to configure your tests without changing the source code. See the documentation of `Dicetest` for a full list of supported environment variables. Here some examples:
+You can use environment variables to configure your tests without changing the source code. See the documentation of `Dicetest` for a full list of supported environment variables. Here are some examples:
 
 * You want to debug the counterexample of `mytest` with its run code (copied from the test result):
 ```text
