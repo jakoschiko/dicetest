@@ -3,6 +3,21 @@ use crate::prelude::*;
 macro_rules! fn_array_n {
     ($N:expr, $array_n:ident: $($i:expr)+) => (
         /// Generates an array with random elements.
+        /// 
+        /// # Examples
+        ///
+        /// ```
+        /// use dicetest::prelude::*;
+        /// use dicetest::{Prng, Limit};
+        ///
+        /// let mut prng = Prng::from_seed(0x5EED.into());
+        /// let limit = Limit::default();
+        /// let mut fate = Fate::new(&mut prng, limit);
+        ///
+        /// let byte_die = dice::u8(..);
+        /// let bytes_die = dice::array_4(byte_die);
+        /// let [a, b, c, d]  = fate.roll(bytes_die);
+        /// ```
         pub fn $array_n<T>(elem_die: impl Die<T>) -> impl Die<[T; $N]> {
             dice::from_fn(move |mut fate| {
                 #[allow(clippy::no_effect)]

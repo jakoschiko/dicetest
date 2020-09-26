@@ -253,7 +253,7 @@ println!("{:?}", vec);
 
 ### Tests
 
-If you want to write a test with randomly generated test data you can use the test builder `Dicetest` :
+If you want to write a test with randomly generated test data you can use the test builder `Dicetest`:
 * It can be configured via source code or environment variables.
 * It runs your test repeatedly with different seeds.
 * It logs useful information that helps you to debug your test.

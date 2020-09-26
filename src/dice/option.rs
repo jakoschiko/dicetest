@@ -13,10 +13,10 @@ use crate::prelude::*;
 /// let limit = Limit::default();
 /// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// let foo_or_bar_die = dice::one_of_2_once("foo", "bar");
-/// let optional_foo_or_bar_die = dice::option_once(foo_or_bar_die);
+/// let some_die = dice::just_once(42);
+/// let option_die = dice::option_once(some_die);
 ///
-/// let foo_or_bar_or_none = fate.roll(optional_foo_or_bar_die);
+/// let some_or_none = fate.roll(option_die);
 /// ```
 pub fn option_once<T>(some_die: impl DieOnce<T>) -> impl DieOnce<Option<T>> {
     dice::one_of_die_2_once(dice::just_once(None), some_die.map_once(Some))
@@ -35,10 +35,10 @@ pub fn option_once<T>(some_die: impl DieOnce<T>) -> impl DieOnce<Option<T>> {
 /// let limit = Limit::default();
 /// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// let byte_die = dice::u8(..);
-/// let optional_byte_die = dice::option(byte_die);
+/// let some_die = dice::just(42);
+/// let option_die = dice::option(some_die);
 ///
-/// let byte_or_none = fate.roll(optional_byte_die);
+/// let some_or_none = fate.roll(option_die);
 /// ```
 pub fn option<T>(some_die: impl Die<T>) -> impl Die<Option<T>> {
     dice::one_of_die_2(dice::from_fn(|_| None), some_die.map(Some))
@@ -57,10 +57,10 @@ pub fn option<T>(some_die: impl Die<T>) -> impl Die<Option<T>> {
 /// let limit = Limit::default();
 /// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// let foo_or_bar_die = dice::one_of_2_once("foo", "bar");
-/// let optional_foo_or_bar_die = dice::weighted_option_once(10, (1, foo_or_bar_die));
+/// let some_die = dice::just_once(42);
+/// let option_die = dice::weighted_option_once(10, (1, some_die));
 ///
-/// let probably_none = fate.roll(optional_foo_or_bar_die);
+/// let probably_none = fate.roll(option_die);
 /// ```
 pub fn weighted_option_once<T>(
     none_weight: u32,
@@ -85,10 +85,10 @@ pub fn weighted_option_once<T>(
 /// let limit = Limit::default();
 /// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// let byte_die = dice::u8(..);
-/// let optional_byte_die = dice::weighted_option(10, (1, byte_die));
+/// let some_die = dice::just(42);
+/// let option_die = dice::weighted_option(10, (1, some_die));
 ///
-/// let probably_none = fate.roll(optional_byte_die);
+/// let probably_none = fate.roll(option_die);
 /// ```
 pub fn weighted_option<T>(
     none_weight: u32,
