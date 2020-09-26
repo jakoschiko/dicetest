@@ -28,7 +28,7 @@ impl Default for Params {
             start_limit: 0.into(),
             end_limit: Limit::default(),
             limit_multiplier: None,
-            passes: 1000,
+            passes: 200,
             passes_multiplier: None,
             env_enabled: true,
             hints_enabled: true,
@@ -198,7 +198,7 @@ impl Dicetest {
 
     /// Sets how many times the test needs to be run without failing.
     ///
-    /// It's only used in run-repeatedly mode and is `1000` by default.
+    /// It's only used in run-repeatedly mode and is `200` by default.
     ///
     /// # Environment
     ///

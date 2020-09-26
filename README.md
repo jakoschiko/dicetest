@@ -54,7 +54,7 @@ The test failed after 31 passes.
 - seed: 3713861809241954222
 - start limit: 0
 - end limit: 100
-- passes: 1000
+- passes: 200
 
 # Counterexample
 - run code: "/yiA1sab3S4UnCf4ozyMpxMxzg1NtFybCuYLHy0/oscDAAAAAAAAAA=="
@@ -311,20 +311,20 @@ Running the test produces the following output:
 The test failed after 0 passes.
 
 # Config
-- seed: 1002476580450337062
+- seed: 10929669535587280453
 - start limit: 0
 - end limit: 100
-- passes: 1000
+- passes: 200
 
 # Counterexample
-- run code: "wVL7vPmPphzT0HjGwTILuoksv/gH1iB0H5qfgApmKoIAAAAAAAAAAA=="
+- run code: "JfXG0LRXjKUMu+YmdrF38/GstRdeLAeMRTKskCQcgNoAAAAAAAAAAA=="
 - limit: 0
 - hints:
     - x = 5
-    - took branch if with y = 2
+    - took branch if with y = 1
 - error: assertion failed: `(left == right)`
   left: `3`,
- right: `2`
+ right: `1`
 ```
 
 ### Stats
@@ -353,26 +353,26 @@ fn test_foo() {
 Running the test with the environment variable `DICETEST_STATS_ENABLED=true` produces the following output:
 
 ```text
-The test withstood 1000 passes.
+The test withstood 200 passes.
 
 # Config
-- seed: 9664794707732402215
+- seed: 5043079553183914912
 - start limit: 0
 - end limit: 100
-- passes: 1000
+- passes: 200
 
 # Stats
 - branch:
-    - 27.00% (270): if with y = 2
-    - 26.50% (265): if with y = 3
-    - 26.10% (261): if with y = 1
-    - 20.40% (204): else
+    - 29.50% (59): if with y = 1
+    - 27.50% (55): if with y = 3
+    - 22.50% (45): if with y = 2
+    - 20.50% (41): else
 - x:
-    - 28.60% (286): 1
-    - 21.00% (210): 5
-    - 19.70% (197): 2
-    - 15.60% (156): 4
-    - 15.10% (151): 3
+    - 31.50% (63): 1
+    - 22.00% (44): 5
+    - 17.00% (34): 2
+    - 15.50% (31): 4
+    - 14.00% (28): 3
 ```
 
 ### Environment variables

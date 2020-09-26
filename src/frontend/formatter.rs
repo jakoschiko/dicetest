@@ -396,7 +396,7 @@ mod tests {
         runner::repeatedly::Config {
             start_limit: 0.into(),
             end_limit: 100.into(),
-            passes: 1000,
+            passes: 200,
             hints_enabled: true,
             stats_enabled: false,
         }
@@ -553,20 +553,20 @@ The test failed.
         let seed = 42.into();
         let config = example_run_repeatedly_config();
         let report = runner::repeatedly::Report {
-            passes: 1000,
+            passes: 200,
             stats: None,
             counterexample: None,
         };
         let formatting = Formatting::default();
 
         let expected = "\
-The test withstood 1000 passes.
+The test withstood 200 passes.
 
 # Config
 - seed: 42
 - start limit: 0
 - end limit: 100
-- passes: 1000
+- passes: 200
 ";
 
         let actual = format!(
@@ -602,7 +602,7 @@ The test failed after 123 passes.
 - seed: 42
 - start limit: 0
 - end limit: 100
-- passes: 1000
+- passes: 200
 
 # Counterexample
 - run code: {:?}
