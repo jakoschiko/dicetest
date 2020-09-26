@@ -7,7 +7,7 @@ pub trait DieOnce<T> {
     ///
     /// The `Fate` is the only source of the randomness. Besides that, the generation is
     /// derterministic.
-    fn roll_once(self, fate: &mut Fate) -> T;
+    fn roll_once(self, fate: Fate) -> T;
 
     /// Creates a new `DieOnce` by mapping the generated values of `self`.
     ///

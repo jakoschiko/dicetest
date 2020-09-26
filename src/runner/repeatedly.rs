@@ -76,7 +76,7 @@ pub struct Report {
 /// has failed.
 pub fn run<T>(prng: Prng, config: &Config, test: T) -> Report
 where
-    T: Fn(&mut Fate) + UnwindSafe + RefUnwindSafe,
+    T: Fn(Fate) + UnwindSafe + RefUnwindSafe,
 {
     let limit_series = LimitSeries::new(config.start_limit, config.end_limit, config.passes);
 
@@ -105,7 +105,7 @@ fn search_counterexample<T>(
     test: &T,
 ) -> (u64, Option<Counterexample>)
 where
-    T: Fn(&mut Fate) + UnwindSafe + RefUnwindSafe,
+    T: Fn(Fate) + UnwindSafe + RefUnwindSafe,
 {
     let mut passes = 0;
     let mut limits = limit_series.into_iter();
@@ -119,7 +119,8 @@ where
         let prng_before_run = prng.clone();
 
         let test_result = catch_unwind(|| {
-            Fate::run(&mut prng, limit, test);
+            let fate = Fate::new(&mut prng, limit);
+            test(fate);
             prng
         });
 
@@ -144,12 +145,17 @@ where
 
 fn rerun_counterexample<T>(counterexample: Counterexample, test: &T) -> Counterexample
 where
-    T: Fn(&mut Fate) + UnwindSafe + RefUnwindSafe,
+    T: Fn(Fate) + UnwindSafe + RefUnwindSafe,
 {
     let (test_result, hints) = {
         let mut prng = counterexample.prng.clone();
         let limit = counterexample.limit;
-        hints::collect(|| catch_unwind(move || Fate::run(&mut prng, limit, test)))
+        hints::collect(|| {
+            catch_unwind(move || {
+                let fate = Fate::new(&mut prng, limit);
+                test(fate)
+            })
+        })
     };
 
     match test_result {

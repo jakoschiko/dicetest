@@ -77,8 +77,8 @@ mod tests {
 
     #[test]
     fn char_ascii_alphabetic_lowercase_generates_only_valid_values() {
-        Dicetest::repeatedly().run(|fate| {
-            let char = dice::char_ascii_alphabetic_lowercase().roll(fate);
+        Dicetest::repeatedly().run(|mut fate| {
+            let char = fate.roll(dice::char_ascii_alphabetic_lowercase());
 
             hint_debug!(char);
 
@@ -89,8 +89,8 @@ mod tests {
 
     #[test]
     fn char_ascii_alphabetic_uppercase_generates_only_valid_values() {
-        Dicetest::repeatedly().run(|fate| {
-            let char = dice::char_ascii_alphabetic_uppercase().roll(fate);
+        Dicetest::repeatedly().run(|mut fate| {
+            let char = fate.roll(dice::char_ascii_alphabetic_uppercase());
 
             hint_debug!(char);
 
@@ -101,8 +101,8 @@ mod tests {
 
     #[test]
     fn char_ascii_alphabetic_generates_only_valid_values() {
-        Dicetest::repeatedly().run(|fate| {
-            let char = dice::char_ascii_alphabetic().roll(fate);
+        Dicetest::repeatedly().run(|mut fate| {
+            let char = fate.roll(dice::char_ascii_alphabetic());
 
             hint_debug!(char);
 
@@ -112,8 +112,8 @@ mod tests {
 
     #[test]
     fn char_ascii_digit_generates_only_valid_values() {
-        Dicetest::repeatedly().run(|fate| {
-            let char = dice::char_ascii_digit().roll(fate);
+        Dicetest::repeatedly().run(|mut fate| {
+            let char = fate.roll(dice::char_ascii_digit());
 
             hint_debug!(char);
 
@@ -123,8 +123,8 @@ mod tests {
 
     #[test]
     fn char_ascii_alphanumeric_generates_only_valid_values() {
-        Dicetest::repeatedly().run(|fate| {
-            let char = dice::char_ascii_alphanumeric().roll(fate);
+        Dicetest::repeatedly().run(|mut fate| {
+            let char = fate.roll(dice::char_ascii_alphanumeric());
 
             hint_debug!(char);
 
@@ -134,8 +134,8 @@ mod tests {
 
     #[test]
     fn char_ascii_printable_generates_only_valid_values() {
-        Dicetest::repeatedly().run(|fate| {
-            let char = dice::char_ascii_printable().roll(fate);
+        Dicetest::repeatedly().run(|mut fate| {
+            let char = fate.roll(dice::char_ascii_printable());
 
             hint_debug!(char);
 
@@ -146,8 +146,8 @@ mod tests {
 
     #[test]
     fn char_ascii_generates_only_valid_values() {
-        Dicetest::repeatedly().run(|fate| {
-            let char = dice::char_ascii().roll(fate);
+        Dicetest::repeatedly().run(|mut fate| {
+            let char = fate.roll(dice::char_ascii());
 
             hint_debug!(char);
 
@@ -157,8 +157,8 @@ mod tests {
 
     #[test]
     fn char_generates_only_valid_values() {
-        Dicetest::repeatedly().run(|fate| {
-            let char = dice::char().roll(fate);
+        Dicetest::repeatedly().run(|mut fate| {
+            let char = fate.roll(dice::char());
 
             hint_debug!(char);
 

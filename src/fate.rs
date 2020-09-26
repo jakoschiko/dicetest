@@ -1,4 +1,4 @@
-use crate::{Limit, Prng};
+use crate::{DieOnce, Limit, Prng};
 
 /// Contains parameters for controlling the value generation with `DieOnce` and `Die`.
 ///
@@ -15,24 +15,9 @@ pub struct Fate<'a> {
 }
 
 impl<'a> Fate<'a> {
-    // It's important that `Fate` has no public constructor. Tests and generators take a `&mut Fate`
-    // because they need to mutate the `Prng`, but they must not mutate the `Limit`. A public
-    // constructor would allow to create an arbitrary `Fate<'static>` and assign it to the
-    // `&mut Fate`. This approach is inspired by `std::fmt::Formatter`.
-
-    /// Calls the function with a `Fate` containing the given parameters.
-    pub fn run<T>(prng: &'a mut Prng, limit: Limit, f: impl FnOnce(&mut Fate) -> T) -> T {
-        let mut fate = Fate { prng, limit };
-        f(&mut fate)
-    }
-
-    /// Modifies the `Limit` temporarily and calls the function with the modified `Fate`.
-    pub fn with_limit<T>(&mut self, limit: Limit, f: impl FnOnce(&mut Fate) -> T) -> T {
-        let mut fate = Fate {
-            prng: &mut self.prng,
-            limit,
-        };
-        f(&mut fate)
+    /// Creates a new instance that uses the given parameters for value generation.
+    pub fn new(prng: &'a mut Prng, limit: Limit) -> Self {
+        Self { prng, limit }
     }
 
     /// Returns the next pseudorandom number generated with the underlying `Prng`.
@@ -48,5 +33,61 @@ impl<'a> Fate<'a> {
     /// Returns the underlying `Limit`.
     pub fn limit(&self) -> Limit {
         self.limit
+    }
+
+    /// Creates a borrowed copy.
+    ///
+    /// `Fate` cannot implement the `Copy` trait because it contains a mutable
+    /// reference. When it's necessary to move `Fate` multiple times this functions provides a
+    /// convenient workaround.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use dicetest::{Limit, Fate, Prng};
+    ///
+    /// let mut prng = Prng::from_seed(42.into());
+    /// let limit = Limit::default();
+    /// let mut fate = Fate::new(&mut prng, limit);
+    ///
+    /// pub fn take_fate(_fate: Fate) {}
+    ///
+    /// take_fate(fate.copy());
+    /// take_fate(fate);
+    /// ```
+    pub fn copy(&mut self) -> Fate {
+        Fate {
+            prng: self.prng,
+            limit: self.limit,
+        }
+    }
+
+    /// Creates a copy with the given limit.
+    pub fn with_limit(&mut self, limit: Limit) -> Fate {
+        let mut fate = self.copy();
+        fate.limit = limit;
+        fate
+    }
+
+    /// Generates a value with the given `DiceOnce` using `self` as parameter.
+    ///
+    /// This function is more convenient than calling `DiceOnce::roll_once` directly because
+    /// it borrows the `Fate` instead of moving it.
+    ///
+    /// ```
+    /// use dicetest::prelude::*;
+    /// use dicetest::{Limit, Prng};
+    ///
+    /// let mut prng = Prng::from_seed(42.into());
+    /// let limit = Limit::default();
+    /// let mut fate = Fate::new(&mut prng, limit);
+    ///
+    /// let die = dice::bool();
+    ///
+    /// let val1 = fate.roll(&die); // Borrows `fate`
+    /// let val2 = die.roll(fate); // Moves `fate`
+    /// ```
+    pub fn roll<T, D: DieOnce<T>>(&mut self, die: D) -> T {
+        die.roll_once(self.copy())
     }
 }

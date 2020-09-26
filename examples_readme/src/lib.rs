@@ -22,8 +22,8 @@ mod section_example {
 
         #[test]
         fn result_of_bubble_sort_is_sorted() {
-            Dicetest::repeatedly().run(|fate| {
-                let mut v = dice::vec(dice::u8(..), ..).roll(fate);
+            Dicetest::repeatedly().run(|mut fate| {
+                let mut v = fate.roll(dice::vec(dice::u8(..), ..));
                 hint!("unsorted: {:?}", v);
 
                 bubble_sort(&mut v);
@@ -104,36 +104,36 @@ mod section_dice {
     fn implement_and_compose() {
         use dicetest::prelude::*;
 
-        // A classic die. Generates a number between 1 and 6 with uniform distribution.
+        // A classic die that generates a number between 1 and 6 with uniform distribution.
         let classic_die = dice::one_of_6::<u8>(1, 2, 3, 4, 5, 6);
 
-        // A loaded die. Generates the number 6 more frequently.
+        // A loaded die that generates the number 6 more frequently.
         let loaded_die =
             dice::weighted_one_of_6::<u8>((1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (2, 6));
 
-        // Generates the result of the function.
+        // This die generates the result of the function.
         let die_from_fn = dice::from_fn(|_| 42);
 
-        // Generates always the same `String` by cloning it.
+        // This die generates always the same `String` by cloning it.
         let foo_die = dice::just("foo".to_string());
 
-        // Generates an arbitrary byte.
+        // This die generates an arbitrary byte.
         let byte_die = dice::u8(..);
 
-        // Generates a non-zero byte.
+        // This die generates a non-zero byte.
         let non_zero_byte_die = dice::u8(1..);
 
-        // Generates a `Vec` that contains an arbitrary number of arbitrary bytes.
+        // This die generates a `Vec` that contains an arbitrary number of arbitrary bytes.
         let bytes_die = dice::vec(dice::u8(..), ..);
 
-        // Generates a `Vec` that contains up to 10 arbitrary bytes.
+        // This die generates a `Vec` that contains up to 10 arbitrary bytes.
         let up_to_ten_bytes_die = dice::vec(dice::u8(..), ..=10);
 
-        // Generates an arbitrary wrapped byte.
+        // This die generates an arbitrary wrapped byte.
         struct WrappedByte(u8);
         let wrapped_byte_die = dice::u8(..).map(WrappedByte);
 
-        // Generates a permutation of `(0..=n)` for an arbitrary `n`.
+        // This die generates a permutation of `(0..=n)` for an arbitrary `n`.
         let permutation_die = dice::size(0..).flat_map(|n| {
             let vec = (0..=n).collect::<Vec<_>>();
             dice::shuffled_vec(vec)
@@ -143,25 +143,26 @@ mod section_dice {
     #[test]
     fn fate() {
         use dicetest::prelude::*;
-        use dicetest::Prng;
+        use dicetest::{Limit, Prng};
 
         // Provides the randomness for the generator and will be mutated when used.
         let mut prng = Prng::from_seed(0x5EED.into());
         // Limits the size of dynamic data structures. The generator has only read access.
-        let limit = 5.into();
+        let limit = Limit(5);
 
-        // Constructs a `Fate` that is only available inside the closure.
-        Fate::run(&mut prng, limit, |fate| {
-            // Generates a `Vec` with an arbitrary length.
-            let vec_die = dice::vec(dice::u8(..), ..);
+        // Contains all parameters necessary for using `DieOnce` or `Die`.
+        let mut fate = Fate::new(&mut prng, limit);
 
-            // Although `vec_die` can generate a `Vec` with arbitrary length,
-            // the actual length is limited by `limit`.
-            let vec = vec_die.roll(fate);
+        // Generator for a `Vec` with an arbitrary length.
+        let vec_die = dice::vec(dice::u8(..), ..);
 
-            println!("{:?}", vec);
-            // Output: [252, 231, 153, 0]
-        })
+        // Generates a `Vec`. Although `vec_die` can generate a `Vec` with an arbitrary length,
+        // the length of the actual `Vec` is limited by `limit`.
+        let vec = fate.roll(vec_die);
+        assert!(vec.len() <= 5);
+
+        println!("{:?}", vec);
+        // Output: [252, 231, 153, 0]
     }
 }
 
@@ -192,11 +193,11 @@ mod section_hints {
 
     #[test]
     fn test_foo() {
-        Dicetest::repeatedly().run(|fate| {
-            let x = dice::u8(1..=5).roll(fate);
+        Dicetest::repeatedly().run(|mut fate| {
+            let x = fate.roll(dice::u8(1..=5));
             hint_debug!(x);
 
-            let y = dice::u8(1..=3).roll(fate);
+            let y = fate.roll(dice::u8(1..=3));
             if y != x {
                 hint!("took branch if with y = {}", y);
 
@@ -214,11 +215,11 @@ mod section_stats {
 
     #[test]
     fn test_foo() {
-        Dicetest::repeatedly().run(|fate| {
-            let x = dice::u8(1..=5).roll(fate);
+        Dicetest::repeatedly().run(|mut fate| {
+            let x = fate.roll(dice::u8(1..=5));
             stat_debug!(x);
 
-            let y = dice::u8(1..=3).roll(fate);
+            let y = fate.roll(dice::u8(1..=3));
             if y != x {
                 stat!("branch", "if with y = {}", y)
             } else {

@@ -12,7 +12,7 @@ pub trait Die<T>: DieOnce<T> {
     ///
     /// The `Fate` is the only source of the randomness. Besides that, the generation is
     /// derterministic.
-    fn roll(&self, fate: &mut Fate) -> T;
+    fn roll(&self, fate: Fate) -> T;
 
     /// Creates a new `Die` by mapping the generated values of `self`.
     ///
@@ -76,13 +76,13 @@ pub trait Die<T>: DieOnce<T> {
 }
 
 impl<T, TD: Die<T>> DieOnce<T> for &TD {
-    fn roll_once(self, fate: &mut Fate) -> T {
+    fn roll_once(self, fate: Fate) -> T {
         (*self).roll(fate)
     }
 }
 
 impl<T, TD: Die<T>> Die<T> for &TD {
-    fn roll(&self, fate: &mut Fate) -> T {
+    fn roll(&self, fate: Fate) -> T {
         (**self).roll(fate)
     }
 }

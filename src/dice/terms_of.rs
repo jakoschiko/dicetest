@@ -22,15 +22,14 @@ macro_rules! fn_terms_of_integer {
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
+        /// let mut fate = Fate::new(&mut prng, limit);
         ///
-        /// Fate::run(&mut prng, limit, |fate| {
-        ///     let sum = 20;
-        ///     let count = 10;
-        ///     let terms = dice::terms_of_u8(sum, count).roll(fate);
+        /// let sum = 20;
+        /// let count = 10;
+        /// let terms = fate.roll(dice::terms_of_u8(sum, count));
         ///
-        ///     assert_eq!(count, terms.len());
-        ///     assert_eq!(sum, terms.into_iter().sum());
-        /// });
+        /// assert_eq!(count, terms.len());
+        /// assert_eq!(sum, terms.into_iter().sum());
         /// ```
         ///
         /// This example panics:
@@ -55,10 +54,10 @@ macro_rules! fn_terms_of_integer {
                     if terms.len() == 1 {
                         terms[0] = sum;
                     } else {
-                        let left_sum = dice::$uni_integer(0..=sum).roll(fate);
+                        let left_sum = fate.roll(dice::$uni_integer(0..=sum));
                         let right_sum = sum - left_sum;
 
-                        let middle_index = if terms.len() % 2 == 0 || dice::bool().roll(fate) {
+                        let middle_index = if terms.len() % 2 == 0 || fate.roll(dice::bool()) {
                             terms.len() / 2
                         } else {
                             terms.len() / 2 + 1
@@ -102,15 +101,15 @@ mod tests {
         ) => {
             #[test]
             fn $terms_of_integer_returns_the_expected_sum_and_count() {
-                Dicetest::repeatedly().run(|fate| {
-                    let expected_count = dice::size(..).roll(fate);
+                Dicetest::repeatedly().run(|mut fate| {
+                    let expected_count = fate.roll(dice::size(..));
                     let exptected_sum = if expected_count == 0 {
                         0
                     } else {
-                        dice::$integer(..).roll(fate)
+                        fate.roll(dice::$integer(..))
                     };
 
-                    let terms = dice::$terms_of_integer(exptected_sum, expected_count).roll(fate);
+                    let terms = fate.roll(dice::$terms_of_integer(exptected_sum, expected_count));
 
                     let actual_sum = terms.iter().sum();
                     let actual_count = terms.len();
@@ -151,10 +150,10 @@ mod tests {
         Dicetest::repeatedly()
             .passes(0)
             .stats_enabled(true)
-            .run(|fate| {
+            .run(|mut fate| {
                 let sum = 8;
                 let count = 4;
-                let terms = dice::terms_of_u64(sum, count).roll(fate);
+                let terms = fate.roll(dice::terms_of_u64(sum, count));
                 stat_debug!(terms);
                 stat!(
                     "for all term t: t > 0",

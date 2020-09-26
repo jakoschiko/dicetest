@@ -113,20 +113,19 @@ macro_rules! fn_float {
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
+        /// let mut fate = Fate::new(&mut prng, limit);
         ///
-        /// Fate::run(&mut prng, limit, |fate| {
-        ///     assert!(dice::f32(-273.15).roll(fate) == -273.15);
+        /// assert!(fate.roll(dice::f32(-273.15)) == -273.15);
         ///
-        ///     assert!(dice::f32(-273.15..).roll(fate) >= -273.15);
+        /// assert!(fate.roll(dice::f32(-273.15..)) >= -273.15);
         ///
-        ///     assert!(dice::f32(..=100.0).roll(fate) <= 100.0);
+        /// assert!(fate.roll(dice::f32(..=100.0)) <= 100.0);
         ///
-        ///     let float = dice::f32(-273.15..=100.0).roll(fate);
-        ///     assert!(float >= -273.15 && float <= 100.0);
+        /// let float = fate.roll(dice::f32(-273.15..=100.0));
+        /// assert!(float >= -273.15 && float <= 100.0);
         ///
-        ///     let float = dice::f32(..).roll(fate);
-        ///     assert!(float.is_infinite() || (float > NEG_INFINITY && float < INFINITY));
-        /// });
+        /// let float = fate.roll(dice::f32(..));
+        /// assert!(float.is_infinite() || (float > NEG_INFINITY && float < INFINITY));
         /// ```
         ///
         /// These examples panic:
@@ -153,14 +152,14 @@ macro_rules! fn_float {
             // generate `INFINITY` or `NEG_INFINITY`. These
             // values may be generates by the generator
             // `maybe_special_value_die` instead.
-            let regular_value_die = dice::from_fn(move |fate| {
+            let regular_value_die = dice::from_fn(move |mut fate| {
                 if lower == upper {
                     // Range contains only one value
                     lower
                 } else {
                     // It holds `lower < upper`
 
-                    let factor = $unit_float().roll(fate);
+                    let factor = fate.roll($unit_float());
 
                     // Just ignore infinite values here. If the range contains infinite values,
                     // `maybe_special_value_die` is able to roll them.
@@ -203,9 +202,9 @@ macro_rules! fn_float {
                 )
             };
 
-            dice::from_fn(move |fate| match maybe_special_value_die.roll(fate) {
+            dice::from_fn(move |mut fate| match fate.roll(&maybe_special_value_die) {
                 Some(special_value) => special_value,
-                None => regular_value_die.roll(fate),
+                None => fate.roll(&regular_value_die),
             })
         }
 
@@ -226,14 +225,13 @@ macro_rules! fn_float {
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
+        /// let mut fate = Fate::new(&mut prng, limit);
         ///
-        /// Fate::run(&mut prng, limit, |fate| {
-        ///     let float = dice::unit_f32().roll(fate);
-        ///     assert!(float >= 0.0 && float <= 1.0);
-        /// });
+        /// let float = fate.roll(dice::unit_f32());
+        /// assert!(float >= 0.0 && float <= 1.0);
         /// ```
         pub fn $unit_float() -> impl Die<$float> {
-            dice::from_fn(move |fate| {
+            dice::from_fn(move |mut fate| {
                 const FACTOR: $float = 1.0 / std::$int::MAX as $float;
                 let numerator = fate.next_number() as $int;
                 numerator as $float * FACTOR
@@ -251,13 +249,12 @@ macro_rules! fn_float {
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
+        /// let mut fate = Fate::new(&mut prng, limit);
         ///
-        /// Fate::run(&mut prng, limit, |fate| {
-        ///     let float = dice::open_unit_f32().roll(fate);
-        ///     assert!(float >= 0.0 && float < 1.0);
-        /// });
+        /// let float = fate.roll(dice::open_unit_f32());
+        /// assert!(float >= 0.0 && float < 1.0);
         pub fn $open_unit_float() -> impl Die<$float> {
-            dice::from_fn(move |fate| {
+            dice::from_fn(move |mut fate| {
                 let numerator = (fate.next_number() as $int) & $float_util::MAX_ONES;
                 $float_util::open_unit_float(numerator)
             })
@@ -391,7 +388,7 @@ mod tests {
     }
 
     fn range_contains_float<I, ID, B, BD, R>(
-        fate: &mut Fate,
+        mut fate: Fate,
         range_data_die: BD,
         create_range: fn(B) -> R,
         float_die: fn(R) -> ID,
@@ -403,13 +400,13 @@ mod tests {
         BD: DieOnce<B>,
         R: FloatRange<I> + Debug,
     {
-        let range_data = range_data_die.roll_once(fate);
+        let range_data = fate.roll(range_data_die);
         hint_debug!(range_data);
 
         let range = create_range(range_data);
         hint_debug!(range);
 
-        let float = float_die(range).roll_once(fate);
+        let float = fate.roll(float_die(range));
         hint_debug!(float);
 
         assert!(is_in_range(range_data, float));
@@ -435,8 +432,8 @@ mod tests {
         ) => {
             #[test]
             fn $unit_float_rolls_values_in_expected_range() {
-                Dicetest::repeatedly().run(|fate| {
-                    let float = $unit_float().roll(fate);
+                Dicetest::repeatedly().run(|mut fate| {
+                    let float = fate.roll($unit_float());
                     hint_debug!(float);
 
                     assert!(float <= 1.0);
@@ -446,8 +443,8 @@ mod tests {
 
             #[test]
             fn $open_unit_float_rolls_values_in_expected_range() {
-                Dicetest::repeatedly().run(|fate| {
-                    let float = $open_unit_float().roll(fate);
+                Dicetest::repeatedly().run(|mut fate| {
+                    let float = fate.roll($open_unit_float());
                     hint_debug!(float);
 
                     assert!(float < 1.0);
@@ -457,9 +454,9 @@ mod tests {
 
             #[test]
             fn $float_util_linear_ipol_float_with_same_min_and_max() {
-                Dicetest::repeatedly().run(|fate| {
-                    let float = $float(std::$float::MIN..=std::$float::MAX).roll(fate);
-                    let factor = $unit_float().roll(fate);
+                Dicetest::repeatedly().run(|mut fate| {
+                    let float = fate.roll($float(std::$float::MIN..=std::$float::MAX));
+                    let factor = fate.roll($unit_float());
 
                     assert_eq!(float, $float_util::linear_ipol_float(factor, float, float));
                 })
@@ -467,9 +464,9 @@ mod tests {
 
             #[test]
             fn $float_util_linear_ipol_float_with_factor_limits() {
-                Dicetest::repeatedly().run(|fate| {
-                    let float1 = $float(std::$float::MIN..=std::$float::MAX).roll(fate);
-                    let float2 = $float(std::$float::MIN..=std::$float::MAX).roll(fate);
+                Dicetest::repeatedly().run(|mut fate| {
+                    let float1 = fate.roll($float(std::$float::MIN..=std::$float::MAX));
+                    let float2 = fate.roll($float(std::$float::MIN..=std::$float::MAX));
                     let (min, max) = if float1 <= float2 {
                         (float1, float2)
                     } else {
@@ -554,8 +551,8 @@ mod tests {
                 Dicetest::repeatedly()
                     .passes(0)
                     .stats_enabled(true)
-                    .run(|fate| {
-                        let float = $unit_float().roll(fate);
+                    .run(|mut fate| {
+                        let float = fate.roll($unit_float());
 
                         if float >= 0.5 {
                             stat!("float", "[0.5, 1]")

@@ -12,19 +12,18 @@ use crate::prelude::*;
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
+/// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// Fate::run(&mut prng, limit, |fate| {
-///     let sorted = vec![1, 2, 3, 4];
+/// let sorted = vec![1, 2, 3, 4];
 ///
-///     let probably_unsorted = dice::shuffled_vec(sorted).roll_once(fate);
-/// });
+/// let probably_unsorted = fate.roll(dice::shuffled_vec(sorted));
 /// ```
 pub fn shuffled_vec<T>(mut vec: Vec<T>) -> impl DieOnce<Vec<T>> {
-    dice::from_fn_once(move |fate| {
+    dice::from_fn_once(move |mut fate| {
         let n = vec.len();
         if n > 0 {
             for i in 0..(n - 1) {
-                let j = dice::uni_usize(i..n).roll(fate);
+                let j = fate.roll(dice::uni_usize(i..n));
                 vec.swap(i, j);
             }
         }
@@ -48,12 +47,12 @@ mod tests {
 
     #[test]
     fn shuffled_vec_contains_same_elems() {
-        Dicetest::repeatedly().run(|fate| {
-            let orig_vec = dice::vec(dice::u8(..), ..).roll(fate);
+        Dicetest::repeatedly().run(|mut fate| {
+            let orig_vec = fate.roll(dice::vec(dice::u8(..), ..));
             let orig_vec_elems = count_vec_elems(&orig_vec);
             hint_debug!(orig_vec);
 
-            let shuffled_vec = dice::shuffled_vec(orig_vec).roll_once(fate);
+            let shuffled_vec = fate.roll(dice::shuffled_vec(orig_vec));
             let shuffled_vec_elems = count_vec_elems(&shuffled_vec);
             hint_debug!(shuffled_vec);
 
@@ -66,11 +65,11 @@ mod tests {
         Dicetest::repeatedly()
             .passes(0)
             .stats_enabled(true)
-            .run(|fate| {
+            .run(|mut fate| {
                 stat!(
                     "shuffled_vec(vec![1, 2, 3])",
                     "{:?}",
-                    dice::shuffled_vec(vec![1, 2, 3]).roll_once(fate),
+                    fate.roll(dice::shuffled_vec(vec![1, 2, 3])),
                 );
             })
     }

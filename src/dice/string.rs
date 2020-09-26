@@ -40,24 +40,21 @@ impl CollectionBuilder<char, String> for StringBuilder {
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
+/// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// Fate::run(&mut prng, limit, |fate| {
-///     let char_die = dice::char();
+/// let char_die = dice::char();
 ///
-///     fate.with_limit(100.into(), |fate| {
-///         let string = dice::string(&char_die, ..).roll(fate);
-///         assert!(string.chars().count() <= 100);
-///     });
+/// let string = fate.with_limit(100.into()).roll(dice::string(&char_die, ..));
+/// assert!(string.chars().count() <= 100);
 ///
-///     let string = dice::string(&char_die, ..=73).roll(fate);
-///     assert!(string.chars().count() <= 73);
+/// let string = fate.roll(dice::string(&char_die, ..=73));
+/// assert!(string.chars().count() <= 73);
 ///
-///     let string = dice::string(&char_die, 17..).roll(fate);
-///     assert!(string.chars().count() >= 17);
+/// let string = fate.roll(dice::string(&char_die, 17..));
+/// assert!(string.chars().count() >= 17);
 ///
-///     let string = dice::string(&char_die, 42).roll(fate);
-///     assert!(string.chars().count() == 42);
-/// });
+/// let string = fate.roll(dice::string(&char_die, 42));
+/// assert!(string.chars().count() == 42);
 /// ```
 pub fn string(char_die: impl Die<char>, len_range: impl SizeRange) -> impl Die<String> {
     dice::collection(StringBuilder::die(), char_die, len_range)

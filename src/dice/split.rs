@@ -10,23 +10,22 @@ use crate::prelude::*;
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
+/// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// Fate::run(&mut prng, limit, |fate| {
-///     let vec = vec![1, 2, 3, 4];
-///     let (prefix, suffix) = dice::split_vec(vec.clone()).roll_once(fate);
-///     assert!(vec.starts_with(&prefix));
-///     assert!(vec.ends_with(&suffix));
+/// let vec = vec![1, 2, 3, 4];
+/// let (prefix, suffix) = fate.roll(dice::split_vec(vec.clone()));
+/// assert!(vec.starts_with(&prefix));
+/// assert!(vec.ends_with(&suffix));
 ///
-///     let empty_vec: Vec<u64> = vec![];
-///     let (empty_prefix, empty_suffix) = dice::split_vec(empty_vec).roll_once(fate);
-///     assert!(empty_prefix.is_empty());
-///     assert!(empty_suffix.is_empty());
-/// });
+/// let empty_vec: Vec<u64> = vec![];
+/// let (empty_prefix, empty_suffix) = fate.roll(dice::split_vec(empty_vec));
+/// assert!(empty_prefix.is_empty());
+/// assert!(empty_suffix.is_empty());
 /// ```
 pub fn split_vec<T>(mut vec: Vec<T>) -> impl DieOnce<(Vec<T>, Vec<T>)> {
     let index_die = dice::uni_usize(0..=vec.len());
-    dice::from_fn_once(move |fate| {
-        let at = index_die.roll(fate);
+    dice::from_fn_once(move |mut fate| {
+        let at = fate.roll(index_die);
         let other_vec = vec.split_off(at);
         (vec, other_vec)
     })
@@ -38,9 +37,9 @@ mod tests {
 
     #[test]
     fn split_vec_result_can_be_merged_to_orig_vec() {
-        Dicetest::repeatedly().run(|fate| {
-            let orig_vec = dice::vec(dice::u8(..), ..).roll(fate);
-            let (prefix, mut suffix) = dice::split_vec(orig_vec.clone()).roll_once(fate);
+        Dicetest::repeatedly().run(|mut fate| {
+            let orig_vec = fate.roll(dice::vec(dice::u8(..), ..));
+            let (prefix, mut suffix) = fate.roll(dice::split_vec(orig_vec.clone()));
 
             let mut merged = prefix;
             merged.append(&mut suffix);
@@ -54,11 +53,11 @@ mod tests {
         Dicetest::repeatedly()
             .passes(0)
             .stats_enabled(true)
-            .run(|fate| {
+            .run(|mut fate| {
                 stat!(
                     "split_vec(vec![1, 2, 3, 4, 5])",
                     "{:?}",
-                    dice::split_vec(vec![1, 2, 3, 4, 5]).roll_once(fate),
+                    fate.roll(dice::split_vec(vec![1, 2, 3, 4, 5])),
                 );
             })
     }

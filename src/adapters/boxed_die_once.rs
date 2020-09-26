@@ -31,13 +31,13 @@ impl<'a, T> DieOnce<T> for BoxedDieOnce<'a, T>
 where
     T: 'a,
 {
-    fn roll_once(mut self, fate: &mut Fate) -> T {
+    fn roll_once(mut self, fate: Fate) -> T {
         self.die.roll_once(fate)
     }
 }
 
 trait Wrapper<T> {
-    fn roll_once(&mut self, fate: &mut Fate) -> T;
+    fn roll_once(&mut self, fate: Fate) -> T;
 }
 
 struct DieOnceWrapper<T, D>
@@ -52,7 +52,7 @@ impl<T, D> Wrapper<T> for DieOnceWrapper<T, D>
 where
     D: DieOnce<T>,
 {
-    fn roll_once(&mut self, fate: &mut Fate) -> T {
+    fn roll_once(&mut self, fate: Fate) -> T {
         let die = self.die.take().unwrap();
         die.roll_once(fate)
     }

@@ -19,13 +19,13 @@ impl<'a, T> RcDie<'a, T> {
 }
 
 impl<'a, T> Die<T> for RcDie<'a, T> {
-    fn roll(&self, fate: &mut Fate) -> T {
+    fn roll(&self, fate: Fate) -> T {
         self.die.roll(fate)
     }
 }
 
 impl<'a, T> DieOnce<T> for RcDie<'a, T> {
-    fn roll_once(self, fate: &mut Fate) -> T {
+    fn roll_once(self, fate: Fate) -> T {
         self.roll(fate)
     }
 }

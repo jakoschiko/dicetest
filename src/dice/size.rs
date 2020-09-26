@@ -97,30 +97,25 @@ impl SizeRange for RangeToInclusive<usize> {
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
+/// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// Fate::run(&mut prng, limit, |fate| {
-///     assert!(dice::size(42).roll(fate) == 42);
+/// assert!(fate.roll(dice::size(42)) == 42);
 ///
-///     fate.with_limit(100.into(), |fate| {
-///         let size = dice::size(42..).roll(fate);
-///         assert!(size >= 42 && size <= 142);
-///     });
+/// let size = fate.with_limit(100.into()).roll(dice::size(42..));
+/// assert!(size >= 42 && size <= 142);
 ///
-///     assert!(dice::size(..=71).roll(fate) <= 71);
+/// assert!(fate.roll(dice::size(..=71)) <= 71);
 ///
-///     assert!(dice::size(..71).roll(fate) < 71);
+/// assert!(fate.roll(dice::size(..71)) < 71);
 ///
-///     let size = dice::size(42..=71).roll(fate);
-///     assert!(size >= 42 && size <= 71);
+/// let size = fate.roll(dice::size(42..=71));
+/// assert!(size >= 42 && size <= 71);
 ///
-///     let size = dice::size(42..71).roll(fate);
-///     assert!(size >= 42 && size < 71);
+/// let size = fate.roll(dice::size(42..71));
+/// assert!(size >= 42 && size < 71);
 ///
-///     fate.with_limit(100.into(), |fate| {
-///         let size = dice::size(..).roll(fate);
-///         assert!(size >= 0 && size <= 100);
-///     });
-/// });
+/// let size = fate.with_limit(100.into()).roll(dice::size(..));
+/// assert!(size >= 0 && size <= 100);
 /// ```
 ///
 /// This example panics:
@@ -134,11 +129,11 @@ impl SizeRange for RangeToInclusive<usize> {
 pub fn size(range: impl SizeRange) -> impl Die<usize> {
     let (lower, upper_opt) = range.bounds();
 
-    dice::from_fn(move |fate| {
+    dice::from_fn(move |mut fate| {
         let upper =
             upper_opt.unwrap_or_else(|| lower.saturating_add(fate.limit().saturating_to_usize()));
 
-        dice::uni_usize(lower..=upper).roll(fate)
+        fate.roll(dice::uni_usize(lower..=upper))
     })
 }
 
@@ -149,7 +144,7 @@ mod tests {
     use crate::prelude::*;
 
     fn range_contains_size<B, R>(
-        fate: &mut Fate,
+        mut fate: Fate,
         range_data_die: impl DieOnce<B>,
         create_range: impl FnOnce(B) -> R,
         is_in_range: impl FnOnce(B, usize) -> bool,
@@ -157,9 +152,9 @@ mod tests {
         B: Copy + Debug,
         R: dice::SizeRange + Debug,
     {
-        let mut prng = fate.fork_prng();
-        let limit = dice::u64(..).roll(fate).into();
-        let range_data = range_data_die.roll_once(fate);
+        let prng = &mut fate.fork_prng();
+        let limit = fate.roll(dice::u64(..)).into();
+        let range_data = fate.roll(range_data_die);
 
         hint_debug!(prng);
         hint_debug!(limit);
@@ -168,7 +163,7 @@ mod tests {
         let range = create_range(range_data);
         hint_debug!(range);
 
-        let size = Fate::run(&mut prng, limit, |fate| dice::size(range).roll(fate));
+        let size = dice::size(range).roll(Fate::new(prng, limit));
         hint_debug!(size);
 
         assert!(is_in_range(range_data, size));

@@ -44,13 +44,16 @@ pub struct Report {
 /// If the test panics the error will be catched and added to the report.
 pub fn run<T>(mut prng: Prng, config: &Config, test: T) -> Report
 where
-    T: FnOnce(&mut Fate) + UnwindSafe,
+    T: FnOnce(Fate) + UnwindSafe,
 {
     let ((test_result, hints), stats) = {
         let limit = config.limit;
         runner::util::collect_stats(config.stats_enabled, || {
             runner::util::collect_hints(config.hints_enabled, || {
-                catch_unwind(move || Fate::run(&mut prng, limit, test))
+                catch_unwind(move || {
+                    let fate = Fate::new(&mut prng, limit);
+                    test(fate)
+                })
             })
         })
     };

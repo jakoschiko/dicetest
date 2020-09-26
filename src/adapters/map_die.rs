@@ -26,7 +26,7 @@ where
     D: DieOnce<T>,
     F: FnOnce(T) -> U,
 {
-    fn roll_once(self, fate: &mut Fate) -> U {
+    fn roll_once(self, fate: Fate) -> U {
         let d = self.d;
         let f = self.f;
 
@@ -40,7 +40,7 @@ where
     D: Die<T>,
     F: Fn(T) -> U,
 {
-    fn roll(&self, fate: &mut Fate) -> U {
+    fn roll(&self, fate: Fate) -> U {
         let d = &self.d;
         let f = &self.f;
 

@@ -13,20 +13,19 @@ macro_rules! fn_zip_n {
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
+        /// let mut fate = Fate::new(&mut prng, limit);
         ///
-        /// Fate::run(&mut prng, limit, |fate| {
-        ///     let zero_die = dice::just_once(0);
-        ///     let one_die = dice::just_once(1);
-        ///     let (zero, one) = dice::zip_2_once(zero_die, one_die).roll_once(fate);
-        ///     assert_eq!(zero, 0);
-        ///     assert_eq!(one, 1);
-        /// });
+        /// let zero_die = dice::just_once(0);
+        /// let one_die = dice::just_once(1);
+        /// let (zero, one) = fate.roll(dice::zip_2_once(zero_die, one_die));
+        /// assert_eq!(zero, 0);
+        /// assert_eq!(one, 1);
         /// ```
         pub fn $zip_n_once<$($Ti,)*>(
             $($die_i: impl DieOnce<$Ti>,)*
         ) -> impl DieOnce<($($Ti,)*)> {
-            dice::from_fn_once(move |fate| {
-                ($($die_i.roll_once(fate),)*)
+            dice::from_fn_once(move |mut fate| {
+                ($(fate.roll($die_i),)*)
             })
         }
 
@@ -41,20 +40,19 @@ macro_rules! fn_zip_n {
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
+        /// let mut fate = Fate::new(&mut prng, limit);
         ///
-        /// Fate::run(&mut prng, limit, |fate| {
-        ///     let zero_die = dice::just(0);
-        ///     let one_die = dice::just(1);
-        ///     let (zero, one) = dice::zip_2(zero_die, one_die).roll(fate);
-        ///     assert_eq!(zero, 0);
-        ///     assert_eq!(one, 1);
-        /// });
+        /// let zero_die = dice::just(0);
+        /// let one_die = dice::just(1);
+        /// let (zero, one) = fate.roll(dice::zip_2(zero_die, one_die));
+        /// assert_eq!(zero, 0);
+        /// assert_eq!(one, 1);
         /// ```
         pub fn $zip_n<$($Ti,)*>(
             $($die_i: impl Die<$Ti>,)*
         ) -> impl Die<($($Ti,)*)> {
-            dice::from_fn(move |fate| {
-                ($($die_i.roll(fate),)*)
+            dice::from_fn(move |mut fate| {
+                ($(fate.roll(&$die_i),)*)
             })
         }
     )

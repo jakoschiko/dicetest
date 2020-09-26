@@ -10,11 +10,10 @@ use crate::prelude::*;
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
+/// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// Fate::run(&mut prng, limit, |fate| {
-///     let true_or_false = dice::bool().roll(fate);
-///     assert!(true_or_false == true || true_or_false == false);
-/// });
+/// let true_or_false = fate.roll(dice::bool());
+/// assert!(true_or_false == true || true_or_false == false);
 /// ```
 pub fn bool() -> impl Die<bool> {
     dice::one_of_2(false, true)
@@ -30,11 +29,10 @@ pub fn bool() -> impl Die<bool> {
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
+/// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// Fate::run(&mut prng, limit, |fate| {
-///     let more_often_true_than_false = dice::weighted_bool(10, 1).roll(fate);
-///     assert!(more_often_true_than_false == true || more_often_true_than_false == false);
-/// });
+/// let more_often_true_than_false = fate.roll(dice::weighted_bool(10, 1));
+/// assert!(more_often_true_than_false == true || more_often_true_than_false == false);
 /// ```
 pub fn weighted_bool(false_weight: u32, true_weight: u32) -> impl Die<bool> {
     dice::weighted_one_of_2((false_weight, false), (true_weight, true))
@@ -49,8 +47,8 @@ mod tests {
         Dicetest::repeatedly()
             .passes(0)
             .stats_enabled(true)
-            .run(|fate| {
-                stat!("bool()", "{}", dice::bool().roll(fate));
+            .run(|mut fate| {
+                stat!("bool()", "{}", fate.roll(dice::bool()));
             })
     }
 
@@ -59,16 +57,16 @@ mod tests {
         Dicetest::repeatedly()
             .passes(0)
             .stats_enabled(true)
-            .run(|fate| {
+            .run(|mut fate| {
                 stat!(
                     "weighted_bool(1, 2)",
                     "{}",
-                    dice::weighted_bool(1, 2).roll(fate),
+                    fate.roll(dice::weighted_bool(1, 2)),
                 );
                 stat!(
                     "weighted_bool(10, 1)",
                     "{}",
-                    dice::weighted_bool(9, 1).roll(fate),
+                    fate.roll(dice::weighted_bool(9, 1)),
                 );
             })
     }

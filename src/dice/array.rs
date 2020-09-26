@@ -4,10 +4,10 @@ macro_rules! fn_array_n {
     ($N:expr, $array_n:ident: $($i:expr)+) => (
         /// Generates an array with random elements.
         pub fn $array_n<T>(elem_die: impl Die<T>) -> impl Die<[T; $N]> {
-            dice::from_fn(move |fate| {
+            dice::from_fn(move |mut fate| {
                 #[allow(clippy::no_effect)]
                 [
-                    $({ $i; elem_die.roll(fate) }, )*
+                    $({ $i; fate.roll(&elem_die) }, )*
                 ]
             })
         }

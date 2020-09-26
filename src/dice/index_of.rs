@@ -16,12 +16,11 @@ use crate::prelude::*;
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
+/// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// Fate::run(&mut prng, limit, |fate| {
-///     let array = ['a', 'b', 'c'];
-///     let index = dice::index_of(&array).roll(fate);
-///     assert!(0 <= index && index < array.len());
-/// });
+/// let array = ['a', 'b', 'c'];
+/// let index = fate.roll(dice::index_of(&array));
+/// assert!(0 <= index && index < array.len());
 /// ```
 ///
 /// This example panics:
@@ -43,9 +42,9 @@ mod tests {
 
     #[test]
     fn index_of_generates_valid_index() {
-        Dicetest::repeatedly().run(|fate| {
-            let vec = dice::vec(dice::u8(..), 1..).roll(fate);
-            let index = dice::index_of(&vec).roll(fate);
+        Dicetest::repeatedly().run(|mut fate| {
+            let vec = fate.roll(dice::vec(dice::u8(..), 1..));
+            let index = fate.roll(dice::index_of(&vec));
 
             assert!(index < vec.len());
         })
@@ -56,11 +55,11 @@ mod tests {
         Dicetest::repeatedly()
             .passes(0)
             .stats_enabled(true)
-            .run(|fate| {
+            .run(|mut fate| {
                 stat!(
                     "index_of(&[1, 2, 3, 4, 5])",
                     "{}",
-                    dice::index_of(&[1, 2, 3, 4, 5]).roll(fate),
+                    fate.roll(dice::index_of(&[1, 2, 3, 4, 5])),
                 );
             })
     }

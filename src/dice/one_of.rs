@@ -26,16 +26,15 @@ macro_rules! fn_one_of_n {
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
+        /// let mut fate = Fate::new(&mut prng, limit);
         ///
-        /// Fate::run(&mut prng, limit, |fate| {
-        ///     #[derive(Debug, PartialEq, Eq)]
-        ///     struct CannotBeCloned(u8);
-        ///     let zero_or_one = dice::one_of_2_once(
-        ///         CannotBeCloned(0),
-        ///         CannotBeCloned(1),
-        ///     ).roll_once(fate);
-        ///     assert!(zero_or_one == CannotBeCloned(0) || zero_or_one == CannotBeCloned(1));
-        /// });
+        /// #[derive(Debug, PartialEq, Eq)]
+        /// struct CannotBeCloned(u8);
+        /// let zero_or_one = fate.roll(dice::one_of_2_once(
+        ///     CannotBeCloned(0),
+        ///     CannotBeCloned(1),
+        /// ));
+        /// assert!(zero_or_one == CannotBeCloned(0) || zero_or_one == CannotBeCloned(1));
         /// ```
         pub fn $one_of_n_once<T>(
             $($value_i: T,)*
@@ -55,19 +54,18 @@ macro_rules! fn_one_of_n {
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
+        /// let mut fate = Fate::new(&mut prng, limit);
         ///
-        /// Fate::run(&mut prng, limit, |fate| {
-        ///     let loaded_die = dice::weighted_one_of_6_once(
-        ///         (1, 1),
-        ///         (1, 2),
-        ///         (1, 3),
-        ///         (1, 4),
-        ///         (1, 5),
-        ///         (6, 6),
-        ///     );
-        ///     let more_often_six_than_not = loaded_die.roll_once(fate);
-        ///     assert!(more_often_six_than_not >= 0 && more_often_six_than_not <= 6);
-        /// });
+        /// let loaded_die = dice::weighted_one_of_6_once(
+        ///     (1, 1),
+        ///     (1, 2),
+        ///     (1, 3),
+        ///     (1, 4),
+        ///     (1, 5),
+        ///     (6, 6),
+        /// );
+        /// let more_often_six_than_not = fate.roll(loaded_die);
+        /// assert!(more_often_six_than_not >= 0 && more_often_six_than_not <= 6);
         /// ```
         pub fn $weighted_one_of_n_once<T>(
             $(($weight_i, $value_i): (u32, T),)*
@@ -87,14 +85,13 @@ macro_rules! fn_one_of_n {
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
+        /// let mut fate = Fate::new(&mut prng, limit);
         ///
-        /// Fate::run(&mut prng, limit, |fate| {
-        ///     let cloning_die = dice::one_of_2(vec![0, 0], vec![1, 1]);
-        ///     for _ in 0..10 {
-        ///         let zeroes_or_ones = cloning_die.roll(fate);
-        ///         assert!(zeroes_or_ones == vec![0, 0] || zeroes_or_ones == vec![1, 1]);
-        ///     }
-        /// });
+        /// let cloning_die = dice::one_of_2(vec![0, 0], vec![1, 1]);
+        /// for _ in 0..10 {
+        ///     let zeroes_or_ones = fate.roll(&cloning_die);
+        ///     assert!(zeroes_or_ones == vec![0, 0] || zeroes_or_ones == vec![1, 1]);
+        /// }
         /// ```
         pub fn $one_of_n<T>(
             $($value_i: T,)*
@@ -117,21 +114,20 @@ macro_rules! fn_one_of_n {
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
+        /// let mut fate = Fate::new(&mut prng, limit);
         ///
-        /// Fate::run(&mut prng, limit, |fate| {
-        ///     let loaded_die = dice::weighted_one_of_6(
-        ///         (1, 1),
-        ///         (1, 2),
-        ///         (1, 3),
-        ///         (1, 4),
-        ///         (1, 5),
-        ///         (6, 6),
-        ///     );
-        ///     for _ in 0..10 {
-        ///         let more_often_six_than_not = loaded_die.roll(fate);
-        ///         assert!(more_often_six_than_not >= 0 && more_often_six_than_not <= 6);
-        ///     }
-        /// });
+        /// let loaded_die = dice::weighted_one_of_6(
+        ///     (1, 1),
+        ///     (1, 2),
+        ///     (1, 3),
+        ///     (1, 4),
+        ///     (1, 5),
+        ///     (6, 6),
+        /// );
+        /// for _ in 0..10 {
+        ///     let more_often_six_than_not = fate.roll(&loaded_die);
+        ///     assert!(more_often_six_than_not >= 0 && more_often_six_than_not <= 6);
+        /// }
         /// ```
         pub fn $weighted_one_of_n<T>(
             $(($weight_i, $value_i): (u32, T),)*
@@ -154,21 +150,20 @@ macro_rules! fn_one_of_n {
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
+        /// let mut fate = Fate::new(&mut prng, limit);
         ///
-        /// Fate::run(&mut prng, limit, |fate| {
-        ///     let zero_die = dice::just_once(0);
-        ///     let one_die = dice::just_once(1);
-        ///     let zero_or_one = dice::one_of_die_2_once(zero_die, one_die).roll_once(fate);
-        ///     assert!(zero_or_one == 0 || zero_or_one == 1);
-        /// });
+        /// let zero_die = dice::just_once(0);
+        /// let one_die = dice::just_once(1);
+        /// let zero_or_one = fate.roll(dice::one_of_die_2_once(zero_die, one_die));
+        /// assert!(zero_or_one == 0 || zero_or_one == 1);
         /// ```
         pub fn $one_of_die_n_once<T>(
             $($die_i: impl DieOnce<T>,)*
         ) -> impl DieOnce<T> {
-            dice::from_fn_once(move |fate| {
+            dice::from_fn_once(move |mut fate| {
                 let choice = fate.next_number() % $n;
                     match choice {
-                    $($i => $die_i.roll_once(fate),)*
+                    $($i => fate.roll($die_i),)*
                     _ => panic!(),
                 }
             })
@@ -186,26 +181,25 @@ macro_rules! fn_one_of_n {
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
+        /// let mut fate = Fate::new(&mut prng, limit);
         ///
-        /// Fate::run(&mut prng, limit, |fate| {
-        ///     let loaded_die = dice::weighted_one_of_die_2_once(
-        ///         (1, dice::u8(1..=5)),
-        ///         (6, dice::just_once(6)),
-        ///     );
-        ///     let more_often_six_than_not = loaded_die.roll_once(fate);
-        ///     assert!(more_often_six_than_not >= 0 && more_often_six_than_not <= 6);
-        /// });
+        /// let loaded_die = dice::weighted_one_of_die_2_once(
+        ///     (1, dice::u8(1..=5)),
+        ///     (6, dice::just_once(6)),
+        /// );
+        /// let more_often_six_than_not = fate.roll(loaded_die);
+        /// assert!(more_often_six_than_not >= 0 && more_often_six_than_not <= 6);
         /// ```
         pub fn $weighted_one_of_die_n_once<T>(
             $(($weight_i, $die_i): (u32, impl DieOnce<T>),)*
         ) -> impl DieOnce<T> {
             $(let $weight_i = u64::from($weight_i);)*
             let total_weight = sum!($($weight_i,)*);
-            dice::from_fn_once(move |fate| {
+            dice::from_fn_once(move |mut fate| {
                 let choice = fate.next_number() % total_weight;
                 $(
                     if choice < $weight_i {
-                        return $die_i.roll_once(fate);
+                        return fate.roll($die_i);
                     }
                     #[allow(unused_variables)]
                     let choice = choice - $weight_i;
@@ -226,24 +220,23 @@ macro_rules! fn_one_of_n {
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
+        /// let mut fate = Fate::new(&mut prng, limit);
         ///
-        /// Fate::run(&mut prng, limit, |fate| {
-        ///     let zero_die = dice::just(0);
-        ///     let one_die = dice::just(1);
-        ///     let zero_or_one_die = dice::one_of_die_2(zero_die, one_die);
-        ///     for _ in 0..10 {
-        ///         let zero_or_one = zero_or_one_die.roll(fate);
-        ///         assert!(zero_or_one == 0 || zero_or_one == 1);
-        ///     }
-        /// });
+        /// let zero_die = dice::just(0);
+        /// let one_die = dice::just(1);
+        /// let zero_or_one_die = dice::one_of_die_2(zero_die, one_die);
+        /// for _ in 0..10 {
+        ///     let zero_or_one = fate.roll(&zero_or_one_die);
+        ///     assert!(zero_or_one == 0 || zero_or_one == 1);
+        /// }
         /// ```
         pub fn $one_of_die_n<T>(
             $($die_i: impl Die<T>,)*
         ) -> impl Die<T> {
-            dice::from_fn(move |fate| {
+            dice::from_fn(move |mut fate| {
                 let choice = fate.next_number() % $n;
                 match choice {
-                    $($i => $die_i.roll(fate),)*
+                    $($i => fate.roll(&$die_i),)*
                     _ => panic!(),
                 }
             })
@@ -261,28 +254,27 @@ macro_rules! fn_one_of_n {
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
+        /// let mut fate = Fate::new(&mut prng, limit);
         ///
-        /// Fate::run(&mut prng, limit, |fate| {
-        ///     let loaded_die = dice::weighted_one_of_die_2(
-        ///         (1, dice::u8(1..=5)),
-        ///         (6, dice::just(6)),
-        ///     );
-        ///     for _ in 0..10 {
-        ///         let more_often_six_than_not = loaded_die.roll(fate);
-        ///         assert!(more_often_six_than_not >= 0 && more_often_six_than_not <= 6);
-        ///     }
-        /// });
+        /// let loaded_die = dice::weighted_one_of_die_2(
+        ///     (1, dice::u8(1..=5)),
+        ///     (6, dice::just(6)),
+        /// );
+        /// for _ in 0..10 {
+        ///     let more_often_six_than_not = fate.roll(&loaded_die);
+        ///     assert!(more_often_six_than_not >= 0 && more_often_six_than_not <= 6);
+        /// }
         /// ```
         pub fn $weighted_one_of_die_n<T>(
             $(($weight_i, $die_i): (u32, impl Die<T>),)*
         ) -> impl Die<T> {
             $(let $weight_i = u64::from($weight_i);)*
             let total_weight = sum!($($weight_i,)*);
-            dice::from_fn(move |fate| {
+            dice::from_fn(move |mut fate| {
                 let choice = fate.next_number() % total_weight;
                 $(
                     if choice < $weight_i {
-                        return $die_i.roll(fate);
+                        return fate.roll(&$die_i);
                     }
                     #[allow(unused_variables)]
                     let choice = choice - $weight_i;
@@ -404,17 +396,16 @@ fn_one_of_n! { 9,
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
+/// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// Fate::run(&mut prng, limit, |fate| {
-///     #[derive(Debug, PartialEq, Eq)]
-///     struct CannotBeCloned(u8);
-///     let zero_and_one = vec![CannotBeCloned(0), CannotBeCloned(1)];
-///     let zero_or_one = dice::one_of_vec_once(zero_and_one).roll_once(fate);
-///     assert!(zero_or_one == CannotBeCloned(0) || zero_or_one == CannotBeCloned(1));
-/// });
+/// #[derive(Debug, PartialEq, Eq)]
+/// struct CannotBeCloned(u8);
+/// let zero_and_one = vec![CannotBeCloned(0), CannotBeCloned(1)];
+/// let zero_or_one = fate.roll(dice::one_of_vec_once(zero_and_one));
+/// assert!(zero_or_one == CannotBeCloned(0) || zero_or_one == CannotBeCloned(1));
 /// ```
 pub fn one_of_vec_once<T>(mut values: Vec<T>) -> impl DieOnce<T> {
-    dice::from_fn_once(move |fate| {
+    dice::from_fn_once(move |mut fate| {
         let choice = (fate.next_number() as usize) % values.len();
         values.swap_remove(choice)
     })
@@ -431,21 +422,20 @@ pub fn one_of_vec_once<T>(mut values: Vec<T>) -> impl DieOnce<T> {
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
+/// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// Fate::run(&mut prng, limit, |fate| {
-///     let zeroes_and_ones = vec![vec![0, 0], vec![1, 1]];
-///     let cloning_die = dice::one_of_vec(zeroes_and_ones);
-///     for _ in 0..10 {
-///         let zeroes_or_ones = cloning_die.roll(fate);
-///         assert!(zeroes_or_ones == vec![0, 0] || zeroes_or_ones == vec![1, 1]);
-///     }
-/// });
+/// let zeroes_and_ones = vec![vec![0, 0], vec![1, 1]];
+/// let cloning_die = dice::one_of_vec(zeroes_and_ones);
+/// for _ in 0..10 {
+///     let zeroes_or_ones = fate.roll(&cloning_die);
+///     assert!(zeroes_or_ones == vec![0, 0] || zeroes_or_ones == vec![1, 1]);
+/// }
 /// ```
 pub fn one_of_vec<T>(values: Vec<T>) -> impl Die<T>
 where
     T: Clone,
 {
-    dice::from_fn(move |fate| {
+    dice::from_fn(move |mut fate| {
         let choice = (fate.next_number() as usize) % values.len();
         values[choice].clone()
     })
@@ -462,21 +452,20 @@ where
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
+/// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// Fate::run(&mut prng, limit, |fate| {
-///     let zeroes_and_ones = [vec![0, 0], vec![1, 1]];
-///     let cloning_die = dice::one_of_slice(&zeroes_and_ones);
-///     for _ in 0..10 {
-///         let zeroes_or_ones = cloning_die.roll(fate);
-///         assert!(zeroes_or_ones == vec![0, 0] || zeroes_or_ones == vec![1, 1]);
-///     }
-/// });
+/// let zeroes_and_ones = [vec![0, 0], vec![1, 1]];
+/// let cloning_die = dice::one_of_slice(&zeroes_and_ones);
+/// for _ in 0..10 {
+///     let zeroes_or_ones = fate.roll(&cloning_die);
+///     assert!(zeroes_or_ones == vec![0, 0] || zeroes_or_ones == vec![1, 1]);
+/// }
 /// ```
 pub fn one_of_slice<'a, T>(values: &'a [T]) -> impl Die<T> + 'a
 where
     T: Clone,
 {
-    dice::from_fn(move |fate| {
+    dice::from_fn(move |mut fate| {
         let choice = (fate.next_number() as usize) % values.len();
         values[choice].clone()
     })

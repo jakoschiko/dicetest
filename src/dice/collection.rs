@@ -34,10 +34,10 @@ where
     B: CollectionBuilder<T, C>,
 {
     let elem_count_die = dice::size(elem_count_range);
-    dice::from_fn(move |fate| {
-        let builder = builder_die.roll(fate);
-        let elem_count = elem_count_die.roll(fate);
-        let elems = (0..elem_count).map(|_| elem_die.roll(fate));
+    dice::from_fn(move |mut fate| {
+        let builder = fate.roll(&builder_die);
+        let elem_count = fate.roll(&elem_count_die);
+        let elems = (0..elem_count).map(|_| fate.roll(&elem_die));
         builder.build(elems)
     })
 }
@@ -61,17 +61,17 @@ where
     B: CollectionBuilder<T, C>,
 {
     let elem_count_die = dice::size(elem_count_range);
-    dice::from_fn(move |fate| {
-        let builder = builder_die.roll(fate);
-        let elem_count = elem_count_die.roll(fate);
+    dice::from_fn(move |mut fate| {
+        let builder = fate.roll(&builder_die);
+        let elem_count = fate.roll(&elem_count_die);
         let elem_limits = if elem_count == 0 {
             Vec::new()
         } else {
-            dice::terms_of_u64(fate.limit().0, elem_count).roll(fate)
+            fate.roll(dice::terms_of_u64(fate.limit().0, elem_count))
         };
         let elems = elem_limits
             .into_iter()
-            .map(|limit| fate.with_limit(limit.into(), |fate| elem_die.roll(fate)));
+            .map(|limit| fate.with_limit(limit.into()).roll(&elem_die));
         builder.build(elems)
     })
 }
@@ -83,8 +83,8 @@ mod tests {
 
     #[test]
     fn outer_collection_overall_size_is_bounded_by_limit() {
-        Dicetest::repeatedly().run(|fate| {
-            let size = dice::size(..).roll(fate);
+        Dicetest::repeatedly().run(|mut fate| {
+            let size = fate.roll(dice::size(..));
 
             let limit = Limit::saturating_from_usize(size);
 
@@ -100,7 +100,7 @@ mod tests {
             let elem_die = dice::u8(..);
             let vec_die = dice::collection(&builder_die, elem_die, ..);
             let vec_of_vecs_die = dice::outer_collection(&builder_die, vec_die, ..);
-            let vec_of_vecs = fate.with_limit(limit, |fate| vec_of_vecs_die.roll(fate));
+            let vec_of_vecs = fate.with_limit(limit).roll(vec_of_vecs_die);
 
             let overall_size = vec_of_vecs.iter().flatten().count();
             assert!(overall_size <= size);

@@ -132,25 +132,24 @@ macro_rules! fn_integer {
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
+        /// let mut fate = Fate::new(&mut prng, limit);
         ///
-        /// Fate::run(&mut prng, limit, |fate| {
-        ///     assert!(dice::uni_u8(42).roll(fate) == 42);
+        /// assert!(fate.roll(dice::uni_u8(42)) == 42);
         ///
-        ///     assert!(dice::uni_u8(42..).roll(fate) >= 42);
+        /// assert!(fate.roll(dice::uni_u8(42..)) >= 42);
         ///
-        ///     assert!(dice::uni_u8(..=71).roll(fate) <= 71);
+        /// assert!(fate.roll(dice::uni_u8(..=71)) <= 71);
         ///
-        ///     assert!(dice::uni_u8(..71).roll(fate) < 71);
+        /// assert!(fate.roll(dice::uni_u8(..71)) < 71);
         ///
-        ///     let integer = dice::uni_u8(42..=71).roll(fate);
-        ///     assert!(integer >= 42 && integer <= 71);
+        /// let integer = fate.roll(dice::uni_u8(42..=71));
+        /// assert!(integer >= 42 && integer <= 71);
         ///
-        ///     let integer = dice::uni_u8(42..71).roll(fate);
-        ///     assert!(integer >= 42 && integer < 71);
+        /// let integer = fate.roll(dice::uni_u8(42..71));
+        /// assert!(integer >= 42 && integer < 71);
         ///
-        ///     let integer = dice::uni_u8(..).roll(fate);
-        ///     assert!(integer >= 0 && integer <= u8::max_value());
-        /// });
+        /// let integer = fate.roll(dice::uni_u8(..));
+        /// assert!(integer >= 0 && integer <= u8::max_value());
         /// ```
         ///
         /// This example panics:
@@ -226,25 +225,24 @@ macro_rules! fn_integer {
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
+        /// let mut fate = Fate::new(&mut prng, limit);
         ///
-        /// Fate::run(&mut prng, limit, |fate| {
-        ///     assert!(dice::u8(42).roll(fate) == 42);
+        /// assert!(fate.roll(dice::u8(42)) == 42);
         ///
-        ///     assert!(dice::u8(42..).roll(fate) >= 42);
+        /// assert!(fate.roll(dice::u8(42..)) >= 42);
         ///
-        ///     assert!(dice::u8(..=71).roll(fate) <= 71);
+        /// assert!(fate.roll(dice::u8(..=71)) <= 71);
         ///
-        ///     assert!(dice::u8(..71).roll(fate) < 71);
+        /// assert!(fate.roll(dice::u8(..71)) < 71);
         ///
-        ///     let integer = dice::u8(42..=71).roll(fate);
-        ///     assert!(integer >= 42 && integer <= 71);
+        /// let integer = fate.roll(dice::u8(42..=71));
+        /// assert!(integer >= 42 && integer <= 71);
         ///
-        ///     let integer = dice::u8(42..71).roll(fate);
-        ///     assert!(integer >= 42 && integer < 71);
+        /// let integer = fate.roll(dice::u8(42..71));
+        /// assert!(integer >= 42 && integer < 71);
         ///
-        ///     let integer = dice::u8(..).roll(fate);
-        ///     assert!(integer >= 0 && integer <= u8::max_value());
-        /// });
+        /// let integer = fate.roll(dice::u8(..));
+        /// assert!(integer >= 0 && integer <= u8::max_value());
         /// ```
         ///
         /// This example panics:
@@ -283,20 +281,20 @@ macro_rules! fn_integer {
                 )
             };
 
-            dice::from_fn(move |fate| match maybe_special_value_die.roll(fate) {
+            dice::from_fn(move |mut fate| match fate.roll(&maybe_special_value_die) {
                 Some(special_value) => special_value,
-                None => regular_value_die.roll(fate),
+                None => fate.roll(&regular_value_die),
             })
         }
     };
 }
 
-fn random_u64(prng: &mut Fate) -> u64 {
-    prng.next_number()
+fn random_u64(mut fate: Fate) -> u64 {
+    fate.next_number()
 }
 
-fn random_u128(prng: &mut Fate) -> u128 {
-    (u128::from(prng.next_number()) << 64) | u128::from(prng.next_number())
+fn random_u128(mut fate: Fate) -> u128 {
+    (u128::from(fate.next_number()) << 64) | u128::from(fate.next_number())
 }
 
 // Some of the integer types use random generators for bigger integer types.
@@ -323,7 +321,7 @@ mod tests {
     use crate::prelude::*;
 
     fn range_contains_integer<I, ID, B, BD, R>(
-        fate: &mut Fate,
+        mut fate: Fate,
         range_data_die: BD,
         create_range: fn(B) -> R,
         integer_die: fn(R) -> ID,
@@ -335,13 +333,13 @@ mod tests {
         BD: DieOnce<B>,
         R: dice::IntegerRange<I> + Debug,
     {
-        let range_data = range_data_die.roll_once(fate);
+        let range_data = fate.roll(range_data_die);
         hint_debug!(range_data);
 
         let range = create_range(range_data);
         hint_debug!(range);
 
-        let integer = integer_die(range).roll_once(fate);
+        let integer = fate.roll(integer_die(range));
         hint_debug!(integer);
 
         assert!(is_in_range(range_data, integer));
@@ -551,10 +549,10 @@ mod tests {
         Dicetest::repeatedly()
             .passes(0)
             .stats_enabled(true)
-            .run(|fate| {
-                stat!("u8(..)", "{}", dice::u8(..).roll(fate));
-                stat!("u8(..=9)", "{}", dice::u8(..=9).roll(fate));
-                stat!("u8(100..=199)", "{}", dice::u8(100..=199).roll(fate));
+            .run(|mut fate| {
+                stat!("u8(..)", "{}", fate.roll(dice::u8(..)));
+                stat!("u8(..=9)", "{}", fate.roll(dice::u8(..=9)));
+                stat!("u8(100..=199)", "{}", fate.roll(dice::u8(100..=199)));
             })
     }
 
@@ -563,13 +561,13 @@ mod tests {
         Dicetest::repeatedly()
             .passes(0)
             .stats_enabled(true)
-            .run(|fate| {
-                stat!("uni_u8(..)", "{}", dice::uni_u8(..).roll(fate));
-                stat!("uni_u8(..=9)", "{}", dice::uni_u8(..=9).roll(fate));
+            .run(|mut fate| {
+                stat!("uni_u8(..)", "{}", fate.roll(dice::uni_u8(..)));
+                stat!("uni_u8(..=9)", "{}", fate.roll(dice::uni_u8(..=9)));
                 stat!(
                     "uni_u8(100..=199)",
                     "{}",
-                    dice::uni_u8(100..=199).roll(fate),
+                    fate.roll(dice::uni_u8(100..=199)),
                 );
             })
     }
@@ -579,9 +577,9 @@ mod tests {
         Dicetest::repeatedly()
             .passes(0)
             .stats_enabled(true)
-            .run(|fate| {
-                stat!("i8(..)", "{}", dice::i8(..).roll(fate));
-                stat!("i8(-4..=5)", "{}", dice::i8(-4..=5).roll(fate));
+            .run(|mut fate| {
+                stat!("i8(..)", "{}", fate.roll(dice::i8(..)));
+                stat!("i8(-4..=5)", "{}", fate.roll(dice::i8(-4..=5)));
             })
     }
 
@@ -590,9 +588,9 @@ mod tests {
         Dicetest::repeatedly()
             .passes(0)
             .stats_enabled(true)
-            .run(|fate| {
-                stat!("uni_i8(..)", "{}", dice::uni_i8(..).roll(fate));
-                stat!("uni_i8(-4..=5)", "{}", dice::uni_i8(-4..=5).roll(fate));
+            .run(|mut fate| {
+                stat!("uni_i8(..)", "{}", fate.roll(dice::uni_i8(..)));
+                stat!("uni_i8(-4..=5)", "{}", fate.roll(dice::uni_i8(-4..=5)));
             })
     }
 }

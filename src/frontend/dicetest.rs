@@ -303,7 +303,7 @@ impl Dicetest {
     /// during a test run.
     pub fn run<T>(self, test: T)
     where
-        T: Fn(&mut Fate) + UnwindSafe + RefUnwindSafe,
+        T: Fn(Fate) + UnwindSafe + RefUnwindSafe,
     {
         let config = if self.params.env_enabled {
             self.override_by_env().unwrap()

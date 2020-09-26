@@ -29,11 +29,11 @@ where
     UD: DieOnce<U>,
     F: FnOnce(T) -> UD,
 {
-    fn roll_once(self, fate: &mut Fate) -> U {
+    fn roll_once(self, mut fate: Fate) -> U {
         let t_die = self.t_die;
         let f = self.f;
 
-        let t = t_die.roll_once(fate);
+        let t = t_die.roll_once(fate.copy());
         let gu = f(t);
         gu.roll_once(fate)
     }
@@ -45,11 +45,11 @@ where
     UD: DieOnce<U>,
     F: Fn(T) -> UD,
 {
-    fn roll(&self, fate: &mut Fate) -> U {
+    fn roll(&self, mut fate: Fate) -> U {
         let t_die = &self.t_die;
         let f = &self.f;
 
-        let t = t_die.roll(fate);
+        let t = t_die.roll(fate.copy());
         let gu = f(t);
         gu.roll_once(fate)
     }

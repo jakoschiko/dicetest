@@ -20,15 +20,15 @@ where
     IC: Codie<I>,
     OD: DieOnce<O>,
 {
-    pub fn build_fn_once(self) -> impl FnOnce(I) -> O {
+    pub fn build_fn_once(mut self) -> impl FnOnce(I) -> O {
         move |input| {
             let output_die = self.output_die;
             let randomness = self.input_codie.coroll(input);
-            let mut prng = self.prng;
+            let prng = &mut self.prng;
             prng.reseed(randomness);
-            Fate::run(&mut prng, self.limit, move |fate| {
-                output_die.roll_once(fate)
-            })
+            let limit = self.limit;
+            let fate = Fate::new(prng, limit);
+            output_die.roll_once(fate)
         }
     }
 }
@@ -42,9 +42,11 @@ where
         move |input| {
             let output_die = &self.output_die;
             let randomness = self.input_codie.coroll(input);
-            let mut prng = self.prng.clone();
+            let prng = &mut self.prng.clone();
             prng.reseed(randomness);
-            Fate::run(&mut prng, self.limit, |fate| output_die.roll(fate))
+            let limit = self.limit;
+            let fate = Fate::new(prng, limit);
+            output_die.roll(fate)
         }
     }
 
@@ -54,7 +56,9 @@ where
             let randomness = self.input_codie.coroll(input);
             let prng = &mut self.prng;
             prng.reseed(randomness);
-            Fate::run(prng, self.limit, |fate| output_die.roll(fate))
+            let limit = self.limit;
+            let fate = Fate::new(prng, limit);
+            output_die.roll(fate)
         }
     }
 }
@@ -72,15 +76,14 @@ where
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
+/// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// Fate::run(&mut prng, limit, |fate| {
-///     let f = dice::fn_builder(
-///         codice::from_default_hasher(),
-///         dice::u8(..),
-///     ).roll_once(fate).build_fn_once();
+/// let f = fate.roll(dice::fn_builder(
+///     codice::from_default_hasher(),
+///     dice::u8(..),
+/// )).build_fn_once();
 ///
-///     let x = f(42);
-/// });
+/// let x = f(42);
 /// ```
 ///
 /// This example generates a [`FnMut`]:
@@ -90,16 +93,15 @@ where
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
+/// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// Fate::run(&mut prng, limit, |fate| {
-///     let mut f = dice::fn_builder(
-///         codice::from_default_hasher(),
-///         dice::u8(..),
-///     ).roll_once(fate).build_fn_mut();
+/// let mut f = fate.roll(dice::fn_builder(
+///     codice::from_default_hasher(),
+///     dice::u8(..),
+/// )).build_fn_mut();
 ///
-///     let x = f(42);
-///     let y = f(42);
-/// });
+/// let x = f(42);
+/// let y = f(42);
 /// ```
 ///
 /// This example generates a [`Fn`]:
@@ -109,17 +111,16 @@ where
 ///
 /// let mut prng = Prng::from_seed(0x5EED.into());
 /// let limit = Limit::default();
+/// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// Fate::run(&mut prng, limit, |fate| {
-///     let f = dice::fn_builder(
-///         codice::from_default_hasher(),
-///         dice::u8(..),
-///     ).roll_once(fate).build_fn();
+/// let f = fate.roll(dice::fn_builder(
+///     codice::from_default_hasher(),
+///     dice::u8(..),
+/// )).build_fn();
 ///
-///     let x = f(42);
-///     let y = f(42);
-///     assert_eq!(x, y);
-/// });
+/// let x = f(42);
+/// let y = f(42);
+/// assert_eq!(x, y);
 /// ```
 ///
 /// [`FnOnce`]: https://doc.rust-lang.org/std/ops/trait.FnOnce.html
@@ -133,7 +134,7 @@ where
     IC: Codie<I>,
     OD: DieOnce<O>,
 {
-    dice::from_fn_once(|fate| FnBuilder {
+    dice::from_fn_once(|mut fate| FnBuilder {
         input_codie,
         output_die,
         prng: fate.fork_prng(),

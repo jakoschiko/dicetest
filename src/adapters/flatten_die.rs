@@ -24,10 +24,10 @@ where
     TD: DieOnce<T>,
     TDD: DieOnce<TD>,
 {
-    fn roll_once(self, fate: &mut Fate) -> T {
+    fn roll_once(self, mut fate: Fate) -> T {
         let td_die = self.td_die;
 
-        let t_die = td_die.roll_once(fate);
+        let t_die = td_die.roll_once(fate.copy());
         t_die.roll_once(fate)
     }
 }
@@ -37,10 +37,10 @@ where
     TD: DieOnce<T>,
     TDD: Die<TD>,
 {
-    fn roll(&self, fate: &mut Fate) -> T {
+    fn roll(&self, mut fate: Fate) -> T {
         let td_die = &self.td_die;
 
-        let t_die = td_die.roll(fate);
+        let t_die = td_die.roll(fate.copy());
         t_die.roll_once(fate)
     }
 }
