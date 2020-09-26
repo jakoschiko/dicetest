@@ -10,7 +10,7 @@ impl Seed {
     /// # Panics
     ///
     /// If the operation system fails to generate the needed amount of random bytes this function
-    /// will panic. See the documetation of [getrandom] for more details.
+    /// will panic. See the documentation of [getrandom] for more details.
     ///
     /// [getrandom]: https://docs.rs/getrandom
     pub fn random() -> Self {

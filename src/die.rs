@@ -1,14 +1,14 @@
 use crate::adapters::{ArcDie, BoxedDie, FlatMapDie, FlattenDie, MapDie, RcDie};
 use crate::{DieOnce, Fate};
 
-/// Trait for generating preudorandom values of type `T`.
+/// Trait for generating pseudorandom values of type `T`.
 ///
 /// The `Die` trait represents a subset of `DieOnce`. It mirrors all methods of `DieOnce` without
 /// the suffix `_once`. These methods must behave in the same way. For example an implementation
 /// of `Die` must produce the same value with its methods `roll` and `roll_once` if they are called
 /// with the same `Fate`.
 pub trait Die<T>: DieOnce<T> {
-    /// Generates a preudorandom value.
+    /// Generates a pseudorandom value.
     ///
     /// The `Fate` is the only source of the randomness. Besides that, the generation is
     /// derterministic.
@@ -35,12 +35,12 @@ pub trait Die<T>: DieOnce<T> {
         FlattenDie::new(self)
     }
 
-    /// Creates a new `Die` similiar to `Die::map`, except that the mapping produces `DieOnce`s.
+    /// Creates a new `Die` similar to `Die::map`, except that the mapping produces `DieOnce`s.
     ///
     /// The function `f` will be applied to the generated values of `self`. These function results
     /// are `DieOnce`s that generates the values for the new `Die`.
     ///
-    /// It is semanticly equivalent to `self.map(f).flatten()`.
+    /// It is semantically equivalent to `self.map(f).flatten()`.
     fn flat_map<U, UD, F>(self, f: F) -> FlatMapDie<T, U, Self, UD, F>
     where
         Self: Sized,

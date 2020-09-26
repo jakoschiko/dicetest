@@ -1,12 +1,12 @@
 use crate::adapters::{BoxedDieOnce, FlatMapDie, FlattenDie, MapDie};
 use crate::Fate;
 
-/// Trait for generating a single preudorandom value of type `T`.
+/// Trait for generating a single pseudorandom value of type `T`.
 pub trait DieOnce<T> {
-    /// Consumes the generator and generates a preudorandom value.
+    /// Consumes the generator and generates a pseudorandom value.
     ///
     /// The `Fate` is the only source of the randomness. Besides that, the generation is
-    /// derterministic.
+    /// deterministic.
     fn roll_once(self, fate: Fate) -> T;
 
     /// Creates a new `DieOnce` by mapping the generated values of `self`.
@@ -30,13 +30,13 @@ pub trait DieOnce<T> {
         FlattenDie::new(self)
     }
 
-    /// Creates a new `DieOnce` similiar to `DieOnce::map_once`, except that the mapping produces
+    /// Creates a new `DieOnce` similar to `DieOnce::map_once`, except that the mapping produces
     /// a `DieOnce`.
     ///
     /// The function `f` will be applied to the generated value of `self`. This function result
     /// ia a `DieOnce` that generate the value for the new `Die`.
     ///
-    /// It is semanticly equivalent to `self.map_once(f).flatten_once()`.
+    /// It is semantically equivalent to `self.map_once(f).flatten_once()`.
     fn flat_map_once<U, DU, F>(self, f: F) -> FlatMapDie<T, U, Self, DU, F>
     where
         Self: Sized,

@@ -93,7 +93,7 @@ impl Prng {
     }
 
     #[allow(clippy::many_single_char_names)]
-    /// Reinitialze the internal state of self using the current internal state and the given seed.
+    /// Reinitialize the internal state of self using the current internal state and the given seed.
     pub fn reseed(&mut self, seed: Seed) {
         let (a, b, c, d) = self.state;
 

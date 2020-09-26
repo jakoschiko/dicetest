@@ -1,7 +1,7 @@
 use crate::prelude::*;
 
 /// Generates a `Ok` or a `Err` that contain a value from one of the given generators. `Ok` and
-/// `Err` have the same probalility.
+/// `Err` have the same probability.
 pub fn result_once<T, E>(
     ok_die: impl DieOnce<T>,
     err_die: impl DieOnce<E>,
@@ -10,7 +10,7 @@ pub fn result_once<T, E>(
 }
 
 /// Generates a `Ok` or a `Err` that contain a value from one of the given generators. `Ok` and
-/// `Err` have the same probalility.
+/// `Err` have the same probability.
 pub fn result<T, E>(ok_die: impl Die<T>, err_die: impl Die<E>) -> impl Die<Result<T, E>> {
     dice::one_of_die_2(ok_die.map(Ok), err_die.map(Err))
 }

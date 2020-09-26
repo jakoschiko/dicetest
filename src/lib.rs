@@ -1,9 +1,8 @@
 //! Dicetest is a framework for writing tests with pseudorandomly generated test data.
 //!
-//! The [README] shows how to write a test with Dicetest. For more information, see the [GUIDE].
+//! For more information, see the [README].
 //!
 //! [README]: https://github.com/jakoschiko/dicetest/blob/master/README.md
-//! [GUIDE]: https://github.com/jakoschiko/dicetest/blob/master/GUIDE.md
 
 // This crate makes assumptions regarding the pointer width. The following conditional error
 // prevents the compilation for unsupported pointer widths.

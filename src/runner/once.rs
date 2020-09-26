@@ -41,7 +41,7 @@ pub struct Report {
 
 /// Runs the test once with the given configuration.
 ///
-/// If the test panics the error will be catched and added to the report.
+/// If the test panics the error will be caught and added to the report.
 pub fn run<T>(mut prng: Prng, config: &Config, test: T) -> Report
 where
     T: FnOnce(Fate) + UnwindSafe,

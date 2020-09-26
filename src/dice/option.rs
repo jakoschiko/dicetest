@@ -1,7 +1,7 @@
 use crate::prelude::*;
 
 /// Generates a `None` or a `Some` that contains a value from the given generator. `None` and `Some`
-/// have the same probalility.
+/// have the same probability.
 ///
 /// # Examples
 ///
@@ -23,7 +23,7 @@ pub fn option_once<T>(some_die: impl DieOnce<T>) -> impl DieOnce<Option<T>> {
 }
 
 /// Generates a `None` or a `Some` that contains a value from the given generator. `None` and `Some`
-/// have the same probalility.
+/// have the same probability.
 ///
 /// # Examples
 ///
