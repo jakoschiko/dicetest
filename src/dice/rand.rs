@@ -9,5 +9,8 @@ pub fn from_distribution<T, D>(distribution: D) -> impl Die<T>
 where
     D: rand::distributions::Distribution<T>,
 {
-    dice::from_fn(move |fate| distribution.sample(fate.prng))
+    dice::from_fn(move |mut fate| {
+        let mut prng = fate.fork_prng();
+        distribution.sample(&mut prng)
+    })
 }
