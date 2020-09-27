@@ -17,8 +17,6 @@ pub fn char_ascii_alphabetic_uppercase() -> impl Die<char> {
 }
 
 /// Generator for letters from the ASCII alphabet ('a' to 'z' and 'A' to 'Z').
-///
-/// It always succeeds and has no `Shrink`.
 pub fn char_ascii_alphabetic() -> impl Die<char> {
     dice::one_of_die_2(
         char_ascii_alphabetic_lowercase(),
