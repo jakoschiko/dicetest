@@ -21,7 +21,7 @@ pub use seed::Seed;
 mod prng;
 pub use prng::Prng;
 
-pub mod codie;
+mod codie;
 pub use codie::Codie;
 
 mod limit;
