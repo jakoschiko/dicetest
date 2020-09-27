@@ -2,6 +2,7 @@
 name = "examples_readme"
 version = "0.0.0"
 edition = "2018"
+publish = false
 
 [dependencies]
 dicetest = { path = ".." }
