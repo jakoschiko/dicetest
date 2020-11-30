@@ -1,4 +1,4 @@
-//! The standard collection of `Codie` implementations.
+//! The standard collection of [`Codie`] implementations.
 
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
@@ -17,7 +17,7 @@ where
     }
 }
 
-/// Helper for implementing a `Codie` from a `Fn` that returns a seed.
+/// Helper for implementing a [`Codie`] from a [`Fn`] that returns a seed.
 pub fn from_fn<T, F>(f: F) -> impl Codie<T>
 where
     F: Fn(T) -> Seed,
@@ -25,7 +25,7 @@ where
     Fun(f)
 }
 
-/// Uses stdlib's `DefaultHasher` to create a seed from a hashable value.
+/// Uses stdlib's [`DefaultHasher`] to create a seed from a hashable value.
 pub fn from_default_hasher<T: Hash>() -> impl Codie<T> {
     from_fn(|value: T| {
         let mut hasher = DefaultHasher::new();

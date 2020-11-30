@@ -3,7 +3,9 @@ use std::ops::{Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToIncl
 
 use crate::prelude::*;
 
-/// Non-empty range for `dice::size`.
+/// Non-empty range for [`dice::size`].
+///
+/// [`dice::size`]: dice::size()
 pub trait SizeRange {
     /// Returns the inclusive lower bound and the optional inclusive upper bound that represent
     /// the range.
@@ -81,7 +83,9 @@ impl SizeRange for RangeToInclusive<usize> {
 }
 
 /// Generates a random size that can be used for collections, etc. The size is bounded by the
-/// given range and the `Limit` parameter passed to `Die::roll`.
+/// given range and the [`Limit`] parameter passed to [`Die::roll`].
+///
+/// [`Limit`]: crate::Limit
 ///
 /// # Panics
 ///

@@ -1,6 +1,6 @@
 use crate::Limit;
 
-/// Generates a series of linearly interpolated `Limit`s.
+/// Generates a series of linearly interpolated [`Limit`]s.
 #[derive(Debug, Clone)]
 pub struct LimitSeries {
     start: u64,
@@ -10,7 +10,7 @@ pub struct LimitSeries {
 }
 
 impl LimitSeries {
-    /// Creates a new instance that produces `len` linearly interpolated `Limit`s between `start`
+    /// Creates a new instance that produces `len` linearly interpolated [`Limit`]s between `start`
     /// and `end`.
     pub fn new(start: Limit, end: Limit, len: u64) -> Self {
         let start = start.0;
@@ -30,7 +30,7 @@ impl LimitSeries {
         }
     }
 
-    /// Returns the n-th interpolated `Limit` or `None` if `n` is out of bounds.
+    /// Returns the n-th interpolated [`Limit`] or `None` if `n` is out of bounds.
     pub fn nth(&self, n: u64) -> Option<Limit> {
         if n >= self.len {
             None
@@ -52,7 +52,7 @@ impl LimitSeries {
         Limit(offset_y + ipol_y)
     }
 
-    /// Returns an interator that emits all `Limit`s.
+    /// Returns an interator that emits all [`Limit`]s.
     pub fn into_iter(self) -> impl Iterator<Item = Limit> {
         LimitSeriesIntoIter {
             series: self,

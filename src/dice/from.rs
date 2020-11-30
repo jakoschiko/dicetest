@@ -20,7 +20,7 @@ where
     }
 }
 
-/// Helper for implementing a `DieOnce` from a `FnOnce` that takes a `Fate`.
+/// Helper for implementing a [`DieOnce`] from a [`FnOnce`] that takes a [`Fate`].
 ///
 /// # Examples
 ///
@@ -47,7 +47,7 @@ where
     Fun(f)
 }
 
-/// Helper for implementing a `Die` from a `Fn` that takes a `Fate`.
+/// Helper for implementing a [`Die`] from a [`Fn`] that takes a [`Fate`].
 ///
 /// # Examples
 ///

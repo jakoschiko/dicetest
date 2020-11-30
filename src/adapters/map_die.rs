@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use crate::{Die, DieOnce, Fate};
 
-/// Adapter for `DieOnce::map_once` and `Die::map`.
+/// Adapter for [`DieOnce::map_once`] and [`Die::map`].
 pub struct MapDie<T, U, D, F> {
     d: D,
     f: F,

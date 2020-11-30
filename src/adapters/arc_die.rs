@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::{Die, DieOnce, Fate};
 
-/// Adapter for `Die::arc`.
+/// Adapter for [`Die::arc`].
 #[derive(Clone)]
 pub struct ArcDie<T> {
     die: Arc<dyn Die<T>>,

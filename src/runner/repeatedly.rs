@@ -18,12 +18,18 @@ pub struct Config {
     /// The initial upper limit for the size of generated dynamic data structures
     ///
     /// It's used for the first test run. The following test runs use an interpolated limit
-    /// between `start_limit` and `end_limit`.
+    /// between [`start_limit`] and [`end_limit`].
+    ///
+    /// [`start_limit`]: Config::start_limit
+    /// [`end_limit`]: Config::end_limit
     pub start_limit: Limit,
     /// The final upper limit for the size of generated dynamic data structures.
     ///
     /// It's used for the last test run. The previous test runs use an interpolated limit
-    /// between `start_limit` and `end_limit`.
+    /// between [`start_limit`] and [`end_limit`].
+    ///
+    /// [`start_limit`]: Config::start_limit
+    /// [`end_limit`]: Config::end_limit
     pub end_limit: Limit,
     /// Defines how many times the test needs to be run without failing.
     ///

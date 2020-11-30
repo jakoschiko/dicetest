@@ -1,4 +1,4 @@
-/// Adds a hint that contains the arguments applied to the `format` macro.
+/// Adds a hint that contains the arguments applied to the [`format`] macro.
 ///
 /// # Examples
 ///
@@ -16,7 +16,9 @@ macro_rules! hint {
 }
 
 /// Adds a hint that contains the stringified argument and the argument value converted with
-/// `Debug`.
+/// [`Debug`].
+///
+/// [`Debug`]: std::fmt::Debug
 ///
 /// # Examples
 ///
@@ -34,7 +36,7 @@ macro_rules! hint_debug {
 }
 
 /// Creates a stat with the first argument as stat key and the remaining arguments applied to the
-/// `format` macro as stat value.
+/// [`format`] macro as stat value.
 ///
 /// # Examples
 ///
@@ -52,7 +54,9 @@ macro_rules! stat {
 }
 
 /// Creates a stat with the stringified argument as stat key and the argument value converted with
-/// `Debug` as stat value.
+/// [`Debug`] as stat value.
+///
+/// [`Debug`]: std::fmt::Debug
 ///
 /// # Examples
 ///

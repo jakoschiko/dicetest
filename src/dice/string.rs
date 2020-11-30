@@ -3,8 +3,7 @@ use crate::prelude::*;
 
 /// [`String`] builder for [`dice::collection`].
 ///
-/// [`String`]: https://doc.rust-lang.org/std/string/struct.String.html
-/// [`dice::collection`]: fn.collection.html
+/// [`dice::collection`]: dice::collection()
 pub struct StringBuilder;
 
 impl StringBuilder {
@@ -24,9 +23,6 @@ impl CollectionBuilder<char, String> for StringBuilder {
 /// Generates a [`String`] that contains the specified [`char`]s.
 ///
 /// The range specifies the number of [`char`]s in the [`String`].
-///
-/// [`String`]: https://doc.rust-lang.org/std/string/struct.String.html
-/// [`char`]: https://doc.rust-lang.org/std/primitive.char.html
 ///
 /// # Panics
 ///

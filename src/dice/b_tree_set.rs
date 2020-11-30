@@ -5,8 +5,7 @@ use crate::prelude::*;
 
 /// [`BTreeSet`] builder for [`dice::collection`].
 ///
-/// [`BTreeSet`]: https://doc.rust-lang.org/std/collections/struct.BTreeSet.html
-/// [`dice::collection`]: fn.collection.html
+/// [`dice::collection`]: dice::collection()
 pub struct BTreeSetBuilder;
 
 impl BTreeSetBuilder {
@@ -27,8 +26,6 @@ where
 /// Generates a [`BTreeSet`] that contains elements of type `T`.
 ///
 /// The range specifies the number of tries to generate distinct elements.
-///
-/// [`BTreeSet`]: https://doc.rust-lang.org/std/collections/struct.BTreeSet.html
 ///
 /// # Panics
 ///
@@ -65,12 +62,15 @@ where
     dice::collection(BTreeSetBuilder::die(), elem_die, tries_range)
 }
 
-/// Similar to `dice::b_tree_set` but each element is generated using only a random part of
-/// `Limit`.
+/// Similar to [`dice::b_tree_set`] but each element is generated using only a random part of
+/// [`Limit`].
 ///
-/// If you want to generate a `BTreeSet` that contains other collections, then you should
-/// consider using this generator for the outer `BTreeSet`. That way the overall size is
-/// bounded by `Limit` (and not the square of `Limit`).
+/// If you want to generate a [`BTreeSet`] that contains other collections, then you should
+/// consider using this generator for the outer [`BTreeSet`]. That way the overall size is
+/// bounded by [`Limit`] (and not the square of [`Limit`]).
+///
+/// [`Limit`]: crate::Limit
+/// [`dice::b_tree_set`]: dice::b_tree_set()
 ///
 /// # Panics
 ///

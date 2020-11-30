@@ -4,8 +4,7 @@ use std::collections::VecDeque;
 
 /// [`VecDeque`] builder for [`dice::collection`].
 ///
-/// [`VecDeque`]: https://doc.rust-lang.org/std/collections/struct.VecDeque.html
-/// [`dice::collection`]: fn.collection.html
+/// [`dice::collection`]: dice::collection()
 pub struct VecDequeBuilder;
 
 impl VecDequeBuilder {
@@ -25,8 +24,6 @@ impl<T> CollectionBuilder<T, VecDeque<T>> for VecDequeBuilder {
 /// Generates a [`VecDeque`] that contains elements of type `T`.
 ///
 /// The range specifies the length of the [`VecDeque`].
-///
-/// [`VecDeque`]: https://doc.rust-lang.org/std/collections/struct.VecDeque.html
 ///
 /// # Panics
 ///
@@ -60,12 +57,15 @@ pub fn vec_deque<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Di
     dice::collection(VecDequeBuilder::die(), elem_die, len_range)
 }
 
-/// Similar to `dice::vec_deque` but each element is generated using only a random part of
-/// `Limit`.
+/// Similar to [`dice::vec_deque`] but each element is generated using only a random part of
+/// [`Limit`].
 ///
-/// If you want to generate a `VecDeque` that contains other collections, then you should
-/// consider using this generator for the outer `VecDeque`. That way the overall size is
-/// bounded by `Limit` (and not the square of `Limit`).
+/// If you want to generate a [`VecDeque]` that contains other collections, then you should
+/// consider using this generator for the outer [`VecDeque`]. That way the overall size is
+/// bounded by [`Limit`] (and not the square of [`Limit`]).
+///
+/// [`Limit`]: crate::Limit
+/// [`dice::vec_deque`]: dice::vec_deque()
 ///
 /// # Panics
 ///

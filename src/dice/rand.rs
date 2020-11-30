@@ -1,13 +1,13 @@
+use rand::distributions::Distribution;
+
 use crate::prelude::*;
 
-/// Generates a value using the given `Distribution` from the [crate `rand`].
-///
-/// [crate `rand`]: https://crates.io/crates/rand
+/// Generates a value using the given [`Distribution`].
 ///
 /// Only available if the feature `rand` is enabled.
 pub fn from_distribution<T, D>(distribution: D) -> impl Die<T>
 where
-    D: rand::distributions::Distribution<T>,
+    D: Distribution<T>,
 {
     dice::from_fn(move |mut fate| {
         let mut prng = fate.fork_prng();

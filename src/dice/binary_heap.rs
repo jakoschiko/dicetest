@@ -5,8 +5,7 @@ use crate::prelude::*;
 
 /// [`BinaryHeap`] builder for [`dice::collection`].
 ///
-/// [`BinaryHeap`]: https://doc.rust-lang.org/std/collections/struct.BinaryHeap.html
-/// [`dice::collection`]: fn.collection.html
+/// [`dice::collection`]: dice::collection()
 pub struct BinaryHeapBuilder;
 
 impl BinaryHeapBuilder {
@@ -29,8 +28,6 @@ where
 /// Generates a [`BinaryHeap`] that contains elements of type `T`.
 ///
 /// The range specifies the length of the [`BinaryHeap`].
-///
-/// [`BinaryHeap`]: https://doc.rust-lang.org/std/collections/struct.BinaryHeap.html
 ///
 /// # Panics
 ///
@@ -67,12 +64,15 @@ where
     dice::collection(BinaryHeapBuilder::die(), elem_die, len_range)
 }
 
-/// Similar to `dice::binary_heap` but each element is generated using only a random part of
-/// `Limit`.
+/// Similar to [`dice::binary_heap`] but each element is generated using only a random part of
+/// [`Limit`].
 ///
-/// If you want to generate a `BinaryHeap` that contains other collections, then you should
-/// consider using this generator for the outer `BinaryHeap`. That way the overall size is
-/// bounded by `Limit` (and not the square of `Limit`).
+/// If you want to generate a [`BinaryHeap`] that contains other collections, then you should
+/// consider using this generator for the outer [`BinaryHeap`]. That way the overall size is
+/// bounded by [`Limit`] (and not the square of [`Limit`]).
+///
+/// [`Limit`]: crate::Limit
+/// [`dice::binary_heap`]: dice::binary_heap()
 ///
 /// # Panics
 ///

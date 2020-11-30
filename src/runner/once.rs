@@ -1,7 +1,7 @@
 //! Provides a runner function that runs a test once.
 //!
 //! This runner function can be used for debugging a counterexample
-//! that was found with `runner::repeatedly::run`.
+//! that was found with [`runner::repeatedly::run`].
 
 use std::panic::{catch_unwind, UnwindSafe};
 

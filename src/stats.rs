@@ -179,8 +179,8 @@ pub fn collect<R>(f: impl FnOnce() -> R) -> (R, Stats) {
 
 /// Returns if stats are currently enabled.
 ///
-/// Stats are enabled if and only if this function is executed inside of `collect` and
-/// the feature `hints` is present.
+/// Stats are enabled if and only if this function is executed inside of [`collect`] and
+/// the feature `stats` is present.
 pub fn enabled() -> bool {
     #[cfg(feature = "stats")]
     {

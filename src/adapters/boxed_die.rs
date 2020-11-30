@@ -1,6 +1,6 @@
 use crate::{Die, DieOnce, Fate};
 
-/// Adapter for `Die::boxed`.
+/// Adapter for [`Die::boxed`].
 pub struct BoxedDie<'a, T> {
     die: Box<dyn Die<T> + 'a>,
 }

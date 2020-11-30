@@ -101,8 +101,8 @@ impl Dicetest {
 
     /// Configuration for running the test in run-once mode.
     ///
-    /// In this mode the test will be run once. In contrast to debug mode, the `Seed` and `Limit`
-    /// can be set separately via `Dicetest::seed` and `Dicetest::limit`.
+    /// In this mode the test will be run once. In contrast to debug mode, the [`Seed`] and
+    /// [`Limit`] can be set separately via [`Dicetest::seed`] and [`Dicetest::once_limit`].
     ///
     /// # Environment
     ///
@@ -118,7 +118,7 @@ impl Dicetest {
     ///
     /// In this mode the test will be run repeatedly until the configured number of passes has been
     /// reached or the test has panicked. If the test has panicked, a counterexample has been
-    /// found. The counterexample can be debugged using the debug mode, see `Dicetest::debug`.
+    /// found. The counterexample can be debugged using the debug mode, see [`Dicetest::debug`].
     ///
     /// # Environment
     ///
@@ -130,10 +130,10 @@ impl Dicetest {
         }
     }
 
-    /// Sets the initial `Seed` for the pseudorandom value generation.
+    /// Sets the initial [`Seed`] for the pseudorandom value generation.
     ///
     /// It's only used in run-once and run-repeatedly mode and is `None` by default.
-    /// In case of `None` the `Seed` will be randomly generated.
+    /// In case of `None` the [`Seed`] will be randomly generated.
     ///
     /// # Environment
     ///
@@ -159,7 +159,7 @@ impl Dicetest {
     /// Sets the initial upper limit for the size of generated dynamic data structures.
     ///
     /// It will be used for the first test run. The following test runs use an interpolated limit,
-    /// see `Dicetest::end_limit`. It's only used in run-repeatedly mode and is `0` by default.
+    /// see [`Dicetest::end_limit`]. It's only used in run-repeatedly mode and is `0` by default.
     ///
     /// # Environment
     ///
@@ -172,7 +172,7 @@ impl Dicetest {
     /// Sets the final upper limit for the size of generated dynamic data structures.
     ///
     /// It will be used for the last test run. The previous test runs use an interpolated limit,
-    /// see `Dicetest::start_limit`. It's only used in run-repeatedly mode and is `100` by default.
+    /// see [`Dicetest::start_limit`]. It's only used in run-repeatedly mode and is `100` by default.
     ///
     /// # Environment
     ///
@@ -182,10 +182,10 @@ impl Dicetest {
         self
     }
 
-    /// Sets the multiplier for the `Limit`.
+    /// Sets the multiplier for the [`Limit`].
     ///
-    /// It will be applied to the values that can be set via `Dicetest::once_limit`,
-    /// `Dicetest::start_limit` and `Dicetest::end_limit` before running the test.
+    /// It will be applied to the values that can be set via [`Dicetest::once_limit`],
+    /// [`Dicetest::start_limit`] and [`Dicetest::end_limit`] before running the test.
     ///
     /// # Environment
     ///
@@ -210,7 +210,7 @@ impl Dicetest {
 
     /// Sets the multiplier for the number of passes.
     ///
-    /// It will be applied to the value that can be set via `Dicetest::passes` before running
+    /// It will be applied to the value that can be set via [`Dicetest::passes`] before running
     /// the test.
     ///
     /// # Environment
@@ -283,7 +283,7 @@ impl Dicetest {
 
     /// Sets whether test parameters can be overridden via environment variables.
     ///
-    /// If set to true and special environment variables are present, `Dicetest::run`
+    /// If set to true and special environment variables are present, [`Dicetest::run`]
     /// will parse their values and override the corresponding test parameters
     /// before running the test. This parameter is `true` by default.
     pub fn env_enabled(mut self, env_enabled: bool) -> Self {
@@ -295,7 +295,7 @@ impl Dicetest {
     ///
     /// If special environment variables are present, this function will parse their values and
     /// override the corresponding test parameters before running the test. This can be disabled
-    /// via `Dicetest::env_enabled`.
+    /// via [`Dicetest::env_enabled`].
     ///
     /// # Panics
     ///

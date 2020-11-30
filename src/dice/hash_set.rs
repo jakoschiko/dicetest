@@ -7,8 +7,7 @@ use crate::Prng;
 
 /// [`HashSet`] builder for [`dice::collection`].
 ///
-/// [`HashSet`]: https://doc.rust-lang.org/std/collections/struct.HashSet.html
-/// [`dice::collection`]: fn.collection.html
+/// [`dice::collection`]: dice::collection()
 pub struct HashSetBuilder<S>
 where
     S: BuildHasher,
@@ -21,9 +20,6 @@ where
     S: BuildHasher,
 {
     /// Creates a builder that uses the given [`BuildHasher`] for constructing a [`HashSet`].
-    ///
-    /// [`BuildHasher`]: https://doc.rust-lang.org/std/hash/trait.BuildHasher.html
-    /// [`HashSet`]: https://doc.rust-lang.org/std/collections/struct.HashSet.html
     pub fn with_hasher(build_hasher: S) -> Self {
         Self { build_hasher }
     }
@@ -52,9 +48,6 @@ where
 /// of type `T`.
 ///
 /// The range specifies the number of tries to generate distinct elements.
-///
-/// [`HashSet`]: https://doc.rust-lang.org/std/collections/struct.HashSet.html
-/// [`BuildHasher`]: https://doc.rust-lang.org/std/hash/trait.BuildHasher.html
 ///
 /// # Panics
 ///
@@ -91,12 +84,15 @@ where
     dice::collection(HashSetBuilder::die(), elem_die, tries_range)
 }
 
-/// Similar to `dice::hash_set` but each element is generated using only a random part of
-/// `Limit`.
+/// Similar to [`dice::hash_set`] but each element is generated using only a random part of
+/// [`Limit`].
 ///
-/// If you want to generate a `HashSet` that contains other collections, then you should
-/// consider using this generator for the outer `HashSet`. That way the overall size is
-/// bounded by `Limit` (and not the square of `Limit`).
+/// If you want to generate a [`HashSet`] that contains other collections, then you should
+/// consider using this generator for the outer [`HashSet`]. That way the overall size is
+/// bounded by [`Limit`] (and not the square of [`Limit`]).
+///
+/// [`Limit`]: crate::Limit
+/// [`dice::hash_set`]: dice::hash_set()
 ///
 /// # Panics
 ///

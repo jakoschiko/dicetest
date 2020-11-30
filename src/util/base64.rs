@@ -47,7 +47,7 @@ fn is_invalid_char(c: char) -> bool {
 
 /// Converts the given bytes to a base64 string.
 ///
-/// This function is a right inverse for `decode`.
+/// This function is a right inverse for [`decode`].
 pub fn encode(bytes: &[u8]) -> String {
     let pad_count = {
         let outrange = bytes.len() % 3;
@@ -87,7 +87,7 @@ pub fn encode(bytes: &[u8]) -> String {
 /// Tries to convert the given base64 string to bytes.
 /// Fails if the string has no valid base64 encoding.
 ///
-/// This function is a left inverse for `encode`.
+/// This function is a left inverse for [`encode`].
 pub fn decode(base64: &str) -> Result<Vec<u8>, String> {
     let suffix = if base64.ends_with("==") {
         "AA"

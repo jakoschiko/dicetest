@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-/// Generates two `Vec`s by splitting the given `Vec` at a random index.
+/// Generates two [`Vec`]s by splitting the given [`Vec`] at a random index.
 ///
 /// # Examples
 ///

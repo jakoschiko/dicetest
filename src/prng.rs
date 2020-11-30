@@ -17,7 +17,7 @@ pub struct Prng {
 }
 
 impl Prng {
-    /// Creates a `Prng` whose internal state is initialized with the given seed.
+    /// Creates a [`Prng`] whose internal state is initialized with the given seed.
     ///
     /// The result has a satisfying cycle length.
     pub fn from_seed(seed: Seed) -> Prng {
@@ -29,13 +29,16 @@ impl Prng {
         prng
     }
 
-    /// Creates a `Prng` using the given byte array as internal state.
+    /// Creates a [`Prng`] using the given byte array as internal state.
     ///
-    /// This function is a left and right inverse for `Prng::to_bytes`.
+    /// This function is a left and right inverse for [`to_bytes`].
     ///
-    /// A satisfying cycle length is only guaranteed for bytes from `Prng::to_bytes` called
-    /// with an `Prng` that has a satisfying cycle length. Other bytes should not be passed to this
-    /// function. For initializing an `Prng` with an arbitrary seed, use `Prng::from_seed` instead.
+    /// A satisfying cycle length is only guaranteed for bytes from [`to_bytes`] called
+    /// with an [`Prng`] that has a satisfying cycle length. Other bytes should not be passed to this
+    /// function. For initializing an [`Prng`] with an arbitrary seed, use [`from_seed`] instead.
+    ///
+    /// [`to_bytes`]: Prng::to_bytes
+    /// [`from_seed`]: Prng::from_seed
     pub fn from_bytes(state_bytes: [u8; 32]) -> Prng {
         #[rustfmt::skip]
         let [
@@ -56,7 +59,9 @@ impl Prng {
 
     /// Returns the internal state as a byte array.
     ///
-    /// This function is a left and right inverse for `Prng::from_bytes`.
+    /// This function is a left and right inverse for `from_bytes`.
+    ///
+    /// [`from_bytes`]: Prng::from_bytes
     pub fn to_bytes(&self) -> [u8; 32] {
         let (a, b, c, d) = self.state;
 
@@ -93,7 +98,8 @@ impl Prng {
     }
 
     #[allow(clippy::many_single_char_names)]
-    /// Reinitialize the internal state of self using the current internal state and the given seed.
+    /// Reinitialize the internal state of `self` using the current internal state and the given
+    /// seed.
     pub fn reseed(&mut self, seed: Seed) {
         let (a, b, c, d) = self.state;
 
@@ -108,8 +114,8 @@ impl Prng {
         }
     }
 
-    /// Splits off a new `Prng` from self. The internal state of the new `Prng` is generated with
-    /// self.
+    /// Splits off a new [`Prng`] from `self`. The internal state of the new [`Prng`] is generated
+    /// with `self`.
     pub fn fork(&mut self) -> Prng {
         let random_number = self.next_number();
         let mut reseeded_prng = self.clone();

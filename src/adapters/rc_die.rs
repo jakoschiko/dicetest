@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use crate::{Die, DieOnce, Fate};
 
-/// Adapter for `DieOnce::rc`.
+/// Adapter for [`Die::rc`].
 #[derive(Clone)]
 pub struct RcDie<'a, T> {
     die: Rc<dyn Die<T> + 'a>,

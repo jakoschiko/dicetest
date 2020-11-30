@@ -7,8 +7,7 @@ use crate::Prng;
 
 /// [`HashMap`] builder for [`dice::collection`].
 ///
-/// [`HashMap`]: https://doc.rust-lang.org/std/collections/struct.HashMap.html
-/// [`dice::collection`]: fn.collection.html
+/// [`dice::collection`]: dice::collection()
 pub struct HashMapBuilder<S>
 where
     S: BuildHasher,
@@ -21,9 +20,6 @@ where
     S: BuildHasher,
 {
     /// Creates a builder that uses the given [`BuildHasher`] for constructing a [`HashMap`].
-    ///
-    /// [`BuildHasher`]: https://doc.rust-lang.org/std/hash/trait.BuildHasher.html
-    /// [`HashMap`]: https://doc.rust-lang.org/std/collections/struct.HashMap.html
     pub fn with_hasher(build_hasher: S) -> Self {
         HashMapBuilder { build_hasher }
     }
@@ -52,9 +48,6 @@ where
 /// type `K` with values of type `V`.
 ///
 /// The range specifies the number of tries to generate key-value entries with distinct keys.
-///
-/// [`HashMap`]: https://doc.rust-lang.org/std/collections/struct.HashMap.html
-/// [`BuildHasher`]: https://doc.rust-lang.org/std/hash/trait.BuildHasher.html
 ///
 /// # Panics
 ///
@@ -94,12 +87,15 @@ where
     dice::collection(HashMapBuilder::die(), elem_die, tries_range)
 }
 
-/// Similar to `dice::hash_map` but each element is generated using only a random part of
-/// `Limit`.
+/// Similar to [`dice::hash_map`] but each element is generated using only a random part of
+/// [`Limit`].
 ///
-/// If you want to generate a `HashMap` that contains other collections, then you should
-/// consider using this generator for the outer `HashMap`. That way the overall size is
-/// bounded by `Limit` (and not the square of `Limit`).
+/// If you want to generate a [`HashMap`] that contains other collections, then you should
+/// consider using this generator for the outer [`HashMap`]. That way the overall size is
+/// bounded by [`Limit`] (and not the square of [`Limit`]).
+///
+/// [`Limit`]: crate::Limit
+/// [`dice::hash_map`]: dice::hash_map()
 ///
 /// # Panics
 ///

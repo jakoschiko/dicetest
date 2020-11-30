@@ -385,7 +385,7 @@ fn_one_of_n! { 9,
     8, weight_8, value_8, die_8
 }
 
-/// Generates a element randomly chosen from the given `Vec`. All elements have the same
+/// Generates a element randomly chosen from the given [`Vec`]. All elements have the same
 /// probability.
 ///
 /// # Examples
@@ -411,8 +411,8 @@ pub fn one_of_vec_once<T>(mut values: Vec<T>) -> impl DieOnce<T> {
     })
 }
 
-/// Generates a clone of a element randomly chosen from the given `Vec`. All elements have the same
-/// probability.
+/// Generates a clone of a element randomly chosen from the given [`Vec`]. All elements have the
+/// same probability.
 ///
 /// # Examples
 ///

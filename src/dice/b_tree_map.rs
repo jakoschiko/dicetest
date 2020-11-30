@@ -5,8 +5,7 @@ use crate::prelude::*;
 
 /// [`BTreeMap`] builder for [`dice::collection`].
 ///
-/// [`BTreeMap`]: https://doc.rust-lang.org/std/collections/struct.BTreeMap.html
-/// [`dice::collection`]: fn.collection.html
+/// [`dice::collection`]: dice::collection()
 pub struct BTreeMapBuilder;
 
 impl BTreeMapBuilder {
@@ -27,8 +26,6 @@ where
 /// Generates a [`BTreeMap`] that contains keys of type `K` with values of type `V`.
 ///
 /// The range specifies the number of tries to generate key-value entries with distinct keys.
-///
-/// [`BTreeMap`]: https://doc.rust-lang.org/std/collections/struct.BTreeMap.html
 ///
 /// # Panics
 ///
@@ -68,12 +65,15 @@ where
     dice::collection(BTreeMapBuilder::die(), elem_die, tries_range)
 }
 
-/// Similar to `dice::b_tree_map` but each element is generated using only a random part of
-/// `Limit`.
+/// Similar to [`dice::b_tree_map`] but each element is generated using only a random part of
+/// [`Limit`].
 ///
-/// If you want to generate a `BTreeMap` that contains other collections, then you should
-/// consider using this generator for the outer `BTreeMap`. That way the overall size is
-/// bounded by `Limit` (and not the square of `Limit`).
+/// If you want to generate a [`BTreeMap`] that contains other collections, then you should
+/// consider using this generator for the outer [`BTreeMap`]. That way the overall size is
+/// bounded by [`Limit`] (and not the square of [`Limit`]).
+///
+/// [`Limit`]: crate::Limit
+/// [`dice::b_tree_map`]: dice::b_tree_map()
 ///
 /// # Panics
 ///

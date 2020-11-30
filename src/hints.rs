@@ -71,7 +71,7 @@ pub fn collect<R>(f: impl FnOnce() -> R) -> (R, Hints) {
 
 /// Returns if hints are currently enabled.
 ///
-/// Hints are enabled if and only if this function is executed inside of `collect` and
+/// Hints are enabled if and only if this function is executed inside of [`collect`] and
 /// the feature `hints` is present.
 pub fn enabled() -> bool {
     #[cfg(feature = "hints")]

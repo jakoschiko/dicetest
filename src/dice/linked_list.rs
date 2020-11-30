@@ -5,8 +5,7 @@ use crate::prelude::*;
 
 /// [`LinkedList`] builder for [`dice::collection`].
 ///
-/// [`LinkedList`]: https://doc.rust-lang.org/std/collections/struct.LinkedList.html
-/// [`dice::collection`]: fn.collection.html
+/// [`dice::collection`]: dice::collection()
 pub struct LinkedListBuilder;
 
 impl LinkedListBuilder {
@@ -24,8 +23,6 @@ impl<T> CollectionBuilder<T, LinkedList<T>> for LinkedListBuilder {
 /// Generates a [`LinkedList`] that contains elements of type `T`.
 ///
 /// The range specifies the length of the [`LinkedList`].
-///
-/// [`LinkedList`]: https://doc.rust-lang.org/std/collections/struct.LinkedList.html
 ///
 /// # Panics
 ///
@@ -59,12 +56,15 @@ pub fn linked_list<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl 
     dice::collection(LinkedListBuilder::die(), elem_die, len_range)
 }
 
-/// Similar to `dice::linked_list` but each element is generated using only a random part of
-/// `Limit`.
+/// Similar to [`dice::linked_list`] but each element is generated using only a random part of
+/// [`Limit`.]
 ///
-/// If you want to generate a `LinkedList` that contains other collections, then you should
-/// consider using this generator for the outer `LinkedList`. That way the overall size is
-/// bounded by `Limit` (and not the square of `Limit`).
+/// If you want to generate a [`LinkedList`] that contains other collections, then you should
+/// consider using this generator for the outer [`LinkedList`.] That way the overall size is
+/// bounded by [`Limit`] (and not the square of [`Limit`]).
+///
+/// [`Limit`]: crate::Limit
+/// [`dice::linked_list`]: dice::linked_list()
 ///
 /// # Panics
 ///

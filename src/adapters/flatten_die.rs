@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use crate::{Die, DieOnce, Fate};
 
-/// Adapter for `DieOnce::flatten_once` and `Die::flatten`.
+/// Adapter for [`DieOnce::flatten_once`] and [`Die::flatten`].
 pub struct FlattenDie<T, TD, TDD> {
     td_die: TDD,
     _t: PhantomData<T>,

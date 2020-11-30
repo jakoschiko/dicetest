@@ -1,7 +1,7 @@
 use crate::prelude::*;
 
-/// Generates a `None` or a `Some` that contains a value from the given generator. `None` and `Some`
-/// have the same probability.
+/// Generates a [`None`] or a [`Some`] that contains a value from the given generator.
+/// [`None`] and [`Some`] have the same probability.
 ///
 /// # Examples
 ///
@@ -22,8 +22,8 @@ pub fn option_once<T>(some_die: impl DieOnce<T>) -> impl DieOnce<Option<T>> {
     dice::one_of_die_2_once(dice::just_once(None), some_die.map_once(Some))
 }
 
-/// Generates a `None` or a `Some` that contains a value from the given generator. `None` and `Some`
-/// have the same probability.
+/// Generates a [`None`] or a [`Some`] that contains a value from the given generator.
+/// [`None`] and [`Some`] have the same probability.
 ///
 /// # Examples
 ///
@@ -44,8 +44,8 @@ pub fn option<T>(some_die: impl Die<T>) -> impl Die<Option<T>> {
     dice::one_of_die_2(dice::from_fn(|_| None), some_die.map(Some))
 }
 
-/// Generates a `None` or a `Some` that contains a value from the given generator. The probabilities
-/// of `None` and `Some` depend on the given weights.
+/// Generates a [`None`] or a [`Some`] that contains a value from the given generator.
+/// The probabilities of [`None`] and [`Some`] depend on the given weights.
 ///
 /// # Examples
 ///
@@ -72,8 +72,8 @@ pub fn weighted_option_once<T>(
     )
 }
 
-/// Generates a `None` or a `Some` that contains a value from the given generator. The probabilities
-/// of `None` and `Some` depend on the given weights.
+/// Generates a [`None`] or a [`Some`] that contains a value from the given generator.
+/// The probabilities of [`None`] and [`Some`] depend on the given weights.
 ///
 /// # Examples
 ///

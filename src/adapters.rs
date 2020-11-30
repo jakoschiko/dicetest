@@ -1,4 +1,7 @@
-//! A collection of `DieOnce` and `Die` adapters.
+//! A collection of [`DieOnce`] and [`Die`] adapters.
+//!
+//! [`DieOnce`]: crate::DieOnce
+//! [`Die`]: crate::Die
 
 mod map_die;
 pub use map_die::MapDie;

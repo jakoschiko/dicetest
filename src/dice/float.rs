@@ -5,7 +5,7 @@ use std::ops::{RangeFrom, RangeFull, RangeInclusive, RangeToInclusive};
 
 use crate::prelude::*;
 
-/// Non-empty range for float generators `dice::f32` and `dice::f64`.
+/// Non-empty range for float generators [`dice::f32`] and [`dice::f64`].
 ///
 /// The float type is represented by `F`.
 pub trait FloatRange<F> {

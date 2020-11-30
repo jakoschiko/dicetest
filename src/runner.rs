@@ -1,9 +1,11 @@
 //! A runner for tests with pseudorandomly generated test data.
 //!
-//! The runner mainly exists for implementing `Dicetest`. You probably want to use `Dicetest`
+//! The runner mainly exists for implementing [`Dicetest`]. You probably want to use [`Dicetest`]
 //! instead of using the runner directly.
 //!
-//! The modules `once` and `repeatedly` contains runner functions with different strategies.
+//! The modules [`once`] and [`repeatedly`] contains runner functions with different strategies.
+//!
+//! [`Dicetest`]: crate::Dicetest
 
 mod util;
 

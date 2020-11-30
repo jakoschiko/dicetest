@@ -60,7 +60,7 @@ pub fn char_ascii() -> impl Die<char> {
 ///
 /// A [`char`] represents an [unicode scalar value].
 ///
-/// [`char`]: https://doc.rust-lang.org/std/primitive.char.html
+/// [`char`]: prim@char
 /// [unicode scalar value]: http://www.unicode.org/glossary/#unicode_scalar_value
 pub fn char() -> impl Die<char> {
     dice::one_of_die_2(

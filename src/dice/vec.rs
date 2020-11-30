@@ -3,8 +3,7 @@ use crate::prelude::*;
 
 /// [`Vec`] builder for [`dice::collection`].
 ///
-/// [`Vec`]: https://doc.rust-lang.org/std/vec/struct.Vec.html
-/// [`dice::collection`]: fn.collection.html
+/// [`dice::collection`]: dice::collection()
 pub struct VecBuilder;
 
 impl VecBuilder {
@@ -24,8 +23,6 @@ impl<T> CollectionBuilder<T, Vec<T>> for VecBuilder {
 /// Generates a [`Vec`] that contains elements of type `T`.
 ///
 /// The range specifies the length of the [`Vec`].
-///
-/// [`Vec`]: https://doc.rust-lang.org/std/vec/struct.Vec.html
 ///
 /// # Panics
 ///
@@ -59,12 +56,15 @@ pub fn vec<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<Vec<
     dice::collection(VecBuilder::die(), elem_die, len_range)
 }
 
-/// Similar to `dice::vec` but each element is generated using only a random part of
-/// `Limit`.
+/// Similar to [`dice::vec`] but each element is generated using only a random part of
+/// [`Limit`].
 ///
-/// If you want to generate a `Vec` that contains other collections, then you should
-/// consider using this generator for the outer `Vec`. That way the overall size is
-/// bounded by `Limit` (and not the square of `Limit`).
+/// If you want to generate a [`Vec`] that contains other collections, then you should
+/// consider using this generator for the outer [`Vec`]. That way the overall size is
+/// bounded by [`Limit]` (and not the square of [`Limit`)].
+///
+/// [`Limit`]: crate::Limit
+/// [`dice::vec`]: dice::vec()
 ///
 /// # Panics
 ///

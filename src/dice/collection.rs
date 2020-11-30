@@ -5,7 +5,7 @@ use crate::prelude::*;
 ///
 /// The collection has the type `C` and contains elements of type `T`.
 ///
-/// [`dice::collection`]: fn.collection.html
+/// [`dice::collection`]: dice::collection()
 pub trait CollectionBuilder<T, C> {
     /// Build a collection from the given elements.
     fn build(self, elems: impl ExactSizeIterator<Item = T>) -> C;
@@ -18,9 +18,6 @@ pub trait CollectionBuilder<T, C> {
 /// * The element count is generated using the given range.
 /// * The elements are generated.
 /// * The generated elements are passed to [`CollectionBuilder::build`].
-///
-/// [`CollectionBuilder`]: trait.CollectionBuilder.html
-/// [`CollectionBuilder::build`]: trait.CollectionBuilder.html#tymethod.build
 ///
 /// # Panics
 ///
@@ -42,12 +39,15 @@ where
     })
 }
 
-/// Similar to `dice::collection` but each element is generated using only a random part of
-/// `Limit`.
+/// Similar to [`dice::collection`] but each element is generated using only a random part of
+/// [`Limit`].
 ///
 /// If you want to generate a collection that contains other collections, then you should
 /// consider using this generator for the outer collection. That way the overall size is
-/// bounded by `Limit` (and not the square of `Limit`).
+/// bounded by [`Limit`] (and not the square of [`Limit`]).
+///
+/// [`Limit`]: crate::Limit
+/// [`dice::collection`]: dice::collection()
 ///
 /// # Panics
 ///

@@ -3,7 +3,7 @@ use std::ops::{Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToIncl
 
 use crate::prelude::*;
 
-/// Non-empty range for integer generators like `dice::u8`, `dice::i32`, etc.
+/// Non-empty range for integer generators like [`dice::u8`], [`dice::i32`], etc.
 ///
 /// The integer type is represented by `I`.
 pub trait IntegerRange<I> {
