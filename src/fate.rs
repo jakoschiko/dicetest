@@ -92,4 +92,16 @@ impl<'a> Fate<'a> {
     pub fn roll<T, D: DieOnce<T>>(&mut self, die: D) -> T {
         die.roll_once(self.copy())
     }
+
+    /// Generates a value using the given [`Distribution`].
+    /// 
+    /// [`Distribution`]: rand::distributions::Distribution
+    #[cfg(any(feature = "rand_full", all(feature = "rand_core", feature = "rand")))]
+    pub fn roll_distribution<T, D>(&mut self, distribution: D) -> T
+    where
+        D: rand::distributions::Distribution<T>,
+    {
+        let die = crate::dice::from_distribution(distribution);
+        self.roll(die)
+    }
 }
