@@ -17,14 +17,8 @@ rand = { version = "0.7", optional = true }
 
 [features]
 default = ["hints", "stats"]
-
-# Enables the hints.
 hints = []
-
-# Enables the stats.
 stats = []
-
-# Enables the support for the `rand` crate.
 rand_full = ["rand_core", "rand"]
 
 [workspace]
