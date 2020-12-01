@@ -94,7 +94,7 @@ impl<'a> Fate<'a> {
     }
 
     /// Generates a value using the given [`Distribution`].
-    /// 
+    ///
     /// [`Distribution`]: rand::distributions::Distribution
     #[cfg(any(feature = "rand_full", all(feature = "rand_core", feature = "rand")))]
     pub fn roll_distribution<T, D>(&mut self, distribution: D) -> T
@@ -103,5 +103,24 @@ impl<'a> Fate<'a> {
     {
         let die = crate::dice::from_distribution(distribution);
         self.roll(die)
+    }
+}
+
+#[cfg(feature = "rand_core")]
+impl<'a> rand_core::RngCore for Fate<'a> {
+    fn next_u32(&mut self) -> u32 {
+        self.next_number() as u32
+    }
+
+    fn next_u64(&mut self) -> u64 {
+        self.next_number()
+    }
+
+    fn fill_bytes(&mut self, dest: &mut [u8]) {
+        rand_core::impls::fill_bytes_via_next(self, dest)
+    }
+
+    fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), rand_core::Error> {
+        Ok(self.fill_bytes(dest))
     }
 }

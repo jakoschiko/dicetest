@@ -413,7 +413,7 @@ Enables or disables the stats feature at compile time. If disabled,
 all stats operations are no-ops.
 
 #### `rand_core` (disabled by default)
-If enabled, `dicetest::Prng` implements the `rand_core::RngCore`
+If enabled, `dicetest::Prng` and `dicetest::Fate` implements the `rand_core::RngCore`
 trait.
 
 #### `rand_full` (disabled by default, alias for `rand_core,rand`)
