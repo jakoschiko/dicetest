@@ -247,9 +247,31 @@ mod section_features {
 
         // Create a `Die` from a `rand::distributions::Distribution`
         let byte_die = dice::from_distribution(rand::distributions::Standard);
-        let bytes_die = dice::array_4(byte_die);
-        let bytes: [u8; 4] = fate.roll(bytes_die);
+        let bytes_die = dice::vec(byte_die, 1..);
+        let bytes: Vec<u8> = fate.roll(bytes_die);
         println!("{:?}", bytes);
-        // Output: [81, 236, 205, 151]
+        // Output: [236, 205, 151, 229]
+    }
+
+    #[test]
+    fn quickcheck_full() {
+        use dicetest::prelude::*;
+        use dicetest::{Limit, Prng};
+
+        let mut prng = Prng::from_seed(0x5EED.into());
+        let limit = Limit(5);
+        let mut fate = Fate::new(&mut prng, limit);
+
+        // Generate a value of a type that implements `quickcheck::Arbitrary`
+        let byte: u8 = fate.roll_arbitrary();
+        println!("{:?}", byte);
+        // Output: 0
+
+        // Create a `Die` for a type that implements `quickcheck::Arbitrary`
+        let byte_die = dice::arbitrary();
+        let bytes_die = dice::vec(byte_die, 1..);
+        let bytes: Vec<u8> = fate.roll(bytes_die);
+        println!("{:?}", bytes);
+        // Output: [1, 4, 4, 2]
     }
 }

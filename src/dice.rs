@@ -85,3 +85,14 @@ pub use index_of::*;
 mod rand;
 #[cfg(any(feature = "rand_full", all(feature = "rand_core", feature = "rand")))]
 pub use self::rand::*;
+
+#[cfg(any(
+    feature = "quickcheck_full",
+    all(feature = "rand_core", feature = "quickcheck")
+))]
+mod quickcheck;
+#[cfg(any(
+    feature = "quickcheck_full",
+    all(feature = "rand_core", feature = "quickcheck")
+))]
+pub use self::quickcheck::*;
