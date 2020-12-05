@@ -4,7 +4,8 @@ Dicetest is a framework for writing tests with randomly generated test data.
 
 ## Status of this crate
 
-The author does not consider this crate as stable yet.
+The author does not consider this crate as stable yet. Changes will be documented in the 
+[changelog](CHANGELOG.md).
 
 ## Example
 
