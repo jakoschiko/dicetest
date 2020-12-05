@@ -57,7 +57,7 @@ macro_rules! hint_debug {
 ///     hint!("bar"); // This hint is indented
 ///     
 ///     hint_section!(); // No hint
-///     hint!("bar") // This hint is indented twice
+///     hint!("bar"); // This hint is indented twice
 /// }
 ///
 /// hint!("Test finished"); // This hint is not indented
