@@ -25,7 +25,7 @@ where
     Fun(f)
 }
 
-/// Uses stdlib's [`DefaultHasher`] to create a seed from a hashable value.
+/// Uses libstd's [`DefaultHasher`] to create a seed from a hashable value.
 pub fn from_default_hasher<T: Hash>() -> impl Codie<T> {
     from_fn(|value: T| {
         let mut hasher = DefaultHasher::new();
