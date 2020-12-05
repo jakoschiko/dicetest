@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2020-12-05
 ### Added
 - Add function `dicetest::Fate::roll_distribution`. This allows to generate values directly from a `rand::distributions::Distribution`.
 - Add optional feature flag `quickcheck_full`. This enables the integration of `quickcheck::Arbitrary`.
@@ -17,4 +18,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add marco `dicetest::hint_section`. This makes it easier to work with hint indents.
 
 
-[Unreleased]: https://github.com/jakoschiko/dicetest/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/jakoschiko/dicetest/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/jakoschiko/dicetest/compare/v0.2.0...v0.2.1
