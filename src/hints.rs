@@ -140,7 +140,7 @@ pub fn unindent() {
 /// Represents a currently active indent.
 ///
 /// It increases the indent (see [`indent`]) when created and decreases the indent
-/// (see [`unindent]) when dropped.
+/// (see [`unindent`]) when dropped.
 pub struct Section {
     _dummy: (),
 }
