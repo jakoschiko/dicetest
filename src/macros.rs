@@ -10,9 +10,9 @@
 /// ```
 #[macro_export]
 macro_rules! hint {
-    ($($arg:tt)*) => ({
-        $crate::hints::add(|| format!($($arg)*))
-    })
+    ($($arg:tt)*) => {
+        $crate::hints::add(|| format!($($arg)*));
+    }
 }
 
 /// Adds a hint that contains the stringified argument and the argument value converted with
@@ -32,7 +32,7 @@ macro_rules! hint {
 macro_rules! hint_debug {
     ($arg:tt) => {
         $crate::hints::add(|| format!(concat!("{} = {:?}"), stringify!($arg), $arg));
-    };
+    }
 }
 
 /// Creates a stat with the first argument as stat key and the remaining arguments applied to the
@@ -48,9 +48,9 @@ macro_rules! hint_debug {
 /// ```
 #[macro_export]
 macro_rules! stat {
-    ($key:tt, $($arg:tt)*) => ({
-        $crate::stats::inc($key, || format!($($arg)*))
-    })
+    ($key:tt, $($arg:tt)*) => {
+        $crate::stats::inc($key, || format!($($arg)*));
+    }
 }
 
 /// Creates a stat with the stringified argument as stat key and the argument value converted with
