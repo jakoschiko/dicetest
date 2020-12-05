@@ -32,6 +32,44 @@ macro_rules! hint {
 macro_rules! hint_debug {
     ($arg:tt) => {
         $crate::hints::add(|| format!(concat!("{} = {:?}"), stringify!($arg), $arg));
+    };
+}
+
+/// Indents all hints in the caller's code block after this macro is called.
+///
+/// If arguments are specified, a (not indented) hint will be added with the arguments applied
+/// to the [`format`] macro. This hint is meant as the title of the section.
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::{hint, hint_section};
+///
+/// hint!("Start test"); // This hint is not indented
+///
+/// {
+///     hint_section!("Test foo"); // This hint is not indented
+///     hint!("foo"); // This hint is indented
+/// }
+///
+/// {
+///     hint_section!("Test bar"); // This hint is not indented
+///     hint!("bar"); // This hint is indented
+///     
+///     hint_section!(); // No hint
+///     hint!("bar") // This hint is indented twice
+/// }
+///
+/// hint!("Test finished"); // This hint is not indented
+/// ```
+#[macro_export]
+macro_rules! hint_section {
+    () => {
+        let _block_ident = $crate::hints::Section::start();
+    };
+    ($($arg:tt)*) => {
+        $crate::hints::add(|| format!($($arg)*));
+        let _block_ident = $crate::hints::Section::start();
     }
 }
 
@@ -90,6 +128,53 @@ mod tests {
             hint_debug!((0 < 20));
             hint_debug!((if true { 1 } else { 2 }));
         }
+    }
+
+    #[test]
+    fn macro_hint_section_produces_valid_code() {
+        if false {
+            hint_section!();
+            hint_section!("foo");
+            hint_section!("bar {}", 42);
+        }
+    }
+
+    #[test]
+    #[cfg(feature = "hints")]
+    fn macro_hint_section_produces_correct_indent() {
+        let (_, actual_hints) = crate::hints::collect(|| {
+            {
+                hint!("foo1");
+                hint_section!();
+                hint!("foo2");
+                hint_section!("bar");
+                hint!("foo3");
+            };
+            hint!("foo4");
+        });
+        let expected_hints = crate::hints::Hints(vec![
+            crate::hints::Hint {
+                indent: 0,
+                text: "foo1".to_owned(),
+            },
+            crate::hints::Hint {
+                indent: 1,
+                text: "foo2".to_owned(),
+            },
+            crate::hints::Hint {
+                indent: 1,
+                text: "bar".to_owned(),
+            },
+            crate::hints::Hint {
+                indent: 2,
+                text: "foo3".to_owned(),
+            },
+            crate::hints::Hint {
+                indent: 0,
+                text: "foo4".to_owned(),
+            },
+        ]);
+        assert_eq!(expected_hints, actual_hints)
     }
 
     #[test]

@@ -136,3 +136,25 @@ pub fn unindent() {
         });
     }
 }
+
+/// Represents a currently active indent.
+///
+/// It increases the indent (see [`indent`]) when created and decreases the indent
+/// (see [`unindent]) when dropped.
+pub struct Section {
+    _dummy: (),
+}
+
+impl Section {
+    /// Increases the indent and returns a [`Section`].
+    pub fn start() -> Section {
+        indent();
+        Section { _dummy: () }
+    }
+}
+
+impl Drop for Section {
+    fn drop(&mut self) {
+        unindent();
+    }
+}
