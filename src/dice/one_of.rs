@@ -461,7 +461,7 @@ where
 ///     assert!(zeroes_or_ones == vec![0, 0] || zeroes_or_ones == vec![1, 1]);
 /// }
 /// ```
-pub fn one_of_slice<'a, T>(values: &'a [T]) -> impl Die<T> + 'a
+pub fn one_of_slice<T>(values: &'_ [T]) -> impl Die<T> + '_
 where
     T: Clone,
 {
