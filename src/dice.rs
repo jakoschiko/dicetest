@@ -69,8 +69,8 @@ pub use binary_heap::*;
 mod string;
 pub use string::*;
 
-mod shuffled;
-pub use shuffled::*;
+mod shuffle;
+pub use shuffle::*;
 
 mod split;
 pub use split::*;

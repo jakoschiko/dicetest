@@ -1,5 +1,35 @@
 use crate::prelude::*;
 
+/// Shuffles the given slice randomly using the [Fisher-Yates shuffle].
+///
+/// [Fisher-Yates shuffle]: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
+///
+/// # Examples
+///
+/// ```
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
+///
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
+/// let mut fate = Fate::new(&mut prng, limit);
+///
+/// let mut elems = vec![1, 2, 3, 4];
+///
+/// fate.roll(dice::shuffle_slice(&mut elems));
+/// ```
+pub fn shuffle_slice<T>(elems: &'_ mut [T]) -> impl DieOnce<()> + '_ {
+    dice::from_fn_once(move |mut fate| {
+        let n = elems.len();
+        if n > 0 {
+            for i in 0..(n - 1) {
+                let j = fate.roll(dice::uni_usize(i..n));
+                elems.swap(i, j);
+            }
+        }
+    })
+}
+
 /// Shuffles the given [`Vec`] randomly using the [Fisher-Yates shuffle].
 ///
 /// [Fisher-Yates shuffle]: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
@@ -20,13 +50,7 @@ use crate::prelude::*;
 /// ```
 pub fn shuffled_vec<T>(mut vec: Vec<T>) -> impl DieOnce<Vec<T>> {
     dice::from_fn_once(move |mut fate| {
-        let n = vec.len();
-        if n > 0 {
-            for i in 0..(n - 1) {
-                let j = fate.roll(dice::uni_usize(i..n));
-                vec.swap(i, j);
-            }
-        }
+        fate.roll(shuffle_slice(&mut vec));
         vec
     })
 }
