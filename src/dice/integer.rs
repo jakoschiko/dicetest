@@ -373,7 +373,7 @@ mod tests {
                 Dicetest::repeatedly().run(|fate| {
                     range_contains_integer(
                         fate,
-                        dice::array_2(dice::$integer(..$integer::max_value() - 1))
+                        dice::array(dice::$integer(..$integer::max_value() - 1))
                             .map(|[a, b]| (a.min(b), a.max(b) + 1)),
                         |(lower, upper)| lower..upper,
                         dice::$integer,
@@ -400,7 +400,7 @@ mod tests {
                 Dicetest::repeatedly().run(|fate| {
                     range_contains_integer(
                         fate,
-                        dice::array_2(dice::$integer(..)).map(|[a, b]| (a.min(b), a.max(b))),
+                        dice::array(dice::$integer(..)).map(|[a, b]| (a.min(b), a.max(b))),
                         |(lower, upper)| lower..=upper,
                         dice::$integer,
                         |(lower, upper), integer| lower <= integer && integer <= upper,

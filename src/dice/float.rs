@@ -525,7 +525,7 @@ mod tests {
                 Dicetest::repeatedly().run(|fate| {
                     range_contains_float(
                         fate,
-                        dice::array_2($float(..)).map(|[a, b]| (a.min(b), a.max(b))),
+                        dice::array($float(..)).map(|[a, b]| (a.min(b), a.max(b))),
                         |(lower, upper)| lower..=upper,
                         $float,
                         |(lower, upper), float| lower <= float && float <= upper,

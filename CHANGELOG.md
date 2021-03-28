@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Add function `dicetest::dice::shuffle_slice`. This allows to shuffle a slice in place.
+- Add function `dicetest::dice::array`. This allows to generate arrays using const generics.
+
+### Removed
+- Remove function `dicetest::dice::array_1`, ..., `dicetest::dice::array_32`. Use `dicetest::dice::array` instead.
 
 ## [0.2.1] - 2020-12-05
 ### Added

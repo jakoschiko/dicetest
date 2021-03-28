@@ -23,7 +23,7 @@ mod tests {
         Dicetest::repeatedly().run(|fate| {
             asserts::left_inverse(
                 fate,
-                dice::array_8(dice::u8(..)),
+                dice::array(dice::u8(..)),
                 conversion::bytes_to_u64,
                 conversion::u64_to_bytes,
             )

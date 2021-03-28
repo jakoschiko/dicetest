@@ -194,12 +194,9 @@ mod tests {
     #[test]
     fn to_bytes_is_left_inverse() {
         Dicetest::repeatedly().run(|fate| {
-            asserts::left_inverse(
-                fate,
-                dice::array_32(dice::u8(..)),
-                Prng::from_bytes,
-                |prng| prng.to_bytes(),
-            );
+            asserts::left_inverse(fate, dice::array(dice::u8(..)), Prng::from_bytes, |prng| {
+                prng.to_bytes()
+            });
         })
     }
 

@@ -182,7 +182,7 @@
 //! let xx_or_yy_die = dice::one_of_2(xx, yy);
 //!
 //! // This generator uses `xx_or_yy_die` to generate three `String`s at once.
-//! let three_xx_or_yy_die = dice::array_3(xx_or_yy_die);
+//! let three_xx_or_yy_die = dice::array::<_, _, 3>(xx_or_yy_die);
 //! ```
 //!
 //! Generators can be easily implemented and composed:
