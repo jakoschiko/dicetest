@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-/// Shuffles the given slice randomly using the [Fisher-Yates shuffle].
+/// Shuffles the given slice randomly in-place using the [Fisher-Yates shuffle].
 ///
 /// [Fisher-Yates shuffle]: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
 ///
