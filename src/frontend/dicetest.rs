@@ -92,7 +92,7 @@ impl Dicetest {
     /// You can set this mode with `DICETEST_DEBUG=<run code>`. The value `<run code>` must be
     /// a valid run code.
     pub fn debug(run_code: &str) -> Self {
-        let run_code = RunCode::from_base64(&run_code).unwrap();
+        let run_code = RunCode::from_base64(run_code).unwrap();
         Dicetest {
             mode: Mode::Debug(run_code),
             params: Params::default(),

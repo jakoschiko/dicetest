@@ -52,12 +52,12 @@ fn enabled_with_cell<E: Events>(cell: &RefCell<Vec<E>>) -> bool {
 }
 
 pub fn enabled<E: Events>(local: &'static Local<E>) -> bool {
-    local.with(move |cell| enabled_with_cell(&cell))
+    local.with(move |cell| enabled_with_cell(cell))
 }
 
 pub fn modify<E: Events>(local: &'static Local<E>, f: impl FnOnce(&mut Vec<E>)) {
     local.with(move |cell| {
-        if enabled_with_cell(&cell) {
+        if enabled_with_cell(cell) {
             let mut events_stack = cell.borrow_mut();
             f(&mut events_stack);
         }
