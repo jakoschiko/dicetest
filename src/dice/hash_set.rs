@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use std::hash::{BuildHasher, Hash};
 
-use crate::dice::{CollectionBuilder, SizeRange};
+use crate::dice::{CollectionBuilder, LengthRange};
 use crate::prelude::*;
 use crate::Prng;
 
@@ -77,7 +77,10 @@ where
 /// let set = fate.roll(dice::hash_set(&elem_die, 42));
 /// assert!(set.len() <= 42);
 /// ```
-pub fn hash_set<T>(elem_die: impl Die<T>, tries_range: impl SizeRange) -> impl Die<HashSet<T, Prng>>
+pub fn hash_set<T>(
+    elem_die: impl Die<T>,
+    tries_range: impl LengthRange,
+) -> impl Die<HashSet<T, Prng>>
 where
     T: Eq + Hash,
 {
@@ -88,7 +91,7 @@ where
 /// [`Limit`].
 ///
 /// If you want to generate a [`HashSet`] that contains other collections, then you should
-/// consider using this generator for the outer [`HashSet`]. That way the overall size is
+/// consider using this generator for the outer [`HashSet`]. That way the overall length is
 /// bounded by [`Limit`] (and not the square of [`Limit`]).
 ///
 /// [`Limit`]: crate::Limit
@@ -117,7 +120,7 @@ where
 /// ```
 pub fn outer_hash_set<T>(
     elem_die: impl Die<T>,
-    tries_range: impl SizeRange,
+    tries_range: impl LengthRange,
 ) -> impl Die<HashSet<T, Prng>>
 where
     T: Eq + Hash,

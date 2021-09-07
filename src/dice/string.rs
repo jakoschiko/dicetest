@@ -1,4 +1,4 @@
-use crate::dice::{CollectionBuilder, SizeRange};
+use crate::dice::{CollectionBuilder, LengthRange};
 use crate::prelude::*;
 
 /// [`String`] builder for [`dice::collection`].
@@ -52,6 +52,6 @@ impl CollectionBuilder<char, String> for StringBuilder {
 /// let string = fate.roll(dice::string(&char_die, 42));
 /// assert!(string.chars().count() == 42);
 /// ```
-pub fn string(char_die: impl Die<char>, len_range: impl SizeRange) -> impl Die<String> {
-    dice::collection(StringBuilder::die(), char_die, len_range)
+pub fn string(char_die: impl Die<char>, length_range: impl LengthRange) -> impl Die<String> {
+    dice::collection(StringBuilder::die(), char_die, length_range)
 }

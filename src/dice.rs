@@ -33,8 +33,8 @@ pub use option::*;
 mod result;
 pub use result::*;
 
-mod size;
-pub use size::*;
+mod length;
+pub use length::*;
 
 mod terms_of;
 pub use terms_of::*;

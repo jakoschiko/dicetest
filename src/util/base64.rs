@@ -180,10 +180,10 @@ mod tests {
     #[test]
     fn decode_fails_if_string_contains_invalid_char() {
         Dicetest::repeatedly().run(|mut fate| {
-            let valid_len_die = dice::size(4..).map(|len| len - (len % 4));
+            let valid_length_die = dice::length(4..).map(|length| length - (length % 4));
 
-            let len = fate.roll(valid_len_die);
-            let base64 = fate.roll(dice::string(dice::char(), len));
+            let length = fate.roll(valid_length_die);
+            let base64 = fate.roll(dice::string(dice::char(), length));
 
             let is_invalid = base64.chars().any(base64::is_invalid_char);
 
@@ -204,11 +204,11 @@ mod tests {
     fn decode_fails_if_string_has_invalid_length() {
         Dicetest::repeatedly().run(|mut fate| {
             let base_64_char_die = dice::one_of_slice(&base64::BYTE_TO_CHAR);
-            let invalid_len_die =
-                dice::size(1..).map(|len| if len % 4 == 0 { len + 1 } else { len });
+            let invalid_length_die =
+                dice::length(1..).map(|length| if length % 4 == 0 { length + 1 } else { length });
 
-            let len = fate.roll(invalid_len_die);
-            let invalid_base64 = fate.roll(dice::string(base_64_char_die, len));
+            let length = fate.roll(invalid_length_die);
+            let invalid_base64 = fate.roll(dice::string(base_64_char_die, length));
 
             let bytes = base64::decode(&invalid_base64);
 

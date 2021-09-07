@@ -1,6 +1,6 @@
 use std::collections::LinkedList;
 
-use crate::dice::{CollectionBuilder, SizeRange};
+use crate::dice::{CollectionBuilder, LengthRange};
 use crate::prelude::*;
 
 /// [`LinkedList`] builder for [`dice::collection`].
@@ -52,15 +52,18 @@ impl<T> CollectionBuilder<T, LinkedList<T>> for LinkedListBuilder {
 /// let list = fate.roll(dice::linked_list(&elem_die, 42));
 /// assert!(list.len() == 42);
 /// ```
-pub fn linked_list<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<LinkedList<T>> {
-    dice::collection(LinkedListBuilder::die(), elem_die, len_range)
+pub fn linked_list<T>(
+    elem_die: impl Die<T>,
+    length_range: impl LengthRange,
+) -> impl Die<LinkedList<T>> {
+    dice::collection(LinkedListBuilder::die(), elem_die, length_range)
 }
 
 /// Similar to [`dice::linked_list`] but each element is generated using only a random part of
 /// [`Limit`.]
 ///
 /// If you want to generate a [`LinkedList`] that contains other collections, then you should
-/// consider using this generator for the outer [`LinkedList`.] That way the overall size is
+/// consider using this generator for the outer [`LinkedList`.] That way the overall length is
 /// bounded by [`Limit`] (and not the square of [`Limit`]).
 ///
 /// [`Limit`]: crate::Limit
@@ -89,7 +92,7 @@ pub fn linked_list<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl 
 /// ```
 pub fn outer_linked_list<T>(
     elem_die: impl Die<T>,
-    len_range: impl SizeRange,
+    length_range: impl LengthRange,
 ) -> impl Die<LinkedList<T>> {
-    dice::outer_collection(LinkedListBuilder::die(), elem_die, len_range)
+    dice::outer_collection(LinkedListBuilder::die(), elem_die, length_range)
 }

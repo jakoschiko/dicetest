@@ -1,13 +1,14 @@
 use std::convert::TryFrom;
 
-/// The upper limit for the size of dynamic data structures generated with [`DieOnce`] and [`Die`].
+/// The upper limit for the length of dynamic data structures generated with [`DieOnce`] and
+/// [`Die`].
 ///
-/// The implementor of [`DieOnce`] or [`Die`] is allowed to freely interpret or even ignore this value,
-/// but it's recommended that the complexity of the value generation is in `O(limit)`.
+/// The implementor of [`DieOnce`] or [`Die`] is allowed to freely interpret or even ignore this
+/// value, but it's recommended that the complexity of the value generation is in `O(limit)`.
 ///
 /// This parameter exists because the hardware of the testing machine is limited. For example
 /// a very big list could not fit in the memory or its generation could take too much time.
-/// With this parameter you can implement a generator for lists of arbitrary size and its
+/// With this parameter you can implement a generator for lists of arbitrary length and its
 /// user can choose an upper limit depending on his hardware.
 ///
 /// [`DieOnce`]: crate::DieOnce

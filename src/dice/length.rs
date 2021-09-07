@@ -3,10 +3,10 @@ use std::ops::{Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToIncl
 
 use crate::prelude::*;
 
-/// Non-empty range for [`dice::size`].
+/// Non-empty range for [`dice::length`].
 ///
-/// [`dice::size`]: dice::size()
-pub trait SizeRange {
+/// [`dice::length`]: dice::length()
+pub trait LengthRange {
     /// Returns the inclusive lower bound and the optional inclusive upper bound that represent
     /// the range.
     ///
@@ -16,73 +16,73 @@ pub trait SizeRange {
     fn bounds(self) -> (usize, Option<usize>);
 }
 
-fn empty_size_range(range: &(impl SizeRange + Debug)) -> ! {
+fn empty_length_range(range: &(impl LengthRange + Debug)) -> ! {
     panic!(
-        "SizeRange is invalid because it contains no values: {:?}",
+        "LengthRange is invalid because it contains no values: {:?}",
         range
     )
 }
 
-impl SizeRange for usize {
+impl LengthRange for usize {
     fn bounds(self) -> (usize, Option<usize>) {
         (self, Some(self))
     }
 }
 
-impl SizeRange for Range<usize> {
+impl LengthRange for Range<usize> {
     fn bounds(self) -> (usize, Option<usize>) {
         if self.start < self.end {
             let lower = self.start;
             let upper = self.end - 1;
             (lower, Some(upper))
         } else {
-            empty_size_range(&self);
+            empty_length_range(&self);
         }
     }
 }
 
-impl SizeRange for RangeFrom<usize> {
+impl LengthRange for RangeFrom<usize> {
     fn bounds(self) -> (usize, Option<usize>) {
         (self.start, None)
     }
 }
 
-impl SizeRange for RangeFull {
+impl LengthRange for RangeFull {
     fn bounds(self) -> (usize, Option<usize>) {
         (0, None)
     }
 }
 
-impl SizeRange for RangeInclusive<usize> {
+impl LengthRange for RangeInclusive<usize> {
     fn bounds(self) -> (usize, Option<usize>) {
         if self.start() <= self.end() {
             let (lower, upper) = self.into_inner();
             (lower, Some(upper))
         } else {
-            empty_size_range(&self);
+            empty_length_range(&self);
         }
     }
 }
 
-impl SizeRange for RangeTo<usize> {
+impl LengthRange for RangeTo<usize> {
     fn bounds(self) -> (usize, Option<usize>) {
         if self.end > 0 {
             let lower = 0;
             let upper = self.end - 1;
             (lower, Some(upper))
         } else {
-            empty_size_range(&self);
+            empty_length_range(&self);
         }
     }
 }
 
-impl SizeRange for RangeToInclusive<usize> {
+impl LengthRange for RangeToInclusive<usize> {
     fn bounds(self) -> (usize, Option<usize>) {
         (0, Some(self.end))
     }
 }
 
-/// Generates a random size that can be used for collections, etc. The size is bounded by the
+/// Generates a random length that can be used for collections, etc. The length is bounded by the
 /// given range and the [`Limit`] parameter passed to [`Die::roll`].
 ///
 /// [`Limit`]: crate::Limit
@@ -93,7 +93,7 @@ impl SizeRange for RangeToInclusive<usize> {
 ///
 /// # Examples
 ///
-/// This example generates sizes without panicking:
+/// This example generates lengths without panicking:
 ///
 /// ```
 /// use dicetest::prelude::*;
@@ -103,23 +103,23 @@ impl SizeRange for RangeToInclusive<usize> {
 /// let limit = Limit::default();
 /// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// assert!(fate.roll(dice::size(42)) == 42);
+/// assert!(fate.roll(dice::length(42)) == 42);
 ///
-/// let size = fate.with_limit(100.into()).roll(dice::size(42..));
-/// assert!(size >= 42 && size <= 142);
+/// let length = fate.with_limit(100.into()).roll(dice::length(42..));
+/// assert!(length >= 42 && length <= 142);
 ///
-/// assert!(fate.roll(dice::size(..=71)) <= 71);
+/// assert!(fate.roll(dice::length(..=71)) <= 71);
 ///
-/// assert!(fate.roll(dice::size(..71)) < 71);
+/// assert!(fate.roll(dice::length(..71)) < 71);
 ///
-/// let size = fate.roll(dice::size(42..=71));
-/// assert!(size >= 42 && size <= 71);
+/// let length = fate.roll(dice::length(42..=71));
+/// assert!(length >= 42 && length <= 71);
 ///
-/// let size = fate.roll(dice::size(42..71));
-/// assert!(size >= 42 && size < 71);
+/// let length = fate.roll(dice::length(42..71));
+/// assert!(length >= 42 && length < 71);
 ///
-/// let size = fate.with_limit(100.into()).roll(dice::size(..));
-/// assert!(size >= 0 && size <= 100);
+/// let length = fate.with_limit(100.into()).roll(dice::length(..));
+/// assert!(length >= 0 && length <= 100);
 /// ```
 ///
 /// This example panics:
@@ -128,9 +128,9 @@ impl SizeRange for RangeToInclusive<usize> {
 /// use dicetest::prelude::*;
 ///
 /// // Oh no, panic!
-/// let _size_die = dice::size(71..42);
+/// let _length_die = dice::length(71..42);
 /// ```
-pub fn size(range: impl SizeRange) -> impl Die<usize> {
+pub fn length(range: impl LengthRange) -> impl Die<usize> {
     let (lower, upper_opt) = range.bounds();
 
     dice::from_fn(move |mut fate| {
@@ -147,14 +147,14 @@ mod tests {
 
     use crate::prelude::*;
 
-    fn range_contains_size<B, R>(
+    fn range_contains_length<B, R>(
         mut fate: Fate,
         range_data_die: impl DieOnce<B>,
         create_range: impl FnOnce(B) -> R,
         is_in_range: impl FnOnce(B, usize) -> bool,
     ) where
         B: Copy + Debug,
-        R: dice::SizeRange + Debug,
+        R: dice::LengthRange + Debug,
     {
         let prng = &mut fate.fork_prng();
         let limit = fate.roll(dice::u64(..)).into();
@@ -167,81 +167,81 @@ mod tests {
         let range = create_range(range_data);
         hint_debug!(range);
 
-        let size = dice::size(range).roll(Fate::new(prng, limit));
-        hint_debug!(size);
+        let length = dice::length(range).roll(Fate::new(prng, limit));
+        hint_debug!(length);
 
-        assert!(is_in_range(range_data, size));
+        assert!(is_in_range(range_data, length));
     }
 
     #[test]
-    fn size_is_equal_to_target() {
+    fn length_is_equal_to_target() {
         Dicetest::repeatedly().run(|fate| {
-            range_contains_size(
+            range_contains_length(
                 fate,
                 dice::usize(..),
                 |target| target,
-                |target, size| size == target,
+                |target, length| length == target,
             );
         })
     }
 
     #[test]
-    fn size_is_in_range() {
+    fn length_is_in_range() {
         Dicetest::repeatedly().run(|fate| {
-            range_contains_size(
+            range_contains_length(
                 fate,
                 dice::array(dice::usize(..usize::max_value() - 1))
                     .map(|[a, b]| (a.min(b), a.max(b) + 1)),
                 |(lower, upper)| lower..upper,
-                |(lower, upper), size| lower <= size && size < upper,
+                |(lower, upper), length| lower <= length && length < upper,
             );
         })
     }
 
     #[test]
-    fn size_is_in_range_from() {
+    fn length_is_in_range_from() {
         Dicetest::repeatedly().run(|fate| {
-            range_contains_size(
+            range_contains_length(
                 fate,
                 dice::usize(..),
                 |lower| lower..,
-                |lower, size| lower <= size,
+                |lower, length| lower <= length,
             );
         })
     }
 
     #[test]
-    fn size_is_in_range_inclusive() {
+    fn length_is_in_range_inclusive() {
         Dicetest::repeatedly().run(|fate| {
-            range_contains_size(
+            range_contains_length(
                 fate,
                 dice::array(dice::usize(..)).map(|[a, b]| (a.min(b), a.max(b))),
                 |(lower, upper)| lower..=upper,
-                |(lower, upper), size| lower <= size && size <= upper,
+                |(lower, upper), length| lower <= length && length <= upper,
             );
         })
     }
 
     #[test]
-    fn size_is_in_range_to() {
+    fn length_is_in_range_to() {
         Dicetest::repeatedly().run(|fate| {
-            range_contains_size(
+            range_contains_length(
                 fate,
                 dice::usize(1..),
                 |upper| ..upper,
-                |upper, size| size < upper,
+                |upper, length| length < upper,
             );
         })
     }
 
     #[test]
-    fn size_is_in_range_to_inclusive() {
+    fn length_is_in_range_to_inclusive() {
         Dicetest::repeatedly().run(|fate| {
-            range_contains_size(
+            range_contains_length(
                 fate,
                 dice::usize(..),
                 |upper| ..=upper,
-                |upper, size| size <= upper,
+                |upper, length| length <= upper,
             );
         })
     }

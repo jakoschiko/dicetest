@@ -1,6 +1,6 @@
 use std::collections::BinaryHeap;
 
-use crate::dice::{CollectionBuilder, SizeRange};
+use crate::dice::{CollectionBuilder, LengthRange};
 use crate::prelude::*;
 
 /// [`BinaryHeap`] builder for [`dice::collection`].
@@ -57,18 +57,21 @@ where
 /// let heap = fate.roll(dice::binary_heap(&elem_die, 42));
 /// assert!(heap.len() == 42);
 /// ```
-pub fn binary_heap<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<BinaryHeap<T>>
+pub fn binary_heap<T>(
+    elem_die: impl Die<T>,
+    length_range: impl LengthRange,
+) -> impl Die<BinaryHeap<T>>
 where
     T: Ord,
 {
-    dice::collection(BinaryHeapBuilder::die(), elem_die, len_range)
+    dice::collection(BinaryHeapBuilder::die(), elem_die, length_range)
 }
 
 /// Similar to [`dice::binary_heap`] but each element is generated using only a random part of
 /// [`Limit`].
 ///
 /// If you want to generate a [`BinaryHeap`] that contains other collections, then you should
-/// consider using this generator for the outer [`BinaryHeap`]. That way the overall size is
+/// consider using this generator for the outer [`BinaryHeap`]. That way the overall length is
 /// bounded by [`Limit`] (and not the square of [`Limit`]).
 ///
 /// [`Limit`]: crate::Limit
@@ -97,7 +100,7 @@ where
 /// ```
 pub fn outer_binary_heap<T>(
     elem_die: impl Die<T>,
-    tries_range: impl SizeRange,
+    tries_range: impl LengthRange,
 ) -> impl Die<BinaryHeap<T>>
 where
     T: Ord,

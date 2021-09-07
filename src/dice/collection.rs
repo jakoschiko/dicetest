@@ -1,4 +1,4 @@
-use crate::dice::SizeRange;
+use crate::dice::LengthRange;
 use crate::prelude::*;
 
 /// A collection builder for [`dice::collection`].
@@ -25,16 +25,16 @@ pub trait CollectionBuilder<T, C> {
 pub fn collection<T, C, B>(
     builder_die: impl Die<B>,
     elem_die: impl Die<T>,
-    elem_count_range: impl SizeRange,
+    length_range: impl LengthRange,
 ) -> impl Die<C>
 where
     B: CollectionBuilder<T, C>,
 {
-    let elem_count_die = dice::size(elem_count_range);
+    let length_die = dice::length(length_range);
     dice::from_fn(move |mut fate| {
         let builder = fate.roll(&builder_die);
-        let elem_count = fate.roll(&elem_count_die);
-        let elems = (0..elem_count).map(|_| fate.roll(&elem_die));
+        let length = fate.roll(&length_die);
+        let elems = (0..length).map(|_| fate.roll(&elem_die));
         builder.build(elems)
     })
 }
@@ -43,7 +43,7 @@ where
 /// [`Limit`].
 ///
 /// If you want to generate a collection that contains other collections, then you should
-/// consider using this generator for the outer collection. That way the overall size is
+/// consider using this generator for the outer collection. That way the overall length is
 /// bounded by [`Limit`] (and not the square of [`Limit`]).
 ///
 /// [`Limit`]: crate::Limit
@@ -55,19 +55,19 @@ where
 pub fn outer_collection<T, C, B>(
     builder_die: impl Die<B>,
     elem_die: impl Die<T>,
-    elem_count_range: impl SizeRange,
+    length_range: impl LengthRange,
 ) -> impl Die<C>
 where
     B: CollectionBuilder<T, C>,
 {
-    let elem_count_die = dice::size(elem_count_range);
+    let length_die = dice::length(length_range);
     dice::from_fn(move |mut fate| {
         let builder = fate.roll(&builder_die);
-        let elem_count = fate.roll(&elem_count_die);
-        let elem_limits = if elem_count == 0 {
+        let length = fate.roll(&length_die);
+        let elem_limits = if length == 0 {
             Vec::new()
         } else {
-            fate.roll(dice::terms_of_u64(fate.limit().0, elem_count))
+            fate.roll(dice::terms_of_u64(fate.limit().0, length))
         };
         let elems = elem_limits
             .into_iter()
@@ -82,11 +82,11 @@ mod tests {
     use crate::Limit;
 
     #[test]
-    fn outer_collection_overall_size_is_bounded_by_limit() {
+    fn outer_collection_overall_length_is_bounded_by_limit() {
         Dicetest::repeatedly().run(|mut fate| {
-            let size = fate.roll(dice::size(..));
+            let length = fate.roll(dice::length(..));
 
-            let limit = Limit::saturating_from_usize(size);
+            let limit = Limit::saturating_from_usize(length);
 
             pub struct TestBuilder;
 
@@ -102,8 +102,8 @@ mod tests {
             let vec_of_vecs_die = dice::outer_collection(&builder_die, vec_die, ..);
             let vec_of_vecs = fate.with_limit(limit).roll(vec_of_vecs_die);
 
-            let overall_size = vec_of_vecs.iter().flatten().count();
-            assert!(overall_size <= size);
+            let overall_length = vec_of_vecs.iter().flatten().count();
+            assert!(overall_length <= length);
         })
     }
 }

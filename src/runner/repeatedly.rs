@@ -15,7 +15,7 @@ use crate::{hints, Fate, Limit, Prng};
 /// The configuration for repeated test runs.
 #[derive(Debug, Clone)]
 pub struct Config {
-    /// The initial upper limit for the size of generated dynamic data structures
+    /// The initial upper limit for the length of generated dynamic data structures
     ///
     /// It's used for the first test run. The following test runs use an interpolated limit
     /// between [`start_limit`] and [`end_limit`].
@@ -23,7 +23,7 @@ pub struct Config {
     /// [`start_limit`]: Config::start_limit
     /// [`end_limit`]: Config::end_limit
     pub start_limit: Limit,
-    /// The final upper limit for the size of generated dynamic data structures.
+    /// The final upper limit for the length of generated dynamic data structures.
     ///
     /// It's used for the last test run. The previous test runs use an interpolated limit
     /// between [`start_limit`] and [`end_limit`].

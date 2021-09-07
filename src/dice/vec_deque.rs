@@ -1,4 +1,4 @@
-use crate::dice::{CollectionBuilder, SizeRange};
+use crate::dice::{CollectionBuilder, LengthRange};
 use crate::prelude::*;
 use std::collections::VecDeque;
 
@@ -53,15 +53,18 @@ impl<T> CollectionBuilder<T, VecDeque<T>> for VecDequeBuilder {
 /// let vec = fate.roll(dice::vec_deque(&elem_die, 42));
 /// assert!(vec.len() == 42);
 /// ```
-pub fn vec_deque<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<VecDeque<T>> {
-    dice::collection(VecDequeBuilder::die(), elem_die, len_range)
+pub fn vec_deque<T>(
+    elem_die: impl Die<T>,
+    length_range: impl LengthRange,
+) -> impl Die<VecDeque<T>> {
+    dice::collection(VecDequeBuilder::die(), elem_die, length_range)
 }
 
 /// Similar to [`dice::vec_deque`] but each element is generated using only a random part of
 /// [`Limit`].
 ///
 /// If you want to generate a [`VecDeque]` that contains other collections, then you should
-/// consider using this generator for the outer [`VecDeque`]. That way the overall size is
+/// consider using this generator for the outer [`VecDeque`]. That way the overall length is
 /// bounded by [`Limit`] (and not the square of [`Limit`]).
 ///
 /// [`Limit`]: crate::Limit
@@ -90,7 +93,7 @@ pub fn vec_deque<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Di
 /// ```
 pub fn outer_vec_deque<T>(
     elem_die: impl Die<T>,
-    len_range: impl SizeRange,
+    length_range: impl LengthRange,
 ) -> impl Die<VecDeque<T>> {
-    dice::outer_collection(VecDequeBuilder::die(), elem_die, len_range)
+    dice::outer_collection(VecDequeBuilder::die(), elem_die, length_range)
 }

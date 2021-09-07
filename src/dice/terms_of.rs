@@ -102,19 +102,19 @@ mod tests {
             #[test]
             fn $terms_of_integer_returns_the_expected_sum_and_count() {
                 Dicetest::repeatedly().run(|mut fate| {
-                    let expected_count = fate.roll(dice::size(..));
-                    let exptected_sum = if expected_count == 0 {
+                    let expected_count = fate.roll(dice::length(..));
+                    let expected_sum = if expected_count == 0 {
                         0
                     } else {
                         fate.roll(dice::$integer(..))
                     };
 
-                    let terms = fate.roll(dice::$terms_of_integer(exptected_sum, expected_count));
+                    let terms = fate.roll(dice::$terms_of_integer(expected_sum, expected_count));
 
                     let actual_sum = terms.iter().sum();
                     let actual_count = terms.len();
 
-                    assert_eq!(exptected_sum, actual_sum);
+                    assert_eq!(expected_sum, actual_sum);
                     assert_eq!(expected_count, actual_count);
                 })
             }

@@ -1,6 +1,6 @@
 use std::collections::BTreeSet;
 
-use crate::dice::{CollectionBuilder, SizeRange};
+use crate::dice::{CollectionBuilder, LengthRange};
 use crate::prelude::*;
 
 /// [`BTreeSet`] builder for [`dice::collection`].
@@ -55,7 +55,7 @@ where
 /// let set = fate.roll(dice::b_tree_set(&elem_die, 42));
 /// assert!(set.len() <= 42);
 /// ```
-pub fn b_tree_set<T>(elem_die: impl Die<T>, tries_range: impl SizeRange) -> impl Die<BTreeSet<T>>
+pub fn b_tree_set<T>(elem_die: impl Die<T>, tries_range: impl LengthRange) -> impl Die<BTreeSet<T>>
 where
     T: Ord,
 {
@@ -66,7 +66,7 @@ where
 /// [`Limit`].
 ///
 /// If you want to generate a [`BTreeSet`] that contains other collections, then you should
-/// consider using this generator for the outer [`BTreeSet`]. That way the overall size is
+/// consider using this generator for the outer [`BTreeSet`]. That way the overall length is
 /// bounded by [`Limit`] (and not the square of [`Limit`]).
 ///
 /// [`Limit`]: crate::Limit
@@ -95,7 +95,7 @@ where
 /// ```
 pub fn outer_b_tree_set<T>(
     elem_die: impl Die<T>,
-    tries_range: impl SizeRange,
+    tries_range: impl LengthRange,
 ) -> impl Die<BTreeSet<T>>
 where
     T: Ord,

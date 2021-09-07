@@ -1,4 +1,4 @@
-use crate::dice::{CollectionBuilder, SizeRange};
+use crate::dice::{CollectionBuilder, LengthRange};
 use crate::prelude::*;
 
 /// [`Vec`] builder for [`dice::collection`].
@@ -52,15 +52,15 @@ impl<T> CollectionBuilder<T, Vec<T>> for VecBuilder {
 /// let vec = fate.roll(dice::vec(&elem_die, 42));
 /// assert!(vec.len() == 42);
 /// ```
-pub fn vec<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<Vec<T>> {
-    dice::collection(VecBuilder::die(), elem_die, len_range)
+pub fn vec<T>(elem_die: impl Die<T>, length_range: impl LengthRange) -> impl Die<Vec<T>> {
+    dice::collection(VecBuilder::die(), elem_die, length_range)
 }
 
 /// Similar to [`dice::vec`] but each element is generated using only a random part of
 /// [`Limit`].
 ///
 /// If you want to generate a [`Vec`] that contains other collections, then you should
-/// consider using this generator for the outer [`Vec`]. That way the overall size is
+/// consider using this generator for the outer [`Vec`]. That way the overall length is
 /// bounded by [`Limit]` (and not the square of [`Limit`)].
 ///
 /// [`Limit`]: crate::Limit
@@ -87,8 +87,8 @@ pub fn vec<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<Vec<
 /// let vec_of_vecs = fate.roll(vec_of_vecs_die);
 /// assert!(vec_of_vecs.iter().flatten().count() <= 100);
 /// ```
-pub fn outer_vec<T>(elem_die: impl Die<T>, len_range: impl SizeRange) -> impl Die<Vec<T>> {
-    dice::outer_collection(VecBuilder::die(), elem_die, len_range)
+pub fn outer_vec<T>(elem_die: impl Die<T>, length_range: impl LengthRange) -> impl Die<Vec<T>> {
+    dice::outer_collection(VecBuilder::die(), elem_die, length_range)
 }
 
 #[cfg(test)]

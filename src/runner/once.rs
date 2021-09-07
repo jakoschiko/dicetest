@@ -14,7 +14,7 @@ use crate::{Fate, Limit, Prng};
 /// The configuration for a single test run.
 #[derive(Debug, Clone)]
 pub struct Config {
-    /// The upper limit for the size of generated dynamic data structures used for the test run.
+    /// The upper limit for the length of generated dynamic data structures used for the test run.
     pub limit: Limit,
     /// Defines whether the test will be run with enabled hints. The hints will be
     /// added to the report.

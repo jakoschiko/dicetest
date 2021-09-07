@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use crate::dice::{CollectionBuilder, SizeRange};
+use crate::dice::{CollectionBuilder, LengthRange};
 use crate::prelude::*;
 
 /// [`BTreeMap`] builder for [`dice::collection`].
@@ -57,7 +57,7 @@ where
 /// ```
 pub fn b_tree_map<K, V>(
     elem_die: impl Die<(K, V)>,
-    tries_range: impl SizeRange,
+    tries_range: impl LengthRange,
 ) -> impl Die<BTreeMap<K, V>>
 where
     K: Ord,
@@ -69,7 +69,7 @@ where
 /// [`Limit`].
 ///
 /// If you want to generate a [`BTreeMap`] that contains other collections, then you should
-/// consider using this generator for the outer [`BTreeMap`]. That way the overall size is
+/// consider using this generator for the outer [`BTreeMap`]. That way the overall length is
 /// bounded by [`Limit`] (and not the square of [`Limit`]).
 ///
 /// [`Limit`]: crate::Limit
@@ -98,7 +98,7 @@ where
 /// ```
 pub fn outer_b_tree_map<K, V>(
     elem_die: impl Die<(K, V)>,
-    tries_range: impl SizeRange,
+    tries_range: impl LengthRange,
 ) -> impl Die<BTreeMap<K, V>>
 where
     K: Ord,

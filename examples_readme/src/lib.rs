@@ -134,7 +134,7 @@ mod section_dice {
         let wrapped_byte_die = dice::u8(..).map(WrappedByte);
 
         // This die generates a permutation of `(0..=n)` for an arbitrary `n`.
-        let permutation_die = dice::size(0..).flat_map(|n| {
+        let permutation_die = dice::length(0..).flat_map(|n| {
             let vec = (0..=n).collect::<Vec<_>>();
             dice::shuffled_vec(vec)
         });
@@ -147,7 +147,7 @@ mod section_dice {
 
         // Provides the randomness for the generator and will be mutated when used.
         let mut prng = Prng::from_seed(0x5EED.into());
-        // Limits the size of dynamic data structures. The generator has only read access.
+        // Limits the length of dynamic data structures. The generator has only read access.
         let limit = Limit(5);
 
         // Contains all parameters necessary for using `DieOnce` or `Die`.

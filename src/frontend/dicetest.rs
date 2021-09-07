@@ -144,7 +144,7 @@ impl Dicetest {
         self
     }
 
-    /// Sets the upper limit for the size of generated dynamic data structures.
+    /// Sets the upper limit for the length of generated dynamic data structures.
     ///
     /// It's only used in run-once mode and is `100` by default.
     ///
@@ -156,7 +156,7 @@ impl Dicetest {
         self
     }
 
-    /// Sets the initial upper limit for the size of generated dynamic data structures.
+    /// Sets the initial upper limit for the length of generated dynamic data structures.
     ///
     /// It will be used for the first test run. The following test runs use an interpolated limit,
     /// see [`Dicetest::end_limit`]. It's only used in run-repeatedly mode and is `0` by default.
@@ -169,7 +169,7 @@ impl Dicetest {
         self
     }
 
-    /// Sets the final upper limit for the size of generated dynamic data structures.
+    /// Sets the final upper limit for the length of generated dynamic data structures.
     ///
     /// It will be used for the last test run. The previous test runs use an interpolated limit,
     /// see [`Dicetest::start_limit`]. It's only used in run-repeatedly mode and is `100` by default.

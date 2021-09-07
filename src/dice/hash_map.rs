@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::hash::{BuildHasher, Hash};
 
-use crate::dice::{CollectionBuilder, SizeRange};
+use crate::dice::{CollectionBuilder, LengthRange};
 use crate::prelude::*;
 use crate::Prng;
 
@@ -79,7 +79,7 @@ where
 /// ```
 pub fn hash_map<K, V>(
     elem_die: impl Die<(K, V)>,
-    tries_range: impl SizeRange,
+    tries_range: impl LengthRange,
 ) -> impl Die<HashMap<K, V, Prng>>
 where
     K: Eq + Hash,
@@ -91,7 +91,7 @@ where
 /// [`Limit`].
 ///
 /// If you want to generate a [`HashMap`] that contains other collections, then you should
-/// consider using this generator for the outer [`HashMap`]. That way the overall size is
+/// consider using this generator for the outer [`HashMap`]. That way the overall length is
 /// bounded by [`Limit`] (and not the square of [`Limit`]).
 ///
 /// [`Limit`]: crate::Limit
@@ -120,7 +120,7 @@ where
 /// ```
 pub fn outer_hash_map<K, V>(
     elem_die: impl Die<(K, V)>,
-    tries_range: impl SizeRange,
+    tries_range: impl LengthRange,
 ) -> impl Die<HashMap<K, V, Prng>>
 where
     K: Eq + Hash,
