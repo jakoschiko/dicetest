@@ -16,7 +16,7 @@ use crate::prelude::*;
 /// assert!(true_or_false == true || true_or_false == false);
 /// ```
 pub fn bool() -> impl Die<bool> {
-    dice::one_of_2(false, true)
+    dice::one_of().two(false, true)
 }
 
 /// Generates `true` or `false` with probabilities based on the given weights.
@@ -35,7 +35,7 @@ pub fn bool() -> impl Die<bool> {
 /// assert!(more_often_true_than_false == true || more_often_true_than_false == false);
 /// ```
 pub fn weighted_bool(false_weight: u32, true_weight: u32) -> impl Die<bool> {
-    dice::weighted_one_of_2((false_weight, false), (true_weight, true))
+    dice::weighted_one_of().two((false_weight, false), (true_weight, true))
 }
 
 #[cfg(test)]

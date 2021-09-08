@@ -183,7 +183,7 @@ macro_rules! fn_float {
 
             // Generates once in a while a special value that is inside the range.
             let maybe_special_value_die = {
-                let border_value_die = dice::one_of_2(Some(lower), Some(upper));
+                let border_value_die = dice::one_of().two(Some(lower), Some(upper));
                 let const_value_die = {
                     let const_values = $float_util::SPECIAL_VALUES;
                     dice::one_of_slice(const_values).map(move |special_value| {
@@ -195,7 +195,7 @@ macro_rules! fn_float {
                     })
                 };
 
-                dice::weighted_one_of_die_3(
+                dice::weighted_one_of_die().three(
                     (10, dice::just(None)),
                     (1, border_value_die),
                     (1, const_value_die),
@@ -211,7 +211,7 @@ macro_rules! fn_float {
         /// Generates an arbitrary float (including NaN). Some special floats have a higher
         /// probability of being generated.
         pub fn $arb_float() -> impl Die<$float> {
-            dice::weighted_one_of_die_2((10, $float(..)), (1, dice::just(std::$float::NAN)))
+            dice::weighted_one_of_die().two((10, $float(..)), (1, dice::just(std::$float::NAN)))
         }
 
         /// Generates a uniformly distributed float that lies inside the closed unit interval

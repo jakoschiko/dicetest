@@ -85,7 +85,7 @@
 //!
 //! - Generators for many libstd types (`u8`, `String`, `Vec`, etc.).
 //! - Generators for functions (`FnMut`, `FnOnce`, `Fn`).
-//! - Generator combinators (`map`, `flat_map`, `zip_2`, etc.).
+//! - Generator combinators (`map`, `flat_map`, `zip`, etc.).
 //! - Integration of `rand::distributions::Distribution`.
 //! - Integration of `quickcheck::Arbitrary` (without shrinking).
 //! - Configurable test runner.
@@ -167,7 +167,7 @@
 //!
 //! // This generator implements `DieOnce`.
 //! // It chooses one of the `String`s without cloning them.
-//! let xx_or_yy_die = dice::one_of_2_once(xx, yy);
+//! let xx_or_yy_die = dice::one_of_once().two(xx, yy);
 //! ```
 //!
 //! An implementor of `Die` is a generator that can be used infinite times (similar to [`Fn`]).
@@ -179,7 +179,7 @@
 //!
 //! // This generator implements `Die`.
 //! // It chooses one of the `String`s by cloning them.
-//! let xx_or_yy_die = dice::one_of_2(xx, yy);
+//! let xx_or_yy_die = dice::one_of().two(xx, yy);
 //!
 //! // This generator uses `xx_or_yy_die` to generate three `String`s at once.
 //! let three_xx_or_yy_die = dice::array::<_, _, 3>(xx_or_yy_die);
@@ -190,16 +190,16 @@
 //! use dicetest::prelude::*;
 //!
 //! // A classic die that generates a number between 1 and 6 with uniform distribution.
-//! let classic_die = dice::one_of_6::<u8>(1, 2, 3, 4, 5, 6);
+//! let classic_die = dice::one_of().six::<u8>(1, 2, 3, 4, 5, 6);
 //!
 //! // A loaded die that generates the number 6 more frequently.
 //! let loaded_die =
-//!     dice::weighted_one_of_6::<u8>((1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (2, 6));
+//!     dice::weighted_one_of().six::<u8>((1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (2, 6));
 //!
 //! // This die generates the result of the function.
 //! let die_from_fn = dice::from_fn(|_| 42);
 //!
-//! // This die generates always the same `String` by cloning the orignal one.
+//! // This die generates always the same `String` by cloning the original one.
 //! let foo_die = dice::just("foo".to_string());
 //!
 //! // This die generates an arbitrary byte.

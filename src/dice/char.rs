@@ -18,7 +18,7 @@ pub fn char_ascii_alphabetic_uppercase() -> impl Die<char> {
 
 /// Generator for letters from the ASCII alphabet ('a' to 'z' and 'A' to 'Z').
 pub fn char_ascii_alphabetic() -> impl Die<char> {
-    dice::one_of_die_2(
+    dice::one_of_die().two(
         char_ascii_alphabetic_lowercase(),
         char_ascii_alphabetic_uppercase(),
     )
@@ -33,7 +33,7 @@ pub fn char_ascii_digit() -> impl Die<char> {
 /// the ASCII alphabet ('a' to 'z' and 'A' to 'Z') and
 /// ASCII digits ('0' to '9').
 pub fn char_ascii_alphanumeric() -> impl Die<char> {
-    dice::one_of_die_3(
+    dice::one_of_die().three(
         char_ascii_alphabetic_lowercase(),
         char_ascii_alphabetic_uppercase(),
         char_ascii_digit(),
@@ -63,7 +63,7 @@ pub fn char_ascii() -> impl Die<char> {
 /// [`char`]: prim@char
 /// [unicode scalar value]: http://www.unicode.org/glossary/#unicode_scalar_value
 pub fn char() -> impl Die<char> {
-    dice::one_of_die_2(
+    dice::one_of_die().two(
         char_in_range(0x0, 0xD7FF),
         char_in_range(0xE000, 0x0010_FFFF),
     )

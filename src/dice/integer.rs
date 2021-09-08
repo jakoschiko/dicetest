@@ -262,7 +262,7 @@ macro_rules! fn_integer {
 
             // Generates once in a while a special value that is inside the range
             let maybe_special_value_die = {
-                let border_value_die = dice::one_of_2(Some(lower), Some(upper));
+                let border_value_die = dice::one_of().two(Some(lower), Some(upper));
                 let const_value_die = {
                     let special_values = &$special_values;
                     dice::one_of_slice(special_values).map(move |special_value| {
@@ -274,7 +274,7 @@ macro_rules! fn_integer {
                     })
                 };
 
-                dice::weighted_one_of_die_3(
+                dice::weighted_one_of_die().three(
                     (6, dice::just(None)),
                     (1, border_value_die),
                     (1, const_value_die),

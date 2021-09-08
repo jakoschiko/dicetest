@@ -63,7 +63,7 @@ where
 /// let limit = Limit::default();
 /// let mut fate = Fate::new(&mut prng, limit);
 ///
-/// let elem_die = dice::zip_2(dice::u8(..), dice::char());
+/// let elem_die = dice::zip().two(dice::u8(..), dice::char());
 ///
 /// let map = fate.with_limit(100.into()).roll(dice::hash_map(&elem_die, ..));
 /// assert!(map.len() <= 100);
@@ -112,7 +112,7 @@ where
 /// let mut fate = Fate::new(&mut prng, limit);
 ///
 /// let elem_die = dice::char();
-/// let vec_die = dice::zip_2(dice::u8(..), dice::vec(elem_die, ..));
+/// let vec_die = dice::zip().two(dice::u8(..), dice::vec(elem_die, ..));
 /// let map_of_vecs_die = dice::outer_hash_map(vec_die, ..);
 ///
 /// let map_of_vecs = fate.roll(map_of_vecs_die);

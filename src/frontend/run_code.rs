@@ -53,8 +53,9 @@ mod tests {
         Dicetest::repeatedly().run(|fate| {
             let prng_die = dice::from_fn(|mut fate| fate.fork_prng());
             let limit_die = dice::u64(..).map(Limit);
-            let run_code_die =
-                dice::zip_2(prng_die, limit_die).map(|(prng, limit)| RunCode { prng, limit });
+            let run_code_die = dice::zip()
+                .two(prng_die, limit_die)
+                .map(|(prng, limit)| RunCode { prng, limit });
 
             asserts::right_inverse(
                 fate,
