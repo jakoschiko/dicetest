@@ -161,27 +161,27 @@ mod tests {
                     terms.iter().all(|&term| term > 0),
                 );
                 stat!(
-                    "for all term t: t >= 0.10 * sum / termcount",
+                    "for all term t: t >= 0.10 * sum / term_count",
                     "{}",
                     terms.iter().all(|&term| term * 10 * count as u64 >= sum),
                 );
                 stat!(
-                    "for all term t: t >= 0.33 * sum / termcount",
+                    "for all term t: t >= 0.33 * sum / term_count",
                     "{}",
                     terms.iter().all(|&term| term * 3 * count as u64 >= sum),
                 );
                 stat!(
-                    "for all term t: t >= 0.50 * sum / termcount",
+                    "for all term t: t >= 0.50 * sum / term_count",
                     "{}",
                     terms.iter().all(|&term| term * 2 * count as u64 >= sum),
                 );
                 stat!(
-                    "for all term t: t >= 0.66 * sum / termcount",
+                    "for all term t: t >= 0.66 * sum / term_count",
                     "{}",
                     terms.iter().all(|&term| term * 3 * count as u64 >= sum * 2),
                 );
                 stat!(
-                    "for all term t: t >= 0.90 * sum / termcount",
+                    "for all term t: t >= 0.90 * sum / term_count",
                     "{}",
                     terms
                         .iter()

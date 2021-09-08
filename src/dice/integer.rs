@@ -298,7 +298,7 @@ fn random_u128(mut fate: Fate) -> u128 {
 }
 
 // Some of the integer types use random generators for bigger integer types.
-// This improves the uniform destribution.
+// This improves the uniform distribution.
 fn_integer! { u8, uni_u8, u64, random_u64, [1, 2] }
 fn_integer! { i8, uni_i8, u64, random_u64, [-2, -1, 0, 1, 2] }
 fn_integer! { u16, uni_u16, u64, random_u64, [1, 2] }

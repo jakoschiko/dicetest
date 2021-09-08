@@ -14,7 +14,7 @@ pub trait Die<T>: DieOnce<T> {
     /// Generates a pseudorandom value.
     ///
     /// The [`Fate`] is the only source of the randomness. Besides that, the generation is
-    /// derterministic.
+    /// deterministic.
     fn roll(&self, fate: Fate) -> T;
 
     /// Creates a new [`Die`] by mapping the generated values of `self`.

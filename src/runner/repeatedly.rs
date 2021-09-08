@@ -233,7 +233,7 @@ mod tests {
     }
 
     #[test]
-    fn no_hints_if_enabled_but_failure_not_reproduceable() {
+    fn no_hints_if_enabled_but_failure_not_reproducible() {
         if cfg!(feature = "hints") {
             let config = Config {
                 hints_enabled: true,
@@ -254,10 +254,10 @@ mod tests {
                     })
                 });
 
-                let failure_was_not_reproduceable =
+                let failure_was_not_reproducible =
                     &has_failed.0[0].text == "true" && &has_failed.0[1].text == "false";
 
-                if failure_was_not_reproduceable {
+                if failure_was_not_reproducible {
                     let counterexample = report.counterexample.unwrap();
                     assert!(counterexample.hints.is_none());
                 }
@@ -266,7 +266,7 @@ mod tests {
     }
 
     #[test]
-    fn has_hints_if_enabled_and_test_deteministic() {
+    fn has_hints_if_enabled_and_test_deterministic() {
         let config = Config {
             hints_enabled: true,
             ..default_config()

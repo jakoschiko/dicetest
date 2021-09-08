@@ -52,7 +52,7 @@ impl LimitSeries {
         Limit(offset_y + ipol_y)
     }
 
-    /// Returns an interator that emits all [`Limit`]s.
+    /// Returns an iterator that emits all [`Limit`]s.
     pub fn into_iter(self) -> impl Iterator<Item = Limit> {
         LimitSeriesIntoIter {
             series: self,

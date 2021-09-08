@@ -196,8 +196,8 @@ fn write_stats_section(
                                 match percent {
                                     None => write!(f, "ovf")?,
                                     Some(percent) => {
-                                        let percent_precesion = formatting.stats_percent_precision;
-                                        write!(f, "{:.n$}", percent, n = percent_precesion)?
+                                        let percent_precision = formatting.stats_percent_precision;
+                                        write!(f, "{:.n$}", percent, n = percent_precision)?
                                     }
                                 };
                                 write!(f, "% (")?;
@@ -403,7 +403,7 @@ mod tests {
     }
 
     #[test]
-    fn display_run_once_report_passed_wiht_hints_example() {
+    fn display_run_once_report_passed_with_hints_example() {
         let run_code = example_run_code();
         let report = runner::once::Report {
             hints: Some(example_hints()),
