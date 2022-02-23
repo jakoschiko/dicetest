@@ -87,7 +87,7 @@ macro_rules! hint_section {
 #[macro_export]
 macro_rules! stat {
     ($key:tt, $($arg:tt)*) => {
-        $crate::stats::inc($key, || format!($($arg)*));
+        $crate::stats::inc($key, || format!($($arg)*))
     }
 }
 
@@ -107,7 +107,7 @@ macro_rules! stat {
 #[macro_export]
 macro_rules! stat_debug {
     ($arg:tt) => {
-        $crate::stats::inc(stringify!($arg), || format!("{:?}", $arg));
+        $crate::stats::inc(stringify!($arg), || format!("{:?}", $arg))
     };
 }
 
