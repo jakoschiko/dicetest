@@ -505,14 +505,14 @@ impl OneOfDieOnceArities {
         2, die_2
     }
 
-    one_of_die_once_with_arity! { 9, four:
+    one_of_die_once_with_arity! { 4, four:
         0, die_0
         1, die_1
         2, die_2
         3, die_3
     }
 
-    one_of_die_once_with_arity! { 9, five:
+    one_of_die_once_with_arity! { 5, five:
         0, die_0
         1, die_1
         2, die_2
@@ -520,7 +520,7 @@ impl OneOfDieOnceArities {
         4, die_4
     }
 
-    one_of_die_once_with_arity! { 9, six:
+    one_of_die_once_with_arity! { 6, six:
         0, die_0
         1, die_1
         2, die_2
@@ -529,7 +529,7 @@ impl OneOfDieOnceArities {
         5, die_5
     }
 
-    one_of_die_once_with_arity! { 9, seven:
+    one_of_die_once_with_arity! { 7, seven:
         0, die_0
         1, die_1
         2, die_2
@@ -539,7 +539,7 @@ impl OneOfDieOnceArities {
         6, die_6
     }
 
-    one_of_die_once_with_arity! { 9, eight:
+    one_of_die_once_with_arity! { 8, eight:
         0, die_0
         1, die_1
         2, die_2
@@ -745,14 +745,14 @@ impl OneOfDieArities {
         2, die_2
     }
 
-    one_of_die_with_arity! { 9, four:
+    one_of_die_with_arity! { 4, four:
         0, die_0
         1, die_1
         2, die_2
         3, die_3
     }
 
-    one_of_die_with_arity! { 9, five:
+    one_of_die_with_arity! { 5, five:
         0, die_0
         1, die_1
         2, die_2
@@ -760,7 +760,7 @@ impl OneOfDieArities {
         4, die_4
     }
 
-    one_of_die_with_arity! { 9, six:
+    one_of_die_with_arity! { 6, six:
         0, die_0
         1, die_1
         2, die_2
@@ -769,7 +769,7 @@ impl OneOfDieArities {
         5, die_5
     }
 
-    one_of_die_with_arity! { 9, seven:
+    one_of_die_with_arity! { 7, seven:
         0, die_0
         1, die_1
         2, die_2
@@ -779,7 +779,7 @@ impl OneOfDieArities {
         6, die_6
     }
 
-    one_of_die_with_arity! { 9, eight:
+    one_of_die_with_arity! { 8, eight:
         0, die_0
         1, die_1
         2, die_2
