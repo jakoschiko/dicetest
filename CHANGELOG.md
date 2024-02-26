@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add function `dicetest::dice::todo`. This generator is for prototyping and always panics when created.
 
+### Fixed
+- Fix unintentional panic in `dicetest::dice::weighted_*` if sum of weights is zero.
+
 ## [0.3.1] - 2022-02-27
 ### Fixed
 - Fix unintentional panic in `dicetest::dice::one_of_die_once` and `dicetest::dice::one_of_die`.

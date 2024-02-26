@@ -484,7 +484,7 @@ macro_rules! one_of_die_once_with_arity {
         ) -> impl DieOnce<T> {
             dice::from_fn_once(move |mut fate| {
                 let choice = fate.next_number() % $n;
-                    match choice {
+                match choice {
                     $($i => fate.roll($die_i),)*
                     _ => panic!(),
                 }
@@ -592,7 +592,7 @@ pub fn one_of_die_once() -> OneOfDieOnceArities {
 pub struct WeightedOneOfDieOnceArities;
 
 macro_rules! weighted_one_of_die_once_with_arity {
-    ($arity:ident: $($weight_i:ident, $die_i:ident)+) => (
+    ($n:expr, $arity:ident: $($i:expr, $weight_i:ident, $die_i:ident)+) => (
         #[allow(clippy::too_many_arguments)]
         pub fn $arity<T>(
             self,
@@ -601,87 +601,96 @@ macro_rules! weighted_one_of_die_once_with_arity {
             $(let $weight_i = u64::from($weight_i);)*
             let total_weight = sum!($($weight_i,)*);
             dice::from_fn_once(move |mut fate| {
-                let choice = fate.next_number() % total_weight;
-                $(
-                    if choice < $weight_i {
-                        return fate.roll($die_i);
+                if total_weight == 0 {
+                    // All weights are 0, fall back to uniform distribution
+                    let choice = fate.next_number() % $n;
+                    match choice {
+                        $($i => fate.roll($die_i),)*
+                        _ => panic!(),
                     }
-                    #[allow(unused_variables)]
-                    let choice = choice - $weight_i;
-                )*
-                unreachable!()
+                } else {
+                    let choice = fate.next_number() % total_weight;
+                    $(
+                        if choice < $weight_i {
+                            return fate.roll($die_i);
+                        }
+                        #[allow(unused_variables)]
+                        let choice = choice - $weight_i;
+                    )*
+                    unreachable!()
+                }
             })
         }
     )
 }
 
 impl WeightedOneOfDieOnceArities {
-    weighted_one_of_die_once_with_arity! { two:
-        weight_0, value_0
-        weight_1, value_1
+    weighted_one_of_die_once_with_arity! { 2, two:
+        0, weight_0, value_0
+        1, weight_1, value_1
     }
 
-    weighted_one_of_die_once_with_arity! { three:
-        weight_0, value_0
-        weight_1, value_1
-        weight_2, value_2
+    weighted_one_of_die_once_with_arity! { 3, three:
+        0, weight_0, value_0
+        1, weight_1, value_1
+        2, weight_2, value_2
     }
 
-    weighted_one_of_die_once_with_arity! { four:
-        weight_0, value_0
-        weight_1, value_1
-        weight_2, value_2
-        weight_3, value_3
+    weighted_one_of_die_once_with_arity! { 4, four:
+        0, weight_0, value_0
+        1, weight_1, value_1
+        2, weight_2, value_2
+        3, weight_3, value_3
     }
 
-    weighted_one_of_die_once_with_arity! { five:
-        weight_0, value_0
-        weight_1, value_1
-        weight_2, value_2
-        weight_3, value_3
-        weight_4, value_4
+    weighted_one_of_die_once_with_arity! { 5, five:
+        0, weight_0, value_0
+        1, weight_1, value_1
+        2, weight_2, value_2
+        3, weight_3, value_3
+        4, weight_4, value_4
     }
 
-    weighted_one_of_die_once_with_arity! { six:
-        weight_0, value_0
-        weight_1, value_1
-        weight_2, value_2
-        weight_3, value_3
-        weight_4, value_4
-        weight_5, value_5
+    weighted_one_of_die_once_with_arity! { 6, six:
+        0, weight_0, value_0
+        1, weight_1, value_1
+        2, weight_2, value_2
+        3, weight_3, value_3
+        4, weight_4, value_4
+        5, weight_5, value_5
     }
 
-    weighted_one_of_die_once_with_arity! { seven:
-        weight_0, value_0
-        weight_1, value_1
-        weight_2, value_2
-        weight_3, value_3
-        weight_4, value_4
-        weight_5, value_5
-        weight_6, value_6
+    weighted_one_of_die_once_with_arity! { 7, seven:
+        0, weight_0, value_0
+        1, weight_1, value_1
+        2, weight_2, value_2
+        3, weight_3, value_3
+        4, weight_4, value_4
+        5, weight_5, value_5
+        6, weight_6, value_6
     }
 
-    weighted_one_of_die_once_with_arity! { eight:
-        weight_0, value_0
-        weight_1, value_1
-        weight_2, value_2
-        weight_3, value_3
-        weight_4, value_4
-        weight_5, value_5
-        weight_6, value_6
-        weight_7, value_7
+    weighted_one_of_die_once_with_arity! { 8, eight:
+        0, weight_0, value_0
+        1, weight_1, value_1
+        2, weight_2, value_2
+        3, weight_3, value_3
+        4, weight_4, value_4
+        5, weight_5, value_5
+        6, weight_6, value_6
+        7, weight_7, value_7
     }
 
-    weighted_one_of_die_once_with_arity! { nine:
-        weight_0, value_0
-        weight_1, value_1
-        weight_2, value_2
-        weight_3, value_3
-        weight_4, value_4
-        weight_5, value_5
-        weight_6, value_6
-        weight_7, value_7
-        weight_8, value_8
+    weighted_one_of_die_once_with_arity! { 9, nine:
+        0, weight_0, value_0
+        1, weight_1, value_1
+        2, weight_2, value_2
+        3, weight_3, value_3
+        4, weight_4, value_4
+        5, weight_5, value_5
+        6, weight_6, value_6
+        7, weight_7, value_7
+        8, weight_8, value_8
     }
 }
 
@@ -835,7 +844,7 @@ pub fn one_of_die() -> OneOfDieArities {
 pub struct WeightedOneOfDieArities;
 
 macro_rules! weighted_one_of_die_with_arity {
-    ($arity:ident: $($weight_i:ident, $die_i:ident)+) => (
+    ($n:expr, $arity:ident: $($i:expr, $weight_i:ident, $die_i:ident)+) => (
         #[allow(clippy::too_many_arguments)]
         pub fn $arity<T>(
             self,
@@ -844,87 +853,96 @@ macro_rules! weighted_one_of_die_with_arity {
             $(let $weight_i = u64::from($weight_i);)*
             let total_weight = sum!($($weight_i,)*);
             dice::from_fn(move |mut fate| {
-                let choice = fate.next_number() % total_weight;
-                $(
-                    if choice < $weight_i {
-                        return fate.roll(&$die_i);
+                if total_weight == 0 {
+                    // All weights are 0, fall back to uniform distribution
+                    let choice = fate.next_number() % $n;
+                    match choice {
+                        $($i => fate.roll(&$die_i),)*
+                        _ => panic!(),
                     }
-                    #[allow(unused_variables)]
-                    let choice = choice - $weight_i;
-                )*
-                unreachable!()
+                } else {
+                    let choice = fate.next_number() % total_weight;
+                    $(
+                        if choice < $weight_i {
+                            return fate.roll(&$die_i);
+                        }
+                        #[allow(unused_variables)]
+                        let choice = choice - $weight_i;
+                    )*
+                    unreachable!()
+                }
             })
         }
     )
 }
 
 impl WeightedOneOfDieArities {
-    weighted_one_of_die_with_arity! { two:
-        weight_0, value_0
-        weight_1, value_1
+    weighted_one_of_die_with_arity! { 2, two:
+        0, weight_0, value_0
+        1, weight_1, value_1
     }
 
-    weighted_one_of_die_with_arity! { three:
-        weight_0, value_0
-        weight_1, value_1
-        weight_2, value_2
+    weighted_one_of_die_with_arity! { 3, three:
+        0, weight_0, value_0
+        1, weight_1, value_1
+        2, weight_2, value_2
     }
 
-    weighted_one_of_die_with_arity! { four:
-        weight_0, value_0
-        weight_1, value_1
-        weight_2, value_2
-        weight_3, value_3
+    weighted_one_of_die_with_arity! { 4, four:
+        0, weight_0, value_0
+        1, weight_1, value_1
+        2, weight_2, value_2
+        3, weight_3, value_3
     }
 
-    weighted_one_of_die_with_arity! { five:
-        weight_0, value_0
-        weight_1, value_1
-        weight_2, value_2
-        weight_3, value_3
-        weight_4, value_4
+    weighted_one_of_die_with_arity! { 5, five:
+        0, weight_0, value_0
+        1, weight_1, value_1
+        2, weight_2, value_2
+        3, weight_3, value_3
+        4, weight_4, value_4
     }
 
-    weighted_one_of_die_with_arity! { six:
-        weight_0, value_0
-        weight_1, value_1
-        weight_2, value_2
-        weight_3, value_3
-        weight_4, value_4
-        weight_5, value_5
+    weighted_one_of_die_with_arity! { 6, six:
+        0, weight_0, value_0
+        1, weight_1, value_1
+        2, weight_2, value_2
+        3, weight_3, value_3
+        4, weight_4, value_4
+        5, weight_5, value_5
     }
 
-    weighted_one_of_die_with_arity! { seven:
-        weight_0, value_0
-        weight_1, value_1
-        weight_2, value_2
-        weight_3, value_3
-        weight_4, value_4
-        weight_5, value_5
-        weight_6, value_6
+    weighted_one_of_die_with_arity! { 7, seven:
+        0, weight_0, value_0
+        1, weight_1, value_1
+        2, weight_2, value_2
+        3, weight_3, value_3
+        4, weight_4, value_4
+        5, weight_5, value_5
+        6, weight_6, value_6
     }
 
-    weighted_one_of_die_with_arity! { eight:
-        weight_0, value_0
-        weight_1, value_1
-        weight_2, value_2
-        weight_3, value_3
-        weight_4, value_4
-        weight_5, value_5
-        weight_6, value_6
-        weight_7, value_7
+    weighted_one_of_die_with_arity! { 8, eight:
+        0, weight_0, value_0
+        1, weight_1, value_1
+        2, weight_2, value_2
+        3, weight_3, value_3
+        4, weight_4, value_4
+        5, weight_5, value_5
+        6, weight_6, value_6
+        7, weight_7, value_7
     }
 
-    weighted_one_of_die_with_arity! { nine:
-        weight_0, value_0
-        weight_1, value_1
-        weight_2, value_2
-        weight_3, value_3
-        weight_4, value_4
-        weight_5, value_5
-        weight_6, value_6
-        weight_7, value_7
-        weight_8, value_8
+    weighted_one_of_die_with_arity! { 9, nine:
+        0, weight_0, value_0
+        1, weight_1, value_1
+        2, weight_2, value_2
+        3, weight_3, value_3
+        4, weight_4, value_4
+        5, weight_5, value_5
+        6, weight_6, value_6
+        7, weight_7, value_7
+        8, weight_8, value_8
     }
 }
 
@@ -1038,4 +1056,141 @@ where
         let choice = (fate.next_number() as usize) % values.len();
         values[choice].clone()
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::prelude::*;
+
+    #[test]
+    fn weighted_one_of_die_once_does_not_panic() {
+        Dicetest::repeatedly().run(|mut fate| {
+            let die = dice::just(());
+            let [w1, w2, w3, w4, w5, w6, w7, w8, w9] = fate.roll(dice::array(dice::u32(..)));
+
+            let _ = fate.roll(dice::weighted_one_of_die_once().two((w1, &die), (w2, &die)));
+            let _ = fate.roll(dice::weighted_one_of_die_once().three(
+                (w1, &die),
+                (w2, &die),
+                (w3, &die),
+            ));
+            let _ = fate.roll(dice::weighted_one_of_die_once().four(
+                (w1, &die),
+                (w2, &die),
+                (w3, &die),
+                (w4, &die),
+            ));
+            let _ = fate.roll(dice::weighted_one_of_die_once().five(
+                (w1, &die),
+                (w2, &die),
+                (w3, &die),
+                (w4, &die),
+                (w5, &die),
+            ));
+            let _ = fate.roll(dice::weighted_one_of_die_once().six(
+                (w1, &die),
+                (w2, &die),
+                (w3, &die),
+                (w4, &die),
+                (w5, &die),
+                (w6, &die),
+            ));
+            let _ = fate.roll(dice::weighted_one_of_die_once().seven(
+                (w1, &die),
+                (w2, &die),
+                (w3, &die),
+                (w4, &die),
+                (w5, &die),
+                (w6, &die),
+                (w7, &die),
+            ));
+            let _ = fate.roll(dice::weighted_one_of_die_once().eight(
+                (w1, &die),
+                (w2, &die),
+                (w3, &die),
+                (w4, &die),
+                (w5, &die),
+                (w6, &die),
+                (w7, &die),
+                (w8, &die),
+            ));
+            let _ = fate.roll(dice::weighted_one_of_die_once().nine(
+                (w1, &die),
+                (w2, &die),
+                (w3, &die),
+                (w4, &die),
+                (w5, &die),
+                (w6, &die),
+                (w7, &die),
+                (w8, &die),
+                (w9, &die),
+            ));
+        })
+    }
+    
+    #[test]
+    fn weighted_one_of_die_does_not_panic() {
+        Dicetest::repeatedly().run(|mut fate| {
+            let die = dice::just(());
+            let [w1, w2, w3, w4, w5, w6, w7, w8, w9] = fate.roll(dice::array(dice::u32(..)));
+
+            let _ = fate.roll(dice::weighted_one_of_die().two((w1, &die), (w2, &die)));
+            let _ = fate.roll(dice::weighted_one_of_die().three(
+                (w1, &die),
+                (w2, &die),
+                (w3, &die),
+            ));
+            let _ = fate.roll(dice::weighted_one_of_die().four(
+                (w1, &die),
+                (w2, &die),
+                (w3, &die),
+                (w4, &die),
+            ));
+            let _ = fate.roll(dice::weighted_one_of_die().five(
+                (w1, &die),
+                (w2, &die),
+                (w3, &die),
+                (w4, &die),
+                (w5, &die),
+            ));
+            let _ = fate.roll(dice::weighted_one_of_die().six(
+                (w1, &die),
+                (w2, &die),
+                (w3, &die),
+                (w4, &die),
+                (w5, &die),
+                (w6, &die),
+            ));
+            let _ = fate.roll(dice::weighted_one_of_die().seven(
+                (w1, &die),
+                (w2, &die),
+                (w3, &die),
+                (w4, &die),
+                (w5, &die),
+                (w6, &die),
+                (w7, &die),
+            ));
+            let _ = fate.roll(dice::weighted_one_of_die().eight(
+                (w1, &die),
+                (w2, &die),
+                (w3, &die),
+                (w4, &die),
+                (w5, &die),
+                (w6, &die),
+                (w7, &die),
+                (w8, &die),
+            ));
+            let _ = fate.roll(dice::weighted_one_of_die().nine(
+                (w1, &die),
+                (w2, &die),
+                (w3, &die),
+                (w4, &die),
+                (w5, &die),
+                (w6, &die),
+                (w7, &die),
+                (w8, &die),
+                (w9, &die),
+            ));
+        })
+    }
 }
