@@ -93,16 +93,19 @@ These features are **available**:
 
 These features are **missing**:
 
+- Derivable trait for arbitrary types.
 - Shrinking of counterexamples.
 - Custom pseudorandom number generators.
-- Type class for arbitrary types.
 
 ## Alternatives
 
 * Write down your test data and use a loop.
+* Use the crate [arbitrary] and [arbtest].
 * Use the crate [quickcheck].
 * Use the crate [proptest].
 
+[arbitrary]: https://crates.io/crates/arbitrary
+[arbtest]: https://crates.io/crates/arbtest
 [quickcheck]: https://crates.io/crates/quickcheck
 [proptest]: https://crates.io/crates/proptest
 
