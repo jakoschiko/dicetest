@@ -107,7 +107,7 @@ pub fn add(message_text: impl FnOnce() -> String) {
     }
     #[cfg(not(feature = "hints"))]
     {
-        drop(message_text);
+        let _ = message_text;
     }
 }
 

@@ -209,8 +209,8 @@ pub fn inc(key: &'static str, value: impl FnOnce() -> String) {
     }
     #[cfg(not(feature = "stats"))]
     {
-        drop(key);
-        drop(value);
+        let _ = key;
+        let _ = value;
     }
 }
 
