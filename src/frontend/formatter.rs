@@ -470,7 +470,7 @@ The test passed.
         let run_code = example_run_code();
         let stats = Stats(
             vec![(
-                "foo".into(),
+                "foo",
                 Stat(
                     vec![
                         ("a".into(), Counter::Value(10)),
@@ -687,7 +687,7 @@ The test failed after 123 passes.
         let stats = Stats(
             vec![
                 (
-                    "foo".into(),
+                    "foo",
                     Stat(
                         vec![
                             ("a".into(), Counter::Value(10)),
@@ -698,7 +698,7 @@ The test failed after 123 passes.
                     ),
                 ),
                 (
-                    "bar".into(),
+                    "bar",
                     Stat(
                         vec![
                             ("x".into(), Counter::Value(10)),
@@ -709,11 +709,11 @@ The test failed after 123 passes.
                     ),
                 ),
                 (
-                    "foobar".into(),
+                    "foobar",
                     Stat(vec![("i".into(), Counter::Value(0))].into_iter().collect()),
                 ),
                 (
-                    "foofoo".into(),
+                    "foofoo",
                     Stat(
                         vec![
                             ("x1".into(), Counter::Value(25)),

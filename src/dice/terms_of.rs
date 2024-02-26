@@ -190,27 +190,27 @@ mod tests {
                 stat!(
                     "for any term t: t >= 0.10 * sum",
                     "{}",
-                    terms.iter().any(|&term| term * 10 as u64 >= sum),
+                    terms.iter().any(|&term| term * 10_u64 >= sum),
                 );
                 stat!(
                     "for any term t: t >= 0.33 * sum",
                     "{}",
-                    terms.iter().any(|&term| term * 3 as u64 >= sum),
+                    terms.iter().any(|&term| term * 3_u64 >= sum),
                 );
                 stat!(
                     "for any term t: t >= 0.50 * sum",
                     "{}",
-                    terms.iter().any(|&term| term * 2 as u64 >= sum),
+                    terms.iter().any(|&term| term * 2_u64 >= sum),
                 );
                 stat!(
                     "for any term t: t >= 0.66 * sum",
                     "{}",
-                    terms.iter().any(|&term| term * 3 as u64 >= sum * 2),
+                    terms.iter().any(|&term| term * 3_u64 >= sum * 2),
                 );
                 stat!(
                     "for any term t: t >= 0.90 * sum",
                     "{}",
-                    terms.iter().any(|&term| term * 10 as u64 >= sum * 9),
+                    terms.iter().any(|&term| term * 10_u64 >= sum * 9),
                 );
                 stat!("greatest terms", "{:?}", {
                     let max = terms.iter().max();

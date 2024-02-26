@@ -9,7 +9,7 @@
 //!
 //! Here's an example of an incorrect sort function tested with dicetest:
 //!
-//! ```
+//! ```no_run
 //! fn bubble_sort<T: Ord>(slice: &mut [T]) {
 //!     let len = slice.len();
 //!
@@ -269,7 +269,7 @@
 //! * It runs your test repeatedly with different seeds.
 //! * It logs useful information that helps you to debug your test.
 //!
-//! ```
+//! ```no_run
 //! use dicetest::prelude::*;
 //!
 //! #[test]
@@ -298,7 +298,7 @@
 //! Hints can be used to analyze a single test run. In most cases you want to analyze the
 //! counterexample. Use it to reveal what test data were generated or which branches were taken:
 //!
-//! ```
+//! ```no_run
 //! use dicetest::prelude::*;
 //!
 //! #[test]
@@ -346,7 +346,7 @@
 //! Stats can be used to analyze multiple test runs. Use it to reveal the distribution of
 //! generated test data or the probability of branches:
 //!
-//! ```
+//! ```no_run
 //! use dicetest::prelude::*;
 //!
 //! #[test]

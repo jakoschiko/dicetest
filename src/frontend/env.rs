@@ -76,7 +76,7 @@ pub fn read_end_limit() -> Result<EnvValue<Limit>, String> {
 }
 
 pub fn read_limit_multiplier() -> Result<EnvValue<Option<f64>>, String> {
-    read_option_value(KEY_LIMIT_MULTIPLIER, "a f64", |s| f64::from_str(s))
+    read_option_value(KEY_LIMIT_MULTIPLIER, "a f64", f64::from_str)
 }
 
 pub fn read_passes() -> Result<EnvValue<u64>, String> {
@@ -84,7 +84,7 @@ pub fn read_passes() -> Result<EnvValue<u64>, String> {
 }
 
 pub fn read_passes_multiplier() -> Result<EnvValue<Option<f64>>, String> {
-    read_option_value(KEY_PASSES_MULTIPLIER, "a f64", |s| f64::from_str(s))
+    read_option_value(KEY_PASSES_MULTIPLIER, "a f64", f64::from_str)
 }
 
 pub fn read_hints_enabled() -> Result<EnvValue<bool>, String> {

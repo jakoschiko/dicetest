@@ -74,7 +74,7 @@ impl Stat {
 
     /// Increases the counter for the given value by one.
     pub fn inc(&mut self, value: String) {
-        let counter_entry = self.0.entry(value).or_insert_with(Counter::new);
+        let counter_entry = self.0.entry(value).or_default();
         *counter_entry = counter_entry.inc();
     }
 
@@ -119,7 +119,7 @@ impl Stats {
 
     /// Increases the counter for the given key and value by one.
     pub fn inc(&mut self, key: &'static str, value: String) {
-        let stat_entry = self.0.entry(key).or_insert_with(Stat::new);
+        let stat_entry = self.0.entry(key).or_default();
         stat_entry.inc(value);
     }
 

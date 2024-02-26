@@ -51,8 +51,7 @@ fn is_invalid_char(c: char) -> bool {
 pub fn encode(bytes: &[u8]) -> String {
     let pad_count = {
         let outrange = bytes.len() % 3;
-        let pad_count = (3 - outrange) % 3;
-        pad_count as usize
+        (3 - outrange) % 3
     };
 
     let bytes_padding = iter::repeat_with(|| &0).take(pad_count);

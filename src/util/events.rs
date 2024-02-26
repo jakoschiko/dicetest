@@ -105,7 +105,7 @@ mod tests {
             inc();
             inc();
 
-            let m = collect(|| inc());
+            let m = collect(inc);
 
             assert_eq!(1, m);
         });

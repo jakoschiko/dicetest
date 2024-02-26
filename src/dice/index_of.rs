@@ -31,7 +31,7 @@ use crate::prelude::*;
 /// // Oh no, panic!
 /// let _index_die = dice::index_of::<char>(&[]);
 /// ```
-pub fn index_of<'a, 'b, T>(slice: &'a [T]) -> impl Die<usize> + 'b {
+pub fn index_of<'a, T>(slice: &[T]) -> impl Die<usize> + 'a {
     let len = slice.len();
     dice::uni_usize(0..len)
 }
