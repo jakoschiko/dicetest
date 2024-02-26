@@ -14,14 +14,12 @@ edition = "2018"
 getrandom = "0.2"
 rand_core = { version = "0.5", optional = true }
 rand = { version = "0.7", optional = true }
-quickcheck = { version = "0.9", optional = true }
 
 [features]
 default = ["hints", "stats"]
 hints = []
 stats = []
 rand_full = ["rand_core", "rand"]
-quickcheck_full = ["rand_core", "quickcheck"]
 
 [workspace]
 members = [

@@ -19,9 +19,6 @@ cargo build --no-default-features --features stats
 echo "STEP dicetest: cargo build --no-default-features --features rand_full"
 cargo build --no-default-features --features rand_full
 
-echo "STEP dicetest: cargo build --no-default-features --features quickcheck_full"
-cargo build --no-default-features --features quickcheck_full
-
 echo "STEP dicetest: cargo build --all-features"
 cargo build --all-features
 

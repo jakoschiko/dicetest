@@ -106,22 +106,6 @@ impl<'a> Fate<'a> {
         let die = crate::dice::from_distribution(distribution);
         self.roll(die)
     }
-
-    /// Generates a value of a type that implements [`Arbitrary`].
-    ///
-    /// Only available if the feature `quickcheck_full` is enabled.
-    ///
-    /// [`Arbitrary`]: quickcheck::Arbitrary
-    #[cfg(any(
-        feature = "quickcheck_full",
-        all(feature = "rand_core", feature = "quickcheck")
-    ))]
-    pub fn roll_arbitrary<T>(&mut self) -> T
-    where
-        T: quickcheck::Arbitrary,
-    {
-        T::arbitrary(self)
-    }
 }
 
 #[cfg(feature = "rand_core")]
@@ -141,15 +125,5 @@ impl<'a> rand_core::RngCore for Fate<'a> {
     fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), rand_core::Error> {
         self.fill_bytes(dest);
         Ok(())
-    }
-}
-
-#[cfg(any(
-    feature = "quickcheck_full",
-    all(feature = "rand_core", feature = "quickcheck")
-))]
-impl<'a> quickcheck::Gen for Fate<'a> {
-    fn size(&self) -> usize {
-        self.limit.saturating_to_usize()
     }
 }

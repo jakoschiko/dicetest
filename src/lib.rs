@@ -87,7 +87,6 @@
 //! - Generators for functions (`FnMut`, `FnOnce`, `Fn`).
 //! - Generator combinators (`map`, `flat_map`, `zip`, etc.).
 //! - Integration of `rand::distributions::Distribution`.
-//! - Integration of `quickcheck::Arbitrary` (without shrinking).
 //! - Configurable test runner.
 //! - Utilities for debugging tests (`hints` and `stats`).
 //!
@@ -95,7 +94,7 @@
 //!
 //! - Shrinking of counterexamples.
 //! - Custom pseudorandom number generators.
-//! - Own type class for arbitrary types.
+//! - Type class for arbitrary types.
 //!
 //! # Alternatives
 //!
@@ -460,34 +459,6 @@
 //! let bytes: Vec<u8> = fate.roll(bytes_die);
 //! println!("{:?}", bytes);
 //! // Output: [236, 205, 151, 229]
-//! # }
-//! ```
-//!
-//! ### `quickcheck_full` (disabled by default, alias for `rand_core,quickcheck`)
-//! If enabled, `Fate` implements the `quickcheck::Gen` trait and `Fate::roll_arbitrary` and
-//! `dice::arbitrary` are available. This allows to generate values and create `Die`s for types
-//! that implements `quickcheck::Arbitrary`.
-//!
-//! ```
-//! # #[cfg(feature = "quickcheck_full")] {
-//! use dicetest::prelude::*;
-//! use dicetest::{Limit, Prng};
-//!
-//! let mut prng = Prng::from_seed(0x5EED.into());
-//! let limit = Limit(5);
-//! let mut fate = Fate::new(&mut prng, limit);
-//!
-//! // Generate a value of a type that implements `quickcheck::Arbitrary`
-//! let byte: u8 = fate.roll_arbitrary();
-//! println!("{:?}", byte);
-//! // Output: 0
-//!
-//! // Create a `Die` for a type that implements `quickcheck::Arbitrary`
-//! let byte_die = dice::arbitrary();
-//! let bytes_die = dice::vec(byte_die, 1..);
-//! let bytes: Vec<u8> = fate.roll(bytes_die);
-//! println!("{:?}", bytes);
-//! // Output: [1, 4, 4, 2]
 //! # }
 //! ```
 
