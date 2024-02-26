@@ -1127,7 +1127,7 @@ mod tests {
             ));
         })
     }
-    
+
     #[test]
     fn weighted_one_of_die_does_not_panic() {
         Dicetest::repeatedly().run(|mut fate| {
@@ -1135,11 +1135,8 @@ mod tests {
             let [w1, w2, w3, w4, w5, w6, w7, w8, w9] = fate.roll(dice::array(dice::u32(..)));
 
             let _ = fate.roll(dice::weighted_one_of_die().two((w1, &die), (w2, &die)));
-            let _ = fate.roll(dice::weighted_one_of_die().three(
-                (w1, &die),
-                (w2, &die),
-                (w3, &die),
-            ));
+            let _ =
+                fate.roll(dice::weighted_one_of_die().three((w1, &die), (w2, &die), (w3, &die)));
             let _ = fate.roll(dice::weighted_one_of_die().four(
                 (w1, &die),
                 (w2, &die),
