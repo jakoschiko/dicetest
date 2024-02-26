@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Add function `dicetest::dice::todo`. This generator is for prototyping and always panics when generating a value.
+- Add function `dicetest::dice::todo`. This generator is for prototyping and always panics when created.
 
 ## [0.3.1] - 2022-02-27
 ### Fixed
