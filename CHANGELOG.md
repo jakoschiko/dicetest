@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Rename feature flag `rand_full` to `rand`.
+- Upgrade dependency rand_core to 0.6 and rand to 0.8.
 
 ### Removed
 - Remove feature flag `quickcheck_full` and the integration of `quickcheck::Gen` and `quickcheck::Arbitrary` due to missing functionality in quickcheck 1.0.
