@@ -437,13 +437,13 @@
 //! If enabled, `dicetest::Prng` and `dicetest::Fate` implements the `rand_core::RngCore`
 //! trait.
 //!
-//! ### `rand_full` (disabled by default, alias for `rand_core,rand`)
+//! ### `rand` (disabled by default)
 //! If enabled, `Fate::roll_distribution` and `dice::from_distribution` are available.
 //! This allows to generate values and create `Die`s from implementations
 //! of `rand::distributions::Distribution`.
 //!
 //! ```
-//! # #[cfg(feature = "rand_full")] {
+//! # #[cfg(feature = "rand")] {
 //! use dicetest::prelude::*;
 //! use dicetest::{Limit, Prng};
 //!

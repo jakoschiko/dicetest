@@ -19,7 +19,8 @@ rand = { version = "0.7", optional = true }
 default = ["hints", "stats"]
 hints = []
 stats = []
-rand_full = ["rand_core", "rand"]
+rand_core = ["dep:rand_core"]
+rand = ["dep:rand", "rand_core"]
 
 [workspace]
 members = [

@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix unintentional panic in `dicetest::dice::weighted_*` if sum of weights is zero.
 
+### Changed
+- Rename feature flag `rand_full` to `rand`.
+
 ### Removed
 - Remove feature flag `quickcheck_full` and the integration of `quickcheck::Gen` and `quickcheck::Arbitrary` due to missing functionality in quickcheck 1.0.
 

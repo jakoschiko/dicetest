@@ -84,7 +84,7 @@ pub use fn_builder::*;
 mod index_of;
 pub use index_of::*;
 
-#[cfg(any(feature = "rand_full", all(feature = "rand_core", feature = "rand")))]
+#[cfg(feature = "rand")]
 mod rand;
-#[cfg(any(feature = "rand_full", all(feature = "rand_core", feature = "rand")))]
+#[cfg(feature = "rand")]
 pub use self::rand::*;

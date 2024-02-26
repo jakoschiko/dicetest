@@ -232,7 +232,7 @@ mod section_stats {
 #[cfg(test)]
 mod section_features {
     #[test]
-    fn rand_full() {
+    fn rand() {
         use dicetest::prelude::*;
         use dicetest::{Limit, Prng};
 

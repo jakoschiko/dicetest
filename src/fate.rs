@@ -95,10 +95,10 @@ impl<'a> Fate<'a> {
 
     /// Generates a value using the given [`Distribution`].
     ///
-    /// Only available if the feature `rand_full` is enabled.
+    /// Only available if the feature `rand` is enabled.
     ///
     /// [`Distribution`]: rand::distributions::Distribution
-    #[cfg(any(feature = "rand_full", all(feature = "rand_core", feature = "rand")))]
+    #[cfg(feature = "rand")]
     pub fn roll_distribution<T, D>(&mut self, distribution: D) -> T
     where
         D: rand::distributions::Distribution<T>,
