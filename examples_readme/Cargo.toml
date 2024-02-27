@@ -6,3 +6,4 @@ publish = false
 
 [dependencies]
 dicetest = { path = "..", features = ["hints", "stats", "rand"] }
+rand = "0.8"
