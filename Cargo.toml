@@ -11,7 +11,6 @@ repository = "https://github.com/jakoschiko/dicetest"
 edition = "2021"
 
 [dependencies]
-getrandom = "0.2"
 rand_core = { version = "0.6", optional = true }
 rand = { version = "0.8", optional = true }
 

@@ -1,4 +1,4 @@
-use getrandom::getrandom;
+use std::hash::{BuildHasher, Hasher, RandomState};
 
 /// A seed for pseudorandomness.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -14,9 +14,9 @@ impl Seed {
     ///
     /// [getrandom]: https://docs.rs/getrandom
     pub fn random() -> Self {
-        let mut buf = [0u8; 8];
-        getrandom(&mut buf).expect("Random seed generation has failed");
-        let seed = u64::from_le_bytes(buf);
+        // Hack for obtaining randomness from stdlib.
+        // The idea was taken from the crate arbtest.
+        let seed = RandomState::new().build_hasher().finish();
         Seed(seed)
     }
 }
