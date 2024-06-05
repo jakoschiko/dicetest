@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Add function `dicetest::dice::todo`. This generator is for prototyping and always panics when created.
+- Add support for regression tests
+  - Add function `dicetest::Dicetest::regression` for adding a regression test.
+  - Add function `dicetest::Dicetest::regressions_enabled` for enabling/disabling regression tests.
+  - Add environment variable `DICETEST_REGRESSIONS_ENABLED` for enabling/disabling regression tests.
+  - Add struct `dicetest::runner::repeatedly::Regression` and field `dicetest::runner::repeatedly::Config::regressions`.
 
 ### Fixed
 - Fix unintentional panic in `dicetest::dice::weighted_*` if sum of weights is zero.

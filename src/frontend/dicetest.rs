@@ -7,6 +7,8 @@ use crate::{runner, Fate, Limit, Prng, Seed};
 
 #[derive(Debug, Clone)]
 struct Params {
+    regressions: Vec<runner::repeatedly::Regression>,
+    regressions_enabled: bool,
     seed: Option<Seed>,
     once_limit: Limit,
     start_limit: Limit,
@@ -23,6 +25,8 @@ struct Params {
 impl Default for Params {
     fn default() -> Self {
         Self {
+            regressions: Vec::new(),
+            regressions_enabled: true,
             seed: None,
             once_limit: Limit::default(),
             start_limit: 0.into(),
@@ -83,6 +87,9 @@ impl Dicetest {
     /// In this mode the test will be run once. The parameters for pseudorandom value generation
     /// will be extracted from the given run code.
     ///
+    /// Please note that run codes are not guaranteed to be stable over time. Library updates
+    /// might change the value generators so that different values will be generated.
+    ///
     /// # Panics
     ///
     /// Panics if the run code is invalid.
@@ -91,6 +98,7 @@ impl Dicetest {
     ///
     /// You can set this mode with `DICETEST_DEBUG=<run code>`. The value `<run code>` must be
     /// a valid run code.
+    #[track_caller]
     pub fn debug(run_code: &str) -> Self {
         let run_code = RunCode::from_base64(run_code).unwrap();
         Dicetest {
@@ -120,6 +128,11 @@ impl Dicetest {
     /// reached or the test has panicked. If the test has panicked, a counterexample has been
     /// found. The counterexample can be debugged using the debug mode, see [`Dicetest::debug`].
     ///
+    /// This mode will first run all regression tests with fixed parameters for pseudorandom value
+    /// generation, see [`Dicetest::regression`]. After that it will run random tests using
+    /// the seed and limit boundaries, see [`Dicetest::seed`], [`Dicetest::start_limit`] and
+    /// [`Dicetest::end_limit`].
+    ///
     /// # Environment
     ///
     /// You can set this mode via `DICETEST_MODE=repeatedly`.
@@ -128,6 +141,47 @@ impl Dicetest {
             mode: Mode::Repeatedly,
             params: Params::default(),
         }
+    }
+
+    /// Adds a regression test.
+    ///
+    /// The regression test is run at the beginning of the run-repeatedly mode. The parameters
+    /// for pseudorandom value generation will be extracted from the given run code. Therefore
+    /// parameters like [`Dicetest::seed`], [`Dicetest::start_limit`] or [`Dicetest::end_limit`]
+    /// won't affect the regression test. All regression tests can be disabled via
+    /// [`Dicetest::regressions_enabled`].
+    ///
+    /// Please note that run codes are not guaranteed to be stable over time. Library updates
+    /// might change the value generators so that different values will be generated.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the run code is invalid.
+    #[track_caller]
+    pub fn regression(mut self, run_code: &str) -> Self {
+        let run_code = RunCode::from_base64(run_code).unwrap();
+        self.params
+            .regressions
+            .push(runner::repeatedly::Regression {
+                prng: run_code.prng,
+                limit: run_code.limit,
+            });
+        self
+    }
+
+    /// Sets whether regression tests will be run.
+    ///
+    /// If set to `false` then the run-repeatedly mode will ignore the regression tests added
+    /// via [`Dicetest::regression`].
+    ///
+    /// This parameter is `true` by default.
+    ///
+    /// # Environment
+    ///
+    /// You can set this parameter via `DICETEST_REGRESSIONS_ENABLED=<bool>`.
+    pub fn regressions_enabled(mut self, regressions_enabled: bool) -> Self {
+        self.params.regressions_enabled = regressions_enabled;
+        self
     }
 
     /// Sets the initial [`Seed`] for the pseudorandom value generation.
@@ -197,6 +251,8 @@ impl Dicetest {
     }
 
     /// Sets how many times the test needs to be run without failing.
+    ///
+    /// This parameter only affects the number of random tests and not regression tests.
     ///
     /// It's only used in run-repeatedly mode and is `200` by default.
     ///
@@ -301,6 +357,7 @@ impl Dicetest {
     ///
     /// Panics if parsing a present environment variable has failed or the test has panicked
     /// during a test run.
+    #[track_caller]
     pub fn run<T>(self, test: T)
     where
         T: Fn(Fate) + UnwindSafe + RefUnwindSafe,
@@ -361,6 +418,12 @@ impl Dicetest {
                 }
             }
             Mode::Repeatedly => {
+                let regressions = if params.regressions_enabled {
+                    params.regressions
+                } else {
+                    Vec::new()
+                };
+
                 let seed = params.seed.unwrap_or_else(Seed::random);
                 let prng = Prng::from_seed(seed);
                 let mut start_limit = params.start_limit;
@@ -376,6 +439,7 @@ impl Dicetest {
                 }
 
                 let config = runner::repeatedly::Config {
+                    regressions,
                     start_limit,
                     end_limit,
                     passes,
@@ -401,6 +465,9 @@ impl Dicetest {
         // Read values
         if let EnvValue::Present(mode) = env::read_mode()? {
             self.mode = mode;
+        }
+        if let EnvValue::Present(regression_enabled) = env::read_regressions_enabled()? {
+            self.params.regressions_enabled = regression_enabled
         }
         if let EnvValue::Present(seed) = env::read_seed()? {
             self.params.seed = seed
@@ -468,6 +535,13 @@ mod tests {
     fn set_repeatedly() {
         let dicetest = Dicetest::repeatedly();
         assert_eq!(Mode::Repeatedly, dicetest.mode);
+    }
+
+    #[test]
+    fn set_regressions_enabled() {
+        let regressions_enabled = false;
+        let dicetest = Dicetest::repeatedly().regressions_enabled(regressions_enabled);
+        assert_eq!(regressions_enabled, dicetest.params.regressions_enabled);
     }
 
     #[test]

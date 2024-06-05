@@ -3,6 +3,7 @@ use std::iter::FromIterator;
 
 use crate::frontend::RunCode;
 use crate::hints::Hints;
+use crate::runner::repeatedly::Regression;
 use crate::runner::{self, repeatedly::Counterexample, Error};
 use crate::stats::Stats;
 use crate::{Limit, Seed};
@@ -145,6 +146,7 @@ fn write_run_repeatedly_parameters_section(
         f,
         "Config",
         impl_display(|f| {
+            write_regressions_item(f, 0, &config.regressions)?;
             write_seed_item(f, 0, seed)?;
             write_key_value_item(f, 0, "start limit", config.start_limit.0)?;
             write_key_value_item(f, 0, "end limit", config.end_limit.0)?;
@@ -274,6 +276,25 @@ fn write_run_code_item(f: &mut fmt::Formatter, indent: usize, run_code: &RunCode
     )
 }
 
+fn write_regressions_item(
+    f: &mut fmt::Formatter,
+    indent: usize,
+    regressions: &[Regression],
+) -> fmt::Result {
+    if !regressions.is_empty() {
+        write_key_item(f, indent, "regressions")?;
+        for regression in regressions {
+            let run_code = RunCode {
+                prng: regression.prng.clone(),
+                limit: regression.limit,
+            };
+            let base64 = run_code.to_base64();
+            write_item(f, indent + 1, impl_display(|f| write!(f, "{:?}", base64)))?;
+        }
+    }
+    Ok(())
+}
+
 fn write_seed_item(f: &mut fmt::Formatter, indent: usize, seed: Seed) -> fmt::Result {
     write_key_value_item(f, indent, "seed", seed.0)
 }
@@ -354,6 +375,7 @@ fn write_some_or(
 mod tests {
     use crate::frontend::RunCode;
     use crate::hints::{Hint, Hints};
+    use crate::runner::repeatedly::Regression;
     use crate::runner::{self, repeatedly::Counterexample, Error};
     use crate::stats::{Counter, Stat, Stats};
     use crate::{Limit, Prng};
@@ -381,9 +403,9 @@ mod tests {
         ])
     }
 
-    fn example_run_code() -> RunCode {
+    fn example_run_code(seed: u64) -> RunCode {
         RunCode {
-            prng: Prng::from_seed(42.into()),
+            prng: Prng::from_seed(seed.into()),
             limit: Limit(71),
         }
     }
@@ -394,6 +416,7 @@ mod tests {
 
     fn example_run_repeatedly_config() -> runner::repeatedly::Config {
         runner::repeatedly::Config {
+            regressions: Vec::new(),
             start_limit: 0.into(),
             end_limit: 100.into(),
             passes: 200,
@@ -404,7 +427,7 @@ mod tests {
 
     #[test]
     fn display_run_once_report_passed_with_hints_example() {
-        let run_code = example_run_code();
+        let run_code = example_run_code(42);
         let report = runner::once::Report {
             hints: Some(example_hints()),
             stats: None,
@@ -437,7 +460,7 @@ The test passed.
 
     #[test]
     fn display_run_once_report_passed_with_seed_example() {
-        let run_code = example_run_code();
+        let run_code = example_run_code(42);
         let report = runner::once::Report {
             hints: None,
             stats: None,
@@ -467,7 +490,7 @@ The test passed.
 
     #[test]
     fn display_run_once_report_passed_with_stats_example() {
-        let run_code = example_run_code();
+        let run_code = example_run_code(42);
         let stats = Stats(
             vec![(
                 "foo",
@@ -516,7 +539,7 @@ The test passed.
 
     #[test]
     fn display_run_once_report_failed_example() {
-        let run_code = example_run_code();
+        let run_code = example_run_code(42);
         let report = runner::once::Report {
             hints: Some(example_hints()),
             stats: None,
@@ -537,7 +560,7 @@ The test failed.
 \t- Ih
 - error: Something bad happened!
 ",
-            example_run_code().to_base64(),
+            run_code.to_base64(),
         );
 
         let actual = format!(
@@ -578,10 +601,58 @@ The test withstood 200 passes.
     }
 
     #[test]
+    fn display_run_repeatedly_report_passed_with_regressions_example() {
+        let seed = 42.into();
+        let mut config = example_run_repeatedly_config();
+
+        let run_code_1 = example_run_code(123);
+        let run_code_2 = example_run_code(321);
+        config.regressions.push(Regression {
+            prng: run_code_1.prng.clone(),
+            limit: run_code_1.limit,
+        });
+        config.regressions.push(Regression {
+            prng: run_code_2.prng.clone(),
+            limit: run_code_2.limit,
+        });
+
+        let report = runner::repeatedly::Report {
+            passes: 200,
+            stats: None,
+            counterexample: None,
+        };
+        let formatting = Formatting::default();
+
+        let expected = format!(
+            "\
+The test withstood 200 passes.
+
+# Config
+- regressions:
+\t- {:?}
+\t- {:?}
+- seed: 42
+- start limit: 0
+- end limit: 100
+- passes: 200
+",
+            run_code_1.to_base64(),
+            run_code_2.to_base64(),
+        );
+
+        let actual = format!(
+            "{}",
+            display_run_repeatedly_report(seed, &config, &report, &formatting,)
+        );
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
     fn display_run_repeatedly_report_failed_example() {
         let seed = 42.into();
         let config = example_run_repeatedly_config();
-        let run_code = example_run_code();
+        let run_code = example_run_code(42);
         let report = runner::repeatedly::Report {
             passes: 123,
             stats: None,
