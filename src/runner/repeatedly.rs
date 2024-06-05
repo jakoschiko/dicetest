@@ -12,13 +12,28 @@ use crate::runner::{self, LimitSeries};
 use crate::stats::Stats;
 use crate::{hints, Fate, Limit, Prng};
 
+/// An additional regression test that will be run before the random test runs.
+#[derive(Debug, Clone)]
+pub struct Regression {
+    /// The initial state of the number generator the regression test will use for generating
+    /// test data.
+    pub prng: Prng,
+    /// The limit for dynamic data structures the regression test will use for generating
+    /// test data.
+    pub limit: Limit,
+}
+
 /// The configuration for repeated test runs.
+///
+/// It contains parameters for both regression tests and random tests.
 #[derive(Debug, Clone)]
 pub struct Config {
+    /// Additional regression tests that will be run before the random test runs.
+    pub regressions: Vec<Regression>,
     /// The initial upper limit for the length of generated dynamic data structures
     ///
-    /// It's used for the first test run. The following test runs use an interpolated limit
-    /// between [`start_limit`] and [`end_limit`].
+    /// It's used for the first test run. The following test runs use an
+    /// interpolated limit between [`start_limit`] and [`end_limit`].
     ///
     /// [`start_limit`]: Config::start_limit
     /// [`end_limit`]: Config::end_limit
@@ -69,6 +84,8 @@ pub struct Counterexample {
 #[derive(Debug)]
 pub struct Report {
     /// The number of test runs that did not fail.
+    ///
+    /// Both regression tests and random tests are included in this number.
     pub passes: u64,
     /// The stats collected during all test runs. It's defined if and only if stats are enabled.
     pub stats: Option<Stats>,
@@ -86,7 +103,7 @@ where
 {
     let limit_series = LimitSeries::new(config.start_limit, config.end_limit, config.passes);
 
-    let test_runs = || search_counterexample(prng, limit_series, &test);
+    let test_runs = || search_counterexample(&config.regressions, prng, limit_series, &test);
 
     let ((passes, counterexample_without_hints), stats) =
         runner::util::collect_stats(config.stats_enabled, test_runs);
@@ -106,6 +123,7 @@ where
 }
 
 fn search_counterexample<T>(
+    regressions: &[Regression],
     mut prng: Prng,
     limit_series: LimitSeries,
     test: &T,
@@ -114,11 +132,32 @@ where
     T: Fn(Fate) + UnwindSafe + RefUnwindSafe,
 {
     let mut passes = 0;
+
+    for regression in regressions {
+        let test_result = catch_unwind(|| {
+            let mut prng = regression.prng.clone();
+            let fate = Fate::new(&mut prng, regression.limit);
+            test(fate);
+        });
+
+        if let Err(err) = test_result {
+            let counterexample = Counterexample {
+                prng: regression.prng.clone(),
+                limit: regression.limit,
+                hints: None,
+                error: Error(err),
+            };
+            return (passes, Some(counterexample));
+        }
+
+        passes += 1;
+    }
+
     let mut limits = limit_series.into_iter();
 
-    let counterexample = loop {
+    loop {
         let limit = match limits.next() {
-            None => break None,
+            None => return (passes, None),
             Some(limit) => limit,
         };
 
@@ -138,15 +177,13 @@ where
                     hints: None,
                     error: Error(err),
                 };
-                break Some(counterexample);
+                return (passes, Some(counterexample));
             }
             Ok(prng_after_run) => prng_after_run,
         };
 
         passes += 1;
-    };
-
-    (passes, counterexample)
+    }
 }
 
 fn rerun_counterexample<T>(counterexample: Counterexample, test: &T) -> Counterexample
@@ -176,8 +213,13 @@ where
 
 #[cfg(test)]
 mod tests {
+    use core::panic;
+    use std::sync::atomic::{AtomicU64, Ordering};
+
     use crate::runner::repeatedly::{run, Config};
     use crate::{hints, Prng, Seed};
+
+    use super::Regression;
 
     fn default_prng() -> Prng {
         Prng::from_seed(Seed::from(42))
@@ -185,11 +227,21 @@ mod tests {
 
     fn default_config() -> Config {
         Config {
+            regressions: Vec::new(),
             start_limit: 0.into(),
             end_limit: 100.into(),
             passes: 100,
             hints_enabled: true,
             stats_enabled: false,
+        }
+    }
+
+    fn regression(seed: u64) -> Regression {
+        let seed = Seed(seed);
+        let prng = Prng::from_seed(seed);
+        Regression {
+            prng,
+            limit: 42.into(),
         }
     }
 
@@ -201,6 +253,55 @@ mod tests {
     }
 
     #[test]
+    fn zero_passes_if_test_fails_with_regressions() {
+        let mut config = default_config();
+        config.regressions = vec![regression(123), regression(321)];
+        let report = run(default_prng(), &config, |_| panic!());
+        assert_eq!(report.passes, 0);
+    }
+
+    #[test]
+    fn mixed_passes_if_test_fails_later() {
+        let counter = AtomicU64::new(1);
+        let config = default_config();
+        let report = run(default_prng(), &config, |_| {
+            let run = counter.fetch_add(1, Ordering::Relaxed);
+            if run == 10 {
+                panic!()
+            }
+        });
+        assert_eq!(report.passes, 9);
+    }
+
+    #[test]
+    fn mixed_passes_if_test_fails_later_with_regressions() {
+        let counter = AtomicU64::new(1);
+        let mut config = default_config();
+        config.regressions = vec![regression(123), regression(321)];
+        let report = run(default_prng(), &config, |_| {
+            let run = counter.fetch_add(1, Ordering::Relaxed);
+            if run == 10 {
+                panic!()
+            }
+        });
+        assert_eq!(report.passes, 9);
+    }
+
+    #[test]
+    fn mixed_passes_if_regression_fails() {
+        let counter = AtomicU64::new(1);
+        let mut config = default_config();
+        config.regressions = vec![regression(123), regression(321)];
+        let report = run(default_prng(), &config, |_| {
+            let run = counter.fetch_add(1, Ordering::Relaxed);
+            if run == 2 {
+                panic!()
+            }
+        });
+        assert_eq!(report.passes, 1);
+    }
+
+    #[test]
     fn full_passes_if_test_succeeds() {
         let config = default_config();
         let report = run(default_prng(), &config, |_| ());
@@ -208,8 +309,24 @@ mod tests {
     }
 
     #[test]
+    fn full_passes_if_test_succeeds_with_regressions() {
+        let mut config = default_config();
+        config.regressions = vec![regression(123), regression(321)];
+        let report = run(default_prng(), &config, |_| ());
+        assert_eq!(report.passes, config.passes + 2);
+    }
+
+    #[test]
     fn has_counterproof_if_test_fails() {
         let config = default_config();
+        let report = run(default_prng(), &config, |_| panic!());
+        assert!(report.counterexample.is_some());
+    }
+
+    #[test]
+    fn has_counterproof_if_test_fails_with_regressions() {
+        let mut config = default_config();
+        config.regressions = vec![regression(123), regression(321)];
         let report = run(default_prng(), &config, |_| panic!());
         assert!(report.counterexample.is_some());
     }

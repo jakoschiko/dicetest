@@ -80,6 +80,16 @@ Dicetest::debug("/yiA1sab3S4UnCf4ozyMpxMxzg1NtFybCuYLHy0/oscDAAAAAAAAAA==").run(
 })
 ```
 
+After fixing the bug you can keep the counterexample as a regression test:
+
+```rust
+Dicetest::repeatedly()
+    .regression("/yiA1sab3S4UnCf4ozyMpxMxzg1NtFybCuYLHy0/oscDAAAAAAAAAA==")
+    .run(|mut fate| {
+        // ...
+    })
+```
+
 ## Features
 
 These features are **available**:

@@ -6,6 +6,7 @@ use crate::{Limit, Seed};
 
 const KEY_MODE: &str = "DICETEST_MODE";
 const KEY_DEBUG: &str = "DICETEST_DEBUG";
+const KEY_REGRESSIONS_ENABLED: &str = "DICETEST_REGRESSIONS_ENABLED";
 const KEY_SEED: &str = "DICETEST_SEED";
 const KEY_ONCE_LIMIT: &str = "DICETEST_ONCE_LIMIT";
 const KEY_START_LIMIT: &str = "DICETEST_START_LIMIT";
@@ -57,6 +58,9 @@ fn read_non_debug_mode() -> Result<EnvValue<Mode>, String> {
             }
         }
     }
+}
+pub fn read_regressions_enabled() -> Result<EnvValue<bool>, String> {
+    read_value(KEY_REGRESSIONS_ENABLED, "a bool", bool::from_str)
 }
 
 pub fn read_seed() -> Result<EnvValue<Option<Seed>>, String> {

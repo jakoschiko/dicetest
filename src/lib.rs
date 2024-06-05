@@ -79,6 +79,17 @@
 //! })
 //! ```
 //!
+//! After fixing the bug you can keep the counterexample as a regression test:
+//!
+//! ```
+//! # use dicetest::Dicetest;
+//! Dicetest::repeatedly()
+//!     .regression("/yiA1sab3S4UnCf4ozyMpxMxzg1NtFybCuYLHy0/oscDAAAAAAAAAA==")
+//!     .run(|mut fate| {
+//!         // ...
+//!     })
+//! ```
+//!
 //! # Features
 //!
 //! These features are **available**:
