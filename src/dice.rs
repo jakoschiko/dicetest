@@ -39,8 +39,8 @@ pub use result::*;
 mod length;
 pub use length::*;
 
-mod terms_of;
-pub use terms_of::*;
+mod split_integer;
+pub use split_integer::*;
 
 mod collection;
 pub use collection::*;

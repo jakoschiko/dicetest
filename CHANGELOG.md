@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Add function `dicetest::dice::todo`. This generator is for prototyping and always panics when created.
+- Add functions `dicetest::dice::split_{u8,u16,u32,u64,u128,usize}`. These generators are similar to `dicetest::dice::split_{u8,u16,u32,u64,u128,usize}_n`, but use a const parameter for the number of parts.
 - Add support for regression tests
   - Add function `dicetest::Dicetest::regression` for adding a regression test.
   - Add function `dicetest::Dicetest::regressions_enabled` for enabling/disabling regression tests.
@@ -17,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix unintentional panic in `dicetest::dice::weighted_*` if sum of weights is zero.
 
 ### Changed
+- Rename functions `dicetest::dice::terms_of_{u8,u16,u32,u64,u128,usize}` to `dicetest::dice::split_{u8,u16,u32,u64,u128,usize}_n`.
 - Rename feature flag `rand_full` to `rand`.
 - Upgrade dependency rand_core to 0.6 and rand to 0.8.
 
