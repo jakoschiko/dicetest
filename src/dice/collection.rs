@@ -67,7 +67,7 @@ where
         let elem_limits = if length == 0 {
             Vec::new()
         } else {
-            fate.roll(dice::terms_of_u64(fate.limit().0, length))
+            fate.roll(dice::split_u64_n(fate.limit().0, length))
         };
         let elems = elem_limits
             .into_iter()
