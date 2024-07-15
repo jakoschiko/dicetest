@@ -75,8 +75,8 @@ pub use string::*;
 mod shuffle;
 pub use shuffle::*;
 
-mod split;
-pub use split::*;
+mod split_vec;
+pub use split_vec::*;
 
 mod fn_builder;
 pub use fn_builder::*;
