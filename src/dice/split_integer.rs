@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::prelude::*;
+use crate::{prelude::*, Limit};
 
 macro_rules! fn_split_integer {
     (
@@ -111,6 +111,100 @@ fn_split_integer! { u64, split_u64, split_u64_n }
 fn_split_integer! { u128, split_u128, split_u128_n }
 fn_split_integer! { usize, split_usize, split_usize_n }
 
+/// Generates `N` `Limit`s that sum up to `sum`.
+///
+/// # Panics
+///
+/// Panics if `sum != Limit(0) && N == 0` is true.
+///
+/// # Examples
+///
+/// This example generates `Limit`s without panicking:
+///
+/// ```
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
+///
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
+/// let mut fate = Fate::new(&mut prng, limit);
+///
+/// let sum = Limit(20);
+/// const N: usize = 10;
+/// let parts = fate.roll(dice::split_limit::<N>(sum));
+///
+/// assert_eq!(N, parts.len());
+/// assert_eq!(sum.0, parts.into_iter().map(|limit| limit.0).sum());
+/// ```
+///
+/// This example panics:
+///
+/// ```should_panic
+/// use dicetest::{prelude::*, Limit};
+///
+/// // Oh no, panic!
+/// let _parts_die = dice::split_limit::<0>(Limit(1));
+/// ```
+#[track_caller]
+pub fn split_limit<const N: usize>(sum: Limit) -> impl Die<[Limit; N]> {
+    assert_solution_exists(sum, N);
+
+    dice::from_fn(move |mut fate| {
+        let mut parts = [Limit(0); N];
+        if !parts.is_empty() {
+            split_integer_recur(&mut parts, sum, &mut fate);
+        }
+        parts
+    })
+}
+
+/// Generates `n` `Limit`s that sum up to `sum`.
+///
+/// # Panics
+///
+/// Panics if `sum != Limit(0) && n == 0` is true.
+///
+/// # Examples
+///
+/// This example generates `Limit`s without panicking:
+///
+/// ```
+/// use dicetest::prelude::*;
+/// use dicetest::{Prng, Limit};
+///
+/// let mut prng = Prng::from_seed(0x5EED.into());
+/// let limit = Limit::default();
+/// let mut fate = Fate::new(&mut prng, limit);
+///
+/// let sum = Limit(20);
+/// let n = 10;
+/// let parts = fate.roll(dice::split_limit_n(sum, n));
+///
+/// assert_eq!(n, parts.len());
+/// assert_eq!(sum.0, parts.into_iter().map(|limits| limits.0).sum());
+/// ```
+///
+/// This example panics:
+///
+/// ```should_panic
+/// use dicetest::{prelude::*, Limit};
+///
+/// // Oh no, panic!
+/// let _parts_die = dice::split_limit_n(Limit(1), 0);
+/// ```
+#[track_caller]
+pub fn split_limit_n(sum: Limit, n: usize) -> impl Die<Vec<Limit>> {
+    assert_solution_exists(sum, n);
+
+    dice::from_fn(move |mut fate| {
+        let mut parts = vec![Limit(0); n];
+        if !parts.is_empty() {
+            split_integer_recur(&mut parts, sum, &mut fate);
+        }
+        parts
+    })
+}
+
 #[track_caller]
 fn assert_solution_exists<I: Integer + Debug>(sum: I, n: usize) {
     let no_solution_exists = sum != I::ZERO && n == 0;
@@ -191,9 +285,28 @@ impl_integer! { u64, u64, uni_u64 }
 impl_integer! { u128, u128, uni_u128 }
 impl_integer! { usize, usize, uni_usize }
 
+impl Integer for Limit {
+    const ZERO: Self = Limit(0);
+
+    fn split(self, fate: &mut Fate) -> (Self, Self) {
+        let left = fate.roll(dice::uni_u64(0..=self.0));
+        (Limit(left), Limit(self.0 - left))
+    }
+
+    #[cfg(test)]
+    fn add(self, rhs: Self) -> Self {
+        Limit(self.0 + rhs.0)
+    }
+
+    #[cfg(test)]
+    fn roll(fate: &mut Fate) -> Self {
+        Limit(fate.roll(dice::u64(..)))
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::prelude::*;
+    use crate::{prelude::*, Limit};
 
     use super::Integer;
 
@@ -301,6 +414,12 @@ mod tests {
         split_usize_returns_the_expected_sum_and_count
         split_usize_n_returns_the_expected_sum_and_count
         split_usize_with_zero
+    }
+
+    split_integer_tests! { Limit, split_limit, split_limit_n:
+        split_limit_returns_the_expected_sum_and_count
+        split_limit_n_returns_the_expected_sum_and_count
+        split_limit_with_zero
     }
 
     #[test]

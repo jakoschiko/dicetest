@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add function `dicetest::dice::todo`. This generator is for prototyping and always panics when created.
 - Add functions `dicetest::dice::split_{u8,u16,u32,u64,u128,usize}`. These generators are similar to `dicetest::dice::split_{u8,u16,u32,u64,u128,usize}_n`, but use a const parameter for the number of parts.
 - Add function `dicetest::dice::split_vec_n`. This generators is similar to `dicetest::dice::split_vec`, but uses a non-const parameter for the number of parts.
+- Add function `dicetest::dice::split_limit`. This generator splits a `dicetest::Limit` into random parts.
+- Add function `dicetest::dice::split_limit_n`. This generators is similar to `dicetest::dice::split_limit`, but uses a non-const parameter for the number of parts.
 - Add support for regression tests
   - Add function `dicetest::Dicetest::regression` for adding a regression test.
   - Add function `dicetest::Dicetest::regressions_enabled` for enabling/disabling regression tests.

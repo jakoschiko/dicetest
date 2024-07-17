@@ -67,11 +67,11 @@ where
         let elem_limits = if length == 0 {
             Vec::new()
         } else {
-            fate.roll(dice::split_u64_n(fate.limit().0, length))
+            fate.roll(dice::split_limit_n(fate.limit(), length))
         };
         let elems = elem_limits
             .into_iter()
-            .map(|limit| fate.with_limit(limit.into()).roll(&elem_die));
+            .map(|limit| fate.with_limit(limit).roll(&elem_die));
         builder.build(elems)
     })
 }
