@@ -60,7 +60,7 @@ mod tests {
     use crate::prelude::*;
     use std::collections::HashMap;
 
-    fn count_vec_elems(vec: &Vec<u8>) -> HashMap<u8, usize> {
+    fn count_vec_elems(vec: &[u8]) -> HashMap<u8, usize> {
         let mut elems = HashMap::new();
         for &elem in vec.iter() {
             let count = elems.entry(elem).or_insert(0);

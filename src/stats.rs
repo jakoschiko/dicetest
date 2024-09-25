@@ -221,7 +221,7 @@ mod tests {
     #[test]
     fn counter_inc_examples() {
         assert_eq!(Counter::new().inc(), Value(1));
-        assert_eq!(Value(u64::max_value()).inc(), Overflow);
+        assert_eq!(Value(u64::MAX).inc(), Overflow);
     }
 
     #[test]

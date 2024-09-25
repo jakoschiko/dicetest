@@ -1068,26 +1068,22 @@ mod tests {
             let die = dice::just(());
             let [w1, w2, w3, w4, w5, w6, w7, w8, w9] = fate.roll(dice::array(dice::u32(..)));
 
-            let _ = fate.roll(dice::weighted_one_of_die_once().two((w1, &die), (w2, &die)));
-            let _ = fate.roll(dice::weighted_one_of_die_once().three(
-                (w1, &die),
-                (w2, &die),
-                (w3, &die),
-            ));
-            let _ = fate.roll(dice::weighted_one_of_die_once().four(
+            fate.roll(dice::weighted_one_of_die_once().two((w1, &die), (w2, &die)));
+            fate.roll(dice::weighted_one_of_die_once().three((w1, &die), (w2, &die), (w3, &die)));
+            fate.roll(dice::weighted_one_of_die_once().four(
                 (w1, &die),
                 (w2, &die),
                 (w3, &die),
                 (w4, &die),
             ));
-            let _ = fate.roll(dice::weighted_one_of_die_once().five(
+            fate.roll(dice::weighted_one_of_die_once().five(
                 (w1, &die),
                 (w2, &die),
                 (w3, &die),
                 (w4, &die),
                 (w5, &die),
             ));
-            let _ = fate.roll(dice::weighted_one_of_die_once().six(
+            fate.roll(dice::weighted_one_of_die_once().six(
                 (w1, &die),
                 (w2, &die),
                 (w3, &die),
@@ -1095,7 +1091,7 @@ mod tests {
                 (w5, &die),
                 (w6, &die),
             ));
-            let _ = fate.roll(dice::weighted_one_of_die_once().seven(
+            fate.roll(dice::weighted_one_of_die_once().seven(
                 (w1, &die),
                 (w2, &die),
                 (w3, &die),
@@ -1104,7 +1100,7 @@ mod tests {
                 (w6, &die),
                 (w7, &die),
             ));
-            let _ = fate.roll(dice::weighted_one_of_die_once().eight(
+            fate.roll(dice::weighted_one_of_die_once().eight(
                 (w1, &die),
                 (w2, &die),
                 (w3, &die),
@@ -1114,7 +1110,7 @@ mod tests {
                 (w7, &die),
                 (w8, &die),
             ));
-            let _ = fate.roll(dice::weighted_one_of_die_once().nine(
+            fate.roll(dice::weighted_one_of_die_once().nine(
                 (w1, &die),
                 (w2, &die),
                 (w3, &die),
@@ -1134,23 +1130,22 @@ mod tests {
             let die = dice::just(());
             let [w1, w2, w3, w4, w5, w6, w7, w8, w9] = fate.roll(dice::array(dice::u32(..)));
 
-            let _ = fate.roll(dice::weighted_one_of_die().two((w1, &die), (w2, &die)));
-            let _ =
-                fate.roll(dice::weighted_one_of_die().three((w1, &die), (w2, &die), (w3, &die)));
-            let _ = fate.roll(dice::weighted_one_of_die().four(
+            fate.roll(dice::weighted_one_of_die().two((w1, &die), (w2, &die)));
+            fate.roll(dice::weighted_one_of_die().three((w1, &die), (w2, &die), (w3, &die)));
+            fate.roll(dice::weighted_one_of_die().four(
                 (w1, &die),
                 (w2, &die),
                 (w3, &die),
                 (w4, &die),
             ));
-            let _ = fate.roll(dice::weighted_one_of_die().five(
+            fate.roll(dice::weighted_one_of_die().five(
                 (w1, &die),
                 (w2, &die),
                 (w3, &die),
                 (w4, &die),
                 (w5, &die),
             ));
-            let _ = fate.roll(dice::weighted_one_of_die().six(
+            fate.roll(dice::weighted_one_of_die().six(
                 (w1, &die),
                 (w2, &die),
                 (w3, &die),
@@ -1158,7 +1153,7 @@ mod tests {
                 (w5, &die),
                 (w6, &die),
             ));
-            let _ = fate.roll(dice::weighted_one_of_die().seven(
+            fate.roll(dice::weighted_one_of_die().seven(
                 (w1, &die),
                 (w2, &die),
                 (w3, &die),
@@ -1167,7 +1162,7 @@ mod tests {
                 (w6, &die),
                 (w7, &die),
             ));
-            let _ = fate.roll(dice::weighted_one_of_die().eight(
+            fate.roll(dice::weighted_one_of_die().eight(
                 (w1, &die),
                 (w2, &die),
                 (w3, &die),
@@ -1177,7 +1172,7 @@ mod tests {
                 (w7, &die),
                 (w8, &die),
             ));
-            let _ = fate.roll(dice::weighted_one_of_die().nine(
+            fate.roll(dice::weighted_one_of_die().nine(
                 (w1, &die),
                 (w2, &die),
                 (w3, &die),
