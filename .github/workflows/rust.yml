@@ -1,0 +1,55 @@
+name: Rust
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          target/
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Install Rust
+      run: |
+        rustup install 1.79 --profile minimal --no-self-update
+        rustup default 1.79
+        rustup component add rustfmt
+        rustup component add clippy
+
+    - name: Check fmt
+      run: cargo fmt --all --check
+
+    - name: Check clippy
+      run: cargo clippy --workspace --all-targets
+
+    - name: Build
+      run: |
+        cargo build --workspace --all-targets --all-features
+        cargo build --workspace --all-targets --no-default-features
+        cargo build --workspace --all-targets --no-default-features --features hints
+        cargo build --workspace --all-targets --no-default-features --features stats
+        cargo build --workspace --all-targets --no-default-features --features rand
+        cargo build --workspace --all-targets
+
+    - name: Run tests
+      run: cargo test -- --format=terse
+      env:
+        RUST_BACKTRACE: 1
