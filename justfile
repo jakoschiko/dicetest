@@ -1,4 +1,4 @@
-default: fmt build test clippy doc readme
+default: fmt build test clippy doc
 
 fmt:
 	cargo fmt
@@ -22,6 +22,3 @@ clippy:
 
 doc:
 	cargo doc --no-deps
-
-readme:
-	cargo readme > README.md

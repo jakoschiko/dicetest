@@ -1,9 +1,14 @@
-//! Provides the trait [`Codie`] for converting values into a seed.
-
 use crate::Seed;
 
-/// The counterpart of [`DieOnce`] and [`Die`]. Instead of generating a value of type
-/// `T` from a seed, this trait allows to convert a value of type `T` into a seed.
+/// Trait for converting values of type `T` into a seed.
+///
+/// This trait can be seen as the counterpart of [`DieOnce`] and [`Die`].
+/// Instead of generating a value of type `T` from a seed, this trait allows to convert a value
+/// of type `T` into a seed.
+///
+/// The most important use case is implementing pseudorandom functions. A pseudorandom function
+/// can be implemented by converting its arguments into a seed and then using the seed for
+/// generating a result.
 ///
 /// [`DieOnce`]: crate::DieOnce
 /// [`Die`]: crate::Die

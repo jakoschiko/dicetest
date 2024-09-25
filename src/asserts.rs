@@ -1,5 +1,3 @@
-//! A collection of useful assertions.
-
 use std::fmt::Debug;
 
 use crate::prelude::*;

@@ -94,7 +94,7 @@ impl Dicetest {
     ///
     /// Panics if the run code is invalid.
     ///
-    /// # Environment
+    /// # Environment variable
     ///
     /// You can set this mode with `DICETEST_DEBUG=<run code>`. The value `<run code>` must be
     /// a valid run code.
@@ -112,7 +112,7 @@ impl Dicetest {
     /// In this mode the test will be run once. In contrast to debug mode, the [`Seed`] and
     /// [`Limit`] can be set separately via [`Dicetest::seed`] and [`Dicetest::once_limit`].
     ///
-    /// # Environment
+    /// # Environment variable
     ///
     /// You can set this mode via `DICETEST_MODE=once`.
     pub fn once() -> Self {
@@ -133,7 +133,7 @@ impl Dicetest {
     /// the seed and limit boundaries, see [`Dicetest::seed`], [`Dicetest::start_limit`] and
     /// [`Dicetest::end_limit`].
     ///
-    /// # Environment
+    /// # Environment variable
     ///
     /// You can set this mode via `DICETEST_MODE=repeatedly`.
     pub fn repeatedly() -> Self {
@@ -176,7 +176,7 @@ impl Dicetest {
     ///
     /// This parameter is `true` by default.
     ///
-    /// # Environment
+    /// # Environment variable
     ///
     /// You can set this parameter via `DICETEST_REGRESSIONS_ENABLED=<bool>`.
     pub fn regressions_enabled(mut self, regressions_enabled: bool) -> Self {
@@ -189,7 +189,7 @@ impl Dicetest {
     /// It's only used in run-once and run-repeatedly mode and is `None` by default.
     /// In case of `None` the [`Seed`] will be randomly generated.
     ///
-    /// # Environment
+    /// # Environment variable
     ///
     /// You can set this parameter via `DICETEST_SEED=<seed>`. The value `<seed>` must be either
     /// `none` or `<u64>`.
@@ -202,7 +202,7 @@ impl Dicetest {
     ///
     /// It's only used in run-once mode and is `100` by default.
     ///
-    /// # Environment
+    /// # Environment variable
     ///
     /// You can set this parameter via `DICETEST_ONCE_LIMIT=<u64>`.
     pub fn once_limit(mut self, once_limit: Limit) -> Self {
@@ -215,7 +215,7 @@ impl Dicetest {
     /// It will be used for the first test run. The following test runs use an interpolated limit,
     /// see [`Dicetest::end_limit`]. It's only used in run-repeatedly mode and is `0` by default.
     ///
-    /// # Environment
+    /// # Environment variable
     ///
     /// You can set this parameter via `DICETEST_START_LIMIT=<u64>`.
     pub fn start_limit(mut self, start_limit: Limit) -> Self {
@@ -228,7 +228,7 @@ impl Dicetest {
     /// It will be used for the last test run. The previous test runs use an interpolated limit,
     /// see [`Dicetest::start_limit`]. It's only used in run-repeatedly mode and is `100` by default.
     ///
-    /// # Environment
+    /// # Environment variable
     ///
     /// You can set this parameter via `DICETEST_END_LIMIT=<u64>`.
     pub fn end_limit(mut self, end_limit: Limit) -> Self {
@@ -241,7 +241,7 @@ impl Dicetest {
     /// It will be applied to the values that can be set via [`Dicetest::once_limit`],
     /// [`Dicetest::start_limit`] and [`Dicetest::end_limit`] before running the test.
     ///
-    /// # Environment
+    /// # Environment variable
     ///
     /// You can set this parameter via `DICETEST_LIMIT_MULTIPLIER=<factor>`. The value `<factor>`
     /// must be either `none` or `<f64>`.
@@ -256,7 +256,7 @@ impl Dicetest {
     ///
     /// It's only used in run-repeatedly mode and is `200` by default.
     ///
-    /// # Environment
+    /// # Environment variable
     ///
     /// You can set this parameter via `DICETEST_PASSES=<u64>`.
     pub fn passes(mut self, passes: u64) -> Self {
@@ -269,7 +269,7 @@ impl Dicetest {
     /// It will be applied to the value that can be set via [`Dicetest::passes`] before running
     /// the test.
     ///
-    /// # Environment
+    /// # Environment variable
     ///
     /// You can set this parameter via `DICETEST_PASSES_MULTIPLIER=<factor>`. The value `<factor>`
     /// must be either `none` or `<f64>`.
@@ -287,7 +287,7 @@ impl Dicetest {
     ///
     /// This parameter is `true` by default. It works only work if the feature `hints` is present.
     ///
-    /// # Environment
+    /// # Environment variable
     ///
     /// You can set this parameter via `DICETEST_HINTS_ENABLED=<bool>`.
     pub fn hints_enabled(mut self, hints_enabled: bool) -> Self {
@@ -303,7 +303,7 @@ impl Dicetest {
     ///
     /// This parameter is `false` by default. It works only work if the feature `stats` is present.
     ///
-    /// # Environment
+    /// # Environment variable
     ///
     /// You can set this parameter via `DICETEST_STATS_ENABLED=<bool>`.
     pub fn stats_enabled(mut self, stats_enabled: bool) -> Self {
@@ -315,7 +315,7 @@ impl Dicetest {
     ///
     /// If `None` all values will be present in the result. This parameter is `Some(20)` by default.
     ///
-    /// # Environment
+    /// # Environment variable
     ///
     /// You can set this parameter via `DICETEST_STATS_MAX_VALUE_COUNT=<max_value_count>`.
     /// The value `<max_value_count>` must be either `none` or `<usize>`.
@@ -329,7 +329,7 @@ impl Dicetest {
     ///
     /// This parameter is `2` by default.
     ///
-    /// # Environment
+    /// # Environment variable
     ///
     /// You can set this parameter via `DICETEST_STATS_PERCENT_PRECISION=<usize>`.
     pub fn stats_percent_precision(mut self, stats_percent_precision: usize) -> Self {
