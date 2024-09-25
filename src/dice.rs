@@ -1,4 +1,7 @@
-//! The standard collection of `DieOnce` and `Die` implementations.
+//! The standard collection of [`DieOnce`] and [`Die`] implementations.
+//!
+//! [`DieOnce`]: crate::DieOnce
+//! [`Die`]: crate::Die
 
 mod from;
 pub use from::*;
