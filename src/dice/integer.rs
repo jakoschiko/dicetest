@@ -49,13 +49,13 @@ macro_rules! impl_integer_range {
 
         impl IntegerRange<$integer> for RangeFrom<$integer> {
             fn bounds(self) -> ($integer, $integer) {
-                (self.start, $integer::max_value())
+                (self.start, $integer::MAX)
             }
         }
 
         impl IntegerRange<$integer> for RangeFull {
             fn bounds(self) -> ($integer, $integer) {
-                ($integer::min_value(), $integer::max_value())
+                ($integer::MIN, $integer::MAX)
             }
         }
 
@@ -71,7 +71,7 @@ macro_rules! impl_integer_range {
 
         impl IntegerRange<$integer> for RangeTo<$integer> {
             fn bounds(self) -> ($integer, $integer) {
-                let lower = $integer::min_value();
+                let lower = $integer::MIN;
                 if self.end > lower {
                     let upper = self.end - 1;
                     (lower, upper)
@@ -83,7 +83,7 @@ macro_rules! impl_integer_range {
 
         impl IntegerRange<$integer> for RangeToInclusive<$integer> {
             fn bounds(self) -> ($integer, $integer) {
-                ($integer::min_value(), self.end)
+                ($integer::MIN, self.end)
             }
         }
 
@@ -149,7 +149,7 @@ macro_rules! fn_integer {
         /// assert!(integer >= 42 && integer < 71);
         ///
         /// let integer = fate.roll(dice::uni_u8(..));
-        /// assert!(integer >= 0 && integer <= u8::max_value());
+        /// assert!(integer >= 0 && integer <= u8::MAX);
         /// ```
         ///
         /// This example panics:
@@ -162,13 +162,13 @@ macro_rules! fn_integer {
         /// ```
         pub fn $uni_integer(range: impl IntegerRange<$integer>) -> impl Die<$integer> {
             fn to_shifted_unsigned(i: $integer) -> $uinteger {
-                let uoffset = $integer::min_value() as $uinteger;
+                let uoffset = $integer::MIN as $uinteger;
                 let x = i as $uinteger;
                 x.wrapping_add(uoffset)
             }
 
             fn from_shifted_unsigned(u: $uinteger) -> $integer {
-                let uoffset = $integer::min_value() as $uinteger;
+                let uoffset = $integer::MIN as $uinteger;
                 let x = u.wrapping_add(uoffset);
                 x as $integer
             }
@@ -183,7 +183,7 @@ macro_rules! fn_integer {
                 } else {
                     let random_unsigned = $random_uinteger(fate);
 
-                    if lower == $integer::min_value() && upper == $integer::max_value() {
+                    if lower == $integer::MIN && upper == $integer::MAX {
                         // Full integer range, hence the randomly chosen integer is already inside
                         // the range
                         random_unsigned as $integer
@@ -242,7 +242,7 @@ macro_rules! fn_integer {
         /// assert!(integer >= 42 && integer < 71);
         ///
         /// let integer = fate.roll(dice::u8(..));
-        /// assert!(integer >= 0 && integer <= u8::max_value());
+        /// assert!(integer >= 0 && integer <= u8::MAX);
         /// ```
         ///
         /// This example panics:
@@ -373,7 +373,7 @@ mod tests {
                 Dicetest::repeatedly().run(|fate| {
                     range_contains_integer(
                         fate,
-                        dice::array(dice::$integer(..$integer::max_value() - 1))
+                        dice::array(dice::$integer(..$integer::MAX - 1))
                             .map(|[a, b]| (a.min(b), a.max(b) + 1)),
                         |(lower, upper)| lower..upper,
                         dice::$integer,
@@ -413,7 +413,7 @@ mod tests {
                 Dicetest::repeatedly().run(|fate| {
                     range_contains_integer(
                         fate,
-                        dice::$integer($integer::min_value() + 1..),
+                        dice::$integer($integer::MIN + 1..),
                         |upper| ..upper,
                         dice::$integer,
                         |upper, integer| integer < upper,

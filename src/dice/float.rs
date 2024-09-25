@@ -48,14 +48,14 @@ macro_rules! impl_float_range {
                 if self.start.is_nan() {
                     nan_range(&self)
                 } else {
-                    (self.start, std::$float::INFINITY)
+                    (self.start, $float::INFINITY)
                 }
             }
         }
 
         impl FloatRange<$float> for RangeFull {
             fn bounds(self) -> ($float, $float) {
-                (std::$float::NEG_INFINITY, std::$float::INFINITY)
+                ($float::NEG_INFINITY, $float::INFINITY)
             }
         }
 
@@ -76,7 +76,7 @@ macro_rules! impl_float_range {
                 if self.end.is_nan() {
                     nan_range(&self)
                 } else {
-                    (std::$float::NEG_INFINITY, self.end)
+                    ($float::NEG_INFINITY, self.end)
                 }
             }
         }
@@ -109,7 +109,6 @@ macro_rules! fn_float {
         /// ```
         /// use dicetest::prelude::*;
         /// use dicetest::{Prng, Limit};
-        /// use std::f32::{INFINITY, NEG_INFINITY};
         ///
         /// let mut prng = Prng::from_seed(0x5EED.into());
         /// let limit = Limit::default();
@@ -125,7 +124,7 @@ macro_rules! fn_float {
         /// assert!(float >= -273.15 && float <= 100.0);
         ///
         /// let float = fate.roll(dice::f32(..));
-        /// assert!(float.is_infinite() || (float > NEG_INFINITY && float < INFINITY));
+        /// assert!(float.is_infinite() || (float > f32::NEG_INFINITY && float < f32::INFINITY));
         /// ```
         ///
         /// These examples panic:
@@ -141,7 +140,7 @@ macro_rules! fn_float {
         /// use dicetest::prelude::*;
         ///
         /// // Oh no, panic!
-        /// let _float_die = dice::f32(std::f32::NAN);
+        /// let _float_die = dice::f32(f32::NAN);
         /// ```
         pub fn $float(range: impl FloatRange<$float>) -> impl Die<$float> {
             // `FloatRange::bounds` guarantees that `lower <= upper` and both bounds are not NaN.
@@ -164,14 +163,14 @@ macro_rules! fn_float {
                     // Just ignore infinite values here. If the range contains infinite values,
                     // `maybe_special_value_die` is able to roll them.
 
-                    let min = if lower == std::$float::NEG_INFINITY {
-                        std::$float::MIN
+                    let min = if lower == $float::NEG_INFINITY {
+                        $float::MIN
                     } else {
                         // `lower` cannot be `INFINITY` because `lower < upper`
                         lower
                     };
-                    let max = if upper == std::$float::INFINITY {
-                        std::$float::MAX
+                    let max = if upper == $float::INFINITY {
+                        $float::MAX
                     } else {
                         // `upper` cannot be `INFINITY` because `lower < upper`
                         upper
@@ -211,7 +210,7 @@ macro_rules! fn_float {
         /// Generates an arbitrary float (including NaN). Some special floats have a higher
         /// probability of being generated.
         pub fn $arb_float() -> impl Die<$float> {
-            dice::weighted_one_of_die().two((10, $float(..)), (1, dice::just(std::$float::NAN)))
+            dice::weighted_one_of_die().two((10, $float(..)), (1, dice::just($float::NAN)))
         }
 
         /// Generates a uniformly distributed float that lies inside the closed unit interval
@@ -232,7 +231,7 @@ macro_rules! fn_float {
         /// ```
         pub fn $unit_float() -> impl Die<$float> {
             dice::from_fn(move |mut fate| {
-                const FACTOR: $float = 1.0 / std::$int::MAX as $float;
+                const FACTOR: $float = 1.0 / $int::MAX as $float;
                 let numerator = fate.next_number() as $int;
                 numerator as $float * FACTOR
             })
@@ -267,12 +266,12 @@ macro_rules! fn_float {
                 -0.0,
                 1.0,
                 -1.0,
-                std::$float::EPSILON,
-                std::$float::INFINITY,
-                std::$float::MAX,
-                std::$float::MIN,
-                std::$float::MIN_POSITIVE,
-                std::$float::NEG_INFINITY,
+                $float::EPSILON,
+                $float::INFINITY,
+                $float::MAX,
+                $float::MIN,
+                $float::MIN_POSITIVE,
+                $float::NEG_INFINITY,
                 std::$float::consts::E,
                 std::$float::consts::FRAC_1_PI,
                 std::$float::consts::FRAC_2_PI,
@@ -294,8 +293,8 @@ macro_rules! fn_float {
             // Represents the ones that the float type can maximally store.
             pub const MAX_ONES: $int = {
                 let float_bits = std::mem::size_of::<$float>() * 8;
-                let mantissa_bits = std::$float::MANTISSA_DIGITS as usize;
-                std::$int::MAX >> (float_bits - mantissa_bits)
+                let mantissa_bits = $float::MANTISSA_DIGITS as usize;
+                $int::MAX >> (float_bits - mantissa_bits)
             };
 
             // Calculate a float that lies inside the range `[0, 1)` if
@@ -356,7 +355,7 @@ mod tests {
             let exponent_bits = 126 << 23;
             // All 23 bits of the mantissa are `1`.
             // These are the remaining 23 `1`s after the `0.1`.
-            let max_mantissa = std::u32::MAX >> (32 - 23);
+            let max_mantissa = u32::MAX >> (32 - 23);
             f32::from_bits(exponent_bits | max_mantissa)
         };
 
@@ -377,7 +376,7 @@ mod tests {
             let exponent_bits = 1022 << 52;
             // All 52 bits of the mantissa are `1`.
             // These are the remaining 52 `1`s after the `0.1`.
-            let max_mantissa = std::u64::MAX >> (64 - 52);
+            let max_mantissa = u64::MAX >> (64 - 52);
             f64::from_bits(exponent_bits | max_mantissa)
         };
 
@@ -455,7 +454,7 @@ mod tests {
             #[test]
             fn $float_util_linear_ipol_float_with_same_min_and_max() {
                 Dicetest::repeatedly().run(|mut fate| {
-                    let float = fate.roll($float(std::$float::MIN..=std::$float::MAX));
+                    let float = fate.roll($float($float::MIN..=$float::MAX));
                     let factor = fate.roll($unit_float());
 
                     assert_eq!(float, $float_util::linear_ipol_float(factor, float, float));
@@ -465,8 +464,8 @@ mod tests {
             #[test]
             fn $float_util_linear_ipol_float_with_factor_limits() {
                 Dicetest::repeatedly().run(|mut fate| {
-                    let float1 = fate.roll($float(std::$float::MIN..=std::$float::MAX));
-                    let float2 = fate.roll($float(std::$float::MIN..=std::$float::MAX));
+                    let float1 = fate.roll($float($float::MIN..=$float::MAX));
+                    let float2 = fate.roll($float($float::MIN..=$float::MAX));
                     let (min, max) = if float1 <= float2 {
                         (float1, float2)
                     } else {
@@ -481,16 +480,16 @@ mod tests {
             #[test]
             fn $float_util_linear_ipol_float_center_examples() {
                 assert_eq!(
-                    std::$float::MIN / 2.0,
-                    $float_util::linear_ipol_float(0.5, std::$float::MIN, 0.0),
+                    $float::MIN / 2.0,
+                    $float_util::linear_ipol_float(0.5, $float::MIN, 0.0),
                 );
                 assert_eq!(
-                    std::$float::MAX / 2.0,
-                    $float_util::linear_ipol_float(0.5, 0.0, std::$float::MAX),
+                    $float::MAX / 2.0,
+                    $float_util::linear_ipol_float(0.5, 0.0, $float::MAX),
                 );
                 assert_eq!(
                     0.0,
-                    $float_util::linear_ipol_float(0.5, std::$float::MIN, std::$float::MAX),
+                    $float_util::linear_ipol_float(0.5, $float::MIN, $float::MAX),
                 );
             }
 

@@ -22,7 +22,7 @@ impl Limit {
     /// If the [`usize`] is greater than the largest [`u64`] value,
     /// the function returns the largest [`u64`] value as limit.
     pub fn saturating_from_usize(usize: usize) -> Self {
-        Self(u64::try_from(usize).unwrap_or(u64::max_value()))
+        Self(u64::try_from(usize).unwrap_or(u64::MAX))
     }
 
     /// Returns the limit as `usize`.
@@ -30,7 +30,7 @@ impl Limit {
     /// If the limit is greater than the largest [`usize`] value,
     /// the function returns the largest [`usize`] value.
     pub fn saturating_to_usize(self) -> usize {
-        usize::try_from(self.0).unwrap_or(usize::max_value())
+        usize::try_from(self.0).unwrap_or(usize::MAX)
     }
 }
 

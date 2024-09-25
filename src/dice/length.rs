@@ -190,8 +190,7 @@ mod tests {
         Dicetest::repeatedly().run(|fate| {
             range_contains_length(
                 fate,
-                dice::array(dice::usize(..usize::max_value() - 1))
-                    .map(|[a, b]| (a.min(b), a.max(b) + 1)),
+                dice::array(dice::usize(..usize::MAX - 1)).map(|[a, b]| (a.min(b), a.max(b) + 1)),
                 |(lower, upper)| lower..upper,
                 |(lower, upper), length| lower <= length && length < upper,
             );
