@@ -21,4 +21,7 @@ clippy:
 	cargo clippy --package examples_readme
 
 doc:
-	cargo doc --no-deps
+	RUSTFLAGS="--cfg docsrs" RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features
+
+doc-open:
+	RUSTFLAGS="--cfg docsrs" RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features --open

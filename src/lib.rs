@@ -34,26 +34,26 @@
 //! There are several feature flags for disabling runtime overhead or enabling additional
 //! features at compile time.
 //!
-//! ### `hints` (enabled by default)
+//! #### `hints` (enabled by default)
 //!
 //! Enables or disables the hints feature at compile time. If disabled,
 //! all hints operations are no-ops.
 //!
-//! ### `stats` (enabled by default)
+//! #### `stats` (enabled by default)
 //!
 //! Enables or disables the stats feature at compile time. If disabled,
 //! all stats operations are no-ops.
 //!
-//! ### `rand_core` (disabled by default)
+//! #### `rand_core` (disabled by default)
 //!
-//! If enabled, `dicetest::Prng` and `dicetest::Fate` implements the `rand_core::RngCore`
+//! If enabled, [`Prng`] and [`Fate`] implements the [`rand_core::RngCore`]
 //! trait.
 //!
-//! ### `rand` (disabled by default)
+//! #### `rand` (disabled by default)
 //!
-//! If enabled, `Fate::roll_distribution` and `dice::from_distribution` are available.
-//! This allows to generate values and create `Die`s from implementations
-//! of `rand::distributions::Distribution`.
+//! If enabled, [`Fate::roll_distribution`] and [`dice::from_distribution`] are available.
+//! This allows to generate values and create [`Die`]s from implementations
+//! of [`rand::distributions::Distribution`].
 //!
 //! ```
 //! # #[cfg(feature = "rand")] {
@@ -77,6 +77,9 @@
 //! // Output: [236, 205, 151, 229]
 //! # }
 //! ```
+
+// This allows us to add annotations to feature-gated items.
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 // This crate makes assumptions regarding the pointer width. The following conditional error
 // prevents the compilation for unsupported pointer widths.
