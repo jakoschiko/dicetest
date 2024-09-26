@@ -3,7 +3,7 @@
 //! # Status of this crate
 //!
 //! The author does not consider this crate as stable yet. Changes will be documented in the
-//! [changelog](https://github.com/jakoschiko/dicetest/blob/master/CHANGELOG.md).
+//! [changelog](https://github.com/jakoschiko/dicetest/blob/main/CHANGELOG.md).
 //!
 //! # Example
 //!
