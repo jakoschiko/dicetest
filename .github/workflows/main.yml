@@ -53,3 +53,8 @@ jobs:
       run: cargo test -- --format=terse
       env:
         RUST_BACKTRACE: 1
+
+    - name: SemVer check
+      run: |
+        cargo install --locked cargo-semver-checks
+        cargo semver-checks check-release --all-features
