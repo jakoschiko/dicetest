@@ -99,6 +99,7 @@ impl<'a> Fate<'a> {
     ///
     /// [`Distribution`]: rand::distributions::Distribution
     #[cfg(feature = "rand")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "rand")))]
     pub fn roll_distribution<T, D>(&mut self, distribution: D) -> T
     where
         D: rand::distributions::Distribution<T>,
@@ -109,6 +110,7 @@ impl<'a> Fate<'a> {
 }
 
 #[cfg(feature = "rand_core")]
+#[cfg_attr(docsrs, doc(cfg(feature = "rand_core")))]
 impl<'a> rand_core::RngCore for Fate<'a> {
     fn next_u32(&mut self) -> u32 {
         self.next_number() as u32

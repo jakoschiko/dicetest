@@ -137,6 +137,7 @@ impl BuildHasher for Prng {
 }
 
 #[cfg(feature = "rand_core")]
+#[cfg_attr(docsrs, doc(cfg(feature = "rand_core")))]
 impl rand_core::RngCore for Prng {
     fn next_u32(&mut self) -> u32 {
         self.next_number() as u32

@@ -21,6 +21,10 @@ stats = []
 rand_core = ["dep:rand_core"]
 rand = ["dep:rand", "rand_core"]
 
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
 [workspace]
 members = [
     "examples_readme",
