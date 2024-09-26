@@ -58,9 +58,9 @@ jobs:
         cargo build --workspace --all-targets
 
     - name: Run tests
-      run: cargo test -- --format=terse
       env:
         RUST_BACKTRACE: 1
+      run: cargo test -- --format=terse
 
     - name: SemVer check
       run: cargo semver-checks check-release --all-features
