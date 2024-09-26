@@ -1,7 +1,7 @@
 [<img alt="github" src="https://img.shields.io/badge/jakoschiko/dicetest-8da0cb?logo=github" height="20">](https://github.com/jakoschiko/dicetest)
 [![crates.io](https://img.shields.io/crates/v/dicetest.svg)](https://crates.io/crates/dicetest)
 [![Documentation](https://docs.rs/dicetest/badge.svg)](https://docs.rs/dicetest)
-[![Build & Test](https://github.com/jakoschiko/dicetest/actions/workflows/rust.yml/badge.svg)](https://github.com/jakoschiko/dicetest/actions/workflows/rust.yml)
+[![Build & Test](https://github.com/jakoschiko/dicetest/actions/workflows/main.yml/badge.svg)](https://github.com/jakoschiko/dicetest/actions/workflows/main.yml)
 [![License](https://img.shields.io/badge/license-MIT%2FApache-blue.svg)](https://github.com/jakoschiko/dicetest#License)
 
 # dicetest
