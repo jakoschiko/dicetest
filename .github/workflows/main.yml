@@ -20,12 +20,19 @@ jobs:
     - uses: actions/cache@v4
       with:
         path: |
+          # See https://doc.rust-lang.org/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci
+          ~/.cargo/.crates.toml
+          ~/.cargo/.crates2.json
           ~/.cargo/bin/
           ~/.cargo/registry/index/
           ~/.cargo/registry/cache/
           ~/.cargo/git/db/
+          # See https://doc.rust-lang.org/cargo/guide/build-cache.html
           target/
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        key: ${{ runner.os }}|${{ github.job }}|${{ github.run_attempt }}
+        restore-keys: |
+          ${{ runner.os }}|${{ github.job }}
+          ${{ runner.os }}
 
     - name: Install Rust
       run: |
@@ -33,6 +40,7 @@ jobs:
         rustup default 1.79
         rustup component add rustfmt
         rustup component add clippy
+        cargo install --locked cargo-semver-checks
 
     - name: Check fmt
       run: cargo fmt --all --check
@@ -55,6 +63,4 @@ jobs:
         RUST_BACKTRACE: 1
 
     - name: SemVer check
-      run: |
-        cargo install --locked cargo-semver-checks
-        cargo semver-checks check-release --all-features
+      run: cargo semver-checks check-release --all-features
