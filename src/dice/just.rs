@@ -24,6 +24,8 @@ pub fn just_once<T>(value: T) -> impl DieOnce<T> {
 
 /// Generates a clone of the given value.
 ///
+/// # Examples
+///
 /// ```
 /// use dicetest::prelude::*;
 /// use dicetest::{Prng, Limit};

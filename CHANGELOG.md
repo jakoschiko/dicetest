@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Add function `dicetest::Dicetest::regressions_enabled` for enabling/disabling regression tests.
   - Add environment variable `DICETEST_REGRESSIONS_ENABLED` for enabling/disabling regression tests.
   - Add struct `dicetest::runner::repeatedly::Regression` and field `dicetest::runner::repeatedly::Config::regressions`.
+- Add trait `dicetest::Dice` that provides a `dicetest::Die` for a type.
+- Add derive macro for `dicetest::Dice`.
+- Add feature flag `derive` for enabling the derive macro.
+- Add function `dicetest::die` that provides a `dicetest::Die` based on `dicetest::Dice`.
+- Add `dicetest::Dice` to `dicetest::prelude`.
+- Add `dicetest::die` to `dicetest::prelude`.
 
 ### Fixed
 - Fix unintentional panic in `dicetest::dice::weighted_*` if sum of weights is zero.

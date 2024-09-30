@@ -34,6 +34,10 @@
 //! There are several feature flags for disabling runtime overhead or enabling additional
 //! features at compile time.
 //!
+//! #### `derive` (disabled by default)
+//!
+//! If enabled, a derive macro for [`Dice`] is available.
+//!
 //! #### `hints` (enabled by default)
 //!
 //! Enables or disables the hints feature at compile time. If disabled,
@@ -112,6 +116,14 @@ pub use die_once::DieOnce;
 
 mod die;
 pub use die::Die;
+
+mod dice_trait;
+pub use dice_trait::{Dice, die};
+
+#[cfg(feature = "derive")]
+mod dice_derive;
+#[cfg(feature = "derive")]
+pub use dice_derive::Dice;
 
 pub mod adapters;
 

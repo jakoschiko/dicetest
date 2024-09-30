@@ -5,5 +5,5 @@ edition = "2021"
 publish = false
 
 [dependencies]
-dicetest = { path = "..", features = ["hints", "stats", "rand"] }
+dicetest = { path = "..", features = ["derive", "hints", "rand", "stats"] }
 rand = "0.8"

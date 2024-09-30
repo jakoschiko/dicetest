@@ -105,13 +105,13 @@ These features are **available**:
 - Generators for many libstd types (`u8`, `String`, `Vec`, etc.).
 - Generators for functions (`FnMut`, `FnOnce`, `Fn`).
 - Generator combinators (`map`, `flat_map`, `zip`, etc.).
+- Derivable trait `Dice` for implementing generators.
 - Integration of `rand::distributions::Distribution`.
 - Configurable test runner.
 - Utilities for debugging tests (`hints` and `stats`).
 
 These features are **missing**:
 
-- Derivable trait for arbitrary types.
 - Shrinking of counterexamples.
 - Custom pseudorandom number generators.
 

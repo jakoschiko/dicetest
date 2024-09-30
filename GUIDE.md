@@ -2,7 +2,7 @@
 
 This document will guide you through the most important concepts and features of dicetest.
 
-## Pseudorandomness
+## Seed and Prng
 
 The type `Seed` allows to determine the [pseudorandomness]. You can either use a fixed
 `Seed` or a random `Seed`:
@@ -43,7 +43,7 @@ print_random_values(Prng::from_seed(Seed::random()));
 [pseudorandomness]: https://en.wikipedia.org/wiki/Pseudorandomness
 [pseudorandom number generator]: https://en.wikipedia.org/wiki/Pseudorandom_number_generator
 
-## Dice
+## DieOnce and Die
 
 Although `Prng` can only generate pseudorandom `u64`s, the `u64`s can be used for constructing
 more complex values. The traits `DieOnce` and `Die` represents `Prng`-based generators for
@@ -80,6 +80,7 @@ let three_xx_or_yy_die = dice::array::<_, _, 3>(xx_or_yy_die);
 ```
 
 Generators can be easily implemented and composed:
+
 ```rust
 use dicetest::prelude::*;
 
@@ -154,6 +155,50 @@ println!("{:?}", vec);
 
 [`FnOnce`]: https://doc.rust-lang.org/std/ops/trait.FnOnce.html
 [`Fn`]: https://doc.rust-lang.org/std/ops/trait.Fn.html
+
+## Dice
+
+The trait `Dice` provides a `Die` for a type with reasonable distribution.
+You can summon a `Die` based on `Dice` using the function `die()`.
+
+```rust
+use dicetest::prelude::*;
+use dicetest::{Limit, Prng};
+
+let mut prng = Prng::from_seed(0x5EED.into());
+let limit = Limit(5);
+let mut fate = Fate::new(&mut prng, limit);
+
+// `die()` returns a `Die` for `u8` based on `Dice`.
+let byte: u8 = fate.roll(die());
+println!("{byte:?}");
+// Output: 161
+```
+
+You can implement `Dice` manually:
+
+```rust
+use dicetest::prelude::*;
+
+struct Foo(u8);
+
+impl Dice for Foo {
+    const USES_LIMIT: bool = false;
+
+    fn die() -> impl dicetest::Die<Self> {
+        dice::u8(..).map(Foo)
+    }
+}
+```
+
+Or you can derive `Dice`:
+
+```rust
+use dicetest::prelude::*;
+
+#[derive(Dice)]
+struct Foo(u8);
+```
 
 ## Tests
 
@@ -291,23 +336,30 @@ You can use environment variables to configure your tests without changing the s
 See the documentation of [`Dicetest`] for a full list of supported environment variables.
 Here are some examples:
 
-- You want to debug the counterexample of `mytest` with its run code (copied from the test result):
+You want to debug the counterexample of `mytest` with its run code (copied from the test result):
+
 ```text
 DICETEST_DEBUG=ABIDje/+CYVkmmCVTwKJ2go6VrzZWMjO2Bqc9m3b3h0DAAAAAAAAAA== cargo test mytest
 ```
-- You want to reproduce the result of `mytest` with its seed (copied from the test result):
+
+You want to reproduce the result of `mytest` with its seed (copied from the test result):
+
 ```text
 DICETEST_SEED=795359663177100823 cargo test mytest
-```
-- You want to see the stats of `mytest`:
+
+You want to see the stats of `mytest`:
+
 ```text
 DICETEST_STATS_ENABLED=true cargo test -- --show-output mytest
-```
-- You want to run `mytest` with more passes and bigger test data:
+
+You want to run `mytest` with more passes and bigger test data:
+
 ```text
 DICETEST_PASSES_MULTIPLIER=10 DICETEST_LIMIT_MULTIPLIER=2 cargo test mytest
 ```
-- You want to run `mytest` with a single test run and see the test result:
+
+You want to run `mytest` with a single test run and see the test result:
+
 ```text
 DICETEST_MODE=once cargo test -- --show-output mytest
 ```
