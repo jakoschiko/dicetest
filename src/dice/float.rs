@@ -91,7 +91,7 @@ macro_rules! fn_float {
         $float:ident,
         $int:ident,
         $float_util:ident,
-        $arb_float:ident,
+        $any_float:ident,
         $unit_float:ident,
         $open_unit_float:ident
     ) => {
@@ -209,7 +209,7 @@ macro_rules! fn_float {
 
         /// Generates an arbitrary float (including NaN). Some special floats have a higher
         /// probability of being generated.
-        pub fn $arb_float() -> impl Die<$float> {
+        pub fn $any_float() -> impl Die<$float> {
             dice::weighted_one_of_die().two((10, $float(..)), (1, dice::just($float::NAN)))
         }
 

@@ -21,6 +21,7 @@ mod section_example {
         use dicetest::prelude::*;
 
         #[test]
+        #[should_panic]
         fn result_of_bubble_sort_is_sorted() {
             Dicetest::repeatedly().run(|mut fate| {
                 let mut v = fate.roll(dice::vec(dice::u8(..), ..));
@@ -72,7 +73,7 @@ mod section_pseudorandomness {
 }
 
 #[cfg(test)]
-mod section_dice {
+mod section_die_once_and_die {
     #[test]
     fn die_once() {
         use dicetest::prelude::*;
@@ -167,6 +168,47 @@ mod section_dice {
 }
 
 #[cfg(test)]
+mod section_dice {
+    #[test]
+    fn use_dice() {
+        use dicetest::prelude::*;
+        use dicetest::{Limit, Prng};
+
+        let mut prng = Prng::from_seed(0x5EED.into());
+        let limit = Limit(5);
+        let mut fate = Fate::new(&mut prng, limit);
+
+        // `die()` returns a `Die` for `u8` based on `Dice`.
+        let byte: u8 = fate.roll(die());
+        println!("{byte:?}");
+        // Output: 161
+    }
+
+    #[test]
+    fn impl_dice() {
+        use dicetest::prelude::*;
+
+        struct Foo(u8);
+
+        impl Dice for Foo {
+            const USES_LIMIT: bool = false;
+
+            fn die() -> impl dicetest::Die<Self> {
+                dice::u8(..).map(Foo)
+            }
+        }
+    }
+
+    #[test]
+    fn derive_dice() {
+        use dicetest::prelude::*;
+
+        #[derive(Dice)]
+        struct Foo(u8);
+    }
+}
+
+#[cfg(test)]
 mod section_tests {
     use dicetest::prelude::*;
 
@@ -192,6 +234,7 @@ mod section_hints {
     use dicetest::prelude::*;
 
     #[test]
+    #[should_panic]
     fn test_foo() {
         Dicetest::repeatedly().run(|mut fate| {
             let x = fate.roll(dice::u8(1..=5));
