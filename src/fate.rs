@@ -57,7 +57,7 @@ impl<'a> Fate<'a> {
     /// take_fate(fate.copy());
     /// take_fate(fate);
     /// ```
-    pub fn copy(&mut self) -> Fate {
+    pub fn copy<'b>(&'b mut self) -> Fate<'b> {
         Fate {
             prng: self.prng,
             limit: self.limit,
@@ -65,7 +65,7 @@ impl<'a> Fate<'a> {
     }
 
     /// Creates a copy with the given limit.
-    pub fn with_limit(&mut self, limit: Limit) -> Fate {
+    pub fn with_limit<'b>(&'b mut self, limit: Limit) -> Fate<'b> {
         let mut fate = self.copy();
         fate.limit = limit;
         fate

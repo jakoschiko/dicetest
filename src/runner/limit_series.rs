@@ -16,11 +16,7 @@ impl LimitSeries {
         let start = start.0;
         let end = end.0;
 
-        let diff = if start <= end {
-            end - start
-        } else {
-            start - end
-        };
+        let diff = u64::abs_diff(start, end);
 
         LimitSeries {
             start,

@@ -107,7 +107,7 @@ pub fn decode(base64: &str) -> Result<Vec<u8>, String> {
         ));
     }
 
-    let has_invalid_length = (prefix.len() + suffix.len()) % 4 != 0;
+    let has_invalid_length = !(prefix.len() + suffix.len()).is_multiple_of(4);
 
     if has_invalid_length {
         return Err("Base64 string has invalid length".to_string());

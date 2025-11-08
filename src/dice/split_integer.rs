@@ -226,7 +226,7 @@ fn split_integer_recur<I: Integer>(parts: &mut [I], sum: I, fate: &mut Fate) {
                 parts[0] = left_sum;
                 parts[1] = right_sum;
             } else {
-                let middle_index = if parts.len() % 2 == 0 || fate.roll(dice::bool()) {
+                let middle_index = if parts.len().is_multiple_of(2) || fate.roll(dice::bool()) {
                     parts.len() / 2
                 } else {
                     parts.len() / 2 + 1
