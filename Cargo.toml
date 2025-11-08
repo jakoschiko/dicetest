@@ -5,22 +5,11 @@ authors = ["Jakob Schikowski"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
 description = "Framework for writing tests with randomly generated test data"
-keywords = ["testing", "fuzz", "property", "quickcheck"]
+keywords = ["fuzz", "property", "quickcheck", "testing"]
 categories = ["development-tools::testing"]
 repository = "https://github.com/jakoschiko/dicetest"
 edition = "2021"
 rust-version = "1.87.0"
-
-[dependencies]
-rand_core = { version = "0.6", optional = true }
-rand = { version = "0.8", optional = true }
-
-[features]
-default = ["hints", "stats"]
-hints = []
-stats = []
-rand_core = ["dep:rand_core"]
-rand = ["dep:rand", "rand_core"]
 
 [package.metadata.docs.rs]
 all-features = true
@@ -28,5 +17,16 @@ rustdoc-args = ["--cfg", "docsrs"]
 
 [workspace]
 members = [
-    "examples_readme",
+  "examples_readme",
 ]
+
+[dependencies]
+rand = { version = "0.8", optional = true }
+rand_core = { version = "0.6", optional = true }
+
+[features]
+default = ["hints", "stats"]
+hints = []
+rand = ["dep:rand", "rand_core"]
+rand_core = ["dep:rand_core"]
+stats = []
