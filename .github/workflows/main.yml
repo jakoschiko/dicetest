@@ -34,13 +34,13 @@ jobs:
           ${{ runner.os }}|${{ github.job }}
           ${{ runner.os }}
 
-    - name: Install Rust
+    - name: Install Rust with MSRV
+      env:
+        RUST_VERSION: 1.87.0
       run: |
-        rustup install 1.87 --profile minimal --no-self-update
-        rustup default 1.87
-        rustup component add rustfmt
-        rustup component add clippy
-        cargo install --locked cargo-semver-checks
+        rustup install "$RUST_VERSION" --profile minimal --no-self-update
+        rustup component add --toolchain "$RUST_VERSION" clippy rustfmt
+        rustup default "$RUST_VERSION"
 
     - name: Check fmt
       run: cargo fmt --all --check
@@ -63,4 +63,10 @@ jobs:
         RUST_BACKTRACE: 1
 
     - name: SemVer check
-      run: cargo semver-checks check-release --all-features
+      env:
+        RUST_VERSION: 1.91.0
+      run: |
+        rustup install "$RUST_VERSION" --profile minimal --no-self-update
+        rustup default "$RUST_VERSION"
+        cargo install --locked cargo-semver-checks
+        cargo semver-checks check-release --all-features
