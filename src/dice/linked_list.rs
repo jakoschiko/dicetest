@@ -60,10 +60,10 @@ pub fn linked_list<T>(
 }
 
 /// Similar to [`dice::linked_list`] but each element is generated using only a random part of
-/// [`Limit`.]
+/// [`Limit`].
 ///
 /// If you want to generate a [`LinkedList`] that contains other collections, then you should
-/// consider using this generator for the outer [`LinkedList`.] That way the overall length is
+/// consider using this generator for the outer [`LinkedList`]. That way the overall length is
 /// bounded by [`Limit`] (and not the square of [`Limit`]).
 ///
 /// [`Limit`]: crate::Limit

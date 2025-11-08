@@ -61,7 +61,7 @@ pub fn vec<T>(elem_die: impl Die<T>, length_range: impl LengthRange) -> impl Die
 ///
 /// If you want to generate a [`Vec`] that contains other collections, then you should
 /// consider using this generator for the outer [`Vec`]. That way the overall length is
-/// bounded by [`Limit]` (and not the square of [`Limit`)].
+/// bounded by [`Limit]` (and not the square of [`Limit`]).
 ///
 /// [`Limit`]: crate::Limit
 /// [`dice::vec`]: dice::vec()
