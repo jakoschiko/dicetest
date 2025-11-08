@@ -4,7 +4,7 @@ use std::iter::FromIterator;
 use crate::frontend::RunCode;
 use crate::hints::Hints;
 use crate::runner::repeatedly::Regression;
-use crate::runner::{self, repeatedly::Counterexample, Error};
+use crate::runner::{self, Error, repeatedly::Counterexample};
 use crate::stats::Stats;
 use crate::{Limit, Seed};
 
@@ -76,7 +76,7 @@ pub fn display_run_repeatedly_report<'a>(
             write_stats_section(f, stats, formatting)?;
         };
 
-        if let Some(ref counterexample) = counterexample {
+        if let Some(counterexample) = counterexample {
             let hints_enabled = cfg!(feature = "hints") && config.hints_enabled;
 
             writeln!(f)?;
@@ -376,7 +376,7 @@ mod tests {
     use crate::frontend::RunCode;
     use crate::hints::{Hint, Hints};
     use crate::runner::repeatedly::Regression;
-    use crate::runner::{self, repeatedly::Counterexample, Error};
+    use crate::runner::{self, Error, repeatedly::Counterexample};
     use crate::stats::{Counter, Stat, Stats};
     use crate::{Limit, Prng};
 

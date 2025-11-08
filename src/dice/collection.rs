@@ -78,8 +78,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::prelude::*;
     use crate::Limit;
+    use crate::prelude::*;
 
     #[test]
     fn outer_collection_overall_length_is_bounded_by_limit() {

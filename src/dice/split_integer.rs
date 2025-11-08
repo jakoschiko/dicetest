@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::{prelude::*, Limit};
+use crate::{Limit, prelude::*};
 
 macro_rules! fn_split_integer {
     (
@@ -306,7 +306,7 @@ impl Integer for Limit {
 
 #[cfg(test)]
 mod tests {
-    use crate::{prelude::*, Limit};
+    use crate::{Limit, prelude::*};
 
     use super::Integer;
 
@@ -494,11 +494,7 @@ mod tests {
                         .enumerate()
                         .filter_map(
                             |(index, part)| {
-                                if Some(part) == max {
-                                    Some(index)
-                                } else {
-                                    None
-                                }
+                                if Some(part) == max { Some(index) } else { None }
                             },
                         )
                         .collect::<Vec<_>>()

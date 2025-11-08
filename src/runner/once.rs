@@ -3,7 +3,7 @@
 //! This runner function can be used for debugging a counterexample
 //! that was found with [`runner::repeatedly::run`].
 
-use std::panic::{catch_unwind, UnwindSafe};
+use std::panic::{UnwindSafe, catch_unwind};
 
 use crate::hints::Hints;
 use crate::runner;
@@ -69,7 +69,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::runner::once::{run, Config};
+    use crate::runner::once::{Config, run};
     use crate::{Prng, Seed};
 
     fn default_prng() -> Prng {

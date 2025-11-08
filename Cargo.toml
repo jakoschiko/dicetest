@@ -8,7 +8,7 @@ description = "Framework for writing tests with randomly generated test data"
 keywords = ["fuzz", "property", "quickcheck", "testing"]
 categories = ["development-tools::testing"]
 repository = "https://github.com/jakoschiko/dicetest"
-edition = "2021"
+edition = "2024"
 rust-version = "1.87.0"
 
 [package.metadata.docs.rs]

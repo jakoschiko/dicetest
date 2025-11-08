@@ -4,7 +4,7 @@
 //! distribution of generated test data or the probability of branches.
 //! Stats must enabled with the feature `stats`.
 
-use std::collections::{btree_map::Entry, BTreeMap};
+use std::collections::{BTreeMap, btree_map::Entry};
 
 #[cfg(feature = "stats")]
 use crate::util::events;

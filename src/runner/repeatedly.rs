@@ -4,13 +4,13 @@
 //! test assertions by running the test with different seeds. If the test panics, a counterexample
 //! has been found.
 
-use std::panic::{catch_unwind, RefUnwindSafe, UnwindSafe};
+use std::panic::{RefUnwindSafe, UnwindSafe, catch_unwind};
 
 use crate::hints::Hints;
 use crate::runner::Error;
 use crate::runner::{self, LimitSeries};
 use crate::stats::Stats;
-use crate::{hints, Fate, Limit, Prng};
+use crate::{Fate, Limit, Prng, hints};
 
 /// An additional regression test that will be run before the random test runs.
 #[derive(Debug, Clone)]
@@ -216,8 +216,8 @@ mod tests {
     use core::panic;
     use std::sync::atomic::{AtomicU64, Ordering};
 
-    use crate::runner::repeatedly::{run, Config};
-    use crate::{hints, Prng, Seed};
+    use crate::runner::repeatedly::{Config, run};
+    use crate::{Prng, Seed, hints};
 
     use super::Regression;
 

@@ -3,8 +3,8 @@
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
-use crate::prelude::*;
 use crate::Seed;
+use crate::prelude::*;
 
 struct Fun<F>(F);
 

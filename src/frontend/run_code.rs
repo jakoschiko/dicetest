@@ -46,7 +46,7 @@ impl RunCode {
 mod tests {
     use crate::frontend::RunCode;
     use crate::prelude::*;
-    use crate::{asserts, Limit};
+    use crate::{Limit, asserts};
 
     #[test]
     fn display_is_right_inverse_for_parse() {

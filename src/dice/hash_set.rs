@@ -1,9 +1,9 @@
 use std::collections::HashSet;
 use std::hash::{BuildHasher, Hash};
 
+use crate::Prng;
 use crate::dice::{CollectionBuilder, LengthRange};
 use crate::prelude::*;
-use crate::Prng;
 
 /// [`HashSet`] builder for [`dice::collection`].
 ///

@@ -3,7 +3,7 @@ use std::panic::{self, RefUnwindSafe, UnwindSafe};
 use crate::frontend::env::{self, EnvValue};
 use crate::frontend::formatter::*;
 use crate::frontend::{Mode, RunCode};
-use crate::{runner, Fate, Limit, Prng, Seed};
+use crate::{Fate, Limit, Prng, Seed, runner};
 
 #[derive(Debug, Clone)]
 struct Params {
