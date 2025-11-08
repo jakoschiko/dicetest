@@ -9,6 +9,7 @@ keywords = ["testing", "fuzz", "property", "quickcheck"]
 categories = ["development-tools::testing"]
 repository = "https://github.com/jakoschiko/dicetest"
 edition = "2021"
+rust-version = "1.87.0"
 
 [dependencies]
 rand_core = { version = "0.6", optional = true }
