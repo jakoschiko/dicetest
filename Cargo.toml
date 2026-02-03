@@ -1,7 +1,6 @@
 [package]
 name = "dicetest"
 version = "0.4.0"
-authors = ["Jakob Schikowski"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
 description = "Framework for writing tests with randomly generated test data"
