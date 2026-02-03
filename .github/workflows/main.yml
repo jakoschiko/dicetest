@@ -46,16 +46,16 @@ jobs:
       run: cargo fmt --all --check
 
     - name: Check clippy
-      run: cargo clippy --workspace --all-targets
+      run: cargo clippy --all-targets
 
     - name: Build
       run: |
-        cargo build --workspace --all-targets --all-features
-        cargo build --workspace --all-targets --no-default-features
-        cargo build --workspace --all-targets --no-default-features --features hints
-        cargo build --workspace --all-targets --no-default-features --features stats
-        cargo build --workspace --all-targets --no-default-features --features rand
-        cargo build --workspace --all-targets
+        cargo build --all-targets --all-features
+        cargo build --all-targets --no-default-features
+        cargo build --all-targets --no-default-features --features hints
+        cargo build --all-targets --no-default-features --features stats
+        cargo build --all-targets --no-default-features --features rand
+        cargo build --all-targets
 
     - name: Run tests
       run: cargo test -- --format=terse
