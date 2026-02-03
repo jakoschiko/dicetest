@@ -1,9 +1,8 @@
 //! Framework for writing tests with randomly generated test data.
 //!
-//! See [the readme] and the [the guide] for more information.
+//! For more information see the [guide].
 //!
-//! [the readme]: https://github.com/jakoschiko/dicetest/blob/main/README.md
-//! [the guide]: https://github.com/jakoschiko/dicetest/blob/main/GUIDE.md
+//! [guide]: https://jakoschiko.github.io/dicetest
 //!
 //! # Example
 //!
@@ -24,10 +23,6 @@
 //!     })
 //! }
 //! ```
-//!
-//! # Environment variables
-//!
-//! See the documentation of [`Dicetest`] for a full list of supported environment variables.
 //!
 //! # Feature flags
 //!
@@ -125,8 +120,3 @@ mod asserts;
 #[doc = include_str!("../README.md")]
 #[cfg(doctest)]
 pub struct ReadmeDoctests;
-
-// Test examples from the GUIDE.
-#[doc = include_str!("../GUIDE.md")]
-#[cfg(doctest)]
-pub struct GuideDoctests;

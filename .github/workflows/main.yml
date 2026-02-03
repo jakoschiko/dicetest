@@ -2,71 +2,62 @@ name: main
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-
-    - uses: actions/cache@v4
-      with:
-        path: |
-          # See https://doc.rust-lang.org/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci
-          ~/.cargo/.crates.toml
-          ~/.cargo/.crates2.json
-          ~/.cargo/bin/
-          ~/.cargo/registry/index/
-          ~/.cargo/registry/cache/
-          ~/.cargo/git/db/
-          # See https://doc.rust-lang.org/cargo/guide/build-cache.html
-          target/
-        key: ${{ runner.os }}|${{ github.job }}|${{ github.run_attempt }}
-        restore-keys: |
-          ${{ runner.os }}|${{ github.job }}
-          ${{ runner.os }}
-
-    - name: Install Rust with MSRV
-      env:
-        RUST_VERSION: 1.87.0
-      run: |
-        rustup install "$RUST_VERSION" --profile minimal --no-self-update
-        rustup component add --toolchain "$RUST_VERSION" clippy rustfmt
-        rustup default "$RUST_VERSION"
-
-    - name: Check fmt
-      run: cargo fmt --all --check
-
-    - name: Check clippy
-      run: cargo clippy --all-targets
-
-    - name: Build
-      run: |
-        cargo build --all-targets --all-features
-        cargo build --all-targets --no-default-features
-        cargo build --all-targets --no-default-features --features hints
-        cargo build --all-targets --no-default-features --features stats
-        cargo build --all-targets --no-default-features --features rand
-        cargo build --all-targets
-
-    - name: Run tests
-      run: cargo test -- --format=terse
-      env:
-        RUST_BACKTRACE: 1
-
-    - name: SemVer check
-      env:
-        RUST_VERSION: 1.91.0
-      run: |
-        rustup install "$RUST_VERSION" --profile minimal --no-self-update
-        rustup default "$RUST_VERSION"
-        cargo install --locked cargo-semver-checks
-        cargo semver-checks check-release --all-features
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: |
+            # See https://doc.rust-lang.org/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci
+            ~/.cargo/.crates.toml
+            ~/.cargo/.crates2.json
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            # See https://doc.rust-lang.org/cargo/guide/build-cache.html
+            target/
+          key: ${{ runner.os }}|${{ github.job }}|${{ github.run_attempt }}
+          restore-keys: |
+            ${{ runner.os }}|${{ github.job }}
+            ${{ runner.os }}
+      - name: Install Rust with MSRV
+        env:
+          RUST_VERSION: 1.87.0
+        run: |
+          rustup install "$RUST_VERSION" --profile minimal --no-self-update
+          rustup component add --toolchain "$RUST_VERSION" clippy rustfmt
+          rustup default "$RUST_VERSION"
+      - name: Check fmt
+        run: cargo fmt --all --check
+      - name: Check clippy
+        run: cargo clippy --all-targets
+      - name: Build
+        run: |
+          cargo build --all-targets --all-features
+          cargo build --all-targets --no-default-features
+          cargo build --all-targets --no-default-features --features hints
+          cargo build --all-targets --no-default-features --features stats
+          cargo build --all-targets --no-default-features --features rand
+          cargo build --all-targets
+      - name: Run tests
+        run: cargo test -- --format=terse
+        env:
+          RUST_BACKTRACE: 1
+      - name: SemVer check
+        env:
+          RUST_VERSION: 1.91.0
+        run: |
+          rustup install "$RUST_VERSION" --profile minimal --no-self-update
+          rustup default "$RUST_VERSION"
+          cargo install --locked cargo-semver-checks
+          cargo semver-checks check-release --all-features
