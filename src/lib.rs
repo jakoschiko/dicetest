@@ -11,15 +11,15 @@
 //! use dicetest::prelude::*;
 //!
 //! #[test]
-//! fn result_of_bubble_sort_is_sorted() {
+//! fn result_of_sort_is_sorted() {
 //!     Dicetest::repeatedly().run(|mut fate| {
-//!         let mut v = fate.roll(dice::vec(dice::u8(..), ..));
-//!         hint!("unsorted: {:?}", v);
+//!         let mut vec: Vec<u8> = fate.roll(die());
+//!         hint!("unsorted: {:?}", vec);
 //!
-//!         v.sort();
-//!         hint!("  sorted: {:?}", v);
+//!         vec.sort();
+//!         hint!("  sorted: {:?}", vec);
 //!
-//!         let is_sorted = v.windows(2).all(|w| w[0] <= w[1]);
+//!         let is_sorted = vec.windows(2).all(|w| w[0] <= w[1]);
 //!         assert!(is_sorted);
 //!     })
 //! }
