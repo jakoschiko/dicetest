@@ -58,29 +58,6 @@
 //! If enabled, [`Fate::roll_distribution`] and [`dice::from_distribution`] are available.
 //! This allows to generate values and create [`Die`]s from implementations
 //! of [`rand::distributions::Distribution`].
-//!
-//! ```
-//! # #[cfg(feature = "rand")] {
-//! use dicetest::prelude::*;
-//! use dicetest::{Limit, Prng};
-//!
-//! let mut prng = Prng::from_seed(0x5EED.into());
-//! let limit = Limit(5);
-//! let mut fate = Fate::new(&mut prng, limit);
-//!
-//! // Generate a value from a `rand::distributions::Distribution`
-//! let byte: u8 = fate.roll_distribution(rand::distributions::Standard);
-//! println!("{:?}", byte);
-//! // Output: 28
-//!
-//! // Create a `Die` from a `rand::distributions::Distribution`
-//! let byte_die = dice::from_distribution(rand::distributions::Standard);
-//! let bytes_die = dice::vec(byte_die, 1..);
-//! let bytes: Vec<u8> = fate.roll(bytes_die);
-//! println!("{:?}", bytes);
-//! // Output: [236, 205, 151, 229]
-//! # }
-//! ```
 
 // This allows us to add annotations to feature-gated items.
 #![cfg_attr(docsrs, feature(doc_cfg))]
