@@ -1,9 +1,0 @@
-[package]
-name = "examples_readme"
-version = "0.0.0"
-edition = "2021"
-publish = false
-
-[dependencies]
-dicetest = { path = "..", features = ["derive", "hints", "rand", "stats"] }
-rand = "0.8"
