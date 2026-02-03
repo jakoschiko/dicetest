@@ -55,9 +55,8 @@
 //!
 //! #### `rand` (disabled by default)
 //!
-//! If enabled, [`Fate::roll_distribution`] and [`dice::from_distribution`] are available.
-//! This allows to generate values and create [`Die`]s from implementations
-//! of [`rand::distributions::Distribution`].
+//! If enabled, [`dice::from_distribution`] is available. It allows to create a [`Die`]
+//! based on a [`rand::distributions::Distribution`].
 
 // This allows us to add annotations to feature-gated items.
 #![cfg_attr(docsrs, feature(doc_cfg))]

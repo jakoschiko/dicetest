@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - Remove feature flag `quickcheck_full` and the integration of `quickcheck::Gen` and `quickcheck::Arbitrary` due to missing functionality in quickcheck 1.0.
+- Remove function `dicetest::Fate::roll_distribution`. Use `dicetest::dice::from_distribution` instead.
 
 ## [0.3.1] - 2022-02-27
 
