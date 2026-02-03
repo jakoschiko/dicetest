@@ -1,27 +1,14 @@
-default: fmt build test clippy doc
-
-fmt:
-	cargo fmt
-	cargo fmt --package examples_readme
-
-build:
-	cargo build --all-targets
-	cargo build --all-targets --no-default-features
-	cargo build --all-targets --no-default-features --features hints
-	cargo build --all-targets --no-default-features --features stats
-	cargo build --all-targets --no-default-features --features rand
-	cargo build --all-targets --all-features
-	cargo build --all-targets --package examples_readme
-
-test:
-	cargo test -- --format=terse
-
-clippy:
-	cargo clippy
-	cargo clippy --package examples_readme
+check:
+	cargo fmt --check --quiet
+	cargo clippy --quiet
+	cargo check --quiet
+	cargo build --quiet --all-targets
+	cargo build --quiet --all-targets --no-default-features
+	cargo build --quiet --all-targets --no-default-features --features hints
+	cargo build --quiet --all-targets --no-default-features --features stats
+	cargo build --quiet --all-targets --no-default-features --features rand
+	cargo build --quiet --all-targets --all-features
+	cargo test --quiet -- --format=terse
 
 doc:
-	RUSTFLAGS="--cfg docsrs" RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features
-
-doc-open:
 	RUSTFLAGS="--cfg docsrs" RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features --open
