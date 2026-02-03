@@ -1,0 +1,6 @@
+[book]
+title = "dicetest Guide"
+language = "en"
+
+[build]
+create-missing = false

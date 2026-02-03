@@ -7,6 +7,39 @@
 
 Framework for writing tests with randomly generated test data.
 
+For more information see the [guide].
+
+[guide]: https://jakoschiko.github.io/dicetest
+
+## Features
+
+These features are **available**:
+
+- Generators for many libstd types (`u8`, `String`, `Vec`, etc.).
+- Generators for functions (`FnMut`, `FnOnce`, `Fn`).
+- Generator combinators (`map`, `flat_map`, `zip`, etc.).
+- Derivable trait `Dice` for implementing generators.
+- Integration of `rand::distributions::Distribution`.
+- Configurable test runner.
+- Utilities for debugging tests (`hints` and `stats`).
+
+These features are **missing**:
+
+- Shrinking of counterexamples.
+- Custom pseudorandom number generators.
+
+## Alternatives
+
+- Write down your test data and use a loop.
+- Use the crate [arbitrary] and [arbtest].
+- Use the crate [quickcheck].
+- Use the crate [proptest].
+
+[arbitrary]: https://crates.io/crates/arbitrary
+[arbtest]: https://crates.io/crates/arbtest
+[quickcheck]: https://crates.io/crates/quickcheck
+[proptest]: https://crates.io/crates/proptest
+
 ## Example
 
 Here's an example of an incorrect sort function tested with dicetest:
@@ -89,37 +122,6 @@ Dicetest::repeatedly()
         // ...
     })
 ```
-
-For a more comprehensive explanation of dicetest, see [the guide](GUIDE.md).
-
-## Features
-
-These features are **available**:
-
-- Generators for many libstd types (`u8`, `String`, `Vec`, etc.).
-- Generators for functions (`FnMut`, `FnOnce`, `Fn`).
-- Generator combinators (`map`, `flat_map`, `zip`, etc.).
-- Derivable trait `Dice` for implementing generators.
-- Integration of `rand::distributions::Distribution`.
-- Configurable test runner.
-- Utilities for debugging tests (`hints` and `stats`).
-
-These features are **missing**:
-
-- Shrinking of counterexamples.
-- Custom pseudorandom number generators.
-
-## Alternatives
-
-- Write down your test data and use a loop.
-- Use the crate [arbitrary] and [arbtest].
-- Use the crate [quickcheck].
-- Use the crate [proptest].
-
-[arbitrary]: https://crates.io/crates/arbitrary
-[arbtest]: https://crates.io/crates/arbtest
-[quickcheck]: https://crates.io/crates/quickcheck
-[proptest]: https://crates.io/crates/proptest
 
 ## License
 
