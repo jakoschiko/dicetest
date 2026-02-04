@@ -136,27 +136,6 @@ impl BuildHasher for Prng {
     }
 }
 
-#[cfg(feature = "rand_core")]
-#[cfg_attr(docsrs, doc(cfg(feature = "rand_core")))]
-impl rand_core::RngCore for Prng {
-    fn next_u32(&mut self) -> u32 {
-        self.next_number() as u32
-    }
-
-    fn next_u64(&mut self) -> u64 {
-        self.next_number()
-    }
-
-    fn fill_bytes(&mut self, dest: &mut [u8]) {
-        rand_core::impls::fill_bytes_via_next(self, dest)
-    }
-
-    fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), rand_core::Error> {
-        self.fill_bytes(dest);
-        Ok(())
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use crate::prelude::*;

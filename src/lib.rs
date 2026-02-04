@@ -42,16 +42,6 @@
 //!
 //! Enables or disables the stats feature at compile time. If disabled,
 //! all stats operations are no-ops.
-//!
-//! #### `rand_core` (disabled by default)
-//!
-//! If enabled, [`Prng`] and [`Fate`] implements the [`rand_core::RngCore`]
-//! trait.
-//!
-//! #### `rand` (disabled by default)
-//!
-//! If enabled, [`dice::from_distribution`] is available. It allows to create a [`Die`]
-//! based on a [`rand::distributions::Distribution`].
 
 // This allows us to add annotations to feature-gated items.
 #![cfg_attr(docsrs, feature(doc_cfg))]
