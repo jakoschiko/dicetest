@@ -28,18 +28,6 @@ These features are **missing**:
 - Shrinking of counterexamples.
 - Custom pseudorandom number generators.
 
-## Alternatives
-
-- Write down your test data and use a loop.
-- Use the crate [arbitrary] and [arbtest].
-- Use the crate [quickcheck].
-- Use the crate [proptest].
-
-[arbitrary]: https://crates.io/crates/arbitrary
-[arbtest]: https://crates.io/crates/arbtest
-[quickcheck]: https://crates.io/crates/quickcheck
-[proptest]: https://crates.io/crates/proptest
-
 ## Example
 
 Here's an example of an incorrect sort function tested with dicetest:
@@ -122,6 +110,18 @@ Dicetest::repeatedly()
         // ...
     })
 ```
+
+## Alternatives
+
+- Write down your test data and use a loop.
+- Use the crate [arbitrary] and [arbtest].
+- Use the crate [quickcheck].
+- Use the crate [proptest].
+
+[arbitrary]: https://crates.io/crates/arbitrary
+[arbtest]: https://crates.io/crates/arbtest
+[quickcheck]: https://crates.io/crates/quickcheck
+[proptest]: https://crates.io/crates/proptest
 
 ## License
 
