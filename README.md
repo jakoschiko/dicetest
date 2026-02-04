@@ -20,7 +20,7 @@ These features are **available**:
 - Generator combinators (`map`, `flat_map`, `zip`, etc.).
 - Derivable trait `Dice` for implementing generators.
 - Integration of `rand::distributions::Distribution`.
-- Configurable test runner.
+- Configurable test runner `Dicetest`.
 - Utilities for debugging tests (`hints` and `stats`).
 
 These features are **missing**:
