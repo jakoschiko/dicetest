@@ -30,13 +30,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Rename functions `dicetest::dice::terms_of_{u8,u16,u32,u64,u128,usize}` to `dicetest::dice::split_{u8,u16,u32,u64,u128,usize}_n`.
 - Change signature of `dicetest::dice::split_vec`. Instead of returning a pair with two parts, it now has a type parameter `const N: usize` and returns an array with `N` parts.
-- Rename feature flag `rand_full` to `rand`.
-- Upgrade dependency rand_core to 0.6 and rand to 0.8.
 - Set MSRV to 1.87.0
 
 ### Removed
 - Remove feature flag `quickcheck_full` and the integration of `quickcheck::Gen` and `quickcheck::Arbitrary` due to missing functionality in quickcheck 1.0.
-- Remove function `dicetest::Fate::roll_distribution`. Use `dicetest::dice::from_distribution` instead.
+- Remove feature flag `rand_core` and `rand_full` and the integration of `rand_core::RngCore` due to frequent breaking changes.
+- Remove function `dicetest::Fate::roll_distribution`.
+- Remove function `dicetest::dice::from_distribution`.
 
 ## [0.3.1] - 2022-02-27
 

@@ -86,8 +86,3 @@ pub use fn_builder::*;
 
 mod index_of;
 pub use index_of::*;
-
-#[cfg(feature = "rand")]
-mod rand;
-#[cfg(feature = "rand")]
-pub use self::rand::*;

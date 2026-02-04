@@ -19,7 +19,6 @@ These features are **available**:
 - Generators for functions (`FnMut`, `FnOnce`, `Fn`).
 - Generator combinators (`map`, `flat_map`, `zip`, etc.).
 - Derivable trait `Dice` for implementing generators.
-- Integration of `rand::distributions::Distribution`.
 - Configurable test runner `Dicetest`.
 - Utilities for debugging tests (`hints` and `stats`).
 

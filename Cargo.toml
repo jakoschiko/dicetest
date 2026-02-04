@@ -16,8 +16,6 @@ rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 dicetest-derive = { version = "0.1", optional = true }
-rand = { version = "0.8", optional = true }
-rand_core = { version = "0.6", optional = true }
 
 [dev-dependencies]
 dicetest = { path = ".", features = ["derive"] }
@@ -27,6 +25,4 @@ static_assertions = "1.1.0"
 default = ["hints", "stats"]
 derive = ["dep:dicetest-derive"]
 hints = []
-rand = ["dep:rand", "rand_core"]
-rand_core = ["dep:rand_core"]
 stats = []
