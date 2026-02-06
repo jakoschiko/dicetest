@@ -1,6 +1,6 @@
 [![crates.io](https://img.shields.io/crates/v/dicetest.svg)](https://crates.io/crates/dicetest)
 [![Documentation](https://docs.rs/dicetest/badge.svg)](https://docs.rs/dicetest)
-[![Build & Test](https://github.com/jakoschiko/dicetest/actions/workflows/main.yml/badge.svg)](https://github.com/jakoschiko/dicetest/actions/workflows/main.yml)
+[![Test](https://github.com/jakoschiko/dicetest/actions/workflows/test.yml/badge.svg)](https://github.com/jakoschiko/dicetest/actions/workflows/test.yml)
 [![Guide](https://github.com/jakoschiko/dicetest/actions/workflows/guide.yml/badge.svg)](https://github.com/jakoschiko/dicetest/actions/workflows/guide.yml)
 [![License](https://img.shields.io/badge/license-MIT%2FApache-blue.svg)](https://github.com/jakoschiko/dicetest?tab=readme-ov-file#license)
 
