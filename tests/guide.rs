@@ -193,7 +193,7 @@ mod section_hints {
     use dicetest::prelude::*;
 
     #[test]
-    #[should_panic]
+    #[should_panic] // Should fail in guide
     fn test_foo() {
         Dicetest::repeatedly().run(|mut fate| {
             let x = fate.roll(dice::u8(1..=5));

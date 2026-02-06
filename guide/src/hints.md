@@ -28,23 +28,23 @@ fn test_foo() {
 Running the test produces the following output:
 
 ```text
-The test failed after 0 passes.
+The test failed after 1 passes.
 
 # Config
-- seed: 10929669535587280453
+- seed: 5786451887221281880
 - start limit: 0
 - end limit: 100
 - passes: 200
 
 # Counterexample
-- run code: "JfXG0LRXjKUMu+YmdrF38/GstRdeLAeMRTKskCQcgNoAAAAAAAAAAA=="
+- run code: sjlW1FE9iGhSktxoMwGUKtFbihHPVjvQpzMObGPTqg571TEYz2rB2
 - limit: 0
 - hints:
-    - x = 5
-    - took branch if with y = 1
-- error: assertion failed: `(left == right)`
-  left: `3`,
- right: `1`
+        - x = 5
+        - took branch if with y = 1
+- error: assertion `left == right` failed
+  left: 3
+ right: 1
 ```
 
 [`hint!`]: https://docs.rs/dicetest/latest/dicetest/macro.hint.html

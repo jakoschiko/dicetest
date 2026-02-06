@@ -70,33 +70,33 @@ mod tests {
 Running `cargo test` produces the following output:
 
 ```text
-The test failed after 31 passes.
+The test failed after 9 passes.
 
 # Config
-- seed: 3713861809241954222
+- seed: 6411673118948708013
 - start limit: 0
 - end limit: 100
 - passes: 200
 
 # Counterexample
-- run code: "/yiA1sab3S4UnCf4ozyMpxMxzg1NtFybCuYLHy0/oscDAAAAAAAAAA=="
-- limit: 3
+- run code: 3lTBtDxQx6SneW3r4sNLUVoYAREJ8OuO9B0yp31nna0NdwFGFvA4no
+- limit: 4
 - hints:
-    - unsorted: [201, 209, 2]
-    -   sorted: [201, 2, 209]
+        - unsorted: [54, 164, 2]
+        -   sorted: [54, 2, 164]
 - error: assertion failed: is_sorted
 ```
 
 You can rerun the counterexample by setting an environment variable:
 
 ```text
-DICETEST_DEBUG=/yiA1sab3S4UnCf4ozyMpxMxzg1NtFybCuYLHy0/oscDAAAAAAAAAA== cargo test
+DICETEST_DEBUG=3lTBtDxQx6SneW3r4sNLUVoYAREJ8OuO9B0yp31nna0NdwFGFvA4no cargo test
 ```
 
 Or you can modify the test:
 
 ```rust,ignore
-Dicetest::debug("/yiA1sab3S4UnCf4ozyMpxMxzg1NtFybCuYLHy0/oscDAAAAAAAAAA==").run(|mut fate| {
+Dicetest::debug("3lTBtDxQx6SneW3r4sNLUVoYAREJ8OuO9B0yp31nna0NdwFGFvA4no").run(|mut fate| {
     // ...
 })
 ```
@@ -105,7 +105,7 @@ After fixing the bug you can keep the counterexample as a regression test:
 
 ```rust,ignore
 Dicetest::repeatedly()
-    .regression("/yiA1sab3S4UnCf4ozyMpxMxzg1NtFybCuYLHy0/oscDAAAAAAAAAA==")
+    .regression("3lTBtDxQx6SneW3r4sNLUVoYAREJ8OuO9B0yp31nna0NdwFGFvA4no")
     .run(|mut fate| {
         // ...
     })

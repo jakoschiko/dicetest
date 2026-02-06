@@ -38,13 +38,13 @@ that has panicked. You can rerun the counterexample by setting an
 [environment variable]:
 
 ```text
-DICETEST_DEBUG=/yiA1sab3S4UnCf4ozyMpxMxzg1NtFybCuYLHy0/oscDAAAAAAAAAA== cargo test
+DICETEST_DEBUG=3lTBtDxQx6SneW3r4sNLUVoYAREJ8OuO9B0yp31nna0NdwFGFvA4no cargo test
 ```
 
 Or you can modify the test:
 
 ```rust,ignore
-Dicetest::debug("/yiA1sab3S4UnCf4ozyMpxMxzg1NtFybCuYLHy0/oscDAAAAAAAAAA==").run(|mut fate| {
+Dicetest::debug("3lTBtDxQx6SneW3r4sNLUVoYAREJ8OuO9B0yp31nna0NdwFGFvA4no").run(|mut fate| {
     // ...
 })
 ```
@@ -53,7 +53,7 @@ After fixing the bug you can keep the counterexample as a regression test:
 
 ```rust,ignore
 Dicetest::repeatedly()
-    .regression("/yiA1sab3S4UnCf4ozyMpxMxzg1NtFybCuYLHy0/oscDAAAAAAAAAA==")
+    .regression("3lTBtDxQx6SneW3r4sNLUVoYAREJ8OuO9B0yp31nna0NdwFGFvA4no")
     .run(|mut fate| {
         // ...
     })

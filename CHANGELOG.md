@@ -66,6 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Rename `dicetest::dice::size` to `dicetest::dice::length` and `dicetest::dice::SizeRange` to `dicetest::dice::LengthRange`. This expresses better their intention and prevents confusion with `dicetest::dice::usize` and `dicetest::dice::isize`.
 - Reorganize functions `dicetest::dice::zip*`, `dicetest::dice::one_of*` and `dicetest::dice::weighted_one_of*`. For each group of functions with same functionality but different arity a struct is added that bundles these functions as methods. E.g. instead of `dice::one_of_2(1, 2)` you can write now `dice::one_of().two(1, 2)`.
+- Change run code encoding from base64 to base62 because it's easier to select a base62 string in many terminals.
 
 ## [0.2.1] - 2020-12-05
 

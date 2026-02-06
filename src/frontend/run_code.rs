@@ -1,4 +1,7 @@
-use crate::util::{base64, conversion};
+use std::fmt::Display;
+use std::str::FromStr;
+
+use crate::util::{base62, conversion};
 use crate::{Limit, Prng};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -7,9 +10,11 @@ pub struct RunCode {
     pub limit: Limit,
 }
 
-impl RunCode {
-    pub fn from_base64(string: &str) -> Result<Self, String> {
-        let bytes = base64::decode(string)?;
+impl FromStr for RunCode {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let bytes = base62::decode(s)?;
 
         if bytes.len() != 40 {
             return Err("Run code has invalid length".to_string());
@@ -31,25 +36,31 @@ impl RunCode {
 
         Ok(run_code)
     }
+}
 
-    pub fn to_base64(&self) -> String {
+impl Display for RunCode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut bytes = Vec::new();
 
         bytes.extend_from_slice(&self.prng.to_bytes());
         bytes.extend_from_slice(&conversion::u64_to_bytes(self.limit.0));
 
-        base64::encode(&bytes)
+        let string = base62::encode(&bytes);
+
+        write!(f, "{string}")
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use std::str::FromStr;
+
     use crate::frontend::RunCode;
     use crate::prelude::*;
     use crate::{Limit, asserts};
 
     #[test]
-    fn display_is_right_inverse_for_parse() {
+    fn to_string_is_right_inverse_for_from_str() {
         Dicetest::repeatedly().run(|fate| {
             let prng_die = dice::from_fn(|mut fate| fate.fork_prng());
             let limit_die = dice::u64(..).map(Limit);
@@ -60,8 +71,8 @@ mod tests {
             asserts::right_inverse(
                 fate,
                 run_code_die,
-                |base64: String| RunCode::from_base64(&base64).unwrap(),
-                |run_code| run_code.to_base64(),
+                |base32: String| RunCode::from_str(&base32).unwrap(),
+                |run_code| run_code.to_string(),
             );
         })
     }
