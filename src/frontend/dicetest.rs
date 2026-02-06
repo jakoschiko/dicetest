@@ -1,4 +1,5 @@
 use std::panic::{self, RefUnwindSafe, UnwindSafe};
+use std::str::FromStr;
 
 use crate::frontend::env::{self, EnvValue};
 use crate::frontend::formatter::*;
@@ -52,7 +53,7 @@ impl Default for Params {
 /// ```
 /// use dicetest::Dicetest;
 ///
-/// Dicetest::repeatedly().run(|_fate| {
+/// Dicetest::repeatedly().run(|fate| {
 ///     // Put your test here.
 /// });
 /// ```
@@ -61,7 +62,7 @@ impl Default for Params {
 /// ```
 /// use dicetest::Dicetest;
 ///
-/// Dicetest::repeatedly().passes(42).run(|_fate| {
+/// Dicetest::repeatedly().passes(42).run(|fate| {
 ///     // Put your test here.
 /// });
 /// ```
@@ -70,7 +71,7 @@ impl Default for Params {
 /// ```
 /// use dicetest::Dicetest;
 ///
-/// Dicetest::debug("ABIDje/+CYVkmmCVTwKJ2go6VrzZWMjO2Bqc9m3b3h0DAAAAAAAAAA==").run(|_fate| {
+/// Dicetest::debug("3lTBtDxQx6SneW3r4sNLUVoYAREJ8OuO9B0yp31nna0NdwFGFvA4no").run(|fate| {
 ///     // Put your test here.
 /// });
 /// ```
@@ -100,7 +101,7 @@ impl Dicetest {
     /// a valid run code.
     #[track_caller]
     pub fn debug(run_code: &str) -> Self {
-        let run_code = RunCode::from_base64(run_code).unwrap();
+        let run_code = RunCode::from_str(run_code).unwrap();
         Dicetest {
             mode: Mode::Debug(run_code),
             params: Params::default(),
@@ -159,7 +160,7 @@ impl Dicetest {
     /// Panics if the run code is invalid.
     #[track_caller]
     pub fn regression(mut self, run_code: &str) -> Self {
-        let run_code = RunCode::from_base64(run_code).unwrap();
+        let run_code = RunCode::from_str(run_code).unwrap();
         self.params
             .regressions
             .push(runner::repeatedly::Regression {
@@ -521,7 +522,7 @@ mod tests {
             prng: Prng::from_seed(42.into()),
             limit: Limit::default(),
         };
-        let dicetest = Dicetest::debug(&run_code.to_base64());
+        let dicetest = Dicetest::debug(&run_code.to_string());
         assert_eq!(Mode::Debug(run_code), dicetest.mode);
     }
 

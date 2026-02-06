@@ -6,4 +6,4 @@ pub mod events;
 
 pub mod conversion;
 
-pub mod base64;
+pub mod base62;

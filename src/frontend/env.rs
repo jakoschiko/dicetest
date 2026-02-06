@@ -33,7 +33,7 @@ pub fn read_mode() -> Result<EnvValue<Mode>, String> {
     match env::var(key) {
         Err(VarError::NotPresent) => read_non_debug_mode(),
         Err(err) => handle_var_error(key, err),
-        Ok(s) => match RunCode::from_base64(&s) {
+        Ok(s) => match RunCode::from_str(&s) {
             Ok(run_code) => Ok(EnvValue::Present(Mode::Debug(run_code))),
             Err(err) => Err(format!("Value for '{}' is not valid: {}", key, err)),
         },

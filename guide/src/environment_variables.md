@@ -7,7 +7,7 @@ Here are some examples:
 You want to debug the counterexample of `mytest` with its run code (copied from the test result):
 
 ```text
-DICETEST_DEBUG=ABIDje/+CYVkmmCVTwKJ2go6VrzZWMjO2Bqc9m3b3h0DAAAAAAAAAA== cargo test mytest
+DICETEST_DEBUG=3lTBtDxQx6SneW3r4sNLUVoYAREJ8OuO9B0yp31nna0NdwFGFvA4no cargo test mytest
 ```
 
 You want to reproduce the result of `mytest` with its seed (copied from the test result):

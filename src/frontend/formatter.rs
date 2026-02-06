@@ -267,12 +267,11 @@ fn write_section(
 }
 
 fn write_run_code_item(f: &mut fmt::Formatter, indent: usize, run_code: &RunCode) -> fmt::Result {
-    let base64 = run_code.to_base64();
     write_key_value_item(
         f,
         indent,
         "run code",
-        impl_display(|f| write!(f, "{:?}", base64)),
+        impl_display(|f| write!(f, "{run_code}")),
     )
 }
 
@@ -288,8 +287,7 @@ fn write_regressions_item(
                 prng: regression.prng.clone(),
                 limit: regression.limit,
             };
-            let base64 = run_code.to_base64();
-            write_item(f, indent + 1, impl_display(|f| write!(f, "{:?}", base64)))?;
+            write_item(f, indent + 1, impl_display(|f| write!(f, "{run_code}")))?;
         }
     }
     Ok(())
@@ -440,14 +438,13 @@ mod tests {
 The test passed.
 
 # Run
-- run code: {:?}
+- run code: {run_code}
 - limit: 71
 - hints:
 \t- Uh
 \t\t- Ah
 \t- Ih
-",
-            run_code.to_base64(),
+"
         );
 
         let actual = format!(
@@ -473,11 +470,10 @@ The test passed.
 The test passed.
 
 # Run
-- run code: {:?}
+- run code: {run_code}
 - seed: 42
 - limit: 71
-",
-            run_code.to_base64(),
+"
         );
 
         let actual = format!(
@@ -518,15 +514,14 @@ The test passed.
 The test passed.
 
 # Run
-- run code: {:?}
+- run code: {run_code}
 - limit: 71
 
 # Stats
 - foo:
 \t- 66.67% (20): b
 \t- 33.33% (10): a
-",
-            run_code.to_base64(),
+"
         );
 
         let actual = format!(
@@ -552,15 +547,14 @@ The test passed.
 The test failed.
 
 # Run
-- run code: {:?}
+- run code: {run_code}
 - limit: 71
 - hints:
 \t- Uh
 \t\t- Ah
 \t- Ih
 - error: Something bad happened!
-",
-            run_code.to_base64(),
+"
         );
 
         let actual = format!(
@@ -629,15 +623,13 @@ The test withstood 200 passes.
 
 # Config
 - regressions:
-\t- {:?}
-\t- {:?}
+\t- {run_code_1}
+\t- {run_code_2}
 - seed: 42
 - start limit: 0
 - end limit: 100
 - passes: 200
-",
-            run_code_1.to_base64(),
-            run_code_2.to_base64(),
+"
         );
 
         let actual = format!(
@@ -676,15 +668,14 @@ The test failed after 123 passes.
 - passes: 200
 
 # Counterexample
-- run code: {:?}
+- run code: {run_code}
 - limit: 71
 - hints:
 \t- Uh
 \t\t- Ah
 \t- Ih
 - error: Something bad happened!
-",
-            run_code.to_base64(),
+"
         );
 
         let actual = format!(

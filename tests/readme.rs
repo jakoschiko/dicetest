@@ -17,7 +17,7 @@ mod tests {
     use dicetest::prelude::*;
 
     #[test]
-    #[should_panic]
+    #[should_panic] // Should fail in readme
     fn result_of_bubble_sort_is_sorted() {
         Dicetest::repeatedly().run(|mut fate| {
             let mut vec: Vec<u8> = fate.roll(die());
