@@ -31,7 +31,7 @@ macro_rules! hint {
 #[macro_export]
 macro_rules! hint_debug {
     ($arg:tt) => {
-        $crate::hints::add(|| format!(concat!("{} = {:?}"), stringify!($arg), $arg));
+        $crate::hints::add(|| format!("{} = {:?}", stringify!($arg), $arg));
     };
 }
 

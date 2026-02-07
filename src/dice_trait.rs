@@ -424,18 +424,18 @@ mod tests {
 
     #[test]
     fn unit_uses_limit() {
-        assert!(!<Box<()> as Dice>::USES_LIMIT);
+        const { assert!(!<Box<()> as Dice>::USES_LIMIT) };
     }
 
     #[test]
     fn u8_uses_limit() {
-        assert!(!<Box<u8> as Dice>::USES_LIMIT);
+        const { assert!(!<Box<u8> as Dice>::USES_LIMIT) };
     }
 
     #[test]
     fn box_uses_limit() {
-        assert!(!<Box<WithoutLimit> as Dice>::USES_LIMIT);
-        assert!(<Box<WithLimit> as Dice>::USES_LIMIT);
+        const { assert!(!<Box<WithoutLimit> as Dice>::USES_LIMIT) };
+        const { assert!(<Box<WithLimit> as Dice>::USES_LIMIT) };
     }
 
     #[test]
@@ -457,8 +457,8 @@ mod tests {
 
     #[test]
     fn vec_uses_limit() {
-        assert!(<Vec<WithoutLimit> as Dice>::USES_LIMIT);
-        assert!(<Vec<WithLimit> as Dice>::USES_LIMIT);
+        const { assert!(<Vec<WithoutLimit> as Dice>::USES_LIMIT) };
+        const { assert!(<Vec<WithLimit> as Dice>::USES_LIMIT) };
     }
 
     #[test]
@@ -489,18 +489,18 @@ mod tests {
 
     #[test]
     fn tuple_uses_limit() {
-        assert!(!<(WithoutLimit,) as Dice>::USES_LIMIT);
-        assert!(<(WithLimit,) as Dice>::USES_LIMIT);
+        const { assert!(!<(WithoutLimit,) as Dice>::USES_LIMIT) };
+        const { assert!(<(WithLimit,) as Dice>::USES_LIMIT) };
 
-        assert!(!<(WithoutLimit, WithoutLimit) as Dice>::USES_LIMIT);
-        assert!(<(WithoutLimit, WithLimit) as Dice>::USES_LIMIT);
-        assert!(<(WithLimit, WithoutLimit) as Dice>::USES_LIMIT);
-        assert!(<(WithLimit, WithLimit) as Dice>::USES_LIMIT);
+        const { assert!(!<(WithoutLimit, WithoutLimit) as Dice>::USES_LIMIT) };
+        const { assert!(<(WithoutLimit, WithLimit) as Dice>::USES_LIMIT) };
+        const { assert!(<(WithLimit, WithoutLimit) as Dice>::USES_LIMIT) };
+        const { assert!(<(WithLimit, WithLimit) as Dice>::USES_LIMIT) };
 
-        assert!(!<(WithoutLimit, WithoutLimit, WithoutLimit) as Dice>::USES_LIMIT);
-        assert!(<(WithoutLimit, WithLimit, WithoutLimit) as Dice>::USES_LIMIT);
-        assert!(<(WithLimit, WithoutLimit, WithoutLimit) as Dice>::USES_LIMIT);
-        assert!(<(WithLimit, WithLimit, WithLimit) as Dice>::USES_LIMIT);
+        const { assert!(!<(WithoutLimit, WithoutLimit, WithoutLimit) as Dice>::USES_LIMIT) };
+        const { assert!(<(WithoutLimit, WithLimit, WithoutLimit) as Dice>::USES_LIMIT) };
+        const { assert!(<(WithLimit, WithoutLimit, WithoutLimit) as Dice>::USES_LIMIT) };
+        const { assert!(<(WithLimit, WithLimit, WithLimit) as Dice>::USES_LIMIT) };
     }
 
     #[test]

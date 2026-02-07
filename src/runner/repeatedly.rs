@@ -361,7 +361,7 @@ mod tests {
             for _ in 0..10 {
                 let (report, has_failed) = hints::collect(|| {
                     run(default_prng(), &config, |_| {
-                        let should_fail = Seed::random().0 % 2 == 0;
+                        let should_fail = Seed::random().0.is_multiple_of(2);
 
                         hints::add(|| format!("{}", should_fail));
 
