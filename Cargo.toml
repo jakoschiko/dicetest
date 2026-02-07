@@ -1,14 +1,14 @@
 [package]
 name = "dicetest"
 version = "0.4.0"
-license = "MIT OR Apache-2.0"
-readme = "README.md"
-description = "Framework for writing tests with randomly generated test data"
-keywords = ["fuzz", "property", "quickcheck", "testing"]
-categories = ["development-tools::testing"]
-repository = "https://github.com/jakoschiko/dicetest"
 edition = "2024"
 rust-version = "1.87.0"
+description = "Framework for writing tests with randomly generated test data"
+readme = "README.md"
+repository = "https://github.com/jakoschiko/dicetest"
+license = "MIT OR Apache-2.0"
+keywords = ["fuzz", "property", "quickcheck", "testing"]
+categories = ["development-tools::testing"]
 
 [package.metadata.docs.rs]
 all-features = true
