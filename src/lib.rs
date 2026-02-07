@@ -106,7 +106,7 @@ pub mod prelude;
 #[cfg(test)]
 mod asserts;
 
-// Test examples from the README.
+// Test examples from the readme.
 #[doc = include_str!("../README.md")]
 #[cfg(doctest)]
 pub struct ReadmeDoctests;
