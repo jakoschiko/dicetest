@@ -6,5 +6,5 @@ pre-release-replacements = [
   { file = "CHANGELOG.md", search = "/HEAD", replace = "/{{tag_name}}", min = 0, max = 1 },
   { file = "CHANGELOG.md", search = "\\.\\.\\.HEAD", replace = "...{{tag_name}}", min = 0, max = 1 },
   { file = "CHANGELOG.md", search = "<!-- next-header -->", replace = "<!-- next-header -->\n\n## [Unreleased]", exactly = 1 },
-  { file = "CHANGELOG.md", search = "<!-- next-url -->", replace = "<!-- next-url -->\n[Unreleased]: https://github.com/jakoschiko/dicetest-derive/compare/{{tag_name}}...HEAD", exactly = 1 },
+  { file = "CHANGELOG.md", search = "<!-- next-url -->", replace = "<!-- next-url -->\n[Unreleased]: https://github.com/jakoschiko/dicetest/compare/{{tag_name}}...HEAD", exactly = 1 },
 ]
