@@ -3,8 +3,8 @@ use crate::Seed;
 /// Trait for converting values of type `T` into a seed.
 ///
 /// This trait can be seen as the counterpart of [`DieOnce`] and [`Die`].
-/// Instead of generating a value of type `T` from a seed, this trait allows to convert a value
-/// of type `T` into a seed.
+/// Instead of generating a value of type `T` from a seed, this trait allows converting
+/// a value of type `T` into a seed.
 ///
 /// The most important use case is implementing pseudorandom functions. A pseudorandom function
 /// can be implemented by converting its arguments into a seed and then using the seed for

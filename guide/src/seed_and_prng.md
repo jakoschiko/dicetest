@@ -1,6 +1,6 @@
 # Seed and Prng
 
-The type [`Seed`] allows to determine the [pseudorandomness]. You can either use a fixed
+The type [`Seed`] allows you to determine the [pseudorandomness]. You can either use a fixed
 [`Seed`] or a random [`Seed`]:
 
 ```rust
@@ -14,7 +14,7 @@ println!("{:?}", Seed::random());
 ```
 
 The [`Seed`] can be used to initialize the [pseudorandom number generator] [`Prng`]. For each
-[`Seed`] the [`Prng`] provides a different infinite pseudorandom sequence of `u64`s.
+[`Seed`], the [`Prng`] provides a different infinite pseudorandom sequence of `u64`s.
 
 ```rust
 use dicetest::{Prng, Seed};

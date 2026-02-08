@@ -1,7 +1,7 @@
 # DieOnce and Die
 
 Although [`Prng`] can only generate pseudorandom `u64`s, the `u64`s can be used for constructing
-more complex values. The traits [`DieOnce`] and [`Die`] represents [`Prng`]-based generators for
+more complex values. The traits [`DieOnce`] and [`Die`] represent [`Prng`]-based generators for
 values of any type.
 
 An implementor of [`DieOnce`] is a generator that can be used a single time
@@ -18,7 +18,8 @@ let yy = "yy".to_string();
 let xx_or_yy_die = dice::one_of_once().two(xx, yy);
 ```
 
-An implementor of [`Die`] is a generator that can be used infinite times (similar to [`Fn`]).
+An implementor of [`Die`] is a generator that can be used an infinite number of
+times (similar to [`Fn`]).
 
 ```rust
 use dicetest::prelude::*;
