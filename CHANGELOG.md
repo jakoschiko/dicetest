@@ -55,8 +55,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add function `dicetest::dice::shuffle_slice`. This allows to shuffle a slice in-place.
-- Add function `dicetest::dice::array`. This allows to generate arrays using const generics.
+- Add function `dicetest::dice::shuffle_slice`. This allows shuffling a slice in-place.
+- Add function `dicetest::dice::array`. This allows generating arrays using const generics.
 
 ### Removed
 
@@ -72,12 +72,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add function `dicetest::Fate::roll_distribution`. This allows to generate values directly from a `rand::distributions::Distribution`.
+- Add function `dicetest::Fate::roll_distribution`. This allows generating values directly from a `rand::distributions::Distribution`.
 - Add optional feature flag `quickcheck_full`. This enables the integration of `quickcheck::Arbitrary`.
 - Implement `rand_core::RngCore` for `dicetest::Fate`.
 - Implement `quickcheck::Gen` for `dicetest::Fate`.
-- Add function `dicetest::Fate::roll_arbitrary`. This allows to generate values for a type that implements `quickcheck::Arbitrary`.
-- Add function `dicetest::dice::arbitrary`. This allows to create a `dicetest::Die` for a type that implements `quickcheck::Arbitrary`.
+- Add function `dicetest::Fate::roll_arbitrary`. This allows generating values for a type that implements `quickcheck::Arbitrary`.
+- Add function `dicetest::dice::arbitrary`. This allows creating a `dicetest::Die` for a type that implements `quickcheck::Arbitrary`.
 - Add struct `dicetest::hints::Section`.
 - Add marco `dicetest::hint_section`. This makes it easier to work with hint indents.
 
